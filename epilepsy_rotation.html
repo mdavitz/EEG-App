@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Link to the shared stylesheet with updated modern styles -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <title>Epilepsy Rotation - EEG Curriculum</title>
+  <style>
+    /* Modal overlay for EEG Slide Generator */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+      animation: fadeIn 0.3s ease-in-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    .modal-content {
+      background: var(--info-bg);
+      width: 90%;
+      max-width: 400px;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px var(--shadow-color);
+      overflow: hidden;
+      position: relative;
+    }
+    .modal-close {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      color: var(--text-color);
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container" id="epilepsy-rotation">
+    <!-- Daily Expectations & Goals Section -->
+    <div class="info-box">
+      <h2 class="page-title">Epilepsy Rotation</h2>
+      <h3>Daily Expectations and Goals</h3>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Activity</th>
+            <th>Description</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Watch Video</td>
+            <td>Review the designated EEG video for the day.</td>
+          </tr>
+          <tr>
+            <td>Complete Quiz</td>
+            <td>Answer the quiz questions associated with the video.</td>
+          </tr>
+          <tr>
+            <td>Upload EEG</td>
+            <td>
+              Submit one interesting EEG finding.
+              <!-- EEG Index button opens the modal popup -->
+              <a href="#" onclick="openEEGIndexApp(event); return false;" class="table-link">
+                <i class="fa-solid fa-brain"></i> EEG Index
+              </a>
+            </td>
+          </tr>
+          <tr>
+            <td>EEG Reading</td>
+            <td>Read both routine and continuous EEGs as described below.</td>
+          </tr>
+          <tr>
+            <td>Review Milestones</td>
+            <td>
+              Review your rotation expectations.
+              <a href="https://www.acgme.org/globalassets/pdfs/milestones/epilepsymilestones.pdf" target="_blank" class="table-link">
+                <i class="fa-solid fa-file-pdf"></i> Epilepsy Milestones
+              </a>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Rotation Schedule Section -->
+    <div class="info-box">
+      <h2>Rotation Schedule</h2>
+      <h3>Inpatient Rotation (MSH &amp; MSW EMU)</h3>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Activity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>7-8 AM</td>
+            <td>Arrive and preround on EMU/epilepsy consult patients</td>
+          </tr>
+          <tr>
+            <td>8-9 AM</td>
+            <td>Attend morning report</td>
+          </tr>
+          <tr>
+            <td>9-10 AM</td>
+            <td>Read at least one LTM EEG, draft EEG reports</td>
+          </tr>
+          <tr>
+            <td>10 AM-12 PM</td>
+            <td>Round with epilepsy fellow/attending</td>
+          </tr>
+          <tr class="pm-workflow">
+            <td colspan="2" style="text-align: center;">PM Workflow (~12-5pm)</td>
+          </tr>
+          <tr>
+            <td>12-1 PM</td>
+            <td>Neurology noon conference</td>
+          </tr>
+          <tr>
+            <td>1-5 PM</td>
+            <td>Elective admission H&amp;Ps, consults, follow-up on LTM EEG, read new inpatient EEGs</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Outpatient Rotation</h3>
+      <table class="custom-table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Activity</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>8-9 AM</td>
+            <td>Morning report (MSH Ambulatory EEG / Outpatient PGY-2)</td>
+          </tr>
+          <tr>
+            <td>AM</td>
+            <td>Epilepsy clinic or outpatient EEG reading (self-study if no clinic)</td>
+          </tr>
+          <tr>
+            <td>PM</td>
+            <td>Resident continuity clinic or faculty clinic, ambulatory EEG readings</td>
+          </tr>
+          <tr>
+            <td colspan="2">MSW Outpatient (PGY-2): Similar schedule with assigned epilepsy clinics &amp; EEG readings</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Teaching Rounds & Conferences Section -->
+    <div class="info-box">
+      <h2>Teaching Rounds &amp; Conferences</h2>
+      <p>All epilepsy conferences are currently held via Zoom (unless otherwise indicated).</p>
+      <table class="custom-table responsive-table">
+        <thead>
+          <tr>
+            <th>Seminar</th>
+            <th>Day/Time</th>
+            <th>Location</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td data-label="Seminar">Epilepsy Surgery Conference (mandatory)</td>
+            <td data-label="Day/Time">Wed 4-5:30 PM</td>
+            <td data-label="Location">Levy Library (MSH) / Zoom</td>
+            <td data-label="Notes">Epilepsy surgery cases, comprehensive team</td>
+          </tr>
+          <tr>
+            <td data-label="Seminar">Teaching Rounds / Interesting EEGs (mandatory)</td>
+            <td data-label="Day/Time">Wed 1-2 PM</td>
+            <td data-label="Location">Zoom</td>
+            <td data-label="Notes">
+              1st Wed: ICU EEGs (joint with NSICU)<br/>
+              2nd &amp; 4th Wed: Faculty lecture series<br/>
+              3rd Wed: Interesting EEGs<br/>
+              5th Wed: Other topics
+            </td>
+          </tr>
+          <tr>
+            <td data-label="Seminar">Grand Rounds</td>
+            <td data-label="Day/Time">Fri 8-9 AM</td>
+            <td data-label="Location">Hess Center / Remote Access</td>
+            <td data-label="Notes">Neurology Grand Rounds (faculty, fellows, residents, students)</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Container for the EEG Slide Generator Modal -->
+  <div id="section-content"></div>
+
+  <!-- PPTXGenJS for Slide Generation -->
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
+  <script>
+    // EEG Slide Generator Popup function
+    function openEEGIndexApp(e) {
+      if (e) e.preventDefault();
+      
+      const modalOverlay = document.createElement("div");
+      modalOverlay.className = "modal-overlay";
+      modalOverlay.addEventListener("click", function(event) {
+        if (event.target === modalOverlay) {
+          modalOverlay.remove();
+        }
+      });
+      
+      const modalContent = document.createElement("div");
+      modalContent.className = "modal-content";
+      
+      const closeButton = document.createElement("button");
+      closeButton.className = "modal-close";
+      closeButton.innerHTML = "&times;";
+      closeButton.addEventListener("click", () => modalOverlay.remove());
+      
+      modalContent.innerHTML = `
+        <header style="background: linear-gradient(135deg, #003366, #00509e); color: var(--header-text); padding: 30px; text-align: center;">
+          <h2 style="font-size: 28px; margin: 0;">EEG Slide Generator</h2>
+        </header>
+        <div class="content" style="padding: 20px;">
+          <form id="slideForm">
+            <label for="fullName" style="font-size: 20px; margin-top: 15px; display: block;">Full Name:</label>
+            <input type="text" id="fullName" placeholder="Enter your full name" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
+            <label for="residency" style="font-size: 20px; margin-top: 15px; display: block;">Residency Program:</label>
+            <input type="text" id="residency" placeholder="e.g. PGY-2 Neurology" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
+            <label for="eegFinding" style="font-size: 20px; margin-top: 15px; display: block;">EEG Finding:</label>
+            <input type="text" id="eegFinding" placeholder="Enter the EEG finding" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
+            <label for="eegImage" style="font-size: 20px; margin-top: 15px; display: block;">Upload EEG Screenshot:</label>
+            <input type="file" id="eegImage" accept="image/*" required style="width: 100%; padding: 14px; font-size: 20px;">
+            <button type="button" onclick="generateSlide()" style="width: 100%; padding: 14px; font-size: 20px; margin-top: 15px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; cursor: pointer;">Generate Slide</button>
+          </form>
+        </div>
+      `;
+      
+      modalContent.prepend(closeButton);
+      modalOverlay.appendChild(modalContent);
+      document.body.appendChild(modalOverlay);
+    }
+    
+    // Revised Slide generation function using PPTXGenJS and FileReader for image processing,
+    // with the image enlarged to fill the slide and text overlayed on top.
+    function generateSlide() {
+      console.log("Generate Slide button clicked.");
+      const fullName = document.getElementById("fullName").value;
+      const residency = document.getElementById("residency").value;
+      const eegFinding = document.getElementById("eegFinding").value;
+      const fileInput = document.getElementById("eegImage");
+      const file = fileInput.files[0];
+      console.log("Values:", fullName, residency, eegFinding);
+      
+      let pptx = new PptxGenJS();
+      let slide = pptx.addSlide();
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          let imageData = e.target.result;
+          // Add the uploaded image as a full-slide background
+          slide.addImage({ data: imageData, x: 0, y: 0, w: 10, h: 5.63 });
+          // Overlay the text on top of the image
+          slide.addText(`EEG Finding: ${eegFinding}`, { x: 1, y: 1, fontSize: 24, color: 'ffffff', bold: true });
+          slide.addText(`Presented by: ${fullName} (${residency})`, { x: 1, y: 2, fontSize: 18, color: 'ffffff' });
+          pptx.writeFile({ fileName: "EEG_Slide.pptx" })
+            .then(() => {
+              console.log("Slide generation complete.");
+              alert("Complete!");
+              const modalOverlay = document.querySelector('.modal-overlay');
+              if (modalOverlay) modalOverlay.remove();
+            })
+            .catch(error => {
+              console.error("Error generating slide:", error);
+              alert("Error generating slide. Check console for details.");
+            });
+        };
+        reader.onerror = function(error) {
+          console.error("Error reading image file:", error);
+          alert("Error reading image file.");
+        };
+        reader.readAsDataURL(file);
+      } else {
+        // If no image is uploaded, set a plain background and overlay the text
+        slide.background = { color: "F1F1F1" };
+        slide.addText(`EEG Finding: ${eegFinding}`, { x: 1, y: 1, fontSize: 24, color: '003366', bold: true });
+        slide.addText(`Presented by: ${fullName} (${residency})`, { x: 1, y: 2, fontSize: 18, color: '00509e' });
+        pptx.writeFile({ fileName: "EEG_Slide.pptx" })
+          .then(() => {
+            console.log("Slide generation complete.");
+            alert("Complete!");
+            const modalOverlay = document.querySelector('.modal-overlay');
+            if (modalOverlay) modalOverlay.remove();
+          })
+          .catch(error => {
+            console.error("Error generating slide:", error);
+            alert("Error generating slide. Check console for details.");
+          });
+      }
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EEG Videos - EEG Curriculum</title>
+
+  <!-- Link to your updated external stylesheet -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+</head>
+<body>
+  <div id="eeg-videos">
+    <!-- SIDEBAR (Video List) -->
+    <div class="video-list" id="videoList">
+      <h2>Selection</h2>
+      <ul>
+        <li onclick="mobileShowVideo(0)">Introduction to EEG</li>
+        <li onclick="mobileShowVideo(1)">Polarity Rules</li>
+        <li onclick="mobileShowVideo(2)">Montages</li>
+        <li onclick="mobileShowVideo(3)">Eye Movements</li>
+        <li onclick="mobileShowVideo(4)">Technical Issues</li>
+        <li onclick="mobileShowVideo(5)">Normal Awake</li>
+        <li onclick="mobileShowVideo(6)">Normal Sleep</li>
+        <li onclick="mobileShowVideo(7)">Interictal Abnormalities</li>
+        <li onclick="mobileShowVideo(8)">Focal Slowing</li>
+        <li onclick="mobileShowVideo(9)">Diffuse Slow &amp; Periodic Discharges</li>
+      </ul>
+    </div>
+    
+    <!-- MAIN CONTENT (Video/Quiz) -->
+    <div class="main-content" id="videoContent">
+      <button class="back-button" onclick="showMenu()">Back to Menu</button>
+      <div class="content-inner">
+		  <h2 class="page-title">Videos</h2>
+        <!-- VIDEO SECTION -->
+        <div id="videoSection" class="video-section">
+          <video id="videoPlayer" controls>
+            <source id="videoSource" src="assets/videos/EEG1.mp4" type="video/mp4">
+            Your browser does not support HTML5 video.
+          </video>
+          <div class="video-nav">
+            <button class="btn btn-prev" onclick="prevVideo()">Previous Video</button>
+            <button class="btn btn-skip" onclick="showQuiz()">Skip to Quiz</button>
+            <button class="btn btn-next" onclick="nextVideo()">Next Video</button>
+          </div>
+        </div>
+        
+        <!-- QUIZ SECTION -->
+        <div id="quizSection" class="quiz-section">
+          <div class="quiz-header">
+            <h3 id="quizTitle"></h3>
+            <div class="progress-indicator" id="quizProgress"></div>
+          </div>
+          <div id="questionContainer"></div>
+          <div id="feedbackMessage"></div>
+          <div class="quiz-nav">
+            <button class="btn btn-prev" id="prevQuestionBtn" onclick="prevQuestion()">Previous Question</button>
+            <button class="btn btn-next" id="nextQuestionBtn" onclick="nextQuestion()">Next Question</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAT OVERLAY -->
+  <script>
+    function showKittenOverlay() {
+      const overlay = document.createElement("div");
+      overlay.className = "kitten-overlay";
+      overlay.addEventListener("click", () => overlay.remove());
+      const randomParam = Date.now();
+      const catImg = document.createElement("img");
+      catImg.src = `https://cataas.com/cat/gif?${randomParam}`;
+      catImg.alt = "Kitten Celebration!";
+      overlay.appendChild(catImg);
+      document.body.appendChild(overlay);
+    }
+  </script>
+
+  <script>
+    // 10 video sections with quiz questions
+    const videoSections = [
+      {
+        title: "Introduction to EEG",
+        video: "EEG1.mp4",
+        questions: [
+          {
+            question: "Which of the following landmarks is NOT used for EEG electrode placement?",
+            answers: [
+              { text: "Nasion", feedback: "Incorrect. The nasion is standard." },
+              { text: "Mandibular notch", feedback: "Correct. It’s not used." },
+              { text: "Inion", feedback: "Incorrect. The inion is standard." },
+              { text: "Pre-auricular point", feedback: "Incorrect. It’s standard." }
+            ],
+            correct: 1
+          },
+          {
+            question: "Which term describes a single EEG tracing?",
+            answers: [
+              { text: "Channel", feedback: "Correct!" },
+              { text: "Chain", feedback: "Incorrect." },
+              { text: "Montage", feedback: "Incorrect." },
+              { text: "Electrode", feedback: "Incorrect." }
+            ],
+            correct: 0
+          },
+          {
+            question: "Which area is least likely to show an interictal abnormality on scalp EEG?",
+            answers: [
+              { text: "Right frontal convexity", feedback: "Incorrect." },
+              { text: "Left temporal neocortex", feedback: "Incorrect." },
+              { text: "Right parietal lobe", feedback: "Incorrect." },
+              { text: "Left insular cortex", feedback: "Correct." }
+            ],
+            correct: 3
+          }
+        ]
+      },
+      {
+        title: "Polarity Rules",
+        video: "EEG2.mp4",
+        questions: [
+          {
+            question: "Which term indicates the quality of a differential amplifier?",
+            answers: [
+              { text: "Low-pass filter", feedback: "Incorrect." },
+              { text: "Common mode rejection ratio", feedback: "Correct." },
+              { text: "High-pass filter", feedback: "Incorrect." },
+              { text: "Time base", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "An upward deflection indicates which scenario?",
+            answers: [
+              { text: "Input 1 positive vs. Input 2", feedback: "Incorrect." },
+              { text: "Input 2 negative vs. Input 1", feedback: "Incorrect." },
+              { text: "Input 1 negative vs. Input 2", feedback: "Correct." },
+              { text: "Input 1 positive vs. ground", feedback: "Incorrect." }
+            ],
+            correct: 2
+          },
+          {
+            question: "What does a phase reversal on EEG indicate?",
+            answers: [
+              { text: "Maximal negativity", feedback: "Correct." },
+              { text: "Polarity change (neg to pos)", feedback: "Incorrect." },
+              { text: "Polarity change (pos to neg)", feedback: "Incorrect." },
+              { text: "Frequency change", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Montages",
+        video: "EEG3.mp4",
+        questions: [
+          {
+            question: "Which montage is bipolar?",
+            answers: [
+              { text: "Laplacian", feedback: "Incorrect." },
+              { text: "Transverse", feedback: "Correct." },
+              { text: "Ipsilateral mastoid", feedback: "Incorrect." },
+              { text: "Contralateral mastoid", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "Which montage is most susceptible to reference contamination?",
+            answers: [
+              { text: "Anterior-posterior bipolar", feedback: "Incorrect." },
+              { text: "Laplacian", feedback: "Incorrect." },
+              { text: "Ipsilateral mastoid", feedback: "Incorrect." },
+              { text: "Common average reference", feedback: "Correct." }
+            ],
+            correct: 3
+          },
+          {
+            question: "What is a disadvantage of the Laplacian montage?",
+            answers: [
+              { text: "Poor for focal waveforms", feedback: "Incorrect." },
+              { text: "Poor for broadly-distributed waveforms", feedback: "Correct." },
+              { text: "Susceptible to eye movement artifact", feedback: "Incorrect." },
+              { text: "Susceptible to reference contamination", feedback: "Incorrect." }
+            ],
+            correct: 1
+          }
+        ]
+      },
+      {
+        title: "Eye Movements",
+        video: "EEG4.mp4",
+        questions: [
+          {
+            question: "What is the polarity of the eye?",
+            answers: [
+              { text: "Cornea electronegative, retina electropositive", feedback: "Incorrect." },
+              { text: "Cornea electropositive, retina electronegative", feedback: "Correct." },
+              { text: "Cornea neutral, retina electronegative", feedback: "Incorrect." },
+              { text: "Cornea electronegative, retina neutral", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "What is Bell’s phenomenon?",
+            answers: [
+              { text: "Slow lateral eye movements", feedback: "Incorrect." },
+              { text: "Downward deviation with eye closure", feedback: "Incorrect." },
+              { text: "Upward deviation with eye closure", feedback: "Correct." },
+              { text: "Rapid eye movements in deep sleep", feedback: "Incorrect." }
+            ],
+            correct: 2
+          },
+          {
+            question: "In which region are lateral eye movements best seen?",
+            answers: [
+              { text: "Anterior temporal", feedback: "Correct." },
+              { text: "Frontal", feedback: "Incorrect." },
+              { text: "Central", feedback: "Incorrect." },
+              { text: "Occipital", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Technical Issues",
+        video: "EEG5.mp4",
+        questions: [
+          {
+            question: "What is the frequency range of theta activity in EEG?",
+            answers: [
+              { text: "Less than 4 Hz", feedback: "Incorrect." },
+              { text: "4-7 Hz", feedback: "Correct." },
+              { text: "8-13 Hz", feedback: "Incorrect." },
+              { text: "More than 13 Hz", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "What does a 1 Hz low-frequency filter remove?",
+            answers: [
+              { text: "All activity below 1 Hz", feedback: "Incorrect." },
+              { text: "Most activity below 1 Hz", feedback: "Correct." },
+              { text: "All activity above 1 Hz", feedback: "Incorrect." },
+              { text: "Most activity above 1 Hz", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "What is the significance of a 60 Hz artifact?",
+            answers: [
+              { text: "High impedance (poor connection)", feedback: "Correct. A 60 Hz artifact often indicates poor electrode contact or grounding issues." },
+              { text: "Low impedance (good connection)", feedback: "Incorrect." },
+              { text: "Excessive digital interference", feedback: "Incorrect." },
+              { text: "Excessive muscle activity", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Normal Awake",
+        video: "EEG6.mp4",
+        questions: [
+          {
+            question: "What is the relationship of the alpha rhythm to eye closure?",
+            answers: [
+              { text: "Higher-voltage with eye opening", feedback: "Incorrect." },
+              { text: "Lower-voltage with eye opening, higher-voltage with closure", feedback: "Correct." },
+              { text: "No change", feedback: "Incorrect." },
+              { text: "Higher-frequency with eye opening", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "What is an acceptable difference in alpha amplitude between hemispheres?",
+            answers: [
+              { text: "Left up to 50% higher than right", feedback: "Incorrect." },
+              { text: "Right up to 50% higher than left", feedback: "Correct." },
+              { text: "Left up to 75% higher than right", feedback: "Incorrect." },
+              { text: "Right up to 75% higher than left", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "Where is the mu rhythm best seen?",
+            answers: [
+              { text: "Fp2", feedback: "Incorrect." },
+              { text: "F8", feedback: "Incorrect." },
+              { text: "C4", feedback: "Correct." },
+              { text: "O4", feedback: "Incorrect." }
+            ],
+            correct: 2
+          }
+        ]
+      },
+      {
+        title: "Normal Sleep",
+        video: "EEG7.mp4",
+        questions: [
+          {
+            question: "Which is a component of Stage I sleep?",
+            answers: [
+              { text: "POSTS", feedback: "Correct." },
+              { text: "Sleep spindles", feedback: "Incorrect." },
+              { text: "K-complexes", feedback: "Incorrect." },
+              { text: "High-voltage polymorphic delta", feedback: "Incorrect." }
+            ],
+            correct: 0
+          },
+          {
+            question: "Which is defining for Stage II sleep?",
+            answers: [
+              { text: "POSTS", feedback: "Incorrect." },
+              { text: "Sleep spindles", feedback: "Correct." },
+              { text: "High-voltage polymorphic delta", feedback: "Incorrect." },
+              { text: "Slow rolling eye movements", feedback: "Incorrect." }
+            ],
+            correct: 1
+          },
+          {
+            question: "Which awake EEG finding is most similar to POSTS?",
+            answers: [
+              { text: "Mu rhythm", feedback: "Incorrect." },
+              { text: "Alpha rhythm", feedback: "Incorrect." },
+              { text: "Eye blinks", feedback: "Incorrect." },
+              { text: "Lambda waves", feedback: "Correct." }
+            ],
+            correct: 3
+          }
+        ]
+      },
+      {
+        title: "Interictal Abnormalities",
+        video: "EEG8.mp4",
+        questions: [
+          {
+            question: "Why might some patients not show interictal abnormalities?",
+            answers: [
+              { text: "Superficial cortical region", feedback: "Incorrect." },
+              { text: "Large area of cortex", feedback: "Incorrect." },
+              { text: "Very small area of cortex", feedback: "Correct." },
+              { text: "Generalized activity", feedback: "Incorrect." }
+            ],
+            correct: 2
+          },
+          {
+            question: "What is characteristic of focal epileptiform discharges?",
+            answers: [
+              { text: "No disruption of background", feedback: "Incorrect." },
+              { text: "Duration > 200 ms", feedback: "Incorrect." },
+              { text: "Only one phase", feedback: "Incorrect." },
+              { text: "After-coming slow wave", feedback: "Correct." }
+            ],
+            correct: 3
+          },
+          {
+            question: "How can artifacts be distinguished from true epileptiform discharges?",
+            answers: [
+              { text: "Artifacts are isolated to one electrode", feedback: "Correct. Artifacts typically lack a consistent field." },
+              { text: "Artifacts are always slower in frequency", feedback: "Incorrect." },
+              { text: "Artifacts do not follow a consistent morphology", feedback: "Incorrect." },
+              { text: "Artifacts occur only during sleep", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Focal Slowing",
+        video: "EEG9.mp4",
+        questions: [
+          {
+            question: "When is focal polymorphic delta most likely observed?",
+            answers: [
+              { text: "During an absence seizure", feedback: "Incorrect." },
+              { text: "After an absence seizure", feedback: "Incorrect." },
+              { text: "During a complex partial seizure", feedback: "Incorrect." },
+              { text: "After a complex partial seizure", feedback: "Correct." }
+            ],
+            correct: 3
+          },
+          {
+            question: "What is the difference between focal rhythmic and polymorphic delta?",
+            answers: [
+              { text: "Rhythmic delta is more epileptogenic", feedback: "Correct." },
+              { text: "Polymorphic delta is more epileptogenic", feedback: "Incorrect." },
+              { text: "There is no difference", feedback: "Incorrect." }
+            ],
+            correct: 0
+          },
+          {
+            question: "What is a breach rhythm?",
+            answers: [
+              { text: "An increase in high-frequency activity over a skull defect", feedback: "Correct." },
+              { text: "A decrease in low-frequency activity", feedback: "Incorrect." },
+              { text: "A decrease in high-frequency activity", feedback: "Incorrect." },
+              { text: "An increase in low-frequency activity", feedback: "Incorrect." }
+            ],
+            correct: 0
+          }
+        ]
+      },
+      {
+        title: "Diffuse Slow & Periodic Discharges",
+        video: "EEG10.mp4",
+        questions: [
+          {
+            question: "Which finding indicates diffuse cerebral dysfunction?",
+            answers: [
+              { text: "Anterior-posterior gradient", feedback: "Incorrect." },
+              { text: "Continuous background", feedback: "Incorrect." },
+              { text: "Predominantly alpha waveforms", feedback: "Incorrect." },
+              { text: "Unreactive background", feedback: "Correct." }
+            ],
+            correct: 3
+          },
+          {
+            question: "Which pattern indicates the most severe dysfunction?",
+            answers: [
+              { text: "Diffuse polymorphic theta", feedback: "Incorrect." },
+              { text: "Diffuse polymorphic delta", feedback: "Incorrect." },
+              { text: "Diffuse attenuation", feedback: "Correct." },
+              { text: "Burst-suppression", feedback: "Incorrect." }
+            ],
+            correct: 2
+          },
+          {
+            question: "What is the significance of lateralized periodic discharges?",
+            answers: [
+              { text: "They indicate a focal seizure", feedback: "Incorrect." },
+              { text: "They indicate increased seizure risk", feedback: "Correct." },
+              { text: "They are not associated with risk", feedback: "Incorrect." },
+              { text: "They are only seen in HSV encephalitis", feedback: "Incorrect." }
+            ],
+            correct: 1
+          }
+        ]
+      }
+    ];
+
+    let currentVideoIndex = 0;
+    let currentQuestionIndex = 0;
+
+    // Desktop: show selected video in the right column
+    function showVideo(index) {
+      currentVideoIndex = index;
+      currentQuestionIndex = 0;
+      document.getElementById("videoSection").style.display = "flex";
+      document.getElementById("quizSection").style.display = "none";
+      document.getElementById("feedbackMessage").innerHTML = "";
+      const videoSource = document.getElementById("videoSource");
+      videoSource.src = "assets/videos/" + videoSections[index].video;
+      document.getElementById("videoPlayer").load();
+    }
+
+    // Mobile: hide menu only if in mobile view, show content
+    function mobileShowVideo(index) {
+      showVideo(index);
+      if(window.innerWidth <= 768) {
+        document.getElementById("videoList").style.display = "none";
+      }
+      document.getElementById("videoContent").style.display = "flex";
+    }
+
+    // Mobile: back to menu
+    function showMenu() {
+      document.getElementById("videoContent").style.display = "none";
+      document.getElementById("videoList").style.display = "block";
+    }
+
+    // Switch to quiz
+    function showQuiz() {
+      document.getElementById("videoSection").style.display = "none";
+      document.getElementById("quizSection").style.display = "block";
+      currentQuestionIndex = 0;
+      document.getElementById("feedbackMessage").innerHTML = "";
+      loadQuestion();
+    }
+
+    // Load current quiz question
+    function loadQuestion() {
+      document.getElementById("feedbackMessage").innerHTML = "";
+      const videoObj = videoSections[currentVideoIndex];
+      const qObj = videoObj.questions[currentQuestionIndex];
+      document.getElementById("quizTitle").textContent = videoObj.title + " Quiz";
+      document.getElementById("quizProgress").textContent =
+        `Question ${currentQuestionIndex + 1} of ${videoObj.questions.length}`;
+
+      let html = `<div class="quiz-question">
+                    <p><strong>Q${currentQuestionIndex + 1}:</strong> ${qObj.question}</p>
+                    <ul>`;
+      qObj.answers.forEach((ans, ai) => {
+        html += `<li><button onclick="checkAnswer(${ai})">${ans.text}</button></li>`;
+      });
+      html += `</ul></div>`;
+      document.getElementById("questionContainer").innerHTML = html;
+
+      document.getElementById("prevQuestionBtn").style.display =
+        (currentQuestionIndex > 0) ? "inline-block" : "none";
+      document.getElementById("nextQuestionBtn").style.display =
+        (currentQuestionIndex < videoObj.questions.length - 1) ? "inline-block" : "none";
+    }
+
+    // Check quiz answer
+    function checkAnswer(answerIndex) {
+      const videoObj = videoSections[currentVideoIndex];
+      const qObj = videoObj.questions[currentQuestionIndex];
+      document.getElementById("feedbackMessage").innerHTML = "";
+      if (answerIndex === qObj.correct) {
+        document.getElementById("feedbackMessage").innerHTML = '<div class="correct-msg">Correct!</div>';
+        showKittenOverlay();
+      } else {
+        document.getElementById("feedbackMessage").innerHTML = '<div class="incorrect-msg">' + qObj.answers[answerIndex].feedback + '</div>';
+      }
+    }
+
+    // Next/Previous quiz question
+    function nextQuestion() {
+      const videoObj = videoSections[currentVideoIndex];
+      if (currentQuestionIndex < videoObj.questions.length - 1) {
+        currentQuestionIndex++;
+        loadQuestion();
+      }
+    }
+    function prevQuestion() {
+      if (currentQuestionIndex > 0) {
+        currentQuestionIndex--;
+        loadQuestion();
+      }
+    }
+
+    // Desktop video nav
+    function nextVideo() {
+      if (currentVideoIndex < videoSections.length - 1) {
+        showVideo(currentVideoIndex + 1);
+      }
+    }
+    function prevVideo() {
+      if (currentVideoIndex > 0) {
+        showVideo(currentVideoIndex - 1);
+      }
+    }
+
+    // Initialize first video on page load
+    document.addEventListener("DOMContentLoaded", () => {
+      showVideo(0);
+    });
+  </script>
+</body>
+</html>

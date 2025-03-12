@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Google Fonts and Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  
+  <!-- Favicon -->
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  
+  <!-- Open Graph meta tags -->
+  <meta property="og:title" content="EEG Curriculum" />
+  <meta property="og:description" content="Engaging Videos & Self-Assessment Tools" />
+  <meta property="og:image" content="https://example.com/assets/images/logo.png" />
+  <meta property="og:url" content="https://example.com" />
+  
+  <title>EEG Curriculum</title>
+  
+  <!-- Shared CSS -->
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  
+  <!-- Additional CSS to force consistent card height -->
+  <style>
+    /* Override the grid row height so every row is the same height (adjust 350px as desired) */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      grid-auto-rows: 350px;  /* This value matches the second row height you prefer */
+    }
+    /* Ensure cards stretch to fill their grid area */
+    .cards-grid .card {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <!-- HEADER with shrink effect -->
+  <header id="header">
+    <div class="header-inner">
+      <!-- Logo (click to go home) -->
+      <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
+      
+      <!-- Desktop Navigation -->
+      <div class="desktop-tabs" id="desktop-tabs">
+        <a href="#" onclick="renderHomePage()">Home</a>
+        <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
+        <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
+        <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
+        <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
+        <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
+        <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
+      </div>
+      
+      <!-- Mobile Navigation -->
+      <div class="mobile-tabs" id="mobile-tabs">
+        <a href="#" id="current-mobile-tab" onclick="toggleMobileDropdown(event)">Home</a>
+        <div class="mobile-dropdown" id="mobile-dropdown">
+          <a href="#" onclick="renderHomePage(); hideMobileDropdown()">Home</a>
+          <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
+          <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
+          <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
+          <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
+          <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
+          <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
+        </div>
+      </div>
+    </div>
+  </header>
+  
+  <!-- HOMEPAGE CARDS -->
+  <div id="home-content" class="cards-container">
+    <h2 class="page-title">Explore the EEG Curriculum</h2>
+    <div class="cards-grid">
+      <div class="card">
+        <i class="fa-solid fa-brain"></i>
+        <h3>Epilepsy Rotation</h3>
+        <p>Delve into daily expectations with engaging videos, quizzes, and guidelines for EEG readings and milestones.</p>
+        <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Learn More</a>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-file-medical"></i>
+        <h3>Seizure Management</h3>
+        <p>Access concise guidelines for seizure management and ASM protocols.</p>
+        <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Learn More</a>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-desktop"></i>
+        <h3>Natus Instructions</h3>
+        <p>Follow our step-by-step guide to launching Natus NeuroWorks, reviewing patient studies, and configuring the display.</p>
+        <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Learn More</a>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-file-pdf"></i>
+        <h3>ACNS Criteria</h3>
+        <p>Access detailed visual references and downloadable charts of ACNS guidelines to improve EEG interpretation.</p>
+        <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">Learn More</a>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-video"></i>
+        <h3>EEG Videos</h3>
+        <p>Engage with interactive EEG videos accompanied by quizzes to sharpen your knowledge and interpretation skills.</p>
+        <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">Learn More</a>
+      </div>
+      <div class="card">
+        <i class="fa-solid fa-circle-question"></i>
+        <h3>FAQ</h3>
+        <p>Find answers to common questions about EEG interpretation, seizure management, and epilepsy care.</p>
+        <a href="faq.html" onclick="loadSection(event, 'faq.html')">Learn More</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- MAIN CONTENT CONTAINER -->
+  <div class="container">
+    <div id="section-content"></div>
+  </div>
+  
+  <!-- FIXED FOOTER CONTROLS -->
+  <footer id="footer">
+    <div class="footer-btns">
+      <button onclick="toggleFontSize()" aria-label="Toggle Font Size">
+        <span style="font-size:1.4em;">A</span>/<span style="font-size:0.8em;">a</span>
+      </button>
+      <button onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">Dark Mode</button>
+    </div>
+  </footer>
+  
+  <!-- Shared JavaScript -->
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
+  <script>
+    // Header shrink on scroll
+    window.addEventListener("scroll", () => {
+      const header = document.getElementById("header");
+      if (window.scrollY > 100) {
+        header.classList.add("shrink");
+      } else {
+        header.classList.remove("shrink");
+      }
+    });
+    
+    // Mobile dropdown functions
+    function toggleMobileDropdown(e) {
+      e.preventDefault();
+      const dropdown = document.getElementById("mobile-dropdown");
+      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+    }
+    function hideMobileDropdown() {
+      document.getElementById("mobile-dropdown").style.display = "none";
+    }
+    function setMobileTabLabel(label) {
+      document.getElementById("current-mobile-tab").textContent = label;
+    }
+    
+    // Navigation functions (for dynamic loading)
+    function renderHomePage() {
+      document.getElementById("section-content").innerHTML = "";
+      document.getElementById("home-content").style.display = "block";
+      setMobileTabLabel("Home");
+      hideMobileDropdown();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      history.pushState({ page: "home" }, "", "index.html");
+    }
+    async function loadPage(url) {
+      try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("HTTP error " + response.status);
+        const html = await response.text();
+        const container = document.getElementById("section-content");
+        container.innerHTML = html;
+        // Extract and execute inline script tags from the loaded content
+        const scripts = container.querySelectorAll("script");
+        scripts.forEach(oldScript => {
+          const newScript = document.createElement("script");
+          if (oldScript.src) {
+            newScript.src = oldScript.src;
+          } else {
+            newScript.textContent = oldScript.textContent;
+          }
+          document.body.appendChild(newScript);
+        });
+      } catch (error) {
+        console.error("Error loading page:", error);
+        document.getElementById("section-content").innerHTML = "<p>Error loading content.</p>";
+      }
+    }
+    function loadSection(event, url) {
+      event.preventDefault();
+      document.getElementById("home-content").style.display = "none";
+      document.getElementById("section-content").style.display = "block";
+      loadPage(url);
+      setMobileTabLabel(getTabName(url));
+      hideMobileDropdown();
+      history.pushState({ url: url }, "", url);
+    }
+    function getTabName(url) {
+      if(url.indexOf("epilepsy_rotation") > -1) return "Epilepsy Rotation";
+      if(url.indexOf("seizure_management") > -1) return "Seizure Management";
+      if(url.indexOf("natus_instructions") > -1) return "Natus Instructions";
+      if(url.indexOf("acns_criteria") > -1) return "ACNS Criteria";
+      if(url.indexOf("eeg_videos") > -1) return "EEG Videos";
+      if(url.indexOf("faq") > -1) return "FAQ";
+      return "Home";
+    }
+    
+    // Dark mode & font size toggles
+    function toggleDarkMode() {
+      document.body.classList.toggle("dark");
+    }
+    function toggleFontSize() {
+      document.body.classList.toggle("large-font");
+    }
+    
+    // History navigation
+    window.onpopstate = function(event) {
+      if(event.state && event.state.page === "home") {
+        renderHomePage();
+      } else if(event.state && event.state.url) {
+        loadPage(event.state.url);
+      } else {
+        renderHomePage();
+      }
+    };
+    
+    // On load, show home page
+    document.addEventListener("DOMContentLoaded", () => {
+      renderHomePage();
+    });
+  </script>
+</body>
+</html>

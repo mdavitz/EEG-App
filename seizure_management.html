@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <title>Seizure Management - EEG Curriculum</title>
+  <style>
+    /* Modal Styling */
+    #dev-modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 10000;
+    }
+    #dev-modal .modal-content {
+      background: var(--info-bg);
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+    #dev-modal h2 {
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    #dev-modal p {
+      margin-bottom: 1.5rem;
+      color: var(--text-color);
+    }
+    #dev-modal input[type="text"] {
+      padding: 0.5rem;
+      font-size: 1rem;
+      width: 80%;
+      margin-bottom: 1rem;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--info-bg);
+      color: var(--text-color);
+    }
+    #dev-modal button {
+      margin: 0 0.5rem;
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: var(--accent-color);
+      color: #fff;
+      transition: background var(--transition-duration);
+    }
+    #dev-modal button:hover {
+      background: var(--btn-next);
+    }
+    #dev-modal .error {
+      color: red;
+      margin-top: 0.5rem;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <!-- Modal Popup -->
+  <div id="dev-modal">
+    <div class="modal-content">
+      <h2>Under Development</h2>
+      <p>This page is currently under development. To access it, please enter the access code.</p>
+      <input type="text" id="access-code" placeholder="Enter access code">
+      <div>
+        <button id="submit-code">Enter</button>
+        <button id="cancel-code">Cancel</button>
+      </div>
+      <div class="error" id="code-error">Incorrect code. Please try again.</div>
+    </div>
+  </div>
+
+  <!-- Main Content (hidden until correct code is entered) -->
+  <div id="page-content" style="display:none;">
+    <div id="seizure-management">
+      <!-- Legal Disclaimer -->
+      <div class="legal-disclaimer">
+        <p><strong>Legal Disclaimer:</strong> This section is for educational and informational purposes only and is under active revision. It does not constitute medical advice. Always consult your home institution’s guidelines and your neurology leadership or a qualified healthcare professional before making any medical decisions.</p>
+      </div>
+      
+      <!-- Search Box -->
+      <div class="info-box">
+        <h2>Seizure Management</h2>
+        <input type="text" id="searchBar" placeholder="Search Seizure Management content..." style="margin-bottom: 20px; padding: 10px; width: 100%; border: 1px solid var(--border-color); border-radius: 4px;" />
+      </div>
+      
+      <!-- Content Container with Expandable Details -->
+      <div id="contentContainer">
+        <!-- Status Epilepticus -->
+        <details open style="margin-bottom: 20px; background: var(--info-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px var(--shadow-color);">
+          <summary style="font-weight: bold; font-size: 1.2rem; cursor: pointer;">Status Epilepticus</summary>
+          <div>
+            <p><strong>Management of Convulsive Status Epilepticus</strong></p>
+            <p>The following table outlines the time‐based phases, interventions, and dosing regimens:</p>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Phase</th>
+                  <th>Time Range</th>
+                  <th>Intervention &amp; Dosing</th>
+                  <th>Additional Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Stabilization Phase</td>
+                  <td>0–5 minutes</td>
+                  <td>
+                    <ul class="list">
+                      <li>ABCs (Airway, Breathing, Circulation)</li>
+                      <li>Record seizure onset and monitor vitals</li>
+                      <li>Establish IV access</li>
+                      <li>ECG monitoring</li>
+                      <li>Finger stick blood glucose (if &lt;60 mg/dL)</li>
+                      <li>Administer 100 mg IV thiamine + 50 mL D50W</li>
+                    </ul>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Initial Therapy Phase</td>
+                  <td>5–20 minutes</td>
+                  <td>
+                    <ul class="list">
+                      <li>IV Lorazepam: 0.1 mg/kg, max 4 mg (may repeat once)</li>
+                      <li>OR IV Midazolam: 0.2 mg/kg, max 10 mg (IM if no IV access)</li>
+                      <li>OR IV Diazepam: 0.15–0.2 mg/kg, max 10 mg (may repeat once)</li>
+                    </ul>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Second-line Therapy</td>
+                  <td>20–40 minutes</td>
+                  <td>
+                    <ul class="list">
+                      <li>IV Fosphenytoin/Phenytoin: 20 mg/kg, single dose</li>
+                      <li>OR IV Valproic Acid: 40 mg/kg, max 3000 mg/dose, single dose</li>
+                      <li>OR IV Levetiracetam: 60 mg/kg, max 4500 mg/dose, single dose</li>
+                      <li>If none available, consider IV Phenobarbital: 15 mg/kg, single dose</li>
+                    </ul>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Refractory Therapy</td>
+                  <td>&ge; 40 minutes</td>
+                  <td>
+                    <ul class="list">
+                      <li>Intubate the patient</li>
+                      <li>
+                        Initiate continuous infusion therapy:
+                        <ul class="list" style="list-style-type: circle; padding-left: 20px;">
+                          <li>Midazolam: 0.2 mg/kg bolus, then infusion 0.2–2.9 mg/kg/h</li>
+                          <li>OR/AND Propofol: 1 mg/kg bolus, then infusion 20–60 mg/kg/min</li>
+                        </ul>
+                      </li>
+                      <li>Add a second ASM (options: fosphenytoin, valproic acid, levetiracetam, lacosamide, or phenobarbital)</li>
+                    </ul>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Breakthrough/Recurrence</td>
+                  <td>N/A</td>
+                  <td>
+                    <ul class="list">
+                      <li>Up-titrate available drips or initiate propofol if not already started</li>
+                      <li>Address underlying cause of seizures</li>
+                      <li>
+                        If super refractory SE, consider additional continuous infusion:
+                        <ul class="list" style="list-style-type: circle; padding-left: 20px;">
+                          <li>Ketamine: 1–2 mg/kg bolus followed by 2–10 mg/kg/h (repeat bolus as needed)</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </td>
+                  <td></td>
+                </tr>
+                <tr>
+                  <td>Additional Therapies</td>
+                  <td>N/A</td>
+                  <td>
+                    <ul class="list">
+                      <li>Ketogenic diet</li>
+                      <li>Phenobarbital: 15–20 mg/kg</li>
+                      <li>Pentobarbital: 5–15 mg/kg then 0.5–5 mg/kg/h</li>
+                      <li>Hypothermia</li>
+                      <li>Immunomodulation</li>
+                      <li>Epilepsy surgery</li>
+                      <li>ECT</li>
+                    </ul>
+                  </td>
+                  <td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+        
+        <!-- Anti-Seizure Medications -->
+        <details open style="margin-bottom: 20px; background: var(--info-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px var(--shadow-color);">
+          <summary style="font-weight: bold; font-size: 1.2rem; cursor: pointer;">Anti-Seizure Medications</summary>
+          <div>
+            <p>Below is a list of anti-seizure medications (ASMs) with typical adult dosing ranges and common side effects. Click each link for detailed drug information:</p>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Medication</th>
+                  <th>Typical Adult Dose Range</th>
+                  <th>Common Side Effects</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/brivaracetam-drug-information" target="_blank">Brivaracetam</a></td>
+                  <td>100–200 mg/day (in 2 divided doses)</td>
+                  <td>Drowsiness, dizziness, fatigue, irritability</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/carbamazepine-drug-information" target="_blank">Carbamazepine</a></td>
+                  <td>800–1200 mg/day (in 2 divided doses; range ~400–1600 mg)</td>
+                  <td>Dizziness, drowsiness, diplopia, ataxia</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/cannabidiol-drug-information" target="_blank">Cannabidiol</a> <em>(rare, for Dravet/LGS)</em></td>
+                  <td>10–20 mg/kg/day (in 2 doses)</td>
+                  <td>Diarrhea, fatigue, decreased appetite, somnolence</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/cenobamate-drug-information" target="_blank">Cenobamate</a> <em>(new)</em></td>
+                  <td>200 mg/day (after gradual titration; max 400 mg/day)</td>
+                  <td>Dizziness, somnolence, fatigue, headache, nausea</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/clobazam-drug-information" target="_blank">Clobazam</a> <em>(adjunct for LGS)</em></td>
+                  <td>10–40 mg/day (usually divided BID)</td>
+                  <td>Sedation, drowsiness, drooling</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/clonazepam-drug-information" target="_blank">Clonazepam</a> <em>(rarely used long-term)</em></td>
+                  <td>2–8 mg/day (in 2–3 divided doses)</td>
+                  <td>Sedation, drowsiness, cognitive impairment, tolerance</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/eslicarbazepine-drug-information" target="_blank">Eslicarbazepine acetate</a></td>
+                  <td>800–1600 mg/day (usually once daily; for focal seizures)</td>
+                  <td>Dizziness, headache, diplopia, somnolence</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/ethosuximide-drug-information" target="_blank">Ethosuximide</a></td>
+                  <td>500–1500 mg/day (target ~20 mg/kg/day; for absence seizures only)</td>
+                  <td>Nausea, vomiting, lethargy, headache, weight loss</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/felbamate-drug-information" target="_blank">Felbamate</a> <em>(rarely used – toxicity)</em></td>
+                  <td>1200–3600 mg/day (divided TID–QID)</td>
+                  <td>Sedation, nausea, vomiting, risk of aplastic anemia/liver failure</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/gabapentin-drug-information" target="_blank">Gabapentin</a> <em>(rarely effective for epilepsy)</em></td>
+                  <td>900–3600 mg/day (divided TID)</td>
+                  <td>Dizziness, somnolence, peripheral edema, ataxia</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/lacosamide-drug-information" target="_blank">Lacosamide</a></td>
+                  <td>200–400 mg/day (divided BID)</td>
+                  <td>Dizziness, headache, nausea</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/lamotrigine-drug-information" target="_blank">Lamotrigine</a></td>
+                  <td>100–400 mg/day (in 2 divided doses; slow titration)</td>
+                  <td>Rash (risk of Stevens–Johnson syndrome), dizziness, headache</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/levetiracetam-drug-information" target="_blank">Levetiracetam</a></td>
+                  <td>1000–3000 mg/day (divided BID)</td>
+                  <td>Drowsiness, dizziness, irritability, behavioral changes</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/oxcarbazepine-drug-information" target="_blank">Oxcarbazepine</a></td>
+                  <td>600–2400 mg/day (divided BID)</td>
+                  <td>Dizziness, sedation, hyponatremia</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/perampanel-drug-information" target="_blank">Perampanel</a></td>
+                  <td>8–12 mg/day (once daily at bedtime)</td>
+                  <td>Dizziness, somnolence, irritability, falls</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/phenobarbital-drug-information" target="_blank">Phenobarbital</a></td>
+                  <td>60–200 mg/day (usually once at bedtime)</td>
+                  <td>Sedation, cognitive impairment, ataxia, dependence</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/phenytoin-drug-information" target="_blank">Phenytoin</a></td>
+                  <td>300–400 mg/day (divided BID; ~5–7 mg/kg/day to maintain level 10–20 µg/mL)</td>
+                  <td>Nystagmus, ataxia, gingival hyperplasia, hirsutism, sedation</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/primidone-drug-information" target="_blank">Primidone</a> <em>(rarely used)</em></td>
+                  <td>250–1000 mg/day (divided BID–TID)</td>
+                  <td>Sedation, ataxia, nausea, dizziness</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/pregabalin-drug-information" target="_blank">Pregabalin</a> <em>(rarely used for epilepsy)</em></td>
+                  <td>150–600 mg/day (divided BID)</td>
+                  <td>Dizziness, somnolence, weight gain, peripheral edema</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/rufinamide-drug-information" target="_blank">Rufinamide</a> <em>(rare, LGS)</em></td>
+                  <td>1800–3200 mg/day (divided BID)</td>
+                  <td>Dizziness, fatigue, nausea, vomiting</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/stiripentol-drug-information" target="_blank">Stiripentol</a> <em>(rare, Dravet)</em></td>
+                  <td>50 mg/kg/day (divided TID)</td>
+                  <td>Drowsiness, ataxia, loss of appetite</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/tiagabine-drug-information" target="_blank">Tiagabine</a> <em>(rarely used)</em></td>
+                  <td>16–56 mg/day (divided BID–QID)</td>
+                  <td>Dizziness, nervousness, fatigue, tremor</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/topiramate-drug-information" target="_blank">Topiramate</a></td>
+                  <td>100–400 mg/day (divided BID)</td>
+                  <td>Cognitive slowing, weight loss, paresthesias, kidney stones</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/valproate-valproic-acid-drug-information" target="_blank">Valproate (Valproic acid)</a></td>
+                  <td>1000–3000 mg/day (divided BID–TID; ~15–60 mg/kg/day)</td>
+                  <td>GI upset, tremor, weight gain, hair loss, hepatotoxicity, thrombocytopenia</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/vigabatrin-drug-information" target="_blank">Vigabatrin</a> <em>(rare – infantile spasms)</em></td>
+                  <td>2000–3000 mg/day (divided BID)</td>
+                  <td>Visual field defects, sedation, irritability</td>
+                </tr>
+                <tr>
+                  <td><a class="reference" href="https://www.uptodate.com/contents/zonisamide-drug-information" target="_blank">Zonisamide</a></td>
+                  <td>100–400 mg/day (once daily or divided BID)</td>
+                  <td>Dizziness, somnolence, loss of appetite, weight loss</td>
+                </tr>
+              </tbody>
+            </table>
+            <p>*Note:* The doses listed are typical adult maintenance ranges. Actual prescribing should be individualized, and many medications require slow titration or weight‐based dosing in children. Always consult detailed references for specific dosing and monitoring recommendations.</p>
+            <p><em>References: Epilepsy Foundation; ILAE; UpToDate drug monographs.</em></p>
+          </div>
+        </details>
+        
+        <!-- ASM Withdrawal -->
+        <details style="margin-bottom: 20px; background: var(--info-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px var(--shadow-color);">
+          <summary style="font-weight: bold; font-size: 1.2rem; cursor: pointer;">ASM Withdrawal</summary>
+          <div>
+            <p>This section provides calculators and risk assessment tools for ASM withdrawal. Use these tools as guidance and consult your epilepsy specialist before tapering medications.</p>
+            <p><a class="reference" href="http://epilepsypredictiontools.info/index" target="_blank">Epilepsy Prediction Tools</a></p>
+          </div>
+        </details>
+        
+        <!-- Management of Refractory Epilepsy -->
+        <details style="margin-bottom: 20px; background: var(--info-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px var(--shadow-color);">
+          <summary style="font-weight: bold; font-size: 1.2rem; cursor: pointer;">Management of Refractory Epilepsy</summary>
+          <div>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Therapy Category</th>
+                  <th>Description/Details</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Definition</td>
+                  <td>Drug-resistant epilepsy (DRE) is defined as failure to achieve sustained seizure freedom after trials of two appropriate ASMs. Approximately one-third of patients have DRE, which increases risks (including SUDEP). Early referral to an epilepsy center is essential.</td>
+                </tr>
+                <tr>
+                  <td>Surgical Options</td>
+                  <td>Resection, lesionectomy, lobar/multilobar resections, or hemispherectomy in catastrophic cases; corpus callosotomy may reduce drop attacks.</td>
+                </tr>
+                <tr>
+                  <td>Neuromodulation Techniques</td>
+                  <td>
+                    <strong>VNS:</strong> ~50% of patients experience ≥50% seizure reduction over 1–2 years.<br>
+                    <strong>RNS:</strong> Median ~60% reduction over several years.<br>
+                    <strong>DBS:</strong> Median ~56% reduction targeting the anterior nucleus of the thalamus.
+                  </td>
+                </tr>
+                <tr>
+                  <td>Dietary &amp; Other Therapies</td>
+                  <td>Ketogenic diet (or variants), immunotherapies, etc.</td>
+                </tr>
+                <tr>
+                  <td>Investigational Therapies</td>
+                  <td>Cannabidiol (CBD), fenfluramine, and cenobamate.</td>
+                </tr>
+                <tr>
+                  <td>References</td>
+                  <td>ILAE/AAN recommendations; ACNS guidelines; UpToDate; Epilepsy Foundation.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </details>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // Modal Logic: Check code input
+    document.getElementById('submit-code').addEventListener('click', function() {
+      var code = document.getElementById('access-code').value.trim();
+      if(code === 'mountsinai') {
+        document.getElementById('dev-modal').style.display = 'none';
+        document.getElementById('page-content').style.display = 'block';
+      } else {
+        document.getElementById('code-error').style.display = 'block';
+      }
+    });
+    document.getElementById('cancel-code').addEventListener('click', function() {
+      window.location.href = 'index.html';
+    });
+    
+    // Search Functionality
+    (function initializeSearch() {
+      const searchBar = document.getElementById('searchBar');
+      if (searchBar) {
+        const detailsElements = document.querySelectorAll('#contentContainer details');
+        detailsElements.forEach(function(detail) {
+          detail.setAttribute('data-original', detail.innerHTML);
+        });
+        searchBar.addEventListener('input', function(e) {
+          const term = e.target.value.trim().toLowerCase();
+          detailsElements.forEach(function(detail) {
+            const originalHTML = detail.getAttribute('data-original');
+            if (term === "") {
+              detail.innerHTML = originalHTML;
+              detail.style.display = "";
+            } else {
+              if (originalHTML.toLowerCase().includes(term)) {
+                const regex = new RegExp('('+term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')+')', 'gi');
+                detail.innerHTML = originalHTML.replace(regex, '<mark>$1</mark>');
+                detail.style.display = "";
+              } else {
+                detail.style.display = "none";
+              }
+            }
+          });
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
