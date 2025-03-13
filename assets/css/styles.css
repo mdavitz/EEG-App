@@ -17,6 +17,7 @@
   --transition-duration: 0.3s;
   --answer-bg: #e9ecef;
   --answer-hover-bg: #d6d8db;
+  --footer-bg: rgba(255, 255, 255, 0.8);  /* New: Footer background for light mode */
 }
 .dark {
   --primary-color: #1a1a1a;
@@ -33,6 +34,7 @@
   --dropdown-hover-bg: #2a2a2a;
   --answer-bg: #333;
   --answer-hover-bg: #444;
+  --footer-bg: rgba(30, 30, 30, 0.8);  /* New: Footer background for dark mode */
 }
 
 /*-----------------------------------------------
@@ -323,14 +325,14 @@ header.shrink .logo {
 }
 
 /*-----------------------------------------------
-  FIXED FOOTER CONTROLS
+  FIXED FOOTER CONTROLS (Bottom Bar with Frosted Glass)
 -----------------------------------------------*/
 footer {
   position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
-  background: var(--info-bl);
+  background: var(--footer-bg);
   border-top: 1px solid var(--border-color);
   padding: 1em;
   text-align: center;
@@ -338,6 +340,8 @@ footer {
   opacity: 1;
   pointer-events: auto;
   transition: opacity var(--transition-duration);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 .footer-btns {
   display: inline-flex;
@@ -733,7 +737,6 @@ body.dark .natus-container p {
 /*-----------------------------------------------
   RESPONSIVE TABLE: New Card Layout on Mobile
 -----------------------------------------------*/
-/* For screens up to 768px: Use fixed layout with wrapping */
 @media (max-width: 768px) {
   .custom-table {
     table-layout: fixed;
@@ -775,4 +778,41 @@ body.dark .natus-container p {
     font-weight: bold;
     margin-bottom: 0.25rem;
   }
+}
+
+/*-----------------------------------------------
+  FAQ PAGE STYLING (Modernized)
+-----------------------------------------------*/
+.faq-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--info-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.faq-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.faq-header h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+}
+.faq-item {
+  margin-bottom: 1.5rem;
+}
+.faq-question {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+.faq-answer {
+  font-size: 1rem;
+  color: var(--text-color);
+  line-height: 1.6;
+  border-left: 3px solid var(--accent-color);
+  padding-left: 1rem;
+  margin-bottom: 1rem;
 }
