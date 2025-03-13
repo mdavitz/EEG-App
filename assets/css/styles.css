@@ -71,7 +71,6 @@ body {
   font-size: 2rem;
   color: var(--primary-color);
 }
-/* Dark Mode Title Override */
 body.dark .page-title,
 body.dark .section-title {
   color: var(--header-text);
@@ -331,7 +330,7 @@ footer {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: var(--info-bg);
+  background: var(--info-bl);
   border-top: 1px solid var(--border-color);
   padding: 1em;
   text-align: center;
@@ -361,34 +360,33 @@ footer {
 }
 
 /*-----------------------------------------------
-  VIDEO TAB RESPONSIVE LAYOUT
+  REDESIGNED VIDEO TAB
 -----------------------------------------------*/
-/* Desktop Layout: Side-by-side */
 #eeg-videos {
-  display: flex;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: 300px 1fr;
   gap: 20px;
-  padding: 10px 20px;
-  min-height: 100vh;
+  padding: 20px;
+  background: var(--bg-color);
+  height: calc(100vh - 40px);
   box-sizing: border-box;
 }
-/* Video List */
+
+/* Video List (Left Sidebar) */
 .video-list {
-  flex: 0 0 240px;
   background: var(--info-bg);
   border: 1px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 2px 6px var(--shadow-color);
-  padding: 16px;
-  height: calc(100vh - 20px);
+  padding: 20px;
   overflow-y: auto;
-  color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .video-list h2 {
-  margin-bottom: 12px;
-  font-size: 1.3rem;
-  font-weight: 600;
-  color: var(--text-color);
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: var(--primary-color);
 }
 .video-list ul {
   list-style: none;
@@ -396,72 +394,119 @@ footer {
   padding: 0;
 }
 .video-list li {
-  padding: 12px;
+  padding: 12px 15px;
+  border-radius: 8px;
   cursor: pointer;
-  border-bottom: 1px solid var(--border-color);
-  transition: background var(--transition-duration);
+  transition: background 0.3s, transform 0.3s;
   font-size: 0.95rem;
   color: var(--text-color);
 }
-.video-list li:hover {
+.video-list li:hover,
+.video-list li:focus {
   background: var(--hover-bg);
+  transform: translateX(5px);
 }
-.video-list li:last-child {
-  border-bottom: none;
-}
-/* Main Content (Video Player/Quiz) */
+
+/* Main Content (Video Player/Quiz Section) */
 .main-content {
-  flex: 1;
   background: var(--info-bg);
   border: 1px solid var(--border-color);
   border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
   box-shadow: 0 2px 6px var(--shadow-color);
-  display: flex;
-  flex-direction: column;
-  padding: 16px;
-  height: calc(100vh - 20px);
-  overflow-y: auto;
 }
-.content-inner {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-/* Back Button for Mobile */
-.back-button {
-  display: none;
-  margin-bottom: 12px;
-  background: var(--btn-back);
-  color: #fff;
-  border: none;
-  padding: 10px 16px;
+/* Responsive Video: Adjusts to available width while maintaining aspect ratio */
+.main-content video,
+.main-content iframe {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
   border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.25s;
-}
-.back-button:hover {
-  background: var(--btn-back-hover);
 }
 
-/* Mobile Layout: Stack video list and main content */
+/* Centered Video Navigation Buttons */
+.video-nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 20px auto 0;
+  text-align: center;
+}
+.video-nav .btn {
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+.video-nav .btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.03);
+}
+.video-nav .btn:active {
+  background-color: #004080;
+}
+
+/* New Video Wrapper for Stable Layout */
+.video-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.video-wrapper video,
+.video-wrapper iframe {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+}
+
+/*-----------------------------------------------
+  MOBILE & RESPONSIVE STYLES
+-----------------------------------------------*/
 @media (max-width: 768px) {
   #eeg-videos {
+    display: flex;
     flex-direction: column;
     padding: 10px;
+    height: auto;
+    /* Remove grid-specific properties */
+    grid-template-columns: none;
+    grid-template-rows: none;
   }
   .video-list {
-    width: 100%;
     order: 1;
     display: block;
+    width: 100%;
+    max-height: 60vh;
+    min-height: 60vh;
+    margin-top: 10px;
   }
   .main-content {
-    width: 100%;
     order: 2;
-    display: none; /* Will be toggled via JS when a video is selected */
+    display: block;
+    width: 100%;
+    margin: 10px 0;
   }
   .back-button {
     display: block;
     margin-bottom: 10px;
+  }
+  .video-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+    text-align: center;
+    margin-top: 12px;
   }
 }
 
@@ -526,18 +571,32 @@ footer {
   flex-wrap: wrap;
 }
 
+/*-----------------------------------------------
+  APPLE-STYLE BUTTONS (Unified)
+-----------------------------------------------*/
 .btn {
-  border: none;
-  border-radius: 8px;
-  padding: 12px 18px;
-  font-size: 0.95rem;
-  cursor: pointer;
-  transition: background 0.25s, transform 0.25s;
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #d1d1d6;
+  border-radius: 10px;
+  color: #007aff;
+  font-size: 16px;
   font-weight: 500;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
 }
 .btn:hover {
+  background-color: #f7f7f7;
   transform: scale(1.03);
 }
+.btn:active {
+  background-color: #e5e5ea;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
 .btn-prev {
   background-color: var(--btn-prev);
   color: #fff;
@@ -664,7 +723,6 @@ footer {
 
 /*-----------------------------------------------
   Dark Mode Overrides for Natus Instructions
-  (Make headers and step text white)
 -----------------------------------------------*/
 body.dark .natus-container h1,
 body.dark .natus-container h3,
@@ -673,7 +731,7 @@ body.dark .natus-container p {
 }
 
 /*-----------------------------------------------
-  Responsive Table: New Card Layout on Mobile
+  RESPONSIVE TABLE: New Card Layout on Mobile
 -----------------------------------------------*/
 /* For screens up to 768px: Use fixed layout with wrapping */
 @media (max-width: 768px) {
