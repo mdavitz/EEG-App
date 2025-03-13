@@ -6,8 +6,146 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EEG Videos - EEG Curriculum</title>
 
-  <!-- Link to your updated external stylesheet -->
+  <!-- Link to your external stylesheet -->
   <link rel="stylesheet" href="assets/css/styles.css" />
+  
+  <!-- Inline CSS for video, quiz, and unified button styling -->
+  <style>
+    /* Unified Button Styles for Both Light and Dark Modes */
+    .btn {
+      background-color: var(--accent-color) !important;
+      color: #fff !important;
+      border: none !important;
+      padding: 10px 20px !important;
+      border-radius: 10px !important;
+      font-size: 16px !important;
+      font-weight: 500 !important;
+      cursor: pointer !important;
+      transition: background-color 0.3s, transform 0.3s !important;
+    }
+    .btn:hover {
+      background-color: #00509e !important;
+      transform: scale(1.03);
+    }
+    .btn:active {
+      background-color: #004080 !important;
+    }
+    
+    /* VIDEO SECTION STYLES */
+    .video-section {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    /* Wrap the video and navigation together */
+    .video-wrapper {
+      width: 100%;
+      max-width: 800px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    /* Video element should fill the wrapper’s width */
+    .video-wrapper video,
+    .video-wrapper iframe {
+      width: 100%;
+      display: block;
+      border-radius: 8px;
+    }
+    /* Navigation buttons container: default desktop layout */
+    .video-nav {
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      margin-top: 20px;
+      text-align: center;
+    }
+    /* Mobile override: stack video nav buttons vertically */
+    @media (max-width: 768px) {
+      .video-nav {
+        flex-direction: column !important;
+        gap: 12px;
+        margin-top: 12px;
+      }
+      .video-nav .btn {
+        width: 80%;
+        max-width: 300px;
+      }
+    }
+    
+    /* QUIZ SECTION STYLES */
+    .quiz-section {
+      display: none;
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .quiz-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .quiz-header h3 {
+      margin: 0;
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+    .progress-indicator {
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+    .quiz-question p {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    .quiz-question ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+    .quiz-question li {
+      margin-bottom: 8px;
+    }
+    .quiz-question button {
+      width: 100%;
+      text-align: left;
+      padding: 12px;
+      cursor: pointer;
+      border: 1px solid var(--border-color);
+      background: var(--info-bg);
+      border-radius: 8px;
+      transition: background 0.2s, transform 0.1s;
+      font-size: 0.95rem;
+      color: var(--text-color);
+    }
+    .quiz-question button:hover {
+      background: var(--hover-bg);
+      transform: scale(1.02);
+    }
+    .quiz-nav {
+      margin-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    /* Mobile override for quiz nav buttons */
+    @media (max-width: 768px) {
+      .quiz-nav {
+        flex-direction: column;
+        align-items: center;
+      }
+      .quiz-nav button {
+        width: 80%;
+        max-width: 300px;
+        margin: 5px 0;
+      }
+    }
+  </style>
 </head>
 <body>
   <div id="eeg-videos">
@@ -32,17 +170,20 @@
     <div class="main-content" id="videoContent">
       <button class="back-button" onclick="showMenu()">Back to Menu</button>
       <div class="content-inner">
-		  <h2 class="page-title">Videos</h2>
+        <h2 class="page-title">Videos</h2>
         <!-- VIDEO SECTION -->
         <div id="videoSection" class="video-section">
-          <video id="videoPlayer" controls>
-            <source id="videoSource" src="assets/videos/EEG1.mp4" type="video/mp4">
-            Your browser does not support HTML5 video.
-          </video>
-          <div class="video-nav">
-            <button class="btn btn-prev" onclick="prevVideo()">Previous Video</button>
-            <button class="btn btn-skip" onclick="showQuiz()">Skip to Quiz</button>
-            <button class="btn btn-next" onclick="nextVideo()">Next Video</button>
+          <!-- Wrap video and nav in a container to keep them together -->
+          <div class="video-wrapper">
+            <video id="videoPlayer" controls>
+              <source id="videoSource" src="assets/videos/EEG1.mp4" type="video/mp4">
+              Your browser does not support HTML5 video.
+            </video>
+            <div class="video-nav">
+              <button class="btn btn-prev" onclick="prevVideo()">Previous Video</button>
+              <button class="btn btn-skip" onclick="showQuiz()">Skip to Quiz</button>
+              <button class="btn btn-next" onclick="nextVideo()">Next Video</button>
+            </div>
           </div>
         </div>
         
@@ -63,7 +204,7 @@
     </div>
   </div>
 
-  <!-- CAT OVERLAY -->
+  <!-- CAT OVERLAY SCRIPT -->
   <script>
     function showKittenOverlay() {
       const overlay = document.createElement("div");
@@ -78,8 +219,9 @@
     }
   </script>
 
+  <!-- VIDEO & QUIZ FUNCTIONALITY SCRIPT -->
   <script>
-    // 10 video sections with quiz questions
+    // Complete video sections with quizzes
     const videoSections = [
       {
         title: "Introduction to EEG",
@@ -445,7 +587,7 @@
     let currentVideoIndex = 0;
     let currentQuestionIndex = 0;
 
-    // Desktop: show selected video in the right column
+    // Display the selected video
     function showVideo(index) {
       currentVideoIndex = index;
       currentQuestionIndex = 0;
@@ -457,7 +599,7 @@
       document.getElementById("videoPlayer").load();
     }
 
-    // Mobile: hide menu only if in mobile view, show content
+    // For mobile: hide menu and show video content
     function mobileShowVideo(index) {
       showVideo(index);
       if(window.innerWidth <= 768) {
@@ -466,13 +608,13 @@
       document.getElementById("videoContent").style.display = "flex";
     }
 
-    // Mobile: back to menu
+    // Return to video list on mobile
     function showMenu() {
       document.getElementById("videoContent").style.display = "none";
       document.getElementById("videoList").style.display = "block";
     }
 
-    // Switch to quiz
+    // Switch to quiz view
     function showQuiz() {
       document.getElementById("videoSection").style.display = "none";
       document.getElementById("quizSection").style.display = "block";
@@ -481,7 +623,7 @@
       loadQuestion();
     }
 
-    // Load current quiz question
+    // Load the current quiz question
     function loadQuestion() {
       document.getElementById("feedbackMessage").innerHTML = "";
       const videoObj = videoSections[currentVideoIndex];
@@ -505,7 +647,7 @@
         (currentQuestionIndex < videoObj.questions.length - 1) ? "inline-block" : "none";
     }
 
-    // Check quiz answer
+    // Check the quiz answer
     function checkAnswer(answerIndex) {
       const videoObj = videoSections[currentVideoIndex];
       const qObj = videoObj.questions[currentQuestionIndex];
@@ -518,7 +660,7 @@
       }
     }
 
-    // Next/Previous quiz question
+    // Next/Previous quiz question functions
     function nextQuestion() {
       const videoObj = videoSections[currentVideoIndex];
       if (currentQuestionIndex < videoObj.questions.length - 1) {
@@ -533,7 +675,7 @@
       }
     }
 
-    // Desktop video nav
+    // Desktop video navigation functions
     function nextVideo() {
       if (currentVideoIndex < videoSections.length - 1) {
         showVideo(currentVideoIndex + 1);
@@ -545,7 +687,7 @@
       }
     }
 
-    // Initialize first video on page load
+    // Initialize the first video on page load
     document.addEventListener("DOMContentLoaded", () => {
       showVideo(0);
     });
