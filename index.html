@@ -235,5 +235,24 @@
       renderHomePage();
     });
   </script>
+  
+  <!-- JavaScript to show footer buttons on mobile when scrolled to the bottom -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      window.addEventListener('scroll', function() {
+        // Only run on mobile devices (viewport width 600px or less)
+        if (window.innerWidth <= 600) {
+          const footerBtns = document.querySelector('.footer-btns');
+          const scrollPosition = window.innerHeight + window.pageYOffset;
+          const threshold = document.documentElement.scrollHeight - 50;
+          if (scrollPosition >= threshold) {
+            footerBtns.style.display = 'inline-flex';
+          } else {
+            footerBtns.style.display = 'none';
+          }
+        }
+      });
+    });
+  </script>
 </body>
 </html>
