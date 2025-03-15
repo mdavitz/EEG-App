@@ -59,6 +59,37 @@
     .tab-buttons button.active {
       background: #00509e;
     }
+    /* Style for collapsible sections using details/summary */
+    details {
+      margin-bottom: 1em;
+      padding: 0.5em;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      background: var(--info-bg);
+    }
+    summary {
+      font-size: 1.3rem;
+      font-weight: bold;
+      cursor: pointer;
+      outline: none;
+    }
+    summary::-webkit-details-marker {
+      display: none;
+    }
+    summary:before {
+      content: "▼  ";
+      font-size: 1rem;
+      transition: transform 0.3s;
+    }
+    details[open] summary:before {
+      transform: rotate(180deg);
+    }
+    /* Optional: style lists inside tables */
+    .custom-table ul {
+      margin: 0;
+      padding-left: 1.2em;
+      list-style: disc;
+    }
   </style>
 </head>
 <body>
@@ -68,12 +99,11 @@
     <div class="tab-buttons" style="text-align:center; margin-bottom:1.5em;">
       <button id="residents-btn" class="btn active" onclick="showTab('residents')">For Residents</button>
       <button id="fellows-btn" class="btn" onclick="showTab('fellows')">For Fellows</button>
-
     <!-- Residents Tab Content (Visible by default) -->
     <div id="residents-tab">
       <!-- Daily Expectations & Goals Section -->
       <div class="info-box">
-        <h3>Daily Expectations and Goals</h3>
+        <h2>Daily Expectations and Goals</h2>
         <table class="custom-table">
           <thead>
             <tr>
@@ -230,170 +260,282 @@
 
     <!-- Fellows Tab Content (Hidden by default) -->
     <div id="fellows-tab" style="display: none;">
-      <div class="info-box">
-        <h2>Fellows: Inpatient Rotation</h2>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Rotation</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>MSH</td>
-              <td>4 adult EMU beds (Guggenheim 8th floor, 8West)</td>
-            </tr>
-            <tr>
-              <td>MSW</td>
-              <td>4 adult EMU beds (8th floor, 8B)</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Collapsible Section: Inpatient Rotation -->
+      <details open>
+        <summary>Inpatient Rotation</summary>
+        <div class="info-box">
+          <h3>Inpatient Rotation</h3>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Rotation</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MSH</td>
+                <td>4 adult EMU beds (Guggenheim 8th floor, 8West)</td>
+              </tr>
+              <tr>
+                <td>MSW</td>
+                <td>4 adult EMU beds (8th floor, 8B)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-box">
+          <h3>EEG Reporting</h3>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Rotation</th>
+                <th>EEG Reporting Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>MSH Rotation</td>
+                <td>Inpatient long term and rEEG at MSH and MSQ</td>
+              </tr>
+              <tr>
+                <td>MSW Rotation</td>
+                <td>Inpatient long term and rEEG at MSW, MSM and MSSN</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-box">
+          <h3>Daily Routines</h3>
+          <h4>AM</h4>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Long Term EEG Reading</td>
+                <td>Start reading long term EEGs between 7–8 AM; prepare preliminary reports before rounding (~9–10 AM).</td>
+              </tr>
+              <tr>
+                <td>ICU Studies</td>
+                <td>Begin with ICU studies. NSICU fellow provides names via EPIC chat for priority readings.</td>
+              </tr>
+              <tr>
+                <td>Rounding</td>
+                <td>Round with the attending between 9–10 AM; finalize reports and communicate with the primary team.</td>
+              </tr>
+            </tbody>
+          </table>
+          <h4>PM</h4>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Activity</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Routine EEG Reading</td>
+                <td>Read inpatient routine &amp; baseline EEGs up to 5 PM and leave preliminary reports (co-signed by the attending).</td>
+              </tr>
+              <tr>
+                <td>Follow-Up</td>
+                <td>Review all long-term EEGs (including EMU patients) and add interim progress notes if changes occur.</td>
+              </tr>
+              <tr>
+                <td>Finalizing Reports</td>
+                <td>Finalize discontinued EEGs during morning rounds and sign out patients needing follow-up at night.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-box">
+          <h3>EMU Elective Admissions &amp; Stay</h3>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Responsibility</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Admissions</td>
+                <td>
+                  Write H&amp;P, place orders, and sign out to on-call residents. Assist with H&amp;P if a dedicated resident is assigned. Confirm admissions with Vincent Palmieri; if after 5 PM, pend a preliminary H&amp;P and detailed sign-out.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-box">
+          <h3>Epilepsy Consults</h3>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Consult Type</th>
+                <th>Details</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Consults</td>
+                <td>
+                  NSICU and General Neurology teams may request consults. Fellows see patients, write notes, and staff with the attending. When a rotating resident is present, consults are divided at the fellow’s discretion.
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-box">
+          <h3>Call Schedule</h3>
+          <p>
+            <strong>Weekdays (5 PM–8 AM):</strong> Coverage for all Mount Sinai Health System hospitals.<br/>
+            <strong>Weekends (Fri 5 PM–Mon 8 AM):</strong> Coverage for MSH and MSW inpatients. On-call attending and fellow are physically present at MSW for weekend rounding. After-hour calls are home-calls. Fellows answer calls and sign out (with a brief history and plan) should be emailed on Sunday.
+          </p>
+        </div>
+      </details>
 
-      <div class="info-box">
-        <h2>EEG Reporting</h2>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Rotation</th>
-              <th>EEG Reporting Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>MSH Rotation</td>
-              <td>Inpatient long term and rEEG at MSH and MSQ</td>
-            </tr>
-            <tr>
-              <td>MSW Rotation</td>
-              <td>Inpatient long term and rEEG at MSW, MSM and MSSN</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Collapsible Section: Outpatient Rotation -->
+      <details>
+        <summary>Outpatient Rotation</summary>
+        <div class="info-box">
+          <h3>Ambulatory Block</h3>
+          <p>
+            AM: Attend faculty clinics.<br/>
+            PM: Read outpatient routine and ambulatory EEGs at MSH, MSW, MSM, and MSQ; round with the ambulatory block attending.
+          </p>
+        </div>
+        <div class="info-box">
+          <h3>AEEG Block Schedule</h3>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>AM</th>
+                <th>PM</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Monday</td>
+                <td>Fields (MSW)</td>
+                <td rowspan="5">Outpatient REEG and AEEG reading and rounding</td>
+              </tr>
+              <tr>
+                <td>Tuesday</td>
+                <td>Dr. Blank (MSH)</td>
+              </tr>
+              <tr>
+                <td>Wednesday</td>
+                <td>Idependent Reading</td>
+              </tr>
+              <tr>
+                <td>Thursday</td>
+                <td>Marcuse (MSW)</td>
+                <td>&nbsp;</td>
+              </tr>
+              <tr>
+                <td>Friday</td>
+                <td>Dr. Yoo (MSH)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-box">
+          <h3>Follow-Up</h3>
+          <p>
+            After clinics, EEGs must be followed up and sign-outs emailed to the on-call attending and fellow. During weekdays, only patients needing close monitoring are signed out; on weekends, all EMU and ICU EEGs are signed out.
+          </p>
+        </div>
+        <div class="info-box">
+          <h3>Elective Block</h3>
+          <p>
+            Two AM faculty clinics per week:<br/>
+            Tuesday AM: Dr. Blank (MSH)<br/>
+            Friday AM: Dr. Yoo (MSH)
+          </p>
+        </div>
+      </details>
 
-      <div class="info-box">
-        <h2>Daily Routines in the Epilepsy Rotation</h2>
-        <h3>AM</h3>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Activity</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Long Term EEG Reading</td>
-              <td>Start reading long term EEGs between 7–8 AM; prepare preliminary reports before rounding (~9–10 AM).</td>
-            </tr>
-            <tr>
-              <td>ICU Studies</td>
-              <td>Begin with ICU studies. NSICU fellow provides names via EPIC chat for priority readings.</td>
-            </tr>
-            <tr>
-              <td>Rounding</td>
-              <td>Round with the attending between 9–10 AM; finalize EEG reports and communicate with the primary team.</td>
-            </tr>
-          </tbody>
-        </table>
-        <h3>PM</h3>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Activity</th>
-              <th>Description</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Routine EEG Reading</td>
-              <td>Read inpatient routine & baseline long-term EEGs up to 5 PM and leave preliminary reports as incomplete.</td>
-            </tr>
-            <tr>
-              <td>Follow Up</td>
-              <td>Review all long-term EEGs (including EMU patients) and add interim progress notes if there are changes.</td>
-            </tr>
-            <tr>
-              <td>Discontinued EEGs</td>
-              <td>On Mondays (or after discontinuations), finalize and sign off on EEGs as needed.</td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="info-box">
-        <h2>EMU Elective Admissions &amp; Stay</h2>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Responsibility</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Admissions</td>
-              <td>
-                Write H&P, place admissions orders, and sign out to on-call residents. Assist when a dedicated resident is assigned. Verify admission details (coordinate with Vincent Palmieri) and, for after-5 PM admissions, pend a preliminary H&P and detailed sign-out.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="info-box">
-        <h2>Epilepsy Consults</h2>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Consult Type</th>
-              <th>Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>Consults</td>
-              <td>
-                NSICU and General Neurology teams may request consults. Fellows are to see patients, write consult notes, and staff with the attending. When rotating residents are present, consults are divided at the fellow’s discretion.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div class="info-box">
-        <h2>Outpatient Clinics</h2>
-        <table class="custom-table">
-          <thead>
-            <tr>
-              <th>Rotation</th>
-              <th>Clinic Details</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>MSH Rotation</td>
-              <td>Friday PM: Fellows’ continuity clinic (17E 102nd street, with Dr. Maria Muxfeldt)</td>
-            </tr>
-            <tr>
-              <td>MSW Rotation</td>
-              <td>
-                Thursday PM: Dr. Fields (MSW 10th floor)<br/>
-                Friday PM: Dr. Marcuse (MSW 10th floor)
-              </td>
-            </tr>
-            <tr>
-              <td>Follow-Up</td>
-              <td>
-                After clinics, follow up on EEGs and email sign-outs to the on-call attending and fellow. Weekdays: only for patients requiring close monitoring; weekends: sign out all EMU and ICU EEGs.
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <!-- Collapsible Section: Pediatric Epilepsy Rotation -->
+      <details>
+        <summary>Pediatric Epilepsy Rotation</summary>
+        <div class="info-box">
+          <h3>Rotation Focus</h3>
+          <p>
+            Focus on neonatal and early childhood EEGs, pediatric epilepsy syndromes, genetics, metabolic disorders, ketogenic diet, and pre-surgical evaluation. Discuss the schedule with the pediatric attending.
+          </p>
+        </div>
+        <div class="info-box">
+          <h3>AM Schedule</h3>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Activity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Mon–Fri 8:00–11:00 AM</td>
+                <td>
+                  • Pediatric EMU at Kravis (5th floor)<br/>
+                  • Read inpatient EEGs at Kravis and Neonatal ICU at MSW, elective EMUs, and intracranial EEGs at Kravis
+                </td>
+              </tr>
+              <tr>
+                <td>Tues &amp; Thurs, 9:00 AM</td>
+                <td>
+                  • Pediatric Neurology Clinic (complete non-EMU readings before 9 AM, then round for EMU/intracranial EEGs)
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="info-box">
+          <h3>PM Schedule</h3>
+          <table class="custom-table">
+            <thead>
+              <tr>
+                <th>Day</th>
+                <th>Activity</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Monday</td>
+                <td>Peds Ambulatory EEG reading</td>
+              </tr>
+              <tr>
+                <td>Tuesday</td>
+                <td>Dr. La Vega (MSBI) Mount Sinai Beth Israel Clinic (10 Union Square East, 5th floor, Suite 5-G)</td>
+              </tr>
+              <tr>
+                <td>Wednesday</td>
+                <td>Attend Lecture and Conference</td>
+              </tr>
+              <tr>
+                <td>Thursday</td>
+                <td>Peds Ambulatory EEG reading</td>
+              </tr>
+              <tr>
+                <td>Friday</td>
+                <td>Dr. La Vega (MSH)</td>
+              </tr>
+              <tr>
+                <td>Ongoing</td>
+                <td>Follow up on long-term EEGs (focusing on ICU studies) with brief EPIC progress notes</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </details>
     </div>
   </div>
 
@@ -406,7 +548,6 @@
     // EEG Slide Generator Popup function
     function openEEGIndexApp(e) {
       if (e) e.preventDefault();
-      
       const modalOverlay = document.createElement("div");
       modalOverlay.className = "modal-overlay";
       modalOverlay.addEventListener("click", function(event) {
@@ -414,15 +555,12 @@
           modalOverlay.remove();
         }
       });
-      
       const modalContent = document.createElement("div");
       modalContent.className = "modal-content";
-      
       const closeButton = document.createElement("button");
       closeButton.className = "modal-close";
       closeButton.innerHTML = "&times;";
       closeButton.addEventListener("click", () => modalOverlay.remove());
-      
       modalContent.innerHTML = `
         <header style="background: linear-gradient(135deg, #003366, #00509e); color: var(--header-text); padding: 30px; text-align: center;">
           <h2 style="font-size: 28px; margin: 0;">EEG Slide Generator</h2>
@@ -441,7 +579,6 @@
           </form>
         </div>
       `;
-      
       modalContent.prepend(closeButton);
       modalOverlay.appendChild(modalContent);
       document.body.appendChild(modalOverlay);
@@ -449,13 +586,11 @@
     
     // Slide generation function using PPTXGenJS
     function generateSlide() {
-      console.log("Generate Slide button clicked.");
       const fullName = document.getElementById("fullName").value;
       const residency = document.getElementById("residency").value;
       const eegFinding = document.getElementById("eegFinding").value;
       const fileInput = document.getElementById("eegImage");
       const file = fileInput.files[0];
-      console.log("Values:", fullName, residency, eegFinding);
       
       let pptx = new PptxGenJS();
       let slide = pptx.addSlide();
@@ -464,42 +599,34 @@
         const reader = new FileReader();
         reader.onload = function(e) {
           let imageData = e.target.result;
-          // Add the uploaded image as a full-slide background
           slide.addImage({ data: imageData, x: 0, y: 0, w: 10, h: 5.63 });
-          // Overlay the text on top of the image
           slide.addText(`EEG Finding: ${eegFinding}`, { x: 1, y: 1, fontSize: 24, color: 'ffffff', bold: true });
           slide.addText(`Presented by: ${fullName} (${residency})`, { x: 1, y: 2, fontSize: 18, color: 'ffffff' });
           pptx.writeFile({ fileName: "EEG_Slide.pptx" })
             .then(() => {
-              console.log("Slide generation complete.");
               alert("Complete!");
               const modalOverlay = document.querySelector('.modal-overlay');
               if (modalOverlay) modalOverlay.remove();
             })
             .catch(error => {
-              console.error("Error generating slide:", error);
               alert("Error generating slide. Check console for details.");
             });
         };
         reader.onerror = function(error) {
-          console.error("Error reading image file:", error);
           alert("Error reading image file.");
         };
         reader.readAsDataURL(file);
       } else {
-        // If no image is uploaded, set a plain background and overlay the text
         slide.background = { color: "F1F1F1" };
         slide.addText(`EEG Finding: ${eegFinding}`, { x: 1, y: 1, fontSize: 24, color: '003366', bold: true });
         slide.addText(`Presented by: ${fullName} (${residency})`, { x: 1, y: 2, fontSize: 18, color: '00509e' });
         pptx.writeFile({ fileName: "EEG_Slide.pptx" })
           .then(() => {
-            console.log("Slide generation complete.");
             alert("Complete!");
             const modalOverlay = document.querySelector('.modal-overlay');
             if (modalOverlay) modalOverlay.remove();
           })
           .catch(error => {
-            console.error("Error generating slide:", error);
             alert("Error generating slide. Check console for details.");
           });
       }
