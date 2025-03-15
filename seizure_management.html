@@ -65,6 +65,13 @@
       margin-top: 0.5rem;
       display: none;
     }
+    
+    /* NEW: Remove bullet points for lists with the class "no-bullets" */
+    .no-bullets {
+      list-style: none;
+      margin: 0;
+      padding-left: 0;
+    }
   </style>
 </head>
 <body>
@@ -98,11 +105,12 @@
       
       <!-- Content Container with Expandable Details -->
       <div id="contentContainer">
-        <!-- Status Epilepticus -->
+        <!-- 1. Status Epilepticus Section (Modified: Removed Additional Notes column and removed bullet points) -->
         <details open style="margin-bottom: 20px; background: var(--info-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px var(--shadow-color);">
           <summary style="font-weight: bold; font-size: 1.2rem; cursor: pointer;">Status Epilepticus</summary>
           <div>
             <p><strong>Management of Convulsive Status Epilepticus</strong></p>
+            <p><a class="reference" href="https://www.neurocriticalcare.org/Portals/0/ENLS%205.0/ENLS%205.0%20Protocol%20-%20SE.pdf" target="_blank">Neurocritical Care Society Guidelines</a></p>
             <p>The following table outlines the time‐based phases, interventions, and dosing regimens:</p>
             <table class="custom-table">
               <thead>
@@ -110,7 +118,6 @@
                   <th>Phase</th>
                   <th>Time Range</th>
                   <th>Intervention &amp; Dosing</th>
-                  <th>Additional Notes</th>
                 </tr>
               </thead>
               <tbody>
@@ -118,7 +125,7 @@
                   <td>Stabilization Phase</td>
                   <td>0–5 minutes</td>
                   <td>
-                    <ul class="list">
+                    <ul class="list no-bullets">
                       <li>ABCs (Airway, Breathing, Circulation)</li>
                       <li>Record seizure onset and monitor vitals</li>
                       <li>Establish IV access</li>
@@ -127,42 +134,39 @@
                       <li>Administer 100 mg IV thiamine + 50 mL D50W</li>
                     </ul>
                   </td>
-                  <td></td>
                 </tr>
                 <tr>
                   <td>Initial Therapy Phase</td>
                   <td>5–20 minutes</td>
                   <td>
-                    <ul class="list">
+                    <ul class="list no-bullets">
                       <li>IV Lorazepam: 0.1 mg/kg, max 4 mg (may repeat once)</li>
                       <li>OR IV Midazolam: 0.2 mg/kg, max 10 mg (IM if no IV access)</li>
                       <li>OR IV Diazepam: 0.15–0.2 mg/kg, max 10 mg (may repeat once)</li>
                     </ul>
                   </td>
-                  <td></td>
                 </tr>
                 <tr>
                   <td>Second-line Therapy</td>
                   <td>20–40 minutes</td>
                   <td>
-                    <ul class="list">
+                    <ul class="list no-bullets">
                       <li>IV Fosphenytoin/Phenytoin: 20 mg/kg, single dose</li>
                       <li>OR IV Valproic Acid: 40 mg/kg, max 3000 mg/dose, single dose</li>
                       <li>OR IV Levetiracetam: 60 mg/kg, max 4500 mg/dose, single dose</li>
                       <li>If none available, consider IV Phenobarbital: 15 mg/kg, single dose</li>
                     </ul>
                   </td>
-                  <td></td>
                 </tr>
                 <tr>
                   <td>Refractory Therapy</td>
                   <td>&ge; 40 minutes</td>
                   <td>
-                    <ul class="list">
+                    <ul class="list no-bullets">
                       <li>Intubate the patient</li>
                       <li>
                         Initiate continuous infusion therapy:
-                        <ul class="list" style="list-style-type: circle; padding-left: 20px;">
+                        <ul class="list no-bullets" style="list-style-type: circle; padding-left: 20px;">
                           <li>Midazolam: 0.2 mg/kg bolus, then infusion 0.2–2.9 mg/kg/h</li>
                           <li>OR/AND Propofol: 1 mg/kg bolus, then infusion 20–60 mg/kg/min</li>
                         </ul>
@@ -170,30 +174,28 @@
                       <li>Add a second ASM (options: fosphenytoin, valproic acid, levetiracetam, lacosamide, or phenobarbital)</li>
                     </ul>
                   </td>
-                  <td></td>
                 </tr>
                 <tr>
                   <td>Breakthrough/Recurrence</td>
                   <td>N/A</td>
                   <td>
-                    <ul class="list">
+                    <ul class="list no-bullets">
                       <li>Up-titrate available drips or initiate propofol if not already started</li>
                       <li>Address underlying cause of seizures</li>
                       <li>
                         If super refractory SE, consider additional continuous infusion:
-                        <ul class="list" style="list-style-type: circle; padding-left: 20px;">
+                        <ul class="list no-bullets" style="list-style-type: circle; padding-left: 20px;">
                           <li>Ketamine: 1–2 mg/kg bolus followed by 2–10 mg/kg/h (repeat bolus as needed)</li>
                         </ul>
                       </li>
                     </ul>
                   </td>
-                  <td></td>
                 </tr>
                 <tr>
                   <td>Additional Therapies</td>
                   <td>N/A</td>
                   <td>
-                    <ul class="list">
+                    <ul class="list no-bullets">
                       <li>Ketogenic diet</li>
                       <li>Phenobarbital: 15–20 mg/kg</li>
                       <li>Pentobarbital: 5–15 mg/kg then 0.5–5 mg/kg/h</li>
@@ -203,24 +205,24 @@
                       <li>ECT</li>
                     </ul>
                   </td>
-                  <td></td>
                 </tr>
               </tbody>
             </table>
           </div>
         </details>
         
-        <!-- Anti-Seizure Medications -->
+        <!-- 2. Anti-Seizure Medications Section (with added Therapeutic Range column) -->
         <details open style="margin-bottom: 20px; background: var(--info-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px var(--shadow-color);">
           <summary style="font-weight: bold; font-size: 1.2rem; cursor: pointer;">Anti-Seizure Medications</summary>
           <div>
-            <p>Below is a list of anti-seizure medications (ASMs) with typical adult dosing ranges and common side effects. Click each link for detailed drug information:</p>
+            <p>Below is a list of anti-seizure medications (ASMs) with typical adult dosing ranges, common side effects, and their therapeutic ranges (if applicable) along with the metabolite measured:</p>
             <table class="custom-table">
               <thead>
                 <tr>
                   <th>Medication</th>
                   <th>Typical Adult Dose Range</th>
                   <th>Common Side Effects</th>
+                  <th>Therapeutic Range &amp; Metabolite</th>
                 </tr>
               </thead>
               <tbody>
@@ -228,131 +230,157 @@
                   <td><a class="reference" href="https://www.uptodate.com/contents/brivaracetam-drug-information" target="_blank">Brivaracetam</a></td>
                   <td>100–200 mg/day (in 2 divided doses)</td>
                   <td>Drowsiness, dizziness, fatigue, irritability</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/carbamazepine-drug-information" target="_blank">Carbamazepine</a></td>
                   <td>800–1200 mg/day (in 2 divided doses; range ~400–1600 mg)</td>
                   <td>Dizziness, drowsiness, diplopia, ataxia</td>
+                  <td>Carbamazepine 4–12 µg/mL; CBZ‑10,11‑epoxide 0.4-4 μg/mL</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/cannabidiol-drug-information" target="_blank">Cannabidiol</a> <em>(rare, for Dravet/LGS)</em></td>
                   <td>10–20 mg/kg/day (in 2 doses)</td>
                   <td>Diarrhea, fatigue, decreased appetite, somnolence</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/cenobamate-drug-information" target="_blank">Cenobamate</a> <em>(new)</em></td>
                   <td>200 mg/day (after gradual titration; max 400 mg/day)</td>
                   <td>Dizziness, somnolence, fatigue, headache, nausea</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/clobazam-drug-information" target="_blank">Clobazam</a> <em>(adjunct for LGS)</em></td>
                   <td>10–40 mg/day (usually divided BID)</td>
                   <td>Sedation, drowsiness, drooling</td>
+                  <td>Clobazam 30 and 300 ng/mL; N-desmethylclobazam 300 and 3000 ng/mL/td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/clonazepam-drug-information" target="_blank">Clonazepam</a> <em>(rarely used long-term)</em></td>
                   <td>2–8 mg/day (in 2–3 divided doses)</td>
                   <td>Sedation, drowsiness, cognitive impairment, tolerance</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/eslicarbazepine-drug-information" target="_blank">Eslicarbazepine acetate</a></td>
                   <td>800–1600 mg/day (usually once daily; for focal seizures)</td>
                   <td>Dizziness, headache, diplopia, somnolence</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/ethosuximide-drug-information" target="_blank">Ethosuximide</a></td>
                   <td>500–1500 mg/day (target ~20 mg/kg/day; for absence seizures only)</td>
                   <td>Nausea, vomiting, lethargy, headache, weight loss</td>
+                  <td>40–100 µg/mL</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/felbamate-drug-information" target="_blank">Felbamate</a> <em>(rarely used – toxicity)</em></td>
                   <td>1200–3600 mg/day (divided TID–QID)</td>
                   <td>Sedation, nausea, vomiting, risk of aplastic anemia/liver failure</td>
+                  <td>40–100 µg/mL</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/gabapentin-drug-information" target="_blank">Gabapentin</a> <em>(rarely effective for epilepsy)</em></td>
                   <td>900–3600 mg/day (divided TID)</td>
                   <td>Dizziness, somnolence, peripheral edema, ataxia</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/lacosamide-drug-information" target="_blank">Lacosamide</a></td>
                   <td>200–400 mg/day (divided BID)</td>
                   <td>Dizziness, headache, nausea</td>
+                  <td>10-20 mg/L</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/lamotrigine-drug-information" target="_blank">Lamotrigine</a></td>
                   <td>100–400 mg/day (in 2 divided doses; slow titration)</td>
                   <td>Rash (risk of Stevens–Johnson syndrome), dizziness, headache</td>
+                  <td>3-15 µg/mL</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/levetiracetam-drug-information" target="_blank">Levetiracetam</a></td>
                   <td>1000–3000 mg/day (divided BID)</td>
                   <td>Drowsiness, dizziness, irritability, behavioral changes</td>
+                  <td>10-40 µg/mL</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/oxcarbazepine-drug-information" target="_blank">Oxcarbazepine</a></td>
                   <td>600–2400 mg/day (divided BID)</td>
                   <td>Dizziness, sedation, hyponatremia</td>
+                  <td>3–35 µg/mL (MHD)</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/perampanel-drug-information" target="_blank">Perampanel</a></td>
                   <td>8–12 mg/day (once daily at bedtime)</td>
                   <td>Dizziness, somnolence, irritability, falls</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/phenobarbital-drug-information" target="_blank">Phenobarbital</a></td>
                   <td>60–200 mg/day (usually once at bedtime)</td>
                   <td>Sedation, cognitive impairment, ataxia, dependence</td>
+                  <td>10–40 µg/mL</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/phenytoin-drug-information" target="_blank">Phenytoin</a></td>
                   <td>300–400 mg/day (divided BID; ~5–7 mg/kg/day to maintain level 10–20 µg/mL)</td>
                   <td>Nystagmus, ataxia, gingival hyperplasia, hirsutism, sedation</td>
+                  <td>10–20 µg/mL (zero-order)</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/primidone-drug-information" target="_blank">Primidone</a> <em>(rarely used)</em></td>
                   <td>250–1000 mg/day (divided BID–TID)</td>
                   <td>Sedation, ataxia, nausea, dizziness</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/pregabalin-drug-information" target="_blank">Pregabalin</a> <em>(rarely used for epilepsy)</em></td>
                   <td>150–600 mg/day (divided BID)</td>
                   <td>Dizziness, somnolence, weight gain, peripheral edema</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/rufinamide-drug-information" target="_blank">Rufinamide</a> <em>(rare, LGS)</em></td>
                   <td>1800–3200 mg/day (divided BID)</td>
                   <td>Dizziness, fatigue, nausea, vomiting</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/stiripentol-drug-information" target="_blank">Stiripentol</a> <em>(rare, Dravet)</em></td>
                   <td>50 mg/kg/day (divided TID)</td>
                   <td>Drowsiness, ataxia, loss of appetite</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/tiagabine-drug-information" target="_blank">Tiagabine</a> <em>(rarely used)</em></td>
                   <td>16–56 mg/day (divided BID–QID)</td>
                   <td>Dizziness, nervousness, fatigue, tremor</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/topiramate-drug-information" target="_blank">Topiramate</a></td>
                   <td>100–400 mg/day (divided BID)</td>
                   <td>Cognitive slowing, weight loss, paresthesias, kidney stones</td>
+                  <td>5-20 µg/mL</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/valproate-valproic-acid-drug-information" target="_blank">Valproate (Valproic acid)</a></td>
                   <td>1000–3000 mg/day (divided BID–TID; ~15–60 mg/kg/day)</td>
                   <td>GI upset, tremor, weight gain, hair loss, hepatotoxicity, thrombocytopenia</td>
+                  <td>50–100 µg/mL</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/vigabatrin-drug-information" target="_blank">Vigabatrin</a> <em>(rare – infantile spasms)</em></td>
                   <td>2000–3000 mg/day (divided BID)</td>
                   <td>Visual field defects, sedation, irritability</td>
+                  <td>N/A</td>
                 </tr>
                 <tr>
                   <td><a class="reference" href="https://www.uptodate.com/contents/zonisamide-drug-information" target="_blank">Zonisamide</a></td>
                   <td>100–400 mg/day (once daily or divided BID)</td>
                   <td>Dizziness, somnolence, loss of appetite, weight loss</td>
+                  <td>N/A</td>
                 </tr>
               </tbody>
             </table>
@@ -361,7 +389,7 @@
           </div>
         </details>
         
-        <!-- ASM Withdrawal -->
+        <!-- 3. ASM Withdrawal Section (Moved below the Anti-Seizure Medications table) -->
         <details style="margin-bottom: 20px; background: var(--info-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px var(--shadow-color);">
           <summary style="font-weight: bold; font-size: 1.2rem; cursor: pointer;">ASM Withdrawal</summary>
           <div>
@@ -370,7 +398,7 @@
           </div>
         </details>
         
-        <!-- Management of Refractory Epilepsy -->
+        <!-- 4. Management of Refractory Epilepsy Section -->
         <details style="margin-bottom: 20px; background: var(--info-bg); padding: 20px; border-radius: 8px; box-shadow: 0 2px 8px var(--shadow-color);">
           <summary style="font-weight: bold; font-size: 1.2rem; cursor: pointer;">Management of Refractory Epilepsy</summary>
           <div>
