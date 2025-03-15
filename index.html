@@ -134,8 +134,6 @@
   </div>
 
   <!-- Main Content (always visible in the background, but initially disabled) -->
-  <div id="page-content" class="disabled">
-    <div id="seizure-management">
       <!-- HEADER with shrink effect -->
       <header id="header">
         <div class="header-inner">
@@ -165,6 +163,9 @@
       </header>
       
       <!-- HOMEPAGE CARDS -->
+      <!-- Main Content (always visible in the background, but initially disabled) -->
+  <div id="page-content" class="disabled">
+    <div id="seizure-management">
       <div id="home-content" class="cards-container">
         <h2 class="page-title">Explore the EEG Curriculum</h2>
         <div class="cards-grid">
@@ -375,6 +376,19 @@
       });
     });
   </script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function() {
+    const header = document.getElementById("header");
+    window.addEventListener("scroll", function() {
+      if (window.scrollY > 50) {
+        header.classList.add("shrink");
+      } else {
+        header.classList.remove("shrink");
+      }
+    });
+  });
+</script>
 
 </body>
 </html>
