@@ -240,6 +240,27 @@ header.shrink .logo {
   }
 }
 
+@media (max-width: 600px) {
+  /* Adjust the disclaimer pop-up (dev-modal) for mobile */
+  #dev-modal .modal-content {
+    font-size: 0.8rem;
+    padding: 1rem;
+  }
+  #dev-modal h2 {
+    font-size: 1.2rem;
+  }
+  #dev-modal p {
+    font-size: 0.8rem;
+  }
+  #dev-modal input[type="text"] {
+    font-size: 0.9rem;
+    padding: 0.6rem;
+  }
+  #dev-modal button {
+    font-size: 0.8rem;
+    padding: 0.5rem 1rem;
+  }
+}
 /*-----------------------------------------------
   MAIN CONTAINER
 -----------------------------------------------*/
@@ -362,7 +383,12 @@ footer {
   background: #00509e;
   transform: scale(1.05);
 }
-
+/* Media Query: Hide Footer Buttons on Mobile by Default */
+@media (max-width: 600px) {
+  .footer-btns {
+    display: none;
+  }
+}
 /*-----------------------------------------------
   REDESIGNED VIDEO TAB
 -----------------------------------------------*/
