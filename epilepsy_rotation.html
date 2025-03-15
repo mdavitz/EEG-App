@@ -44,166 +44,357 @@
       color: var(--text-color);
       cursor: pointer;
     }
+    /* Simple styling for the tab buttons */
+    .tab-buttons button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 4px;
+      background: var(--accent-color);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .tab-buttons button.active {
+      background: #00509e;
+    }
   </style>
 </head>
 <body>
   <div class="container" id="epilepsy-rotation">
-    <!-- Daily Expectations & Goals Section -->
-    <div class="info-box">
-      <h2 class="page-title">Epilepsy Rotation</h2>
-      <h3>Daily Expectations and Goals</h3>
-      <table class="custom-table">
-        <thead>
-          <tr>
-            <th>Activity</th>
-            <th>Description</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>Watch Video</td>
-            <td>Review the designated EEG video for the day.</td>
-          </tr>
-          <tr>
-            <td>Complete Quiz</td>
-            <td>Answer the quiz questions associated with the video.</td>
-          </tr>
-          <tr>
-            <td>Upload EEG</td>
-            <td>
-              Submit one interesting EEG finding.
-              <!-- EEG Index button opens the modal popup -->
-              <a href="#" onclick="openEEGIndexApp(event); return false;" class="table-link">
-                <i class="fa-solid fa-brain"></i> EEG Index
-              </a>
-            </td>
-          </tr>
-          <tr>
-            <td>EEG Reading</td>
-            <td>Read both routine and continuous EEGs as described below.</td>
-          </tr>
-          <tr>
-            <td>Review Milestones</td>
-            <td>
-              Review your rotation expectations.
-              <a href="https://www.acgme.org/globalassets/pdfs/milestones/epilepsymilestones.pdf" target="_blank" class="table-link">
-                <i class="fa-solid fa-file-pdf"></i> Epilepsy Milestones
-              </a>
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Tab Buttons -->
+    <div class="tab-buttons" style="text-align:center; margin-bottom:1.5em;">
+      <button id="residents-btn" class="btn active" onclick="showTab('residents')">For Residents</button>
+      <button id="fellows-btn" class="btn" onclick="showTab('fellows')">For Fellows</button>
     </div>
 
-    <!-- Rotation Schedule Section -->
-    <div class="info-box">
-      <h2>Rotation Schedule</h2>
-      <h3>Inpatient Rotation (MSH &amp; MSW EMU)</h3>
-      <table class="custom-table">
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Activity</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>7-8 AM</td>
-            <td>Arrive and preround on EMU/epilepsy consult patients</td>
-          </tr>
-          <tr>
-            <td>8-9 AM</td>
-            <td>Attend morning report</td>
-          </tr>
-          <tr>
-            <td>9-10 AM</td>
-            <td>Read at least one LTM EEG, draft EEG reports</td>
-          </tr>
-          <tr>
-            <td>10 AM-12 PM</td>
-            <td>Round with epilepsy fellow/attending</td>
-          </tr>
-          <tr class="pm-workflow">
-            <td colspan="2" style="text-align: center;">PM Workflow (~12-5pm)</td>
-          </tr>
-          <tr>
-            <td>12-1 PM</td>
-            <td>Neurology noon conference</td>
-          </tr>
-          <tr>
-            <td>1-5 PM</td>
-            <td>Elective admission H&amp;Ps, consults, follow-up on LTM EEG, read new inpatient EEGs</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Residents Tab Content (Visible by default) -->
+    <div id="residents-tab">
+      <!-- Daily Expectations & Goals Section -->
+      <div class="info-box">
+        <h2 class="page-title">Epilepsy Rotation</h2>
+        <h3>Daily Expectations and Goals</h3>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Activity</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Watch Video</td>
+              <td>Review the designated EEG video for the day.</td>
+            </tr>
+            <tr>
+              <td>Complete Quiz</td>
+              <td>Answer the quiz questions associated with the video.</td>
+            </tr>
+            <tr>
+              <td>Upload EEG</td>
+              <td>
+                Submit one interesting EEG finding.
+                <a href="#" onclick="openEEGIndexApp(event); return false;" class="table-link">
+                  <i class="fa-solid fa-brain"></i> EEG Index
+                </a>
+              </td>
+            </tr>
+            <tr>
+              <td>EEG Reading</td>
+              <td>Read both routine and continuous EEGs as described below.</td>
+            </tr>
+            <tr>
+              <td>Review Milestones</td>
+              <td>
+                Review your rotation expectations.
+                <a href="https://www.acgme.org/globalassets/pdfs/milestones/epilepsymilestones.pdf" target="_blank" class="table-link">
+                  <i class="fa-solid fa-file-pdf"></i> Epilepsy Milestones
+                </a>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-      <h3>Outpatient Rotation</h3>
-      <table class="custom-table">
-        <thead>
-          <tr>
-            <th>Time</th>
-            <th>Activity</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td>8-9 AM</td>
-            <td>Morning report (MSH Ambulatory EEG / Outpatient PGY-2)</td>
-          </tr>
-          <tr>
-            <td>AM</td>
-            <td>Epilepsy clinic or outpatient EEG reading (self-study if no clinic)</td>
-          </tr>
-          <tr>
-            <td>PM</td>
-            <td>Resident continuity clinic or faculty clinic, ambulatory EEG readings</td>
-          </tr>
-          <tr>
-            <td colspan="2">MSW Outpatient (PGY-2): Similar schedule with assigned epilepsy clinics &amp; EEG readings</td>
-          </tr>
-        </tbody>
-      </table>
+      <!-- Rotation Schedule Section -->
+      <div class="info-box">
+        <h2>Rotation Schedule</h2>
+        <h3>Inpatient Rotation (MSH &amp; MSW EMU)</h3>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>7-8 AM</td>
+              <td>Arrive and preround on EMU/epilepsy consult patients</td>
+            </tr>
+            <tr>
+              <td>8-9 AM</td>
+              <td>Attend morning report</td>
+            </tr>
+            <tr>
+              <td>9-10 AM</td>
+              <td>Read at least one LTM EEG, draft EEG reports</td>
+            </tr>
+            <tr>
+              <td>10 AM-12 PM</td>
+              <td>Round with epilepsy fellow/attending</td>
+            </tr>
+            <tr class="pm-workflow">
+              <td colspan="2" style="text-align: center;">PM Workflow (~12-5pm)</td>
+            </tr>
+            <tr>
+              <td>12-1 PM</td>
+              <td>Neurology noon conference</td>
+            </tr>
+            <tr>
+              <td>1-5 PM</td>
+              <td>Elective admission H&amp;Ps, consults, follow-up on LTM EEG, read new inpatient EEGs</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3>Outpatient Rotation</h3>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Time</th>
+              <th>Activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>8-9 AM</td>
+              <td>Morning report (MSH Ambulatory EEG / Outpatient PGY-2)</td>
+            </tr>
+            <tr>
+              <td>AM</td>
+              <td>Epilepsy clinic or outpatient EEG reading (self-study if no clinic)</td>
+            </tr>
+            <tr>
+              <td>PM</td>
+              <td>Resident continuity clinic or faculty clinic, ambulatory EEG readings</td>
+            </tr>
+            <tr>
+              <td colspan="2">MSW Outpatient (PGY-2): Similar schedule with assigned epilepsy clinics &amp; EEG readings</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Teaching Rounds & Conferences Section -->
+      <div class="info-box">
+        <h2>Teaching Rounds &amp; Conferences</h2>
+        <p>All epilepsy conferences are currently held via Zoom (unless otherwise indicated).</p>
+        <table class="custom-table responsive-table">
+          <thead>
+            <tr>
+              <th>Seminar</th>
+              <th>Day/Time</th>
+              <th>Location</th>
+              <th>Notes</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td data-label="Seminar">Epilepsy Surgery Conference (mandatory)</td>
+              <td data-label="Day/Time">Wed 4-5:30 PM</td>
+              <td data-label="Location">Levy Library (MSH) / Zoom</td>
+              <td data-label="Notes">Epilepsy surgery cases, comprehensive team</td>
+            </tr>
+            <tr>
+              <td data-label="Seminar">Teaching Rounds / Interesting EEGs (mandatory)</td>
+              <td data-label="Day/Time">Wed 1-2 PM</td>
+              <td data-label="Location">Zoom</td>
+              <td data-label="Notes">
+                1st Wed: ICU EEGs (joint with NSICU)<br/>
+                2nd &amp; 4th Wed: Faculty lecture series<br/>
+                3rd Wed: Interesting EEGs<br/>
+                5th Wed: Other topics
+              </td>
+            </tr>
+            <tr>
+              <td data-label="Seminar">Grand Rounds</td>
+              <td data-label="Day/Time">Fri 8-9 AM</td>
+              <td data-label="Location">Hess Center / Remote Access</td>
+              <td data-label="Notes">Neurology Grand Rounds (faculty, fellows, residents, students)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
-    <!-- Teaching Rounds & Conferences Section -->
-    <div class="info-box">
-      <h2>Teaching Rounds &amp; Conferences</h2>
-      <p>All epilepsy conferences are currently held via Zoom (unless otherwise indicated).</p>
-      <table class="custom-table responsive-table">
-        <thead>
-          <tr>
-            <th>Seminar</th>
-            <th>Day/Time</th>
-            <th>Location</th>
-            <th>Notes</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td data-label="Seminar">Epilepsy Surgery Conference (mandatory)</td>
-            <td data-label="Day/Time">Wed 4-5:30 PM</td>
-            <td data-label="Location">Levy Library (MSH) / Zoom</td>
-            <td data-label="Notes">Epilepsy surgery cases, comprehensive team</td>
-          </tr>
-          <tr>
-            <td data-label="Seminar">Teaching Rounds / Interesting EEGs (mandatory)</td>
-            <td data-label="Day/Time">Wed 1-2 PM</td>
-            <td data-label="Location">Zoom</td>
-            <td data-label="Notes">
-              1st Wed: ICU EEGs (joint with NSICU)<br/>
-              2nd &amp; 4th Wed: Faculty lecture series<br/>
-              3rd Wed: Interesting EEGs<br/>
-              5th Wed: Other topics
-            </td>
-          </tr>
-          <tr>
-            <td data-label="Seminar">Grand Rounds</td>
-            <td data-label="Day/Time">Fri 8-9 AM</td>
-            <td data-label="Location">Hess Center / Remote Access</td>
-            <td data-label="Notes">Neurology Grand Rounds (faculty, fellows, residents, students)</td>
-          </tr>
-        </tbody>
-      </table>
+    <!-- Fellows Tab Content (Hidden by default) -->
+    <div id="fellows-tab" style="display: none;">
+      <div class="info-box">
+        <h2>Fellows: Inpatient Rotation</h2>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Rotation</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MSH</td>
+              <td>4 adult EMU beds (Guggenheim 8th floor, 8West)</td>
+            </tr>
+            <tr>
+              <td>MSW</td>
+              <td>4 adult EMU beds (8th floor, 8B)</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-box">
+        <h2>EEG Reporting</h2>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Rotation</th>
+              <th>EEG Reporting Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MSH Rotation</td>
+              <td>Inpatient long term and rEEG at MSH and MSQ</td>
+            </tr>
+            <tr>
+              <td>MSW Rotation</td>
+              <td>Inpatient long term and rEEG at MSW, MSM and MSSN</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-box">
+        <h2>Daily Routines in the Epilepsy Rotation</h2>
+        <h3>AM</h3>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Activity</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Long Term EEG Reading</td>
+              <td>Start reading long term EEGs between 7–8 AM; prepare preliminary reports before rounding (~9–10 AM).</td>
+            </tr>
+            <tr>
+              <td>ICU Studies</td>
+              <td>Begin with ICU studies. NSICU fellow provides names via EPIC chat for priority readings.</td>
+            </tr>
+            <tr>
+              <td>Rounding</td>
+              <td>Round with the attending between 9–10 AM; finalize EEG reports and communicate with the primary team.</td>
+            </tr>
+          </tbody>
+        </table>
+        <h3>PM</h3>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Activity</th>
+              <th>Description</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Routine EEG Reading</td>
+              <td>Read inpatient routine & baseline long-term EEGs up to 5 PM and leave preliminary reports as incomplete.</td>
+            </tr>
+            <tr>
+              <td>Follow Up</td>
+              <td>Review all long-term EEGs (including EMU patients) and add interim progress notes if there are changes.</td>
+            </tr>
+            <tr>
+              <td>Discontinued EEGs</td>
+              <td>On Mondays (or after discontinuations), finalize and sign off on EEGs as needed.</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-box">
+        <h2>EMU Elective Admissions &amp; Stay</h2>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Responsibility</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Admissions</td>
+              <td>
+                Write H&P, place admissions orders, and sign out to on-call residents. Assist when a dedicated resident is assigned. Verify admission details (coordinate with Vincent Palmieri) and, for after-5 PM admissions, pend a preliminary H&P and detailed sign-out.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-box">
+        <h2>Epilepsy Consults</h2>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Consult Type</th>
+              <th>Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Consults</td>
+              <td>
+                NSICU and General Neurology teams may request consults. Fellows are to see patients, write consult notes, and staff with the attending. When rotating residents are present, consults are divided at the fellow’s discretion.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="info-box">
+        <h2>Outpatient Clinics</h2>
+        <table class="custom-table">
+          <thead>
+            <tr>
+              <th>Rotation</th>
+              <th>Clinic Details</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>MSH Rotation</td>
+              <td>Friday PM: Fellows’ continuity clinic (17E 102nd street, with Dr. Maria Muxfeldt)</td>
+            </tr>
+            <tr>
+              <td>MSW Rotation</td>
+              <td>
+                Thursday PM: Dr. Fields (MSW 10th floor)<br/>
+                Friday PM: Dr. Marcuse (MSW 10th floor)
+              </td>
+            </tr>
+            <tr>
+              <td>Follow-Up</td>
+              <td>
+                After clinics, follow up on EEGs and email sign-outs to the on-call attending and fellow. Weekdays: only for patients requiring close monitoring; weekends: sign out all EMU and ICU EEGs.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 
@@ -257,8 +448,7 @@
       document.body.appendChild(modalOverlay);
     }
     
-    // Revised Slide generation function using PPTXGenJS and FileReader for image processing,
-    // with the image enlarged to fill the slide and text overlayed on top.
+    // Slide generation function using PPTXGenJS
     function generateSlide() {
       console.log("Generate Slide button clicked.");
       const fullName = document.getElementById("fullName").value;
@@ -313,6 +503,21 @@
             console.error("Error generating slide:", error);
             alert("Error generating slide. Check console for details.");
           });
+      }
+    }
+    
+    // Function to toggle between Residents and Fellows tabs
+    function showTab(tab) {
+      if (tab === 'residents') {
+        document.getElementById('residents-tab').style.display = 'block';
+        document.getElementById('fellows-tab').style.display = 'none';
+        document.getElementById('residents-btn').classList.add('active');
+        document.getElementById('fellows-btn').classList.remove('active');
+      } else {
+        document.getElementById('residents-tab').style.display = 'none';
+        document.getElementById('fellows-tab').style.display = 'block';
+        document.getElementById('fellows-btn').classList.add('active');
+        document.getElementById('residents-btn').classList.remove('active');
       }
     }
   </script>
