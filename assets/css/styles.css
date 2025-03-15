@@ -241,10 +241,12 @@ header.shrink .logo {
 }
 
 @media (max-width: 600px) {
-  /* Adjust the disclaimer pop-up (dev-modal) for mobile */
+  /* Adjust and make the disclaimer pop-up scrollable on mobile */
   #dev-modal .modal-content {
     font-size: 0.8rem;
     padding: 1rem;
+    max-height: 90vh;      /* Limit the height to 90% of the viewport */
+    overflow-y: auto;      /* Enable vertical scrolling if content overflows */
   }
   #dev-modal h2 {
     font-size: 1.2rem;
