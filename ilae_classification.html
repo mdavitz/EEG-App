@@ -9,7 +9,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <!-- External CSS -->
   <link rel="stylesheet" href="assets/css/styles.css">
-  
 </head>
 <body>
   <!-- Main Content -->
@@ -22,26 +21,31 @@
       </div>
       <button id="test-yourself-button" class="flashcard-button">Test Yourself!</button>
     </div>
-<!-- Flashcard Container (initially hidden) -->
-<div id="flashcard-container" style="display: none;">
-  <div id="flashcard" class="flashcard">
-    <div class="flashcard-front"></div>
-    <div class="flashcard-back" style="display: none;"></div>
-  </div>
-  <div class="flashcard-controls">
-    <button id="prev-flashcard">Previous</button>
-    <button id="next-flashcard">Next</button>
-    <button id="exit-flashcard">Exit Flashcard Mode</button>
-  </div>
-</div>
+
+    <!-- Flashcard Container (initially hidden) -->
+    <div id="flashcard-container" style="display: none;">
+      <!-- 
+         ADD the .flashcard-inner wrapper inside your #flashcard div 
+         so we can flip it in 3D around the Y-axis 
+      -->
+      <div id="flashcard" class="flashcard">
+        <div class="flashcard-inner">
+          <div class="flashcard-front"></div>
+          <div class="flashcard-back"></div>
+        </div>
+      </div>
+      <div class="flashcard-controls">
+        <button id="prev-flashcard">Previous</button>
+        <button id="next-flashcard">Next</button>
+        <button id="exit-flashcard">Exit Flashcard Mode</button>
+      </div>
+    </div>
 
     <!-- Content Container -->
     <div id="contentContainer">
       <!-- Section 1: Neonates and Infants -->
       <details open>
         <summary class="section-header">Epilepsy Syndromes with Onset in Neonates and Infants</summary>
-        
-        <!-- Renamed "cards-grid" to "ilae-grid" -->
         <div class="ilae-grid">
           <!-- Card: Self‑Limited Neonatal Epilepsy (SeLNE) -->
           <div class="ilae-card"
@@ -98,11 +102,11 @@
           <!-- Card: Childhood Absence Epilepsy (CAE) -->
           <div class="ilae-card"
                data-title="Childhood Absence Epilepsy (CAE)"
-               data-summary="Brief impaired awareness episodes with a regular 3 Hertz spike‐and‐wave pattern on EEG."
-               data-eeg="EEG displays a consistent 3 Hertz spike‐and‐wave discharge on a normal background."
+               data-summary="Brief impaired awareness episodes with a regular 3 Hertz spike‑and‑wave pattern on EEG."
+               data-eeg="EEG displays a consistent 3 Hertz spike‑and‑wave discharge on a normal background."
                data-pdf="assets/documents/onset-in-childhood2.pdf#page=5">
             <h3>Childhood Absence Epilepsy (CAE)</h3>
-            <p>Brief staring spells with classic 3 Hertz spike‐and‐wave EEG activity.</p>
+            <p>Brief staring spells with classic 3 Hertz spike‑and‑wave EEG activity.</p>
           </div>
           <!-- Card: Epilepsy with Myoclonic Atonic Seizures (EMAtS) -->
           <div class="ilae-card"
@@ -126,7 +130,7 @@
           <div class="ilae-card"
                data-title="Photosensitive Occipital Lobe Epilepsy (POLE)"
                data-summary="Triggered by photic stimulation, presenting with focal visual seizures; strong female predominance noted."
-               data-eeg="EEG shows occipital spike‐and‐wave discharges enhanced by eye closure and photic stimulation."
+               data-eeg="EEG shows occipital spike‑and‑wave discharges enhanced by eye closure and photic stimulation."
                data-pdf="assets/documents/onset-in-childhood2.pdf#page=8">
             <h3>Photosensitive Occipital Lobe Epilepsy (POLE)</h3>
             <p>Focal visual seizures triggered by light with characteristic occipital EEG patterns.</p>
@@ -141,20 +145,20 @@
           <!-- Card: Juvenile Absence Epilepsy (JAE) -->
           <div class="ilae-card"
                data-title="Juvenile Absence Epilepsy (JAE)"
-               data-summary="Characterized by brief impaired awareness episodes and a regular 3 Hertz spike‐and‐wave pattern, with a strong genetic component."
-               data-eeg="EEG exhibits a consistent 3 Hertz spike‐and‐wave discharge on a normal background."
+               data-summary="Characterized by brief impaired awareness episodes and a regular 3 Hertz spike‑and‑wave pattern, with a strong genetic component."
+               data-eeg="EEG exhibits a consistent 3 Hertz spike‑and‑wave discharge on a normal background."
                data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=4">
             <h3>Juvenile Absence Epilepsy (JAE)</h3>
-            <p>Brief impaired awareness episodes with 3 Hertz spike‐and‐wave EEG.</p>
+            <p>Brief impaired awareness episodes with 3 Hertz spike‑and‑wave EEG.</p>
           </div>
           <!-- Card: Juvenile Myoclonic Epilepsy (JME) -->
           <div class="ilae-card"
                data-title="Juvenile Myoclonic Epilepsy (JME)"
                data-summary="Begins in adolescence with myoclonic jerks soon after waking, and may include generalized tonic–clonic seizures."
-               data-eeg="EEG shows generalized polyspike‐and‐wave discharges with photic sensitivity."
+               data-eeg="EEG shows generalized polyspike‑and‑wave discharges with photic sensitivity."
                data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=5">
             <h3>Juvenile Myoclonic Epilepsy (JME)</h3>
-            <p>Adolescent-onset epilepsy with myoclonic jerks and generalized polyspike‐and‐wave EEG.</p>
+            <p>Adolescent-onset epilepsy with myoclonic jerks and generalized polyspike‑and‑wave EEG.</p>
           </div>
           <!-- Card: Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA) -->
           <div class="ilae-card"
@@ -247,6 +251,7 @@
             <p>Intractable seizures with progressive hemiplegia and unilateral EEG abnormalities.</p>
           </div>
         </div>
+        
         <!-- References Footer (appears at bottom of page) -->
         <h3>References</h3>
         <ul>
@@ -275,9 +280,9 @@
   
   <!-- JavaScript for Search and Modal Functionality -->
   <script>
-/*============================================
-   FLASH CARDS
-=============================================*/
+  /*============================================
+     SEARCH AND MODAL
+  =============================================*/
     // Scope search to ILAE cards only
     document.getElementById('searchBar').addEventListener('input', function(e) {
       const term = e.target.value.trim().toLowerCase();
@@ -318,86 +323,107 @@
     });
   </script>
 
-<script>
-  // Gather all ILAE cards data into an array
-  const flashcards = Array.from(document.querySelectorAll('#ilae-classification-content .ilae-card')).map(card => ({
-    title: card.getAttribute('data-title'),
-    summary: card.getAttribute('data-summary'),
-    eeg: card.getAttribute('data-eeg'),
-    pdf: card.getAttribute('data-pdf')
-  }));
-  
-  let currentCardIndex = 0;
-  
-  // Elements
-  const testButton = document.getElementById('test-yourself-button');
-  const searchBar = document.querySelector('.search-box'); // search bar container
-  const flashcardContainer = document.getElementById('flashcard-container');
-  const flashcard = document.getElementById('flashcard');
-  const flashcardFront = flashcard.querySelector('.flashcard-front');
-  const flashcardBack = flashcard.querySelector('.flashcard-back');
-  const prevButton = document.getElementById('prev-flashcard');
-  const nextButton = document.getElementById('next-flashcard');
-  const exitButton = document.getElementById('exit-flashcard');
-  const normalContent = document.getElementById('contentContainer');
-  
-  // Function to update flashcard display (show question first)
-  function updateFlashcard() {
-    const card = flashcards[currentCardIndex];
-    // Using title as question and summary as answer.
-    flashcardFront.textContent = card.title;
-    flashcardBack.textContent = "Answer: " + card.summary;
-    // Always show the front first.
-    flashcardFront.style.display = 'block';
-    flashcardBack.style.display = 'none';
-  }
-  
-  // Toggle flashcard mode
-  testButton.addEventListener('click', () => {
-    // Hide search bar and test button, and the normal content
-    searchBar.style.display = 'none';
-    testButton.style.display = 'none';
-    normalContent.style.display = 'none';
-    // Show flashcard container
-    flashcardContainer.style.display = 'block';
-    currentCardIndex = 0;
-    updateFlashcard();
-  });
-  
-  // Flashcard navigation
-  nextButton.addEventListener('click', () => {
-    if (currentCardIndex < flashcards.length - 1) {
-      currentCardIndex++;
+  <script>
+  /*============================================
+     FLASHCARD LOGIC (Shuffle + Flip)
+  =============================================*/
+
+    // Gather all ILAE cards data into an array
+    const flashcards = Array.from(
+      document.querySelectorAll('#ilae-classification-content .ilae-card')
+    ).map(card => ({
+      title: card.getAttribute('data-title'),
+      summary: card.getAttribute('data-summary'),
+      eeg: card.getAttribute('data-eeg'),
+      pdf: card.getAttribute('data-pdf')
+    }));
+
+    let currentCardIndex = 0;
+
+    // Fisher–Yates Shuffle
+    function shuffleArray(array) {
+      let currentIndex = array.length, randomIndex;
+      while (currentIndex !== 0) {
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+        [array[currentIndex], array[randomIndex]] = [
+          array[randomIndex], array[currentIndex]
+        ];
+      }
+      return array;
+    }
+
+    // Elements
+    const testButton = document.getElementById('test-yourself-button');
+    const searchBar = document.querySelector('.search-box');
+    const flashcardContainer = document.getElementById('flashcard-container');
+    const flashcard = document.getElementById('flashcard'); // The parent .flashcard
+    const flashcardFront = document.querySelector('.flashcard-front');
+    const flashcardBack = document.querySelector('.flashcard-back');
+    const prevButton = document.getElementById('prev-flashcard');
+    const nextButton = document.getElementById('next-flashcard');
+    const exitButton = document.getElementById('exit-flashcard');
+    const normalContent = document.getElementById('contentContainer');
+
+    // Update flashcard display with current question/answer
+    function updateFlashcard() {
+      const card = flashcards[currentCardIndex];
+      flashcardFront.textContent = card.title;
+      flashcardBack.textContent = "Answer: " + card.summary;
+      // Whenever we load a new card, remove the "is-flipped" class 
+      // so it shows the front side first.
+      flashcard.classList.remove('is-flipped');
+    }
+
+    // Enter flashcard mode
+    testButton.addEventListener('click', () => {
+      // Hide search bar, normal content, and test button
+      searchBar.style.display = 'none';
+      testButton.style.display = 'none';
+      normalContent.style.display = 'none';
+
+      // Shuffle the flashcards
+      shuffleArray(flashcards);
+      currentCardIndex = 0;
       updateFlashcard();
-    }
-  });
-  
-  prevButton.addEventListener('click', () => {
-    if (currentCardIndex > 0) {
-      currentCardIndex--;
-      updateFlashcard();
-    }
-  });
-  
-  exitButton.addEventListener('click', () => {
-    // Hide flashcard mode and show normal grid plus the search bar and test button
-    flashcardContainer.style.display = 'none';
-    normalContent.style.display = 'block';
-    searchBar.style.display = '';
-    testButton.style.display = 'block';
-  });
-  
-  // Add click-to-flip functionality on the flashcard
-  flashcard.addEventListener('click', () => {
-    if (flashcardFront.style.display !== 'none') {
-      flashcardFront.style.display = 'none';
-      flashcardBack.style.display = 'block';
-    } else {
-      flashcardFront.style.display = 'block';
-      flashcardBack.style.display = 'none';
-    }
-  });
-</script>
+
+      // Show flashcard container
+      flashcardContainer.style.display = 'block';
+    });
+
+    // Next button
+    nextButton.addEventListener('click', () => {
+      if (currentCardIndex < flashcards.length - 1) {
+        currentCardIndex++;
+        updateFlashcard();
+      }
+    });
+
+    // Previous button
+    prevButton.addEventListener('click', () => {
+      if (currentCardIndex > 0) {
+        currentCardIndex--;
+        updateFlashcard();
+      }
+    });
+
+    // Exit button
+    exitButton.addEventListener('click', () => {
+      // Hide flashcard mode
+      flashcardContainer.style.display = 'none';
+      // Show normal page content
+      normalContent.style.display = 'block';
+      searchBar.style.display = '';
+      testButton.style.display = 'block';
+    });
+
+    // Flip the card on click
+    flashcard.addEventListener('click', () => {
+      // Toggle the is-flipped class
+      flashcard.classList.toggle('is-flipped');
+    });
+
+  </script>
 
 </body>
 </html>
