@@ -1258,6 +1258,90 @@ body.dark .modal-title {
 .search-and-test .flashcard-button:hover {
   background: var(--primary-color);
 }
-/*============================================
-   END ILAE CLASSIFICATION SPECIFIC STYLES
-=============================================*/
+
+.flashcard {
+  /* Width rules for desktop & mobile */
+  width: 70vw;            /* 70% of the viewport width */
+  max-width: 600px;       /* Don’t exceed 600px wide */
+  min-height: 300px;      /* Base minimum height */
+  max-height: 80vh;       /* At most 80% of the screen's height */
+  margin: 1rem auto;      /* Center it and add vertical spacing */
+  perspective: 1000px;    /* Enables 3D flip */
+  position: relative;     /* Needed for absolutely positioned child surfaces */
+}
+
+.flashcard-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.4s;
+  transform-style: preserve-3d;
+}
+
+/* Both surfaces fill the parent and can scroll if content is too big */
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;  
+  backface-visibility: hidden;
+  overflow-y: auto;         /* Let content scroll if it exceeds the card height */
+  box-sizing: border-box;    /* So padding doesn’t blow up the width/height */
+  padding: 1rem;            /* Some breathing room for the text */
+  display: flex;            /* If you want centered text... */
+  align-items: center;
+  justify-content: center;
+}
+
+/* The back side is rotated so it’s hidden until flipped */
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+.modal-content {
+  /* A wide, responsive modal */
+  width: 80vw;               /* 80% of viewport width on desktop */
+  max-width: 1000px;         /* cap it so it’s not too large */
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  /* flex layout to center items vertically & horizontally */
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+}
+
+/* The container for the PDF iframe */
+.pdf-iframe-container {
+  /* Fill the modal content width fully */
+  width: 100%;
+  max-width: 900px;    /* or some comfortable limit inside the modal */
+  margin: 1rem auto;
+  /* If you want to limit the vertical size, you can do:
+     max-height: 80vh;
+     overflow: auto;
+  */
+}
+
+/* The PDF iframe adapts to the container width. */
+.pdf-iframe-container iframe {
+  width: 100%;         /* Always match container’s width */
+  height: 600px;       /* Or pick a height that works for your layout */
+  border: none;
+  display: block;      /* Removes any default inline gaps */
+}
+
+/* On smaller screens, let the modal fill more space */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90vw;       
+    max-width: 600px;  
+  }
+  .pdf-iframe-container iframe {
+    height: 400px;     /* Maybe shorter on mobile */
+  }
+}
