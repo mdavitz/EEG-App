@@ -1,0 +1,1541 @@
+/*-----------------------------------------------
+  THEME VARIABLES & TRANSITIONS
+-----------------------------------------------*/
+:root {
+  --primary-color: #003366;
+  --secondary-color: #00509e;
+  --accent-color: #007bff;
+  --bg-color: #fafafa;
+  --text-color: #333;
+  --info-bg: #fff;
+  --border-color: #ddd;
+  --header-text: #fff;
+  --hover-bg: #f0f0f0;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+  --transition-duration: 0.3s;
+  --footer-bg: rgba(255, 255, 255, 0.8);
+}
+.dark {
+  --primary-color: #1a1a1a;
+  --secondary-color: #333;
+  --accent-color: #0099ff;
+  --bg-color: #121212;
+  --text-color: #eee;
+  --info-bg: #1e1e1e;
+  --border-color: #444;
+  --header-text: #fff;
+  --hover-bg: #222;
+  --shadow-color: rgba(0, 0, 0, 0.3);
+  --footer-bg: rgba(30, 30, 30, 0.8);
+}
+
+/*-----------------------------------------------
+  GLOBAL RESET & BASE STYLES
+-----------------------------------------------*/
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
+    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  background: var(--bg-color);
+  color: var(--text-color);
+  line-height: 1.6;
+  transition: background var(--transition-duration),
+    color var(--transition-duration);
+  padding-bottom: 80px;
+}
+
+/*-----------------------------------------------
+  TITLES (Page & Section)
+-----------------------------------------------*/
+.page-title,
+.section-title {
+  text-align: center;
+  margin: 2rem 0;
+  font-size: 2rem;
+  color: var(--primary-color);
+}
+body.dark .page-title,
+body.dark .section-title {
+  color: var(--header-text);
+}
+
+/*-----------------------------------------------
+  INFO-BOX
+-----------------------------------------------*/
+.info-box {
+  background: var(--info-bg);
+  padding: 1.2em;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  margin-bottom: 1.5em;
+  transition: background var(--transition-duration);
+}
+
+/* Make the white box narrower and center it */
+#acns-criteria.info-box {
+  max-width: 800px;    /* or whatever width you prefer */
+  margin: 2rem auto;   /* auto margins to center horizontally */
+  text-align: center;  /* center inline elements inside */
+}
+
+/* Ensure each PNG is also centered as a block */
+.step-image {
+  display: block;
+  margin: 1em auto;
+  max-width: 100%;     /* Prevent overflow on smaller screens */
+  height: auto;
+}
+/*-----------------------------------------------
+  MODERNIZED TABLE STYLING
+-----------------------------------------------*/
+.custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: var(--info-bg);
+  font-size: 1rem;
+  color: var(--text-color);
+  border-radius: 8px;
+  overflow: hidden;
+  border: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.custom-table thead tr {
+  background-color: var(--table-header-bg);
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition-duration);
+}
+.custom-table thead th {
+  font-weight: 600;
+  padding: 16px;
+  text-align: left;
+  border: none;
+}
+.custom-table tbody tr {
+  border-bottom: 1px solid var(--border-color);
+  transition: background var(--transition-duration);
+}
+.custom-table tbody tr:last-child {
+  border-bottom: none;
+}
+.custom-table td,
+.custom-table th {
+  padding: 16px;
+  text-align: left;
+  border: none;
+}
+.custom-table td + td,
+.custom-table th + th {
+  border-left: 1px solid var(--border-color);
+}
+.custom-table tr:hover td {
+  background-color: var(--hover-bg);
+}
+
+/*-----------------------------------------------
+  HEADER & NAVIGATION
+-----------------------------------------------*/
+header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: rgba(0, 51, 102, 0.6);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 6px var(--shadow-color);
+  transition: padding 0.3s ease, backdrop-filter 0.3s ease;
+}
+.header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 1rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+header.shrink .header-inner {
+  padding: 0.4rem 2rem;
+}
+.logo {
+  width: 80px;
+  height: auto;
+  cursor: pointer;
+  transition: width 0.3s, transform 0.3s;
+}
+header.shrink .logo {
+  width: 60px;
+}
+.logo:hover {
+  transform: scale(1.05);
+}
+.desktop-tabs {
+  display: flex;
+  gap: 1.5rem;
+  align-items: center;
+}
+.desktop-tabs a {
+  color: var(--header-text);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.3s;
+}
+.desktop-tabs a:hover {
+  color: var(--accent-color);
+  transform: scale(1.05);
+}
+.mobile-tabs {
+  display: none;
+  align-items: center;
+  position: relative;
+  gap: 1rem;
+}
+.mobile-tabs a {
+  text-decoration: none;
+  color: var(--header-text);
+  font-weight: 500;
+  padding: 0.5rem 1rem;
+  transition: color 0.3s, transform 0.3s;
+}
+.mobile-tabs a:hover {
+  color: var(--accent-color);
+  transform: scale(1.05);
+}
+#current-mobile-tab {
+  cursor: pointer;
+}
+.mobile-dropdown {
+  display: none;
+  position: absolute;
+  top: 100%;
+  right: 0;
+  background: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  box-shadow: 0 2px 6px var(--shadow-color);
+  z-index: 2000;
+  min-width: 150px;
+}
+.mobile-dropdown a {
+  display: block;
+  padding: 0.6rem 1rem;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: background 0.3s, transform 0.3s;
+}
+.mobile-dropdown a:hover {
+  background: var(--hover-bg);
+  transform: scale(1.02);
+}
+@media (max-width: 600px) {
+  .desktop-tabs {
+    display: none;
+  }
+  .mobile-tabs {
+    display: flex;
+  }
+}
+
+/*-----------------------------------------------
+  MAIN CONTAINER
+-----------------------------------------------*/
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem 2rem;
+}
+@media (max-width: 600px) {
+  .container {
+    max-width: 95%;
+  }
+}
+
+/*-----------------------------------------------
+  HOMEPAGE CARDS
+-----------------------------------------------*/
+.cards-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  text-align: center;
+}
+.cards-container h2 {
+  margin-top: 1.5rem;
+  margin-bottom: 1.5rem;
+  font-size: 2rem;
+  text-align: center;
+}
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  background: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 16px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+}
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+}
+.card i {
+  font-size: 3rem;
+  color: var(--accent-color);
+  margin-bottom: 1rem;
+  transition: transform 0.3s;
+}
+.card i:hover {
+  transform: scale(1.1);
+}
+.card h3 {
+  font-size: 1.5rem;
+  margin-bottom: 0.75rem;
+  color: var(--primary-color);
+}
+/* Ensure dark mode applies correctly to card headers */
+body.dark .card h3 {
+  color: var(--header-text);
+}
+.card p {
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+.card a {
+  margin-top: auto;
+  display: inline-block;
+  padding: 0.5rem 1rem;
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 4px;
+  text-decoration: none;
+  font-weight: 500;
+  transition: background 0.3s ease, transform 0.3s;
+}
+.card a:hover {
+  background: #0056b3;
+  transform: scale(1.05);
+}
+
+/*-----------------------------------------------
+  FIXED FOOTER CONTROLS (Bottom Bar with Frosted Glass)
+-----------------------------------------------*/
+footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: var(--footer-bg);
+  border-top: 1px solid var(--border-color);
+  padding: 1em;
+  text-align: center;
+  z-index: 2000;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity var(--transition-duration);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+.footer-btns {
+  display: inline-flex;
+  gap: 1em;
+  align-items: center;
+}
+.footer-btns button {
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background var(--transition-duration), transform 0.3s;
+  font-size: 0.9rem;
+}
+.footer-btns button:hover {
+  background: #00509e;
+  transform: scale(1.05);
+}
+/* Media Query: Hide Footer Buttons on Mobile by Default */
+@media (max-width: 600px) {
+  .footer-btns {
+    display: none;
+  }
+}
+
+/*-----------------------------------------------
+  REDESIGNED VIDEO TAB
+-----------------------------------------------*/
+#eeg-videos {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 20px;
+  padding: 20px;
+  background: var(--bg-color);
+  height: calc(100vh - 40px);
+  box-sizing: border-box;
+}
+.video-list {
+  background: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.video-list h2 {
+  font-size: 1.4rem;
+  margin-bottom: 10px;
+  color: var(--primary-color);
+}
+.video-list ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.video-list li {
+  padding: 12px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.3s;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+.video-list li:hover,
+.video-list li:focus {
+  background: var(--hover-bg);
+  transform: translateX(5px);
+}
+.main-content {
+  background: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  overflow: auto;
+  box-shadow: 0 2px 6px var(--shadow-color);
+}
+.main-content video,
+.main-content iframe {
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  border-radius: 8px;
+}
+.video-nav {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  margin: 20px auto 0;
+  text-align: center;
+}
+.video-nav .btn {
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+.video-nav .btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.03);
+}
+.video-nav .btn:active {
+  background-color: #004080;
+}
+.video-wrapper {
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.video-wrapper video,
+.video-wrapper iframe {
+  width: 100%;
+  display: block;
+  border-radius: 8px;
+}
+
+/*-----------------------------------------------
+  MOBILE & RESPONSIVE STYLES
+-----------------------------------------------*/
+@media (max-width: 768px) {
+  #eeg-videos {
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    height: auto;
+    grid-template-columns: none;
+    grid-template-rows: none;
+  }
+  .video-list {
+    order: 1;
+    display: block;
+    width: 100%;
+    max-height: 60vh;
+    min-height: 60vh;
+    margin-top: 10px;
+  }
+  .main-content {
+    order: 2;
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+  }
+  .back-button {
+    display: block;
+    margin-bottom: 10px;
+  }
+  .video-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    justify-content: center;
+    text-align: center;
+    margin-top: 12px;
+  }
+}
+
+/*-----------------------------------------------
+  QUIZ SECTION
+-----------------------------------------------*/
+.quiz-section {
+  display: none;
+  width: 100%;
+  max-width: 800px;
+  margin: 0 auto;
+}
+.quiz-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.quiz-header h3 {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: var(--text-color);
+}
+.progress-indicator {
+  font-size: 0.9rem;
+  color: var(--text-color);
+}
+.quiz-question p {
+  margin-bottom: 8px;
+  line-height: 1.4;
+}
+.quiz-question ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.quiz-question li {
+  margin-bottom: 8px;
+}
+.quiz-question button {
+  width: 100%;
+  text-align: left;
+  padding: 12px;
+  cursor: pointer;
+  border: 1px solid var(--border-color);
+  background: var(--info-bg);
+  border-radius: 8px;
+  transition: background 0.2s, transform 0.1s;
+  font-size: 0.95rem;
+  color: var(--text-color);
+}
+.quiz-question button:hover {
+  background: var(--hover-bg);
+  transform: scale(1.02);
+}
+.quiz-nav {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+/*-----------------------------------------------
+  APPLE-STYLE BUTTONS (Unified)
+-----------------------------------------------*/
+.btn {
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #d1d1d6;
+  border-radius: 10px;
+  color: #007aff;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.btn:hover {
+  background-color: #f7f7f7;
+  transform: scale(1.03);
+}
+.btn:active {
+  background-color: #e5e5ea;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+.btn-prev {
+  background-color: var(--btn-prev);
+  color: #fff;
+}
+.btn-skip {
+  background-color: var(--btn-skip);
+  color: #fff;
+}
+.btn-next {
+  background-color: var(--btn-next);
+  color: #fff;
+}
+.correct-msg {
+  color: #155724;
+  background-color: #d4edda;
+  padding: 8px;
+  border: 1px solid #c3e6cb;
+  border-radius: 4px;
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+.incorrect-msg {
+  color: #721c24;
+  background-color: #f8d7da;
+  padding: 8px;
+  border: 1px solid #f5c6cb;
+  border-radius: 4px;
+  margin-top: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+.kitten-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+.kitten-overlay img {
+  width: 200px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+/*-----------------------------------------------
+  NATUS INSTRUCTIONS MODERNIZATION
+-----------------------------------------------*/
+.natus-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--info-bg);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+.natus-container h1 {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+.natus-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.natus-step {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  transition: transform 0.3s;
+}
+.natus-step:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+.natus-step-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--primary-color);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+.natus-step-content h3 {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: var(--secondary-color);
+}
+.natus-step-content p {
+  font-size: 1rem;
+  color: var(--text-color);
+  line-height: 1.5;
+}
+.natus-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  border-radius: 4px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.natus-step:nth-child(1) .natus-image.step1-image {
+  max-width: 150px;
+  margin: 1rem auto 0;
+}
+
+/*-----------------------------------------------
+  Dark Mode Overrides for Natus Instructions
+-----------------------------------------------*/
+body.dark .natus-container h1,
+body.dark .natus-container h3,
+body.dark .natus-container p {
+  color: #fff;
+}
+
+/*-----------------------------------------------
+  RESPONSIVE TABLE: New Card Layout on Mobile
+-----------------------------------------------*/
+@media (max-width: 768px) {
+  .custom-table {
+    table-layout: fixed;
+    width: 100%;
+    font-size: 0.9rem;
+  }
+  .custom-table th,
+  .custom-table td {
+    white-space: normal;
+    word-wrap: break-word;
+    padding: 8px;
+  }
+}
+@media (max-width: 600px) {
+  .custom-table thead {
+    display: none;
+  }
+  .custom-table tr {
+    display: block;
+    margin-bottom: 1rem;
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+  }
+  .custom-table td {
+    display: block;
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .custom-table td:last-child {
+    border-bottom: 0;
+  }
+  .custom-table td:before {
+    content: attr(data-label);
+    display: block;
+    font-weight: bold;
+    margin-bottom: 0.25rem;
+  }
+}
+
+/*-----------------------------------------------
+  FAQ PAGE STYLING (Modernized)
+-----------------------------------------------*/
+.faq-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--info-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+.faq-header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.faq-header h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+}
+.faq-item {
+  margin-bottom: 1.5rem;
+}
+.faq-question {
+  font-size: 1.2rem;
+  font-weight: bold;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+}
+.faq-answer {
+  font-size: 1rem;
+  color: var(--text-color);
+  line-height: 1.6;
+  border-left: 3px solid var(--accent-color);
+  padding-left: 1rem;
+  margin-bottom: 1rem;
+}
+
+/*-----------------------------------------------
+  MODAL STYLES (if using modals)
+-----------------------------------------------*/
+.detail-modal {
+  display: none;
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.6);
+  align-items: center;
+  justify-content: center;
+}
+
+.modal {
+  display: none;  /* hides it initially */
+  /* ... all your other .modal properties ... */
+}
+.modal-content {
+  background: var(--info-bg);
+  margin: auto;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 2px 10px var(--shadow-color);
+}
+.modal-content h2 {
+  margin-top: 0;
+  color: var(--primary-color);
+}
+.modal-content ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  color: var(--text-color);
+}
+.modal-content .close {
+  float: right;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--accent-color);
+}
+
+/*-----------------------------------------------
+  MOBILE & RESPONSIVE STYLES
+-----------------------------------------------*/
+@media (max-width: 600px) {
+  .cards-container {
+    max-width: 95%;
+  }
+}
+
+/*-----------------------------------------------
+  BUTTONS & MISC
+-----------------------------------------------*/
+.btn {
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #d1d1d6;
+  border-radius: 10px;
+  color: #007aff;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.btn:hover {
+  background-color: #f7f7f7;
+  transform: scale(1.03);
+}
+.btn:active {
+  background-color: #e5e5ea;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+/*-----------------------------------------------
+  SECTION TITLES (Keep Original Look)
+-----------------------------------------------*/
+.section-header {
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 1.5rem 0 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--accent-color);
+}
+
+/*-----------------------------------------------
+  ILAE CLASSIFICATION SECTION DARK MODE OVERRIDES
+-----------------------------------------------*/
+body.dark .cards-container h2,
+body.dark .cards-container h3,
+body.dark .section-header {
+  /* Ensure page and section headers use the dark mode header text color */
+  color: var(--header-text) !important;
+}
+
+body.dark .card {
+  /* Ensure the card background, text, and border update in dark mode */
+  background: var(--info-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+body.dark .modal-content {
+  /* The modal pop-up adapts its background and text colors */
+  background: var(--info-bg);
+  color: var(--text-color);
+}
+
+body.dark .modal-close {
+  /* Update modal close button color */
+  color: var(--header-text);
+}
+
+body.dark .modal-title {
+  /* Modal title should reflect dark mode header color */
+  color: var(--header-text);
+}
+
+body.dark .modal-overview,
+body.dark .modal-eeg {
+  /* Ensure modal body text uses the dark mode text color */
+  color: var(--text-color);
+}
+
+
+/*============================================
+   ILAE CLASSIFICATION SPECIFIC STYLES
+=============================================*/
+#ilae-classification-content.ilae-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+#ilae-classification-content .ilae-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+}
+
+#ilae-classification-content .ilae-card {
+  background: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#ilae-classification-content .ilae-card:hover {
+  transform: translateY(-5px);
+}
+
+#ilae-classification-content .ilae-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+/* Dark mode override for ILAE card titles */
+body.dark #ilae-classification-content .ilae-card h3 {
+  color: var(--header-text) !important;
+}
+
+#ilae-classification-content .ilae-card p {
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+/* Modal Styles for ILAE Pop-Ups */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: var(--info-bg);
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--primary-color);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  text-align: center;
+}
+
+/* Dark mode override for modal titles */
+body.dark .modal-title {
+  color: var(--header-text) !important;
+}
+
+.modal-overview,
+.modal-eeg {
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.modal-eeg {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 0.75rem;
+  color: var(--secondary-color);
+}
+
+.button-group {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.modal-button {
+  flex: 1;
+  background: var(--accent-color);
+  color: #fff;
+  padding: 0.75rem;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.modal-button:hover {
+  background: var(--primary-color);
+}
+
+/* ILAE Search Bar Styles */
+.search-box {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  padding: 0.5rem;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  background: var(--info-bg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--text-color);
+}
+
+.search-box input::placeholder {
+  color: var(--border-color);
+  opacity: 0.8;
+}
+
+.search-box input:focus {
+  outline: none;
+  box-shadow: 0 0 5px var(--accent-color);
+}
+
+/* Outer container: perspective = 3D space */
+.flashcard {
+  width: 500px;            /* Adjust as needed */
+  height: 300px;           /* Adjust as needed */
+  perspective: 1000px;     /* Creates the 3D space for children */
+  margin: 0 auto;          /* Center horizontally (optional) */
+  position: relative;      /* If you want to position absolutely, etc. */
+}
+
+/* Inner wrapper that will be rotated. */
+.flashcard-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s;
+  transform-style: preserve-3d;  /* So child elements are 3D */
+  position: relative;
+}
+
+/* When "is-flipped" is on the parent, rotate 180deg around Y-axis */
+.flashcard.is-flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+/* Front + Back */
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;   /* Hide the reversed side */
+  display: flex;                 /* So we can center text easily */
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+/* The back side is rotated 180°, so initially hidden. */
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+/* Flashcard Button */
+.flashcard-button {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.75rem 1.5rem;
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.flashcard-button:hover {
+  background: var(--primary-color);
+}
+
+/* Flashcard Container & Card Styles */
+#flashcard-container {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.flashcard {
+  margin: 1rem auto;
+  padding: 1.5rem;
+  max-width: 600px; /* increased size */
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--info-bg);
+  box-shadow: 0 2px 8px var(--shadow-color);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+  font-size: 1.5rem; /* increased font size */
+}
+.flashcard:hover {
+  transform: scale(1.02);
+}
+
+/* Flashcard front/back styling */
+.flashcard-front,
+.flashcard-back {
+  padding: 1rem;
+}
+
+/* Flashcard controls */
+.flashcard-controls {
+  margin-top: 1rem;
+}
+.flashcard-controls button {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  background: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+.flashcard-controls button:hover {
+  background: var(--primary-color);
+}
+
+/*============================================
+   NEW: SEARCH AND TEST CONTAINER (Combined & Centered)
+=============================================*/
+.search-and-test {
+  display: flex;
+  align-items: stretch;       /* Children share the same height */
+  justify-content: center;     /* Center the container horizontally */
+  margin-bottom: 2rem;
+}
+
+/* Style the search box inside the container */
+.search-and-test .search-box {
+  flex: 1;
+  max-width: 600px;
+  margin: 0;
+  /* Use the same border, padding, and background as before */
+  border: 2px solid var(--accent-color);
+  border-right: none;         /* Remove right border so it touches the button */
+  border-top-left-radius: 8px;
+  border-bottom-left-radius: 8px;
+  background: var(--info-bg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+}
+
+.search-and-test .search-box input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--text-color);
+}
+
+/* Style the Test Yourself button inside the container */
+.search-and-test .flashcard-button {
+  margin: 0;
+  padding: 0.5rem 1.5rem;
+  border: 2px solid var(--accent-color);
+  border-left: none;          /* Remove left border so it touches the search box */
+  border-top-right-radius: 8px;
+  border-bottom-right-radius: 8px;
+  background: var(--accent-color);
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+.search-and-test .flashcard-button:hover {
+  background: var(--primary-color);
+}
+
+.flashcard {
+  /* Width rules for desktop & mobile */
+  width: 70vw;            /* 70% of the viewport width */
+  max-width: 600px;       /* Don’t exceed 600px wide */
+  min-height: 300px;      /* Base minimum height */
+  max-height: 80vh;       /* At most 80% of the screen's height */
+  margin: 1rem auto;      /* Center it and add vertical spacing */
+  perspective: 1000px;    /* Enables 3D flip */
+  position: relative;     /* Needed for absolutely positioned child surfaces */
+}
+
+.flashcard-inner {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transition: transform 0.4s;
+  transform-style: preserve-3d;
+}
+
+/* Both surfaces fill the parent and can scroll if content is too big */
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;  
+  backface-visibility: hidden;
+  overflow-y: auto;         /* Let content scroll if it exceeds the card height */
+  box-sizing: border-box;    /* So padding doesn’t blow up the width/height */
+  padding: 1rem;            /* Some breathing room for the text */
+  display: flex;            /* If you want centered text... */
+  align-items: center;
+  justify-content: center;
+}
+
+/* The back side is rotated so it’s hidden until flipped */
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
+.modal-content {
+  /* A wide, responsive modal */
+  width: 80vw;               /* 80% of viewport width on desktop */
+  max-width: 1000px;         /* cap it so it’s not too large */
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  /* flex layout to center items vertically & horizontally */
+  display: flex;
+  flex-direction: column;
+  align-items: center; 
+}
+
+/* The container for the PDF iframe */
+.pdf-iframe-container {
+  /* Fill the modal content width fully */
+  width: 100%;
+  max-width: 900px;    /* or some comfortable limit inside the modal */
+  margin: 1rem auto;
+  /* If you want to limit the vertical size, you can do:
+     max-height: 80vh;
+     overflow: auto;
+  */
+}
+
+/* The PDF iframe adapts to the container width. */
+.pdf-iframe-container iframe {
+  width: 100%;         /* Always match container’s width */
+  height: 600px;       /* Or pick a height that works for your layout */
+  border: none;
+  display: block;      /* Removes any default inline gaps */
+}
+
+/* On smaller screens, let the modal fill more space */
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90vw;       
+    max-width: 600px;  
+  }
+  .pdf-iframe-container iframe {
+    height: 400px;     /* Maybe shorter on mobile */
+  }
+}
+
+/* (All your existing CSS up here) */
+
+/*-----------------------------------------------
+  END OF YOUR EXISTING STYLES
+-----------------------------------------------*/
+
+/*-----------------------------------------------
+  NEW MODAL + PDF IFRAME OVERRIDES
+-----------------------------------------------*/
+.modal-content {
+  width: 80vw; 
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pdf-iframe-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 1rem auto;
+  /* max-height: 80vh; overflow: auto;  If you want scrolling within the container */
+  -webkit-overflow-scrolling: touch;  /* helps iOS devices scroll PDFs smoothly */
+}
+
+.pdf-iframe-container iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90vw;
+    max-width: 600px;
+  }
+  .pdf-iframe-container iframe {
+    height: 400px;
+  }
+}
+
+/* (Larger screens) Default modal styling */
+.modal-content {
+  width: 80vw;              /* 80% of viewport width on desktop */
+  max-width: 1000px;        /* don’t exceed 1000px */
+  margin: 2rem auto;        /* center horizontally, add vertical spacing */
+  padding: 2rem;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-size: 1rem;          /* base text size for bigger screens */
+  line-height: 1.5;
+}
+
+/* The PDF iframe container (if you have a PDF embedded) */
+.pdf-iframe-container {
+  width: 100%;
+  max-width: 900px; 
+  margin: 1rem auto;
+  /* If needed for scrolling:
+     max-height: 80vh;
+     overflow: auto;
+     -webkit-overflow-scrolling: touch;
+  */
+}
+.pdf-iframe-container iframe {
+  width: 100%;
+  height: 600px;            /* or set a different fixed height */
+  border: none;
+  display: block;
+}
+
+/* (Smaller screens) Shrink everything a bit */
+@media (max-width: 600px) {
+  .modal-content {
+    width: 90vw;            /* fill more of the screen width */
+    max-width: 500px;       /* narrower max on smaller devices */
+    padding: 1rem;          /* less padding so it fits better */
+    font-size: 0.9rem;      /* slightly smaller text on phones */
+    line-height: 1.4;
+  }
+  .pdf-iframe-container iframe {
+    height: 400px;          /* reduce iframe height on phones */
+  }
+}
+
+/* The outer overlay covers the screen fully */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* The dark overlay */
+  background: rgba(0, 0, 0, 0.7);
+  
+  /* Use flex to center the modal both horizontally + vertically */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;       /* Above most other elements */
+
+  /* Typically 'display: none;' is toggled by JS to hide/show this */
+}
+
+/* The modal box itself */
+.modal-content {
+  position: relative;
+  width: 90vw;          /* 90% of the viewport width */
+  max-width: 600px;     /* cap width on larger screens */
+  
+  /* The critical piece: ensure it never exceeds 90% of viewport height. */
+  max-height: 90vh;
+  overflow-y: auto;     /* if content is taller than 90vh, scroll inside */
+  
+  background: var(--info-bg);
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The “Close” (×) button positioning, if you want it in the corner */
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Slightly shrink spacing/font on very small screens if needed */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* If you're embedding a PDF: container for the iframe */
+.pdf-iframe-container {
+  width: 100%;
+  /* Constrain the iframe so it doesn't push the modal bigger than 90vh */
+  /* If you want it to scroll: you can do max-height: 80vh; overflow: auto; here as well */
+  margin-top: 1rem;  /* spacing above iframe */
+}
+
+.pdf-iframe-container iframe {
+  width: 100%;
+  height: 60vh;      /* a typical default for the PDF height */
+  border: none;
+  display: block;
+}
+
+/* Base flashcard text sizes for desktop/tablet */
+.flashcard-front,
+.flashcard-back {
+  font-size: 1rem;      /* Or whatever default you like */
+  line-height: 1.4;     /* Ensures comfortable spacing */
+}
+
+/* On smaller screens, shrink the font a bit */
+@media (max-width: 600px) {
+  .flashcard-front,
+  .flashcard-back {
+    font-size: 0.9rem;  /* slightly smaller font on phones */
+    line-height: 1.3;   /* adjust line spacing as needed */
+  }
+}
+
+.modal {
+  display: none;  /* hides it initially */
+  /* ... all your other .modal properties ... */
+}
