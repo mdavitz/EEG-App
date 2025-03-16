@@ -16,12 +16,25 @@
   <!-- Renamed class from "cards-container" to "ilae-container" -->
   <main id="ilae-classification-content" class="ilae-container">
     <h2 class="page-title">ILAE Classification</h2>
-    
-    <!-- Search Box -->
-    <div class="search-box">
-      <input type="text" id="searchBar" placeholder="Search ILAE Classification content..." />
+    <div class="search-and-test">
+      <div class="search-box">
+        <input type="text" id="searchBar" placeholder="Search ILAE Classification content..." />
+      </div>
+      <button id="test-yourself-button" class="flashcard-button">Test Yourself!</button>
     </div>
-    
+<!-- Flashcard Container (initially hidden) -->
+<div id="flashcard-container" style="display: none;">
+  <div id="flashcard" class="flashcard">
+    <div class="flashcard-front"></div>
+    <div class="flashcard-back" style="display: none;"></div>
+  </div>
+  <div class="flashcard-controls">
+    <button id="prev-flashcard">Previous</button>
+    <button id="next-flashcard">Next</button>
+    <button id="exit-flashcard">Exit Flashcard Mode</button>
+  </div>
+</div>
+
     <!-- Content Container -->
     <div id="contentContainer">
       <!-- Section 1: Neonates and Infants -->
@@ -262,6 +275,9 @@
   
   <!-- JavaScript for Search and Modal Functionality -->
   <script>
+/*============================================
+   FLASH CARDS
+=============================================*/
     // Scope search to ILAE cards only
     document.getElementById('searchBar').addEventListener('input', function(e) {
       const term = e.target.value.trim().toLowerCase();
@@ -301,5 +317,87 @@
       }
     });
   </script>
+
+<script>
+  // Gather all ILAE cards data into an array
+  const flashcards = Array.from(document.querySelectorAll('#ilae-classification-content .ilae-card')).map(card => ({
+    title: card.getAttribute('data-title'),
+    summary: card.getAttribute('data-summary'),
+    eeg: card.getAttribute('data-eeg'),
+    pdf: card.getAttribute('data-pdf')
+  }));
+  
+  let currentCardIndex = 0;
+  
+  // Elements
+  const testButton = document.getElementById('test-yourself-button');
+  const searchBar = document.querySelector('.search-box'); // search bar container
+  const flashcardContainer = document.getElementById('flashcard-container');
+  const flashcard = document.getElementById('flashcard');
+  const flashcardFront = flashcard.querySelector('.flashcard-front');
+  const flashcardBack = flashcard.querySelector('.flashcard-back');
+  const prevButton = document.getElementById('prev-flashcard');
+  const nextButton = document.getElementById('next-flashcard');
+  const exitButton = document.getElementById('exit-flashcard');
+  const normalContent = document.getElementById('contentContainer');
+  
+  // Function to update flashcard display (show question first)
+  function updateFlashcard() {
+    const card = flashcards[currentCardIndex];
+    // Using title as question and summary as answer.
+    flashcardFront.textContent = card.title;
+    flashcardBack.textContent = "Answer: " + card.summary;
+    // Always show the front first.
+    flashcardFront.style.display = 'block';
+    flashcardBack.style.display = 'none';
+  }
+  
+  // Toggle flashcard mode
+  testButton.addEventListener('click', () => {
+    // Hide search bar and test button, and the normal content
+    searchBar.style.display = 'none';
+    testButton.style.display = 'none';
+    normalContent.style.display = 'none';
+    // Show flashcard container
+    flashcardContainer.style.display = 'block';
+    currentCardIndex = 0;
+    updateFlashcard();
+  });
+  
+  // Flashcard navigation
+  nextButton.addEventListener('click', () => {
+    if (currentCardIndex < flashcards.length - 1) {
+      currentCardIndex++;
+      updateFlashcard();
+    }
+  });
+  
+  prevButton.addEventListener('click', () => {
+    if (currentCardIndex > 0) {
+      currentCardIndex--;
+      updateFlashcard();
+    }
+  });
+  
+  exitButton.addEventListener('click', () => {
+    // Hide flashcard mode and show normal grid plus the search bar and test button
+    flashcardContainer.style.display = 'none';
+    normalContent.style.display = 'block';
+    searchBar.style.display = '';
+    testButton.style.display = 'block';
+  });
+  
+  // Add click-to-flip functionality on the flashcard
+  flashcard.addEventListener('click', () => {
+    if (flashcardFront.style.display !== 'none') {
+      flashcardFront.style.display = 'none';
+      flashcardBack.style.display = 'block';
+    } else {
+      flashcardFront.style.display = 'block';
+      flashcardBack.style.display = 'none';
+    }
+  });
+</script>
+
 </body>
 </html>
