@@ -139,27 +139,35 @@
       position: relative;
       width: 400px;
       height: 700px;
-      background: #ffffff2a;
-      border-radius: 0px;
-      overflow: visible;
-    }
+      background: transparent;  /* no background */
+      border: none !important;  /* ensure no border */
+      border-radius: 0 !important;  /* no rounded corners */
+      box-shadow: none !important;  /* remove any shadows */
+      overflow: hidden;
+}
+
     /* The iframe fills its container */
     #secret-game-modal iframe {
       width: 100%;
       height: 100%;
-      border: none;
+      border: none !important;  /* remove border from iframe */
+      outline: none !important; /* remove any outline */
     }
     /* On mobile devices, the modal adapts to the viewport width while maintaining a 4:3 aspect ratio */
     @media (max-width: 820px) {
       #secret-game-modal .modal-content {
         width: auto;
         height: 100%;
-        margin: 20px;
+        margin: 0px;
+        background: transparent;
       }
       #secret-game-modal iframe {
         width: calc(100vw * 0.75);
       }
     }
+    #close-secret-modal {
+  display: none !important;
+}
   </style>
 
 </head>
