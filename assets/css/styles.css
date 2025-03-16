@@ -12,12 +12,8 @@
   --header-text: #fff;
   --hover-bg: #f0f0f0;
   --shadow-color: rgba(0, 0, 0, 0.08);
-  --table-header-bg: #f8f8f8;
-  --dropdown-hover-bg: #f9f9f9;
   --transition-duration: 0.3s;
-  --answer-bg: #e9ecef;
-  --answer-hover-bg: #d6d8db;
-  --footer-bg: rgba(255, 255, 255, 0.8);  /* New: Footer background for light mode */
+  --footer-bg: rgba(255, 255, 255, 0.8);
 }
 .dark {
   --primary-color: #1a1a1a;
@@ -30,11 +26,7 @@
   --header-text: #fff;
   --hover-bg: #222;
   --shadow-color: rgba(0, 0, 0, 0.3);
-  --table-header-bg: #333;
-  --dropdown-hover-bg: #2a2a2a;
-  --answer-bg: #333;
-  --answer-hover-bg: #444;
-  --footer-bg: rgba(30, 30, 30, 0.8);  /* New: Footer background for dark mode */
+  --footer-bg: rgba(30, 30, 30, 0.8);
 }
 
 /*-----------------------------------------------
@@ -52,15 +44,8 @@ body {
   color: var(--text-color);
   line-height: 1.6;
   transition: background var(--transition-duration),
-    color var(--transition-duration),
-    font-size var(--transition-duration);
+    color var(--transition-duration);
   padding-bottom: 80px;
-}
-.step-image {
-  display: block;
-  margin: 0 auto;
-  max-width: 100%;
-  height: auto;
 }
 
 /*-----------------------------------------------
@@ -240,29 +225,6 @@ header.shrink .logo {
   }
 }
 
-@media (max-width: 600px) {
-  /* Adjust and make the disclaimer pop-up scrollable on mobile */
-  #dev-modal .modal-content {
-    font-size: 0.8rem;
-    padding: 1rem;
-    max-height: 90vh;      /* Limit the height to 90% of the viewport */
-    overflow-y: auto;      /* Enable vertical scrolling if content overflows */
-  }
-  #dev-modal h2 {
-    font-size: 1.2rem;
-  }
-  #dev-modal p {
-    font-size: 0.8rem;
-  }
-  #dev-modal input[type="text"] {
-    font-size: 0.9rem;
-    padding: 0.6rem;
-  }
-  #dev-modal button {
-    font-size: 0.8rem;
-    padding: 0.5rem 1rem;
-  }
-}
 /*-----------------------------------------------
   MAIN CONTAINER
 -----------------------------------------------*/
@@ -304,8 +266,8 @@ header.shrink .logo {
   background: var(--info-bg);
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 1.5rem;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  padding: 16px;
+  box-shadow: 0 2px 8px var(--shadow-color);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
 }
@@ -325,6 +287,11 @@ header.shrink .logo {
 .card h3 {
   font-size: 1.5rem;
   margin-bottom: 0.75rem;
+  color: var(--primary-color);
+}
+/* Ensure dark mode applies correctly to card headers */
+body.dark .card h3 {
+  color: var(--header-text);
 }
 .card p {
   font-size: 1rem;
@@ -391,6 +358,7 @@ footer {
     display: none;
   }
 }
+
 /*-----------------------------------------------
   REDESIGNED VIDEO TAB
 -----------------------------------------------*/
@@ -403,8 +371,6 @@ footer {
   height: calc(100vh - 40px);
   box-sizing: border-box;
 }
-
-/* Video List (Left Sidebar) */
 .video-list {
   background: var(--info-bg);
   border: 1px solid var(--border-color);
@@ -438,8 +404,6 @@ footer {
   background: var(--hover-bg);
   transform: translateX(5px);
 }
-
-/* Main Content (Video Player/Quiz Section) */
 .main-content {
   background: var(--info-bg);
   border: 1px solid var(--border-color);
@@ -450,7 +414,6 @@ footer {
   overflow: auto;
   box-shadow: 0 2px 6px var(--shadow-color);
 }
-/* Responsive Video: Adjusts to available width while maintaining aspect ratio */
 .main-content video,
 .main-content iframe {
   width: 100%;
@@ -458,8 +421,6 @@ footer {
   max-width: 100%;
   border-radius: 8px;
 }
-
-/* Centered Video Navigation Buttons */
 .video-nav {
   width: 100%;
   display: flex;
@@ -487,8 +448,6 @@ footer {
 .video-nav .btn:active {
   background-color: #004080;
 }
-
-/* New Video Wrapper for Stable Layout */
 .video-wrapper {
   width: 100%;
   max-width: 800px;
@@ -510,7 +469,6 @@ footer {
     flex-direction: column;
     padding: 10px;
     height: auto;
-    /* Remove grid-specific properties */
     grid-template-columns: none;
     grid-template-rows: none;
   }
@@ -628,7 +586,6 @@ footer {
   background-color: #e5e5ea;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
 }
-
 .btn-prev {
   background-color: var(--btn-prev);
   color: #fff;
@@ -641,7 +598,6 @@ footer {
   background-color: var(--btn-next);
   color: #fff;
 }
-
 .correct-msg {
   color: #155724;
   background-color: #d4edda;
@@ -662,7 +618,6 @@ footer {
   text-align: center;
   font-weight: 600;
 }
-
 .kitten-overlay {
   position: fixed;
   top: 0;
@@ -778,8 +733,6 @@ body.dark .natus-container p {
     padding: 8px;
   }
 }
-
-/* For screens under 600px: Convert table rows into card-like blocks */
 @media (max-width: 600px) {
   .custom-table thead {
     display: none;
@@ -844,153 +797,6 @@ body.dark .natus-container p {
   padding-left: 1rem;
   margin-bottom: 1rem;
 }
-/*-----------------------------------------------
-  THEME VARIABLES & TRANSITIONS
------------------------------------------------*/
-:root {
-  --primary-color: #003366;
-  --secondary-color: #00509e;
-  --accent-color: #007bff;
-  --bg-color: #fafafa;
-  --text-color: #333;
-  --info-bg: #fff;
-  --border-color: #ddd;
-  --header-text: #fff;
-  --hover-bg: #f0f0f0;
-  --shadow-color: rgba(0, 0, 0, 0.08);
-  --table-header-bg: #f8f8f8;
-  --dropdown-hover-bg: #f9f9f9;
-  --transition-duration: 0.3s;
-  --answer-bg: #e9ecef;
-  --answer-hover-bg: #d6d8db;
-  --footer-bg: rgba(255, 255, 255, 0.8);
-}
-
-.dark {
-  --primary-color: #1a1a1a;
-  --secondary-color: #333;
-  --accent-color: #0099ff;
-  --bg-color: #121212;
-  --text-color: #eee;
-  --info-bg: #1e1e1e;
-  --border-color: #444;
-  --header-text: #fff;
-  --hover-bg: #222;
-  --shadow-color: rgba(0, 0, 0, 0.3);
-  --table-header-bg: #333;
-  --dropdown-hover-bg: #2a2a2a;
-  --answer-bg: #333;
-  --answer-hover-bg: #444;
-  --footer-bg: rgba(30, 30, 30, 0.8);
-}
-
-/*-----------------------------------------------
-  GLOBAL RESET & BASE STYLES
------------------------------------------------*/
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
-  background: var(--bg-color);
-  color: var(--text-color);
-  line-height: 1.6;
-  transition: background var(--transition-duration), color var(--transition-duration), font-size var(--transition-duration);
-  padding-bottom: 80px;
-}
-
-/*-----------------------------------------------
-  TITLES (Page & Section)
------------------------------------------------*/
-.page-title,
-.section-title {
-  text-align: center;
-  margin: 2rem 0;
-  font-size: 2rem;
-  color: var(--primary-color);
-}
-
-/*-----------------------------------------------
-  CARDS & GRID (Pediatric Epilepsy Tab)
------------------------------------------------*/
-.cards-container {
-  padding: 2rem;
-}
-
-.cards-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 2rem;
-}
-
-.card {
-  background: var(--info-bg);
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 8px var(--shadow-color);
-  transition: background var(--transition-duration);
-}
-
-.card:hover {
-  background: var(--hover-bg);
-}
-
-.card h3 {
-  margin-bottom: 0.5rem;
-  font-size: 1.2rem;
-  color: var(--primary-color);
-}
-
-.card p {
-  margin-bottom: 1rem;
-  font-size: 0.95rem;
-  color: var(--text-color);
-}
-
-.learn-more {
-  text-decoration: none;
-  color: var(--accent-color);
-  font-weight: 500;
-}
-
-/*-----------------------------------------------
-  DETAILS & SUMMARY (Collapsible Sections)
------------------------------------------------*/
-details {
-  margin-bottom: 2rem;
-}
-
-details > summary {
-  font-size: 1.5rem;
-  cursor: pointer;
-  padding: 0.5rem 0;
-  outline: none;
-  color: var(--primary-color);
-}
-
-/*-----------------------------------------------
-  REFERENCES SECTION
------------------------------------------------*/
-.references {
-  margin: 2rem auto;
-  max-width: 800px;
-  padding: 0 1rem;
-}
-
-.references h3 {
-  text-align: center;
-  color: var(--primary-color);
-}
-
-.references ul {
-  list-style: disc;
-  padding-left: 1.5rem;
-  color: var(--text-color);
-}
 
 /*-----------------------------------------------
   MODAL STYLES (if using modals)
@@ -1008,7 +814,6 @@ details > summary {
   align-items: center;
   justify-content: center;
 }
-
 .modal-content {
   background: var(--info-bg);
   margin: auto;
@@ -1018,21 +823,93 @@ details > summary {
   max-width: 600px;
   box-shadow: 0 2px 10px var(--shadow-color);
 }
-
 .modal-content h2 {
   margin-top: 0;
   color: var(--primary-color);
 }
-
 .modal-content ul {
   list-style: disc;
   padding-left: 1.5rem;
   color: var(--text-color);
 }
-
 .modal-content .close {
   float: right;
   font-size: 1.5rem;
   cursor: pointer;
   color: var(--accent-color);
+}
+
+/*-----------------------------------------------
+  MOBILE & RESPONSIVE STYLES
+-----------------------------------------------*/
+@media (max-width: 600px) {
+  .cards-container {
+    max-width: 95%;
+  }
+}
+
+
+/*-----------------------------------------------
+  BUTTONS & MISC
+-----------------------------------------------*/
+.btn {
+  appearance: none;
+  background-color: #fff;
+  border: 1px solid #d1d1d6;
+  border-radius: 10px;
+  color: #007aff;
+  font-size: 16px;
+  font-weight: 500;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+}
+.btn:hover {
+  background-color: #f7f7f7;
+  transform: scale(1.03);
+}
+.btn:active {
+  background-color: #e5e5ea;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/*-----------------------------------------------
+  ILAE CLASSIFICATION SECTION DARK MODE OVERRIDES
+-----------------------------------------------*/
+body.dark .cards-container h2,
+body.dark .cards-container h3,
+body.dark .section-header {
+  /* Ensure page and section headers use the dark mode header text color */
+  color: var(--header-text) !important;
+}
+
+body.dark .card {
+  /* Ensure the card background, text, and border update in dark mode */
+  background: var(--info-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+body.dark .modal-content {
+  /* The modal pop-up adapts its background and text colors */
+  background: var(--info-bg);
+  color: var(--text-color);
+}
+
+body.dark .modal-close {
+  /* Update modal close button color */
+  color: var(--header-text);
+}
+
+body.dark .modal-title {
+  /* Modal title should reflect dark mode header color */
+  color: var(--header-text);
+}
+
+body.dark .modal-overview,
+body.dark .modal-eeg {
+  /* Ensure modal body text uses the dark mode text color */
+  color: var(--text-color);
 }
