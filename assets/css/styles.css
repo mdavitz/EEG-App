@@ -1473,7 +1473,7 @@ body.dark .modal-title {
   max-width: 600px;     /* cap width on larger screens */
   
   /* The critical piece: ensure it never exceeds 90% of viewport height. */
-  max-height: 90vh;
+  max-height: 70vh;
   overflow-y: auto;     /* if content is taller than 90vh, scroll inside */
   
   background: var(--info-bg);
