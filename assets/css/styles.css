@@ -1522,7 +1522,7 @@ body.dark .modal-title {
 /* Base flashcard text sizes for desktop/tablet */
 .flashcard-front,
 .flashcard-back {
-  font-size: 1rem;      /* Or whatever default you like */
+  font-size: 2rem;      /* Or whatever default you like */
   line-height: 1.4;     /* Ensures comfortable spacing */
 }
 
@@ -1530,7 +1530,7 @@ body.dark .modal-title {
 @media (max-width: 600px) {
   .flashcard-front,
   .flashcard-back {
-    font-size: 0.9rem;  /* slightly smaller font on phones */
+    font-size: 1.4rem;  /* slightly smaller font on phones */
     line-height: 1.3;   /* adjust line spacing as needed */
   }
 }
