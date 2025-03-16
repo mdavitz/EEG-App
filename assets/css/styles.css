@@ -848,7 +848,6 @@ body.dark .natus-container p {
   }
 }
 
-
 /*-----------------------------------------------
   BUTTONS & MISC
 -----------------------------------------------*/
@@ -913,3 +912,165 @@ body.dark .modal-eeg {
   /* Ensure modal body text uses the dark mode text color */
   color: var(--text-color);
 }
+
+/*============================================
+   ILAE CLASSIFICATION SPECIFIC STYLES
+=============================================*/
+#ilae-classification-content.ilae-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+#ilae-classification-content .ilae-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  padding: 0;
+}
+
+#ilae-classification-content .ilae-card {
+  background: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 1rem;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+#ilae-classification-content .ilae-card:hover {
+  transform: translateY(-5px);
+}
+
+#ilae-classification-content .ilae-card h3 {
+  font-size: 1.4rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+/* Dark mode override for ILAE card titles */
+body.dark #ilae-classification-content .ilae-card h3 {
+  color: var(--header-text) !important;
+}
+
+#ilae-classification-content .ilae-card p {
+  font-size: 0.95rem;
+  margin: 0.5rem 0;
+  line-height: 1.4;
+}
+
+/* Modal Styles for ILAE Pop-Ups */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 20000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: var(--info-bg);
+  padding: 1.5rem;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 100%;
+  position: relative;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--primary-color);
+}
+
+.modal-title {
+  margin: 0;
+  font-size: 1.8rem;
+  color: var(--primary-color);
+  text-align: center;
+}
+
+/* Dark mode override for modal titles */
+body.dark .modal-title {
+  color: var(--header-text) !important;
+}
+
+.modal-overview,
+.modal-eeg {
+  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+.modal-eeg {
+  border-left: 4px solid var(--accent-color);
+  padding-left: 0.75rem;
+  color: var(--secondary-color);
+}
+
+.button-group {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.modal-button {
+  flex: 1;
+  background: var(--accent-color);
+  color: #fff;
+  padding: 0.75rem;
+  text-align: center;
+  text-decoration: none;
+  border-radius: 4px;
+  font-size: 1rem;
+  transition: background 0.2s ease;
+}
+
+.modal-button:hover {
+  background: var(--primary-color);
+}
+
+/* ILAE Search Bar Styles */
+.search-box {
+  max-width: 600px;
+  margin: 0 auto 2rem;
+  padding: 0.5rem;
+  border: 2px solid var(--accent-color);
+  border-radius: 8px;
+  background: var(--info-bg);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-box input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  background: transparent;
+  color: var(--text-color);
+}
+
+.search-box input::placeholder {
+  color: var(--border-color);
+  opacity: 0.8;
+}
+
+.search-box input:focus {
+  outline: none;
+  box-shadow: 0 0 5px var(--accent-color);
+}
+/*============================================
+   END ILAE CLASSIFICATION SPECIFIC STYLES
+=============================================*/
