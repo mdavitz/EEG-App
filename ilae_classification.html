@@ -265,18 +265,23 @@
     </div>
   </main>
   
-  <!-- Modal Pop-Up -->
-  <div id="modal" class="modal">
-    <div class="modal-content">
-      <span class="modal-close">&times;</span>
-      <h2 class="modal-title"></h2>
-      <div class="modal-overview"></div>
-      <div class="modal-eeg"></div>
-      <div class="button-group">
-        <a href="#" target="_blank" class="modal-button">Open PDF</a>
-      </div>
+<!-- Modal Pop-Up -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="modal-close">&times;</span>
+    <h2 class="modal-title"></h2>
+    <div class="modal-overview"></div>
+    <div class="modal-eeg"></div>
+
+    <!-- PDF iframe container -->
+    <div class="pdf-iframe-container">
+      <!-- We'll dynamically set its "src" in JavaScript -->
+      <iframe id="pdfFrame" src="" frameborder="0"
+              style="width: 100%; height: 600px;">
+      </iframe>
     </div>
   </div>
+</div>
   
   <!-- JavaScript for Search and Modal Functionality -->
   <script>
@@ -294,23 +299,29 @@
       });
     });
     
-    // Modal functionality for ILAE cards
-    document.querySelectorAll('#ilae-classification-content .ilae-card').forEach(card => {
-      card.addEventListener('click', function() {
-        const modal = document.getElementById('modal');
-        const title = card.getAttribute('data-title');
-        const overview = card.getAttribute('data-summary');
-        const eeg = card.getAttribute('data-eeg');
-        const pdfLink = card.getAttribute('data-pdf');
-        
-        modal.querySelector('.modal-title').textContent = title;
-        modal.querySelector('.modal-overview').textContent = overview;
-        modal.querySelector('.modal-eeg').textContent = "EEG Findings: " + eeg;
-        modal.querySelector('.modal-button').href = pdfLink;
-        
-        modal.style.display = 'flex';
-      });
+// Modal functionality for ILAE cards
+document.querySelectorAll('#ilae-classification-content .ilae-card')
+  .forEach(card => {
+    card.addEventListener('click', function() {
+      const modal = document.getElementById('modal');
+      const title = card.getAttribute('data-title');
+      const overview = card.getAttribute('data-summary');
+      const eeg = card.getAttribute('data-eeg');
+      const pdfLink = card.getAttribute('data-pdf');
+
+      // Fill the modal text
+      modal.querySelector('.modal-title').textContent = title;
+      modal.querySelector('.modal-overview').textContent = overview;
+      modal.querySelector('.modal-eeg').textContent = "EEG Findings: " + eeg;
+
+      // Set the iframe to load the PDF
+      const pdfFrame = document.getElementById('pdfFrame');
+      pdfFrame.src = pdfLink;
+
+      // Show the modal
+      modal.style.display = 'flex';
     });
+  });
     
     // Close modal when clicking close button or outside modal content.
     document.querySelector('.modal-close').addEventListener('click', function() {
