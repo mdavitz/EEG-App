@@ -828,6 +828,11 @@ body.dark .natus-container p {
   align-items: center;
   justify-content: center;
 }
+
+.modal {
+  display: none;  /* hides it initially */
+  /* ... all your other .modal properties ... */
+}
 .modal-content {
   background: var(--info-bg);
   margin: auto;
@@ -1344,4 +1349,193 @@ body.dark .modal-title {
   .pdf-iframe-container iframe {
     height: 400px;     /* Maybe shorter on mobile */
   }
+}
+
+/* (All your existing CSS up here) */
+
+/*-----------------------------------------------
+  END OF YOUR EXISTING STYLES
+-----------------------------------------------*/
+
+/*-----------------------------------------------
+  NEW MODAL + PDF IFRAME OVERRIDES
+-----------------------------------------------*/
+.modal-content {
+  width: 80vw; 
+  max-width: 1000px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.pdf-iframe-container {
+  width: 100%;
+  max-width: 900px;
+  margin: 1rem auto;
+  /* max-height: 80vh; overflow: auto;  If you want scrolling within the container */
+  -webkit-overflow-scrolling: touch;  /* helps iOS devices scroll PDFs smoothly */
+}
+
+.pdf-iframe-container iframe {
+  width: 100%;
+  height: 600px;
+  border: none;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .modal-content {
+    width: 90vw;
+    max-width: 600px;
+  }
+  .pdf-iframe-container iframe {
+    height: 400px;
+  }
+}
+
+/* (Larger screens) Default modal styling */
+.modal-content {
+  width: 80vw;              /* 80% of viewport width on desktop */
+  max-width: 1000px;        /* don’t exceed 1000px */
+  margin: 2rem auto;        /* center horizontally, add vertical spacing */
+  padding: 2rem;
+  border-radius: 8px;
+  box-sizing: border-box;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  font-size: 1rem;          /* base text size for bigger screens */
+  line-height: 1.5;
+}
+
+/* The PDF iframe container (if you have a PDF embedded) */
+.pdf-iframe-container {
+  width: 100%;
+  max-width: 900px; 
+  margin: 1rem auto;
+  /* If needed for scrolling:
+     max-height: 80vh;
+     overflow: auto;
+     -webkit-overflow-scrolling: touch;
+  */
+}
+.pdf-iframe-container iframe {
+  width: 100%;
+  height: 600px;            /* or set a different fixed height */
+  border: none;
+  display: block;
+}
+
+/* (Smaller screens) Shrink everything a bit */
+@media (max-width: 600px) {
+  .modal-content {
+    width: 90vw;            /* fill more of the screen width */
+    max-width: 500px;       /* narrower max on smaller devices */
+    padding: 1rem;          /* less padding so it fits better */
+    font-size: 0.9rem;      /* slightly smaller text on phones */
+    line-height: 1.4;
+  }
+  .pdf-iframe-container iframe {
+    height: 400px;          /* reduce iframe height on phones */
+  }
+}
+
+/* The outer overlay covers the screen fully */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  /* The dark overlay */
+  background: rgba(0, 0, 0, 0.7);
+  
+  /* Use flex to center the modal both horizontally + vertically */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 20000;       /* Above most other elements */
+
+  /* Typically 'display: none;' is toggled by JS to hide/show this */
+}
+
+/* The modal box itself */
+.modal-content {
+  position: relative;
+  width: 90vw;          /* 90% of the viewport width */
+  max-width: 600px;     /* cap width on larger screens */
+  
+  /* The critical piece: ensure it never exceeds 90% of viewport height. */
+  max-height: 90vh;
+  overflow-y: auto;     /* if content is taller than 90vh, scroll inside */
+  
+  background: var(--info-bg);
+  border-radius: 8px;
+  box-sizing: border-box;
+  padding: 1.5rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* The “Close” (×) button positioning, if you want it in the corner */
+.modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+/* Slightly shrink spacing/font on very small screens if needed */
+@media (max-width: 600px) {
+  .modal-content {
+    padding: 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* If you're embedding a PDF: container for the iframe */
+.pdf-iframe-container {
+  width: 100%;
+  /* Constrain the iframe so it doesn't push the modal bigger than 90vh */
+  /* If you want it to scroll: you can do max-height: 80vh; overflow: auto; here as well */
+  margin-top: 1rem;  /* spacing above iframe */
+}
+
+.pdf-iframe-container iframe {
+  width: 100%;
+  height: 60vh;      /* a typical default for the PDF height */
+  border: none;
+  display: block;
+}
+
+/* Base flashcard text sizes for desktop/tablet */
+.flashcard-front,
+.flashcard-back {
+  font-size: 1rem;      /* Or whatever default you like */
+  line-height: 1.4;     /* Ensures comfortable spacing */
+}
+
+/* On smaller screens, shrink the font a bit */
+@media (max-width: 600px) {
+  .flashcard-front,
+  .flashcard-back {
+    font-size: 0.9rem;  /* slightly smaller font on phones */
+    line-height: 1.3;   /* adjust line spacing as needed */
+  }
+}
+
+.modal {
+  display: none;  /* hides it initially */
+  /* ... all your other .modal properties ... */
 }
