@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ILAE Classification</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- External CSS -->
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    /* Overall Page Styling */
+    body {
+      background: var(--bg-color);
+      font-family: 'Roboto', sans-serif;
+      margin: 0;
+      padding: 1rem;
+      color: var(--text-color);
+    }
+    .page-title {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 2.5rem;
+      color: var(--primary-color);
+    }
+    /* Section Headers - reduced font size */
+    .section-header {
+      text-align: center;
+      font-size: 1.5rem;
+      margin: 1.5rem 0 1rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 2px solid var(--accent-color);
+    }
+    /* Search Box */
+    .search-box {
+      max-width: 600px;
+      margin: 0 auto 2rem;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--info-bg);
+    }
+    .search-box input {
+      width: 100%;
+      padding: 0.75rem;
+      border: none;
+      outline: none;
+      font-size: 1rem;
+      background: transparent;
+      color: var(--text-color);
+    }
+    /* Card Grid */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      padding: 0 1rem;
+    }
+    .card {
+      background: var(--info-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    .card:hover {
+      transform: translateY(-5px);
+    }
+    .card h3 {
+      font-size: 1.4rem;
+      margin-bottom: 0.5rem;
+      color: var(--primary-color);
+    }
+    .card p {
+      font-size: 0.95rem;
+      margin: 0.5rem 0;
+      line-height: 1.4;
+    }
+    /* Modal Styling */
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 20000;
+      padding: 1rem;
+    }
+    .modal-content {
+      background: var(--info-bg);
+      padding: 1.5rem;
+      border-radius: 8px;
+      max-width: 600px;
+      width: 100%;
+      position: relative;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    }
+    .modal-close {
+      position: absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: var(--primary-color);
+    }
+    .modal-title {
+      margin: 0;
+      font-size: 1.8rem;
+      color: var(--primary-color);
+      text-align: center;
+    }
+    .modal-overview, .modal-eeg {
+      margin-top: 1rem;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+    .modal-eeg {
+      border-left: 4px solid var(--accent-color);
+      padding-left: 0.75rem;
+      color: var(--secondary-color);
+    }
+    .button-group {
+      margin-top: 1.5rem;
+      display: flex;
+      gap: 1rem;
+    }
+    .modal-button {
+      flex: 1;
+      background: var(--accent-color);
+      color: #fff;
+      padding: 0.75rem;
+      text-align: center;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 1rem;
+      transition: background 0.2s ease;
+    }
+    .modal-button:hover {
+      background: var(--primary-color);
+    }
+    /* References Footer */
+    footer.references {
+      background: var(--info-bg);
+      padding: 1.5rem;
+      margin-top: 2rem;
+      border-top: 2px solid var(--border-color);
+    }
+    footer.references h3 {
+      text-align: center;
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+      color: var(--primary-color);
+    }
+    footer.references ul {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      max-width: 600px;
+    }
+    footer.references li {
+      margin-bottom: 0.5rem;
+      text-align: center;
+    }
+    footer.references a {
+      text-decoration: none;
+      color: var(--accent-color);
+      transition: color 0.2s ease;
+    }
+    footer.references a:hover {
+      color: var(--primary-color);
+    }
+  </style>
+</head>
+<body>
+  <!-- Main Content -->
+  <main class="cards-container" id="ilae-classification-content">
+    <h2 class="page-title">ILAE Classification</h2>
+    
+    <!-- Search Box -->
+    <div class="search-box">
+      <input type="text" id="searchBar" placeholder="Search ILAE Classification content..." />
+    </div>
+    
+    <!-- Content Container -->
+    <div id="contentContainer">
+      <!-- Section 1: Neonates and Infants -->
+      <details open>
+        <summary class="section-header">Epilepsy Syndromes with Onset in Neonates and Infants<br></summary>
+        <div class="cards-grid">
+          <!-- Card: Self‑Limited Neonatal Epilepsy (SeLNE) -->
+          <div class="card"
+               data-title="Self‑Limited Neonatal Epilepsy (SeLNE)"
+               data-summary="Focal seizures starting between days 2 and 7 of life with normal development between events."
+               data-eeg="Interictal electroencephalogram (EEG) may show mild background slowing with occasional focal discharges."
+               data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=5">
+            <h3>Self‑Limited Neonatal Epilepsy (SeLNE)</h3>
+            <p>Focal seizures starting between days 2 and 7 with normal development.</p>
+          </div>
+          <!-- Card: Infantile Spasms -->
+          <div class="card"
+               data-title="Infantile Spasms"
+               data-summary="Characterized by clusters of spasms, a chaotic hypsarrhythmic EEG pattern, and developmental regression."
+               data-eeg="EEG typically shows chaotic, high‐amplitude hypsarrhythmia."
+               data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=4">
+            <h3>Infantile Spasms</h3>
+            <p>Clusters of spasms with chaotic EEG and developmental regression.</p>
+          </div>
+          <!-- Card: Early Infantile Epileptic Encephalopathy (EIEE) -->
+          <div class="card"
+               data-title="Early Infantile Epileptic Encephalopathy (EIEE)"
+               data-summary="Presents with severe neonatal encephalopathy and a burst‐suppression EEG pattern."
+               data-eeg="EEG demonstrates a burst‐suppression pattern."
+               data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=3">
+            <h3>Early Infantile Epileptic Encephalopathy (EIEE)</h3>
+            <p>Severe neonatal encephalopathy with burst‐suppression on EEG.</p>
+          </div>
+          <!-- Card: Epilepsy of Infancy with Migrating Focal Seizures (EIMFS) -->
+          <div class="card"
+               data-title="Epilepsy of Infancy with Migrating Focal Seizures (EIMFS)"
+               data-summary="Rare syndrome with multifocal seizures that migrate between brain regions; genetic mutations are common."
+               data-eeg="EEG shows shifting focal discharges with a multifocal pattern."
+               data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=4">
+            <h3>Epilepsy of Infancy with Migrating Focal Seizures (EIMFS)</h3>
+            <p>Multifocal, migrating focal seizures with genetic associations.</p>
+          </div>
+        </div>
+      </details>
+      
+      <!-- Section 2: Self‑Limited Focal Epilepsies of Childhood -->
+      <details open>
+        <summary class="section-header">Self‑Limited Focal Epilepsies of Childhood<br></summary>
+        <div class="cards-grid">
+          <!-- Card: Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS) -->
+          <div class="card"
+               data-title="Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)"
+               data-summary="Focal seizures with centrotemporal semiology, typically occurring during sleep. Remission is expected by adolescence."
+               data-eeg="EEG shows high‐amplitude centrotemporal sharp‐and‐slow wave complexes on a normal background."
+               data-pdf="assets/documents/onset-in-childhood2.pdf#page=3">
+            <h3>Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)</h3>
+            <p>Focal centrotemporal seizures during sleep with remission by adolescence.</p>
+          </div>
+          <!-- Card: Childhood Absence Epilepsy (CAE) -->
+          <div class="card"
+               data-title="Childhood Absence Epilepsy (CAE)"
+               data-summary="Brief impaired awareness episodes with a regular 3 Hertz spike‐and‐wave pattern on EEG."
+               data-eeg="EEG displays a consistent 3 Hertz spike‐and‐wave discharge on a normal background."
+               data-pdf="assets/documents/onset-in-childhood2.pdf#page=5">
+            <h3>Childhood Absence Epilepsy (CAE)</h3>
+            <p>Brief staring spells with classic 3 Hertz spike‐and‐wave EEG activity.</p>
+          </div>
+          <!-- Card: Epilepsy with Myoclonic Atonic Seizures (EMAtS) -->
+          <div class="card"
+               data-title="Epilepsy with Myoclonic Atonic Seizures (EMAtS)"
+               data-summary="A severe syndrome with myoclonic and atonic seizures leading to drop attacks and generalized EEG abnormalities."
+               data-eeg="EEG demonstrates generalized discharges with myoclonic and atonic features."
+               data-pdf="assets/documents/onset-in-childhood2.pdf#page=8">
+            <h3>Epilepsy with Myoclonic Atonic Seizures (EMAtS)</h3>
+            <p>Myoclonic and atonic seizures causing drop attacks with generalized EEG findings.</p>
+          </div>
+          <!-- Card: Childhood Occipital Visual Epilepsy (COVE) -->
+          <div class="card"
+               data-title="Childhood Occipital Visual Epilepsy (COVE)"
+               data-summary="Focal visual seizures with occipital EEG abnormalities, often accompanied by visual auras and headache."
+               data-eeg="EEG may show interictal occipital spikes with a normal background, especially during sleep."
+               data-pdf="assets/documents/onset-in-childhood2.pdf#page=7">
+            <h3>Childhood Occipital Visual Epilepsy (COVE)</h3>
+            <p>Focal visual seizures with occipital EEG findings and favorable prognosis.</p>
+          </div>
+          <!-- Card: Photosensitive Occipital Lobe Epilepsy (POLE) -->
+          <div class="card"
+               data-title="Photosensitive Occipital Lobe Epilepsy (POLE)"
+               data-summary="Triggered by photic stimulation, presenting with focal visual seizures; strong female predominance noted."
+               data-eeg="EEG shows occipital spike‐and‐wave discharges enhanced by eye closure and photic stimulation."
+               data-pdf="assets/documents/onset-in-childhood2.pdf#page=8">
+            <h3>Photosensitive Occipital Lobe Epilepsy (POLE)</h3>
+            <p>Focal visual seizures triggered by light with characteristic occipital EEG patterns.</p>
+          </div>
+        </div>
+      </details>
+      
+      <!-- Section 3: Epilepsy Syndromes with Onset at a Variable Age -->
+      <details open>
+        <summary class="section-header">Epilepsy Syndromes with Onset at a Variable Age<br></summary>
+        <div class="cards-grid">
+          <!-- Card: Juvenile Absence Epilepsy (JAE) -->
+          <div class="card"
+               data-title="Juvenile Absence Epilepsy (JAE)"
+               data-summary="Characterized by brief impaired awareness episodes and a regular 3 Hertz spike‐and‐wave pattern, with a strong genetic component."
+               data-eeg="EEG exhibits a consistent 3 Hertz spike‐and‐wave discharge on a normal background."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=4">
+            <h3>Juvenile Absence Epilepsy (JAE)</h3>
+            <p>Brief impaired awareness episodes with 3 Hertz spike‐and‐wave EEG.</p>
+          </div>
+          <!-- Card: Juvenile Myoclonic Epilepsy (JME) -->
+          <div class="card"
+               data-title="Juvenile Myoclonic Epilepsy (JME)"
+               data-summary="Begins in adolescence with myoclonic jerks soon after waking, and may include generalized tonic–clonic seizures."
+               data-eeg="EEG shows generalized polyspike‐and‐wave discharges with photic sensitivity."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=5">
+            <h3>Juvenile Myoclonic Epilepsy (JME)</h3>
+            <p>Adolescent-onset epilepsy with myoclonic jerks and generalized polyspike‐and‐wave EEG.</p>
+          </div>
+          <!-- Card: Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA) -->
+          <div class="card"
+               data-title="Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)"
+               data-summary="Isolated generalized tonic–clonic seizures without other seizure types, with standard treatment response."
+               data-eeg="EEG reveals generalized discharges on a normal background."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=6">
+            <h3>Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)</h3>
+            <p>Isolated generalized tonic–clonic seizures with normal EEG.</p>
+          </div>
+          <!-- Card: Sleep-Related Hypermotor Epilepsy (SHE) -->
+          <div class="card"
+               data-title="Sleep-Related Hypermotor Epilepsy (SHE)"
+               data-summary="Features brief, stereotyped hyperkinetic seizures predominantly during sleep; may be associated with both genetic and structural causes."
+               data-eeg="EEG during sleep shows focal hyperkinetic discharges with abnormal frontal activity."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=9">
+            <h3>Sleep-Related Hypermotor Epilepsy (SHE)</h3>
+            <p>Brief hyperkinetic seizures during sleep with focal frontal EEG abnormalities.</p>
+          </div>
+          <!-- Card: Familial Mesial Temporal Lobe Epilepsy (FMTLE) -->
+          <div class="card"
+               data-title="Familial Mesial Temporal Lobe Epilepsy (FMTLE)"
+               data-summary="A focal epilepsy syndrome with seizures originating from the mesial temporal lobe; often familial and presenting in adolescence/adulthood."
+               data-eeg="EEG shows focal temporal discharges with mild background slowing."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=10">
+            <h3>Familial Mesial Temporal Lobe Epilepsy (FMTLE)</h3>
+            <p>Focal temporal seizures with a positive family history.</p>
+          </div>
+          <!-- Card: Familial Focal Epilepsy with Variable Foci (FFEVF) -->
+          <div class="card"
+               data-title="Familial Focal Epilepsy with Variable Foci (FFEVF)"
+               data-summary="Presents with focal seizures whose localization varies among affected family members, suggesting complex inheritance."
+               data-eeg="EEG shows variable focal discharges in different family members."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=11">
+            <h3>Familial Focal Epilepsy with Variable Foci (FFEVF)</h3>
+            <p>Focal seizures with variable localization among family members.</p>
+          </div>
+          <!-- Card: Epilepsy with Auditory Features (EAF) -->
+          <div class="card"
+               data-title="Epilepsy with Auditory Features (EAF)"
+               data-summary="Characterized by focal seizures with auditory auras, sometimes with receptive language disturbances."
+               data-eeg="EEG demonstrates focal temporal discharges."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=12">
+            <h3>Epilepsy with Auditory Features (EAF)</h3>
+            <p>Focal seizures with auditory auras and temporal EEG abnormalities.</p>
+          </div>
+          <!-- Card: Epilepsy with Reading‑Induced Seizures (EwRIS) -->
+          <div class="card"
+               data-title="Epilepsy with Reading‑Induced Seizures (EwRIS)"
+               data-summary="A rare syndrome where reading triggers focal seizures with sensory and cognitive manifestations."
+               data-eeg="EEG shows focal discharges provoked by reading."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=13">
+            <h3>Epilepsy with Reading‑Induced Seizures (EwRIS)</h3>
+            <p>Focal seizures triggered by reading with corresponding EEG changes.</p>
+          </div>
+          <!-- Card: Progressive Myoclonus Epilepsies (PME) -->
+          <div class="card"
+               data-title="Progressive Myoclonus Epilepsies (PME)"
+               data-summary="Severe syndromes with myoclonic seizures and progressive neurological deterioration; multifocal EEG abnormalities are common."
+               data-eeg="EEG demonstrates multifocal and generalized discharges with a progressively slowing background."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=14">
+            <h3>Progressive Myoclonus Epilepsies (PME)</h3>
+            <p>Severe myoclonic seizures with progressive neurological decline.</p>
+          </div>
+          <!-- Card: Febrile Infection-Related Epilepsy Syndrome (FIRES) -->
+          <div class="card"
+               data-title="Febrile Infection-Related Epilepsy Syndrome (FIRES)"
+               data-summary="A catastrophic encephalopathy following a febrile illness, marked by refractory seizures and a poor prognosis."
+               data-eeg="EEG typically shows diffuse slowing with multifocal discharges."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=15">
+            <h3>Febrile Infection-Related Epilepsy Syndrome (FIRES)</h3>
+            <p>Refractory seizures after a febrile illness with diffuse EEG abnormalities.</p>
+          </div>
+          <!-- Card: Mesial Temporal Lobe Epilepsy with Hippocampal Sclerosis (MTLE-HS) -->
+          <div class="card"
+               data-title="Mesial Temporal Lobe Epilepsy with Hippocampal Sclerosis (MTLE-HS)"
+               data-summary="A focal epilepsy syndrome with seizures originating in the mesial temporal lobe; MRI shows hippocampal sclerosis."
+               data-eeg="EEG shows focal temporal discharges consistent with hippocampal sclerosis."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=11">
+            <h3>Mesial Temporal Lobe Epilepsy with Hippocampal Sclerosis (MTLE-HS)</h3>
+            <p>Focal temporal seizures with hippocampal sclerosis on MRI.</p>
+          </div>
+          <!-- Card: Rasmussen Syndrome (RS) -->
+          <div class="card"
+               data-title="Rasmussen Syndrome (RS)"
+               data-summary="A rare, progressive encephalitis with intractable seizures and hemiplegia, characterized by unilateral EEG abnormalities."
+               data-eeg="EEG reveals unilateral focal discharges with marked background slowing in one hemisphere."
+               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=16">
+            <h3>Rasmussen Syndrome (RS)</h3>
+            <p>Intractable seizures with progressive hemiplegia and unilateral EEG abnormalities.</p>
+          </div>
+        </div>
+          <!-- References Footer (appears at bottom of page) -->
+    <h3>References</h3>
+    <ul>
+      <p><a href="assets/documents/epilepsy-syndromes-introduction.pdf" target="_blank">Introduction to the Epilepsy Syndrome Papers (Epilepsia, 2022)</a></li>
+      <p><a href="assets/documents/epilepsy-syndromes-methodology1.pdf" target="_blank">Methodology for Classification and Definition of Epilepsy Syndromes (Epilepsia, 2022)</a></li>
+      <p><a href="assets/documents/onset-at-a-variable-age2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset at a Variable Age (Epilepsia, 2022)</a></li>
+      <p><a href="assets/documents/onset-in-childhood2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Childhood (Epilepsia, 2022)</a></li>
+      <p><a href="assets/documents/onset-in-neonates-and-infants2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Neonates and Infants (Epilepsia, 2022)</a></li>
+    </ul>
+  
+      </details>
+    </div>
+  </main>
+  
+
+  <!-- Modal Pop-Up -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2 class="modal-title"></h2>
+      <div class="modal-overview"></div>
+      <div class="modal-eeg"></div>
+      <div class="button-group">
+        <a href="#" target="_blank" class="modal-button">Open PDF</a>
+      </div>
+    </div>
+  </div>
+  
+  <!-- JavaScript for Search and Modal Functionality -->
+  <script>
+    // Search: Filter cards by title or summary.
+    document.getElementById('searchBar').addEventListener('input', function(e) {
+      const term = e.target.value.trim().toLowerCase();
+      const cards = document.querySelectorAll('.card');
+      cards.forEach(card => {
+        const title = card.getAttribute('data-title').toLowerCase();
+        const summary = card.getAttribute('data-summary').toLowerCase();
+        card.style.display = (title.includes(term) || summary.includes(term)) ? "block" : "none";
+      });
+    });
+    
+    // Modal functionality.
+    document.querySelectorAll('.card').forEach(card => {
+      card.addEventListener('click', function() {
+        const modal = document.getElementById('modal');
+        const title = card.getAttribute('data-title');
+        const overview = card.getAttribute('data-summary');
+        const eeg = card.getAttribute('data-eeg');
+        const pdfLink = card.getAttribute('data-pdf');
+        
+        modal.querySelector('.modal-title').textContent = title;
+        modal.querySelector('.modal-overview').textContent = overview;
+        modal.querySelector('.modal-eeg').textContent = "EEG Findings: " + eeg;
+        modal.querySelector('.modal-button').href = pdfLink;
+        
+        modal.style.display = 'flex';
+      });
+    });
+    
+    // Close modal on click of close button or outside modal content.
+    document.querySelector('.modal-close').addEventListener('click', function() {
+      document.getElementById('modal').style.display = 'none';
+    });
+    document.getElementById('modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
+    });
+  </script>
+</body>
+</html>

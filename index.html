@@ -123,7 +123,9 @@
   <div id="dev-modal">
     <div class="modal-content">
       <h2><strong>Disclaimer:</strong></h2>
-      <p>Any information or materials provided on or accessed through this web site are intended solely for informational purposes and are NOT intended for individuals or patients seeking medical advice or treatment. The information and materials presented are not intended nor implied to be a substitute for professional medical advice, diagnosis or treatment. Every individual should always seek the advice of a physician or other qualified health care provider prior to starting or continuing any treatment. Nothing contained on or accessed through this web site should be used for medical diagnosis or treatment of any type. Medical professionals should not use or rely upon any of the information or content provided on or accessed through this web site to make any medical decisions. By providing this web site or any information or content, we are not engaged in the practice of medicine or the provision of any health care service and do not exercise any control or influence over the medical judgment or decision of any patient or health care provider.</p>
+      <p>
+        Any information or materials provided on or accessed through this web site are intended solely for informational purposes and are NOT intended for individuals or patients seeking medical advice or treatment. The information and materials presented are not intended nor implied to be a substitute for professional medical advice, diagnosis or treatment. Every individual should always seek the advice of a physician or other qualified health care provider prior to starting or continuing any treatment. Medical professionals should not use or rely upon any of the information or content provided on or accessed through this web site to make any medical decisions.
+      </p>
       <input type="text" id="access-code" placeholder="Enter access code">
       <div>
         <button id="submit-code">Enter</button>
@@ -133,83 +135,96 @@
     </div>
   </div>
 
-  <!-- Main Content (always visible in the background, but initially disabled) -->
-      <!-- HEADER with shrink effect -->
-      <header id="header">
-        <div class="header-inner">
-          <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
-          <div class="desktop-tabs" id="desktop-tabs">
-            <a href="#" onclick="renderHomePage()">Home</a>
+  <!-- Main Content (initially disabled) -->
+  <div id="page-content" class="disabled">
+    <!-- HEADER (kept in original location) -->
+    <header id="header">
+      <div class="header-inner">
+        <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
+        <div class="desktop-tabs" id="desktop-tabs">
+          <a href="#" onclick="renderHomePage()">Home</a>
+          <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
+          <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
+          <!-- NEW ILAE Classification Tab -->
+          <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
+          <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
+          <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
+          <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
+          <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
+        </div>
+        <div class="mobile-tabs" id="mobile-tabs">
+          <a href="#" id="current-mobile-tab" onclick="toggleMobileDropdown(event)">Home</a>
+          <div class="mobile-dropdown" id="mobile-dropdown">
+            <a href="#" onclick="renderHomePage(); hideMobileDropdown()">Home</a>
             <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
             <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
+            <!-- NEW ILAE Classification Tab -->
+            <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
             <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
             <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
             <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
             <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
           </div>
-          <div class="mobile-tabs" id="mobile-tabs">
-            <a href="#" id="current-mobile-tab" onclick="toggleMobileDropdown(event)">Home</a>
-            <div class="mobile-dropdown" id="mobile-dropdown">
-              <a href="#" onclick="renderHomePage(); hideMobileDropdown()">Home</a>
-              <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
-              <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
-              <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
-              <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
-              <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
-              <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
-            </div>
-          </div>
         </div>
-      </header>
-      
-      <!-- HOMEPAGE CARDS -->
-      <!-- Main Content (always visible in the background, but initially disabled) -->
-  <div id="page-content" class="disabled">
-    <div id="seizure-management">
-      <div id="home-content" class="cards-container">
-        <h2 class="page-title">Explore the EEG Curriculum</h2>
-        <div class="cards-grid">
-          <div class="card">
-            <i class="fa-solid fa-brain"></i>
-            <h3>Epilepsy Rotation</h3>
-            <p>Delve into daily expectations with engaging videos, quizzes, and guidelines for EEG readings and milestones.</p>
-            <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Learn More</a>
-          </div>
-          <div class="card">
-            <i class="fa-solid fa-file-medical"></i>
-            <h3>Seizure Management</h3>
-            <p>Access concise guidelines for seizure management and ASM protocols.</p>
-            <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Learn More</a>
-          </div>
-          <div class="card">
-            <i class="fa-solid fa-desktop"></i>
-            <h3>Natus Instructions</h3>
-            <p>Follow our step-by-step guide to launching Natus NeuroWorks, reviewing patient studies, and configuring the display.</p>
-            <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Learn More</a>
-          </div>
-          <div class="card">
-            <i class="fa-solid fa-file-pdf"></i>
-            <h3>ACNS Criteria</h3>
-            <p>Access detailed visual references and downloadable charts of ACNS guidelines to improve EEG interpretation.</p>
-            <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">Learn More</a>
-          </div>
-          <div class="card">
-            <i class="fa-solid fa-video"></i>
-            <h3>EEG Videos</h3>
-            <p>Engage with interactive EEG videos accompanied by quizzes to sharpen your knowledge and interpretation skills.</p>
-            <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">Learn More</a>
-          </div>
-          <div class="card">
-            <i class="fa-solid fa-circle-question"></i>
-            <h3>FAQ</h3>
-            <p>Find answers to common questions about EEG interpretation, seizure management, and epilepsy care.</p>
-            <a href="faq.html" onclick="loadSection(event, 'faq.html')">Learn More</a>
-          </div>
+      </div>
+    </header>
+    
+    <!-- HOMEPAGE CARDS -->
+    <div id="home-content" class="cards-container">
+      <h2 class="page-title">Explore the EEG Curriculum</h2>
+      <div class="cards-grid">
+        <div class="card">
+          <i class="fa-solid fa-brain"></i>
+          <h3>Epilepsy Rotation</h3>
+          <p>Delve into daily expectations with engaging videos, quizzes, and guidelines for EEG readings and milestones.</p>
+          <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Learn More</a>
+        </div>
+        <div class="card">
+          <i class="fa-solid fa-file-medical"></i>
+          <h3>Seizure Management</h3>
+          <p>Access concise guidelines for seizure management and ASM protocols.</p>
+          <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Learn More</a>
+        </div>
+        <!-- NEW ILAE Classification Card -->
+        <div class="card">
+          <i class="fa-solid fa-file-alt"></i>
+          <h3>ILAE Classification</h3>
+          <p>Explore comprehensive ILAE epilepsy syndrome classifications and definitions.</p>
+          <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">Learn More</a>
+        </div>
+        <div class="card">
+          <i class="fa-solid fa-desktop"></i>
+          <h3>Natus Instructions</h3>
+          <p>Follow our step-by-step guide to launching Natus NeuroWorks, reviewing patient studies, and configuring the display.</p>
+          <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Learn More</a>
+        </div>
+        <div class="card">
+          <i class="fa-solid fa-file-pdf"></i>
+          <h3>ACNS Criteria</h3>
+          <p>Access detailed visual references and downloadable charts of ACNS guidelines to improve EEG interpretation.</p>
+          <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">Learn More</a>
+        </div>
+        <div class="card">
+          <i class="fa-solid fa-video"></i>
+          <h3>EEG Videos</h3>
+          <p>Engage with interactive EEG videos accompanied by quizzes to sharpen your knowledge and interpretation skills.</p>
+          <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">Learn More</a>
+        </div>
+        <div class="card">
+          <i class="fa-solid fa-circle-question"></i>
+          <h3>FAQ</h3>
+          <p>Find answers to common questions about EEG interpretation, seizure management, and epilepsy care.</p>
+          <a href="faq.html" onclick="loadSection(event, 'faq.html')">Learn More</a>
         </div>
       </div>
     </div>
+    
+    <!-- MAIN CONTENT CONTAINER FOR LOADED PAGES -->
+    <div class="container">
+      <div id="section-content"></div>
+    </div>
   </div>
-
+  
   <!-- Copyright Modal -->
   <div id="copyright-modal">
     <div class="modal-content">
@@ -218,11 +233,6 @@
       <p>Unless otherwise noted, all copyrights to the web site and its contents are the property of the Matthew S. Davitz MD. Except when indicated, permission is hereby granted to reproduce, distribute, and display copies of content material for nonprofit educational and nonprofit library purposes, provided that: (i) copies are distributed at or below costs; (ii) author and source are acknowledged; and (iii) a copyright notice is attached to the copies, such notice being in the form of "Matthew S. Davitz MD. 2025" (or as otherwise indicated on the materials as posted here). No commercial uses of any type are allowed without the prior express permission of the Matthew S. Davitz MD.
       </p>
     </div>
-  </div>
-
-  <!-- MAIN CONTENT CONTAINER -->
-  <div class="container">
-    <div id="section-content"></div>
   </div>
   
   <!-- Fixed Footer Controls -->
@@ -241,8 +251,8 @@
   <!-- Shared JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
   <script>
-// Access Code Modal Logic with case-insensitive comparison
-  function checkAccessCode() {
+    // Access Code Modal Logic with case-insensitive comparison
+    function checkAccessCode() {
       var code = document.getElementById('access-code').value.trim().toLowerCase();
       if(code === 'mountsinai') {
         document.getElementById('dev-modal').style.display = 'none';
@@ -253,9 +263,7 @@
     }
     document.getElementById('submit-code').addEventListener('click', checkAccessCode);
     document.getElementById('access-code').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') {
-        checkAccessCode();
-      }
+      if (e.key === 'Enter') { checkAccessCode(); }
     });
     document.getElementById('cancel-code').addEventListener('click', function() {
       window.location.href = 'index.html';
@@ -265,19 +273,14 @@
     document.querySelector('.footer-copy').addEventListener('click', function() {
       document.getElementById('copyright-modal').style.display = 'flex';
     });
-    // Close when clicking the close button or outside the modal content
     document.getElementById('copyright-modal')
       .addEventListener('click', function(e) {
-        if (e.target === this) {
-          this.style.display = 'none';
-        }
+        if (e.target === this) { this.style.display = 'none'; }
       });
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') {
         var modal = document.getElementById('copyright-modal');
-        if (modal.style.display === 'flex') {
-          modal.style.display = 'none';
-        }
+        if (modal.style.display === 'flex') { modal.style.display = 'none'; }
       }
     });
     function closeCopyrightModal() {
@@ -300,8 +303,7 @@
         const html = await response.text();
         const container = document.getElementById("section-content");
         container.innerHTML = html;
-        const scripts = container.querySelectorAll("script");
-        scripts.forEach(oldScript => {
+        container.querySelectorAll("script").forEach(oldScript => {
           const newScript = document.createElement("script");
           if (oldScript.src) {
             newScript.src = oldScript.src;
@@ -327,6 +329,7 @@
     function getTabName(url) {
       if(url.indexOf("epilepsy_rotation") > -1) return "Epilepsy Rotation";
       if(url.indexOf("seizure_management") > -1) return "Seizure Management";
+      if(url.indexOf("ilae_classification") > -1) return "ILAE Classification";
       if(url.indexOf("natus_instructions") > -1) return "Natus Instructions";
       if(url.indexOf("acns_criteria") > -1) return "ACNS Criteria";
       if(url.indexOf("eeg_videos") > -1) return "EEG Videos";
@@ -362,6 +365,29 @@
     document.addEventListener("DOMContentLoaded", () => {
       renderHomePage();
     });
+    
+    // Header shrink on scroll for mobile
+    document.addEventListener("DOMContentLoaded", function() {
+      window.addEventListener("scroll", function() {
+        if (window.innerWidth <= 600) {
+          const footerBtns = document.querySelector('.footer-btns');
+          const scrollPosition = window.innerHeight + window.pageYOffset;
+          const threshold = document.documentElement.scrollHeight - 50;
+          footerBtns.style.display = (scrollPosition >= threshold) ? 'inline-flex' : 'none';
+        }
+      });
+    });
+    
+    document.addEventListener("DOMContentLoaded", function() {
+      const header = document.getElementById("header");
+      window.addEventListener("scroll", function() {
+        if (window.scrollY > 50) {
+          header.classList.add("shrink");
+        } else {
+          header.classList.remove("shrink");
+        }
+      });
+    });
   </script>
   
   <script>
@@ -376,19 +402,6 @@
       });
     });
   </script>
-
-<script>
-  document.addEventListener("DOMContentLoaded", function() {
-    const header = document.getElementById("header");
-    window.addEventListener("scroll", function() {
-      if (window.scrollY > 50) {
-        header.classList.add("shrink");
-      } else {
-        header.classList.remove("shrink");
-      }
-    });
-  });
-</script>
-
+  
 </body>
 </html>
