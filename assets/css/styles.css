@@ -1097,6 +1097,48 @@ body.dark .modal-title {
   box-shadow: 0 0 5px var(--accent-color);
 }
 
+/* Outer container: perspective = 3D space */
+.flashcard {
+  width: 500px;            /* Adjust as needed */
+  height: 300px;           /* Adjust as needed */
+  perspective: 1000px;     /* Creates the 3D space for children */
+  margin: 0 auto;          /* Center horizontally (optional) */
+  position: relative;      /* If you want to position absolutely, etc. */
+}
+
+/* Inner wrapper that will be rotated. */
+.flashcard-inner {
+  width: 100%;
+  height: 100%;
+  transition: transform 0.4s;
+  transform-style: preserve-3d;  /* So child elements are 3D */
+  position: relative;
+}
+
+/* When "is-flipped" is on the parent, rotate 180deg around Y-axis */
+.flashcard.is-flipped .flashcard-inner {
+  transform: rotateY(180deg);
+}
+
+/* Front + Back */
+.flashcard-front,
+.flashcard-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;   /* Hide the reversed side */
+  display: flex;                 /* So we can center text easily */
+  align-items: center;
+  justify-content: center;
+  padding: 1em;
+  box-sizing: border-box;
+}
+
+/* The back side is rotated 180°, so initially hidden. */
+.flashcard-back {
+  transform: rotateY(180deg);
+}
+
 /* Flashcard Button */
 .flashcard-button {
   display: block;
