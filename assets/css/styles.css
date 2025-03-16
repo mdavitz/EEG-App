@@ -75,6 +75,20 @@ body.dark .section-title {
   transition: background var(--transition-duration);
 }
 
+/* Make the white box narrower and center it */
+#acns-criteria.info-box {
+  max-width: 800px;    /* or whatever width you prefer */
+  margin: 2rem auto;   /* auto margins to center horizontally */
+  text-align: center;  /* center inline elements inside */
+}
+
+/* Ensure each PNG is also centered as a block */
+.step-image {
+  display: block;
+  margin: 1em auto;
+  max-width: 100%;     /* Prevent overflow on smaller screens */
+  height: auto;
+}
 /*-----------------------------------------------
   MODERNIZED TABLE STYLING
 -----------------------------------------------*/
