@@ -29,40 +29,38 @@
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    // ------------------------------------------------------------
-    // ASSET LOADING
-    // ------------------------------------------------------------
+    // ----------------------- ASSET LOADING -----------------------
     const bgImg = new Image();
     bgImg.src = "background.png";
-    bgImg.onload = () => { console.log("background.png loaded."); checkImagesLoaded(); };
-    bgImg.onerror = () => { console.error("Error loading background.png."); checkImagesLoaded(); };
+    bgImg.onload = checkImagesLoaded;
+    bgImg.onerror = checkImagesLoaded;
 
     const fgImg = new Image();
     fgImg.src = "foreground.png";
-    fgImg.onload = () => { console.log("foreground.png loaded."); checkImagesLoaded(); };
-    fgImg.onerror = () => { console.error("Error loading foreground.png."); checkImagesLoaded(); };
+    fgImg.onload = checkImagesLoaded;
+    fgImg.onerror = checkImagesLoaded;
 
     const birdImg = new Image();
     birdImg.src = "bird.png";
-    birdImg.onload = () => { console.log("bird.png loaded."); checkImagesLoaded(); };
-    birdImg.onerror = () => { console.error("Error loading bird.png."); checkImagesLoaded(); };
+    birdImg.onload = checkImagesLoaded;
+    birdImg.onerror = checkImagesLoaded;
 
     const pipeNorthImg = new Image();
     pipeNorthImg.src = "pipeNorth.png";
-    pipeNorthImg.onload = () => { console.log("pipeNorth.png loaded."); checkImagesLoaded(); };
-    pipeNorthImg.onerror = () => { console.error("Error loading pipeNorth.png."); checkImagesLoaded(); };
+    pipeNorthImg.onload = checkImagesLoaded;
+    pipeNorthImg.onerror = checkImagesLoaded;
 
     const pipeSouthImg = new Image();
     pipeSouthImg.src = "pipeSouth.png";
-    pipeSouthImg.onload = () => { console.log("pipeSouth.png loaded."); checkImagesLoaded(); };
-    pipeSouthImg.onerror = () => { console.error("Error loading pipeSouth.png."); checkImagesLoaded(); };
+    pipeSouthImg.onload = checkImagesLoaded;
+    pipeSouthImg.onerror = checkImagesLoaded;
 
     const neuronImg = new Image();
     neuronImg.src = "neuron.png";
-    neuronImg.onload = () => { console.log("neuron.png loaded."); checkImagesLoaded(); };
-    neuronImg.onerror = () => { console.error("Error loading neuron.png."); checkImagesLoaded(); };
+    neuronImg.onload = checkImagesLoaded;
+    neuronImg.onerror = checkImagesLoaded;
 
-    // Audio files (optional)
+    // ----------------------- AUDIO (optional) -----------------------
     const flapSound = new Audio("flap.wav");
     const scoreSound = new Audio("score.wav");
     const hitSound = new Audio("hit.wav");
@@ -72,44 +70,37 @@
     document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
     document.addEventListener("touchstart", () => { if (bgMusic.paused) bgMusic.play(); });
 
-    // ------------------------------------------------------------
-    // GAME VARIABLES & STATES
-    // ------------------------------------------------------------
+    // ----------------------- GAME VARIABLES -----------------------
     let frames = 0;
-    let score = 0; // Pipes passed in current game
+    let score = 0;
     let gameState = "menu"; // "menu", "playing", "paused", "gameover"
 
-    // Gameplay physics settings
     const gravity = 0.3;
     const jumpStrength = -5;
 
-    // Pipe settings with variable spacing
-    const pipeSpeed = 1.5;
+    // Pipe settings (active when score < 50 or score >= 100)
+    const pipeSpeed = 2;
     const pipeWidth = 50;
     const gapMin = 140;
     const gapMax = 180;
     let pipes = [];
-    let nextPipeFrame = 100; // Next pipe appears between 100 and 200 frames later
+    let nextPipeFrame = 100; // Next pipe spawns between 100 and 200 frames later
 
-    // High score counter (persisted via localStorage)
+    // High score (persisted)
     let bestScore = Number(localStorage.getItem("bestScore")) || 0;
 
     // Collision margins
     const collisionMarginX = 5;
     const collisionMarginY = 5;
 
-    // ------------------------------------------------------------
-    // PROJECTILES (spawn after score >= 50)
-    // ------------------------------------------------------------
+    // Projectile settings (active when score >= 50)
     let projectiles = [];
-    let nextProjectileFrame = 0; // Initialized to 0
-    const projectileSpeed = 3;
-    const projectileWidth = 20;
-    const projectileHeight = 10;
+    const projectileSpeed = 4;
+    const projectileWidth = 100;
+    const projectileHeight = 40;
+    let projectilePassCount = 0;
 
-    // ------------------------------------------------------------
-    // PARALLAX LAYER OBJECTS
-    // ------------------------------------------------------------
+    // ----------------------- PARALLAX LAYER OBJECTS -----------------------
     const bgLayer = {
       x: 0,
       speed: 0.5,
@@ -118,13 +109,11 @@
 
     const fgLayer = {
       x: 0,
-      speed: 2,  // Foreground moves faster for parallax effect
+      speed: 2,
       image: fgImg
     };
 
-    // ------------------------------------------------------------
-    // BIRD OBJECT (SINGLE-FRAME IMAGE)
-    // ------------------------------------------------------------
+    // ----------------------- BIRD OBJECT -----------------------
     const bird = {
       x: 50,
       y: canvas.height / 2,
@@ -132,18 +121,11 @@
       height: 40,
       velocity: 0,
       draw: function() {
-        ctx.drawImage(
-          birdImg,
-          this.x - this.width / 2,
-          this.y - this.height / 2,
-          this.width,
-          this.height
-        );
+        ctx.drawImage(birdImg, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
       },
       update: function() {
         this.velocity += gravity;
         this.y += this.velocity;
-        // Collision with canvas bottom
         if (this.y + this.height / 2 > canvas.height) {
           this.y = canvas.height - this.height / 2;
           this.velocity = 0;
@@ -151,7 +133,6 @@
           hitSound.play();
           updateHighScores();
         }
-        // Collision with canvas top
         if (this.y - this.height / 2 < 0) {
           this.y = this.height / 2;
           this.velocity = 0;
@@ -167,9 +148,7 @@
       }
     };
 
-    // ------------------------------------------------------------
-    // HELPER FUNCTIONS
-    // ------------------------------------------------------------
+    // ----------------------- HELPER FUNCTIONS -----------------------
     function createPipe() {
       const gap = Math.floor(Math.random() * (gapMax - gapMin + 1)) + gapMin;
       const maxPipeHeight = canvas.height - gap - 80;
@@ -189,7 +168,7 @@
       }
     }
 
-    // Projectile functions
+    // ----------------------- PROJECTILE FUNCTIONS -----------------------
     function createProjectile() {
       const projY = Math.floor(Math.random() * (canvas.height - 60)) + 30;
       projectiles.push({
@@ -197,14 +176,14 @@
         y: projY,
         width: projectileWidth,
         height: projectileHeight,
-        velocity: projectileSpeed
+        velocity: projectileSpeed,
+        passed: false
       });
     }
 
     function updateProjectiles() {
       projectiles.forEach(proj => {
         proj.x -= proj.velocity;
-        // Simple AABB collision
         if (
           proj.x < bird.x + bird.width / 2 &&
           proj.x + proj.width > bird.x - bird.width / 2 &&
@@ -215,7 +194,17 @@
           hitSound.play();
           updateHighScores();
         }
+        if (!proj.passed && proj.x + proj.width < bird.x) {
+          proj.passed = true;
+          projectilePassCount++;
+        }
       });
+      // For every two projectiles passed, increment score by 1
+      if (projectilePassCount >= 2) {
+        score += Math.floor(projectilePassCount / 2);
+        projectilePassCount %= 2;
+        scoreSound.play();
+      }
       projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
     }
 
@@ -225,30 +214,30 @@
       });
     }
 
-    // ------------------------------------------------------------
-    // DRAWING FUNCTIONS
-    // ------------------------------------------------------------
+    // ----------------------- DRAWING FUNCTIONS -----------------------
     function drawBackground() {
       ctx.drawImage(bgLayer.image, bgLayer.x, 0, canvas.width, canvas.height);
       ctx.drawImage(bgLayer.image, bgLayer.x + canvas.width, 0, canvas.width, canvas.height);
     }
 
     function drawPipes() {
-      pipes.forEach(pipe => {
-        ctx.drawImage(pipeNorthImg, pipe.x, 0, pipeWidth, pipe.top);
-        ctx.drawImage(pipeSouthImg, pipe.x, canvas.height - pipe.bottom, pipeWidth, pipe.bottom);
-      });
+      // Draw pipes only if score is less than 50 or if score >= 100.
+      if (score < 50 || score >= 100) {
+        pipes.forEach(pipe => {
+          ctx.drawImage(pipeNorthImg, pipe.x, 0, pipeWidth, pipe.top);
+          ctx.drawImage(pipeSouthImg, pipe.x, canvas.height - pipe.bottom, pipeWidth, pipe.bottom);
+        });
+      }
     }
 
-    // Draw a single foreground layer:
-    // Crop the foreground image to its top half and tile it at a fixed height at the bottom.
+    // Draw the foreground as a single layer (cropped to top half, tiled horizontally)
     function drawForeground() {
-      const destHeight = 30; // Fixed drawn height for the foreground layer
+      const destHeight = 30;
       let x = fgLayer.x;
       while (x < canvas.width) {
         ctx.drawImage(
           fgLayer.image,
-          0, 0, fgLayer.image.width, fgLayer.image.height / 2, // Use the top half of the image
+          0, 0, fgLayer.image.width, fgLayer.image.height / 2,
           x, canvas.height - destHeight, fgLayer.image.width, destHeight
         );
         x += fgLayer.image.width;
@@ -266,7 +255,6 @@
       }
     }
 
-    // HUD: current score at top left (large) and best score at bottom left (small); text in white.
     function drawHUD() {
       const margin = 20;
       ctx.fillStyle = "white";
@@ -313,9 +301,7 @@
       ctx.fillText("Paused", canvas.width / 2, canvas.height / 2);
     }
 
-    // ------------------------------------------------------------
-    // UPDATE FUNCTIONS
-    // ------------------------------------------------------------
+    // ----------------------- UPDATE FUNCTIONS -----------------------
     function updateBackground() {
       bgLayer.x -= bgLayer.speed;
       if (bgLayer.x <= -canvas.width) bgLayer.x = 0;
@@ -327,38 +313,38 @@
     }
 
     function updatePipes() {
-      pipes.forEach(pipe => {
-        pipe.x -= pipeSpeed;
-        // Check collision using margins (collision with canvas bottom)
-        if (
-          bird.x + bird.width/2 - collisionMarginX > pipe.x &&
-          bird.x - bird.width/2 + collisionMarginX < pipe.x + pipeWidth
-        ) {
+      // Update pipes only if score < 50 or score >= 100
+      if (score < 50 || score >= 100) {
+        pipes.forEach(pipe => {
+          pipe.x -= pipeSpeed;
           if (
-            bird.y - bird.height/2 + collisionMarginY < pipe.top ||
-            bird.y + bird.height/2 - collisionMarginY > canvas.height - pipe.bottom
+            bird.x + bird.width/2 - collisionMarginX > pipe.x &&
+            bird.x - bird.width/2 + collisionMarginX < pipe.x + pipeWidth
           ) {
-            gameState = "gameover";
-            hitSound.play();
-            updateHighScores();
+            if (
+              bird.y - bird.height/2 + collisionMarginY < pipe.top ||
+              bird.y + bird.height/2 - collisionMarginY > canvas.height - pipe.bottom
+            ) {
+              gameState = "gameover";
+              hitSound.play();
+              updateHighScores();
+            }
           }
+          if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
+            pipe.passed = true;
+            score++;
+            scoreSound.play();
+          }
+        });
+        if (pipes.length && pipes[0].x + pipeWidth < 0) {
+          pipes.shift();
         }
-        // Increase score when a pipe passes the bird
-        if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
-          pipe.passed = true;
-          score++;
-          scoreSound.play();
-        }
-      });
-      if (pipes.length && pipes[0].x + pipeWidth < 0) {
-        pipes.shift();
       }
     }
 
     function updateProjectiles() {
       projectiles.forEach(proj => {
         proj.x -= proj.velocity;
-        // Simple AABB collision check
         if (
           proj.x < bird.x + bird.width/2 &&
           proj.x + proj.width > bird.x - bird.width/2 &&
@@ -369,51 +355,53 @@
           hitSound.play();
           updateHighScores();
         }
+        if (!proj.passed && proj.x + proj.width < bird.x) {
+          proj.passed = true;
+          projectilePassCount++;
+        }
       });
+      if (projectilePassCount >= 2) {
+        score += Math.floor(projectilePassCount / 2);
+        projectilePassCount %= 2;
+        scoreSound.play();
+      }
       projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
-    }
-
-    function drawProjectiles() {
-      projectiles.forEach(proj => {
-        ctx.drawImage(neuronImg, proj.x, proj.y, proj.width, proj.height);
-      });
     }
 
     function updateGame() {
       if (gameState === "playing") {
         frames++;
-        if (frames >= nextPipeFrame) {
-          createPipe();
-          nextPipeFrame = frames + Math.floor(Math.random() * (200 - 100 + 1)) + 100;
-        }
-        // Spawn projectiles if score is 50 or above
-        if (score >= 50 && frames >= nextProjectileFrame) {
-          createProjectile();
-          nextProjectileFrame = frames + Math.floor(Math.random() * (250 - 120 + 1)) + 120;
+        if (score < 50) {
+          if (frames >= nextPipeFrame) {
+            createPipe();
+            nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100;
+          }
+          updatePipes();
+        } else if (score >= 50 && score < 100) {
+          // In this range, only projectiles appear.
+          pipes = [];
+          if (Math.random() < 0.02) {
+            createProjectile();
+          }
+          updateProjectiles();
+        } else { // score >= 100: both pipes and projectiles appear.
+          if (frames >= nextPipeFrame) {
+            createPipe();
+            nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100;
+          }
+          updatePipes();
+          if (Math.random() < 0.02) {
+            createProjectile();
+          }
+          updateProjectiles();
         }
         bird.update();
-        updatePipes();
         updateBackground();
         updateForeground();
-        updateProjectiles();
       }
     }
 
-    // Projectile globals and function (already declared above)
-    function createProjectile() {
-      const projY = Math.floor(Math.random() * (canvas.height - 60)) + 30;
-      projectiles.push({
-        x: canvas.width,
-        y: projY,
-        width: projectileWidth,
-        height: projectileHeight,
-        velocity: projectileSpeed
-      });
-    }
-
-    // ------------------------------------------------------------
-    // INPUT HANDLING
-    // ------------------------------------------------------------
+    // ----------------------- INPUT HANDLING -----------------------
     function handleJump() {
       if (gameState === "menu") {
         gameState = "playing";
@@ -444,19 +432,17 @@
       frames = 0;
       score = 0;
       nextPipeFrame = 100;
-      nextProjectileFrame = 0;
+      projectilePassCount = 0;
     }
 
-    // ------------------------------------------------------------
-    // MAIN GAME LOOP
-    // ------------------------------------------------------------
+    // ----------------------- MAIN GAME LOOP -----------------------
     function gameLoop() {
       drawBackground();
       if (gameState === "menu") {
         drawMenu();
       } else if (gameState === "playing" || gameState === "paused") {
         updateGame();
-        drawPipes();
+        if (score < 50 || score >= 100) { drawPipes(); }
         drawProjectiles();
         bird.draw();
         drawForeground();
@@ -473,9 +459,7 @@
       requestAnimationFrame(gameLoop);
     }
 
-    // ------------------------------------------------------------
-    // ASSET LOADING COUNTER
-    // ------------------------------------------------------------
+    // ----------------------- ASSET LOADING COUNTER -----------------------
     let imagesLoaded = 0;
     const totalImages = 6;
     function checkImagesLoaded() {
