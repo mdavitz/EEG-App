@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <!-- Mobile-friendly viewport -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flappy Brain – Pop-Up Game</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+    }
+    canvas {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    }
+  </style>
+</head>
+<body>
+  <canvas id="gameCanvas" width="320" height="480"></canvas>
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    // ----------------------- ASSET LOADING -----------------------
+    const bgImg = new Image();
+    bgImg.src = "background.png";
+    bgImg.onload = checkImagesLoaded;
+    bgImg.onerror = checkImagesLoaded;
+
+    const fgImg = new Image();
+    fgImg.src = "foreground.png";
+    fgImg.onload = checkImagesLoaded;
+    fgImg.onerror = checkImagesLoaded;
+
+    const birdImg = new Image();
+    birdImg.src = "bird.png";
+    birdImg.onload = checkImagesLoaded;
+    birdImg.onerror = checkImagesLoaded;
+
+    const pipeNorthImg = new Image();
+    pipeNorthImg.src = "pipeNorth.png";
+    pipeNorthImg.onload = checkImagesLoaded;
+    pipeNorthImg.onerror = checkImagesLoaded;
+
+    const pipeSouthImg = new Image();
+    pipeSouthImg.src = "pipeSouth.png";
+    pipeSouthImg.onload = checkImagesLoaded;
+    pipeSouthImg.onerror = checkImagesLoaded;
+
+    const neuronImg = new Image();
+    neuronImg.src = "neuron.png";
+    neuronImg.onload = checkImagesLoaded;
+    neuronImg.onerror = checkImagesLoaded;
+
+    // ----------------------- AUDIO (optional) -----------------------
+    const flapSound = new Audio("flap.wav");
+    const scoreSound = new Audio("score.wav");
+    const hitSound = new Audio("hit.wav");
+    const bgMusic = new Audio("music.mp3");
+    bgMusic.loop = true;
+    bgMusic.volume = 0.5;
+    document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
+    document.addEventListener("touchstart", () => { if (bgMusic.paused) bgMusic.play(); });
+
+    // ----------------------- GAME VARIABLES -----------------------
+    let frames = 0;
+    let score = 0;
+    let gameState = "menu"; // "menu", "playing", "paused", "gameover"
+
+    const gravity = 0.3;
+    const jumpStrength = -5;
+
+    // Pipe settings
+    const pipeSpeed = 1.5;
+    const pipeWidth = 50;
+    const gapMin = 140;
+    const gapMax = 180;
+    let pipes = [];
+    let nextPipeFrame = 100; // Next pipe spawns between 100 and 200 frames later
+
+    // High score (persisted)
+    let bestScore = Number(localStorage.getItem("bestScore")) || 0;
+
+    // Collision margins
+    const collisionMarginX = 5;
+    const collisionMarginY = 5;
+
+    // Projectile settings (appear when score >= 50)
+    let projectiles = [];
+    let nextProjectileFrame = 0; // Initialized to 0
+    const projectileSpeed = 3;
+    const projectileWidth = 20;
+    const projectileHeight = 10;
+
+    // ----------------------- PARALLAX LAYER OBJECTS -----------------------
+    const bgLayer = {
+      x: 0,
+      speed: 0.5,
+      image: bgImg
+    };
+
+    const fgLayer = {
+      x: 0,
+      speed: 2,
+      image: fgImg
+    };
+
+    // ----------------------- BIRD OBJECT -----------------------
+    const bird = {
+      x: 50,
+      y: canvas.height / 2,
+      width: 50,
+      height: 40,
+      velocity: 0,
+      draw: function() {
+        ctx.drawImage(birdImg, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+      },
+      update: function() {
+        this.velocity += gravity;
+        this.y += this.velocity;
+        // Collision with canvas bottom
+        if (this.y + this.height / 2 > canvas.height) {
+          this.y = canvas.height - this.height / 2;
+          this.velocity = 0;
+          gameState = "gameover";
+          hitSound.play();
+          updateHighScores();
+        }
+        // Collision with canvas top
+        if (this.y - this.height / 2 < 0) {
+          this.y = this.height / 2;
+          this.velocity = 0;
+        }
+      },
+      jump: function() {
+        this.velocity = jumpStrength;
+        flapSound.play();
+      },
+      reset: function() {
+        this.y = canvas.height / 2;
+        this.velocity = 0;
+      }
+    };
+
+    // ----------------------- HELPER FUNCTIONS -----------------------
+    function createPipe() {
+      const gap = Math.floor(Math.random() * (gapMax - gapMin + 1)) + gapMin;
+      const maxPipeHeight = canvas.height - gap - 80;
+      const topPipeHeight = Math.floor(Math.random() * maxPipeHeight) + 40;
+      pipes.push({
+        x: canvas.width,
+        top: topPipeHeight,
+        bottom: canvas.height - (topPipeHeight + gap),
+        passed: false
+      });
+    }
+
+    function updateHighScores() {
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("bestScore", bestScore);
+      }
+    }
+
+    // Projectile functions
+    function createProjectile() {
+      const projY = Math.floor(Math.random() * (canvas.height - 60)) + 30;
+      projectiles.push({
+        x: canvas.width,
+        y: projY,
+        width: projectileWidth,
+        height: projectileHeight,
+        velocity: projectileSpeed
+      });
+    }
+
+    function updateProjectiles() {
+      projectiles.forEach(proj => {
+        proj.x -= proj.velocity;
+        // Simple AABB collision check
+        if (
+          proj.x < bird.x + bird.width/2 &&
+          proj.x + proj.width > bird.x - bird.width/2 &&
+          proj.y < bird.y + bird.height/2 &&
+          proj.y + proj.height > bird.y - bird.height/2
+        ) {
+          gameState = "gameover";
+          hitSound.play();
+          updateHighScores();
+        }
+      });
+      projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
+    }
+
+    function drawProjectiles() {
+      projectiles.forEach(proj => {
+        ctx.drawImage(neuronImg, proj.x, proj.y, proj.width, proj.height);
+      });
+    }
+
+    // ----------------------- DRAWING FUNCTIONS -----------------------
+    function drawBackground() {
+      ctx.drawImage(bgLayer.image, bgLayer.x, 0, canvas.width, canvas.height);
+      ctx.drawImage(bgLayer.image, bgLayer.x + canvas.width, 0, canvas.width, canvas.height);
+    }
+
+    function drawPipes() {
+      // Only draw pipes if score is less than 50
+      if (score < 50) {
+        pipes.forEach(pipe => {
+          ctx.drawImage(pipeNorthImg, pipe.x, 0, pipeWidth, pipe.top);
+          ctx.drawImage(pipeSouthImg, pipe.x, canvas.height - pipe.bottom, pipeWidth, pipe.bottom);
+        });
+      }
+    }
+
+    // Draw foreground as a single layer by cropping the top half of the foreground image.
+    function drawForeground() {
+      const destHeight = 45; // Fixed height for the foreground layer
+      let x = fgLayer.x;
+      while (x < canvas.width) {
+        ctx.drawImage(
+          fgLayer.image,
+          0, 0, fgLayer.image.width, fgLayer.image.height / 1.25,
+          x, canvas.height - destHeight, fgLayer.image.width, destHeight
+        );
+        x += fgLayer.image.width;
+      }
+      if (fgLayer.x < 0) {
+        x = fgLayer.x + canvas.width;
+        while (x > 0) {
+          ctx.drawImage(
+            fgLayer.image,
+            0, 0, fgLayer.image.width, fgLayer.image.height / 2,
+            x - fgLayer.image.width, canvas.height - destHeight, fgLayer.image.width, destHeight
+          );
+          x -= fgLayer.image.width;
+        }
+      }
+    }
+
+    function drawHUD() {
+      const margin = 20;
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText("Score: " + score, margin, margin);
+      ctx.font = "12px Arial";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("Best Score: " + bestScore, margin, canvas.height - margin);
+    }
+
+    function drawMenu() {
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Flappy Brain", canvas.width / 2, canvas.height / 2 - 40);
+      ctx.font = "20px Arial";
+      ctx.fillText("Click or tap to start", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("Press P to Pause", canvas.width / 2, canvas.height / 2 + 30);
+    }
+
+    function drawGameOver() {
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 20);
+      ctx.font = "20px Arial";
+      ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2 + 10);
+      ctx.fillText("Best Score: " + bestScore, canvas.width / 2, canvas.height / 2 + 35);
+      ctx.fillText("Click or tap to restart", canvas.width / 2, canvas.height / 2 + 70);
+    }
+
+    function drawPause() {
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Paused", canvas.width / 2, canvas.height / 2);
+    }
+
+    // ----------------------- UPDATE FUNCTIONS -----------------------
+    function updateBackground() {
+      bgLayer.x -= bgLayer.speed;
+      if (bgLayer.x <= -canvas.width) bgLayer.x = 0;
+    }
+
+    function updateForeground() {
+      fgLayer.x -= fgLayer.speed;
+      if (fgLayer.x <= -fgLayer.image.width) fgLayer.x += fgLayer.image.width;
+    }
+
+    function updatePipes() {
+      if (score < 50) {
+        pipes.forEach(pipe => {
+          pipe.x -= pipeSpeed;
+          if (
+            bird.x + bird.width/2 - collisionMarginX > pipe.x &&
+            bird.x - bird.width/2 + collisionMarginX < pipe.x + pipeWidth
+          ) {
+            if (
+              bird.y - bird.height/2 + collisionMarginY < pipe.top ||
+              bird.y + bird.height/2 - collisionMarginY > canvas.height - pipe.bottom
+            ) {
+              gameState = "gameover";
+              hitSound.play();
+              updateHighScores();
+            }
+          }
+          if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
+            pipe.passed = true;
+            score++;
+            scoreSound.play();
+          }
+        });
+        if (pipes.length && pipes[0].x + pipeWidth < 0) {
+          pipes.shift();
+        }
+      }
+    }
+
+    function updateProjectiles() {
+      projectiles.forEach(proj => {
+        proj.x -= proj.velocity;
+        if (
+          proj.x < bird.x + bird.width/2 &&
+          proj.x + proj.width > bird.x - bird.width/2 &&
+          proj.y < bird.y + bird.height/2 &&
+          proj.y + proj.height > bird.y - bird.height/2
+        ) {
+          gameState = "gameover";
+          hitSound.play();
+          updateHighScores();
+        }
+      });
+      projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
+    }
+
+    function updateGame() {
+      if (gameState === "playing") {
+        frames++;
+        if (score < 50) {
+          if (frames >= nextPipeFrame) {
+            createPipe();
+            nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100; // 100-200 frames
+          }
+          updatePipes();
+        } else {
+          // Remove pipes when score reaches 50 or above
+          pipes = [];
+          if (frames >= nextProjectileFrame) {
+            createProjectile();
+            nextProjectileFrame = frames + Math.floor(Math.random() * 131) + 120; // 120-250 frames
+          }
+          updateProjectiles();
+        }
+        bird.update();
+        updateBackground();
+        updateForeground();
+      }
+    }
+
+    // ----------------------- INPUT HANDLING -----------------------
+    function handleJump() {
+      if (gameState === "menu") {
+        gameState = "playing";
+      } else if (gameState === "playing") {
+        bird.jump();
+      } else if (gameState === "gameover") {
+        resetGame();
+        gameState = "playing";
+      }
+    }
+
+    document.addEventListener("keydown", function(e) {
+      if (e.code === "Space") { handleJump(); }
+      if (e.code === "KeyP" && gameState === "playing") { gameState = "paused"; }
+      else if (e.code === "KeyP" && gameState === "paused") { gameState = "playing"; }
+    });
+
+    canvas.addEventListener("click", handleJump);
+    canvas.addEventListener("touchstart", function(e) {
+      e.preventDefault();
+      handleJump();
+    });
+
+    function resetGame() {
+      bird.reset();
+      pipes = [];
+      projectiles = [];
+      frames = 0;
+      score = 0;
+      nextPipeFrame = 100;
+      nextProjectileFrame = 0;
+    }
+
+    // ----------------------- MAIN GAME LOOP -----------------------
+    function gameLoop() {
+      drawBackground();
+      if (gameState === "menu") {
+        drawMenu();
+      } else if (gameState === "playing" || gameState === "paused") {
+        updateGame();
+        if (score < 50) { drawPipes(); }
+        drawProjectiles();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        if (gameState === "paused") { drawPause(); }
+      } else if (gameState === "gameover") {
+        drawPipes();
+        drawProjectiles();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        drawGameOver();
+      }
+      requestAnimationFrame(gameLoop);
+    }
+
+    // ----------------------- ASSET LOADING COUNTER -----------------------
+    let imagesLoaded = 0;
+    const totalImages = 6;
+    function checkImagesLoaded() {
+      imagesLoaded++;
+      if (imagesLoaded === totalImages) {
+        gameLoop();
+      }
+    }
+  </script>
+</body>
+</html>
