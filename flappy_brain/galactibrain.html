@@ -72,7 +72,7 @@
     const shootSound = new Audio("flap.wav");
     const explosionSound = new Audio("score.wav");
     const hitSound = new Audio("hit.wav");
-    const bgMusic = new Audio("music.m4a");
+    const bgMusic = new Audio("music2.m4a");
     bgMusic.loop = true;
     bgMusic.volume = 0.2;
     document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
@@ -257,9 +257,11 @@
       for (let i = enemyProjectiles.length - 1; i >= 0; i--) {
         enemyProjectiles[i].x += enemyProjectiles[i].vx;
         enemyProjectiles[i].y += enemyProjectiles[i].vy;
-        if (enemyProjectiles[i].y > canvas.height ||
-            enemyProjectiles[i].x < 0 ||
-            enemyProjectiles[i].x > canvas.width) {
+        if (
+          enemyProjectiles[i].y > canvas.height ||
+          enemyProjectiles[i].x < 0 ||
+          enemyProjectiles[i].x > canvas.width
+        ) {
           enemyProjectiles.splice(i, 1);
         }
       }
@@ -371,7 +373,7 @@
     }
     canvas.addEventListener("touchstart", function(e) {
       e.preventDefault();
-      // If game is in menu or gameover state, start game.
+      // If game is in menu or gameover state, start the game.
       if (gameState === "menu" || gameState === "gameover") {
         resetGame();
         createFormation();
@@ -379,7 +381,7 @@
         return;
       }
       const pos = getCanvasCoordinates(e);
-      // Check if touch is within player's bounding box (with a margin of 10px).
+      // Check if touch is within player's bounding box (with margin).
       if (
         pos.x >= player.x - player.width/2 - 10 &&
         pos.x <= player.x + player.width/2 + 10 &&
@@ -388,7 +390,7 @@
       ) {
         shoot();
       } else {
-        // Otherwise, if touch is left of center, move left; if right, move right.
+        // Otherwise, if touch is on left half, move left; right half, move right.
         if (pos.x < canvas.width / 2) {
           player.movingLeft = true;
           player.movingRight = false;
@@ -401,7 +403,6 @@
     canvas.addEventListener("touchmove", function(e) {
       e.preventDefault();
       const pos = getCanvasCoordinates(e);
-      // If touch moves into player's bounding box, shoot and stop movement.
       if (
         pos.x >= player.x - player.width/2 - 10 &&
         pos.x <= player.x + player.width/2 + 10 &&
@@ -424,7 +425,6 @@
       player.movingLeft = false;
       player.movingRight = false;
     });
-    // Also allow click-to-start.
     canvas.addEventListener("click", function(e) {
       if (gameState === "menu" || gameState === "gameover") {
         resetGame();
@@ -526,6 +526,12 @@
       requestAnimationFrame(gameLoop);
     }
     gameLoop();
+
+    // ----------------------- STOP MUSIC WHEN POPUP CLOSES -----------------------
+    window.addEventListener("beforeunload", () => {
+      bgMusic.pause();
+      bgMusic.currentTime = 0;
+    });
   </script>
 </body>
 </html>
