@@ -57,6 +57,11 @@
     pipeSouthImg.onload = () => { console.log("pipeSouth.png loaded."); checkImagesLoaded(); };
     pipeSouthImg.onerror = () => { console.error("Error loading pipeSouth.png."); checkImagesLoaded(); };
 
+    const neuronImg = new Image();
+    neuronImg.src = "neuron.png";
+    neuronImg.onload = () => { console.log("neuron.png loaded."); checkImagesLoaded(); };
+    neuronImg.onerror = () => { console.error("Error loading neuron.png."); checkImagesLoaded(); };
+
     // Audio files (optional)
     const flapSound = new Audio("flap.wav");
     const scoreSound = new Audio("score.wav");
@@ -71,7 +76,7 @@
     // GAME VARIABLES & STATES
     // ------------------------------------------------------------
     let frames = 0;
-    let score = 0; // Number of pipes passed
+    let score = 0; // Pipes passed in current game
     let gameState = "menu"; // "menu", "playing", "paused", "gameover"
 
     // Gameplay physics settings
@@ -94,6 +99,15 @@
     const collisionMarginY = 5;
 
     // ------------------------------------------------------------
+    // PROJECTILES (spawn after score >= 50)
+    // ------------------------------------------------------------
+    let projectiles = [];
+    let nextProjectileFrame = 0; // Initialized to 0
+    const projectileSpeed = 3;
+    const projectileWidth = 20;
+    const projectileHeight = 10;
+
+    // ------------------------------------------------------------
     // PARALLAX LAYER OBJECTS
     // ------------------------------------------------------------
     const bgLayer = {
@@ -102,10 +116,9 @@
       image: bgImg
     };
 
-    // Foreground layer (the decorative grass)
     const fgLayer = {
       x: 0,
-      speed: 1.7,  // Moves faster for parallax effect
+      speed: 2,  // Foreground moves faster for parallax effect
       image: fgImg
     };
 
@@ -130,7 +143,7 @@
       update: function() {
         this.velocity += gravity;
         this.y += this.velocity;
-        // Collision with bottom (canvas bottom)
+        // Collision with canvas bottom
         if (this.y + this.height / 2 > canvas.height) {
           this.y = canvas.height - this.height / 2;
           this.velocity = 0;
@@ -138,7 +151,7 @@
           hitSound.play();
           updateHighScores();
         }
-        // Collision with top
+        // Collision with canvas top
         if (this.y - this.height / 2 < 0) {
           this.y = this.height / 2;
           this.velocity = 0;
@@ -176,6 +189,42 @@
       }
     }
 
+    // Projectile functions
+    function createProjectile() {
+      const projY = Math.floor(Math.random() * (canvas.height - 60)) + 30;
+      projectiles.push({
+        x: canvas.width,
+        y: projY,
+        width: projectileWidth,
+        height: projectileHeight,
+        velocity: projectileSpeed
+      });
+    }
+
+    function updateProjectiles() {
+      projectiles.forEach(proj => {
+        proj.x -= proj.velocity;
+        // Simple AABB collision
+        if (
+          proj.x < bird.x + bird.width / 2 &&
+          proj.x + proj.width > bird.x - bird.width / 2 &&
+          proj.y < bird.y + bird.height / 2 &&
+          proj.y + proj.height > bird.y - bird.height / 2
+        ) {
+          gameState = "gameover";
+          hitSound.play();
+          updateHighScores();
+        }
+      });
+      projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
+    }
+
+    function drawProjectiles() {
+      projectiles.forEach(proj => {
+        ctx.drawImage(neuronImg, proj.x, proj.y, proj.width, proj.height);
+      });
+    }
+
     // ------------------------------------------------------------
     // DRAWING FUNCTIONS
     // ------------------------------------------------------------
@@ -191,23 +240,19 @@
       });
     }
 
-    // Draw the foreground as a repeating tile at the bottom.
-    // It will show only the top half of the foreground image,
-    // tiled horizontally at a fixed height.
+    // Draw a single foreground layer:
+    // Crop the foreground image to its top half and tile it at a fixed height at the bottom.
     function drawForeground() {
-      // Define the desired drawn height for the foreground (e.g., 30px)
-      const destHeight = 40;
+      const destHeight = 30; // Fixed drawn height for the foreground layer
       let x = fgLayer.x;
       while (x < canvas.width) {
-        // Draw the top half of the image without stretching horizontally.
         ctx.drawImage(
           fgLayer.image,
-          0, 0, fgLayer.image.width, fgLayer.image.height / 1.25,  // Source: top half of image
-          x, canvas.height - destHeight, fgLayer.image.width, destHeight  // Destination rectangle
+          0, 0, fgLayer.image.width, fgLayer.image.height / 2, // Use the top half of the image
+          x, canvas.height - destHeight, fgLayer.image.width, destHeight
         );
         x += fgLayer.image.width;
       }
-      // Handle negative offset if fgLayer.x is negative.
       if (fgLayer.x < 0) {
         x = fgLayer.x + canvas.width;
         while (x > 0) {
@@ -310,6 +355,30 @@
       }
     }
 
+    function updateProjectiles() {
+      projectiles.forEach(proj => {
+        proj.x -= proj.velocity;
+        // Simple AABB collision check
+        if (
+          proj.x < bird.x + bird.width/2 &&
+          proj.x + proj.width > bird.x - bird.width/2 &&
+          proj.y < bird.y + bird.height/2 &&
+          proj.y + proj.height > bird.y - bird.height/2
+        ) {
+          gameState = "gameover";
+          hitSound.play();
+          updateHighScores();
+        }
+      });
+      projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
+    }
+
+    function drawProjectiles() {
+      projectiles.forEach(proj => {
+        ctx.drawImage(neuronImg, proj.x, proj.y, proj.width, proj.height);
+      });
+    }
+
     function updateGame() {
       if (gameState === "playing") {
         frames++;
@@ -317,11 +386,29 @@
           createPipe();
           nextPipeFrame = frames + Math.floor(Math.random() * (200 - 100 + 1)) + 100;
         }
+        // Spawn projectiles if score is 50 or above
+        if (score >= 50 && frames >= nextProjectileFrame) {
+          createProjectile();
+          nextProjectileFrame = frames + Math.floor(Math.random() * (250 - 120 + 1)) + 120;
+        }
         bird.update();
         updatePipes();
         updateBackground();
         updateForeground();
+        updateProjectiles();
       }
+    }
+
+    // Projectile globals and function (already declared above)
+    function createProjectile() {
+      const projY = Math.floor(Math.random() * (canvas.height - 60)) + 30;
+      projectiles.push({
+        x: canvas.width,
+        y: projY,
+        width: projectileWidth,
+        height: projectileHeight,
+        velocity: projectileSpeed
+      });
     }
 
     // ------------------------------------------------------------
@@ -353,9 +440,11 @@
     function resetGame() {
       bird.reset();
       pipes = [];
+      projectiles = [];
       frames = 0;
       score = 0;
       nextPipeFrame = 100;
+      nextProjectileFrame = 0;
     }
 
     // ------------------------------------------------------------
@@ -368,12 +457,14 @@
       } else if (gameState === "playing" || gameState === "paused") {
         updateGame();
         drawPipes();
+        drawProjectiles();
         bird.draw();
         drawForeground();
         drawHUD();
         if (gameState === "paused") { drawPause(); }
       } else if (gameState === "gameover") {
         drawPipes();
+        drawProjectiles();
         bird.draw();
         drawForeground();
         drawHUD();
@@ -386,7 +477,7 @@
     // ASSET LOADING COUNTER
     // ------------------------------------------------------------
     let imagesLoaded = 0;
-    const totalImages = 5;
+    const totalImages = 6;
     function checkImagesLoaded() {
       imagesLoaded++;
       if (imagesLoaded === totalImages) {
