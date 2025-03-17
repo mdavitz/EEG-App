@@ -64,7 +64,7 @@
     const flapSound = new Audio("flap.wav");
     const scoreSound = new Audio("score.wav");
     const hitSound = new Audio("hit.wav");
-    const bgMusic = new Audio("music.mp3");
+    const bgMusic = new Audio("music.m4a");
     bgMusic.loop = true;
     bgMusic.volume = 0.5;
     document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
@@ -78,13 +78,13 @@
     const gravity = 0.3;
     const jumpStrength = -5;
 
-    // Pipe settings
-    const pipeSpeed = 1.5;
+    // Pipe settings (active when score < 50 or score >= 100)
+    const pipeSpeed = 2.3;
     const pipeWidth = 50;
-    const gapMin = 140;
+    const gapMin = 130;
     const gapMax = 180;
     let pipes = [];
-    let nextPipeFrame = 100; // Next pipe spawns between 100 and 200 frames later
+    let nextPipeFrame = 90; // Next pipe spawns between 100 and 200 frames later
 
     // High score (persisted)
     let bestScore = Number(localStorage.getItem("bestScore")) || 0;
@@ -93,12 +93,12 @@
     const collisionMarginX = 5;
     const collisionMarginY = 5;
 
-    // Projectile settings (appear when score >= 50)
+    // Projectile settings (active when score >= 50)
     let projectiles = [];
-    let nextProjectileFrame = 0; // Initialized to 0
-    const projectileSpeed = 3;
-    const projectileWidth = 20;
-    const projectileHeight = 10;
+    const projectileSpeed = 4;
+    const projectileWidth = 100;
+    const projectileHeight = 40;
+    let projectilePassCount = 0;
 
     // ----------------------- PARALLAX LAYER OBJECTS -----------------------
     const bgLayer = {
@@ -126,7 +126,6 @@
       update: function() {
         this.velocity += gravity;
         this.y += this.velocity;
-        // Collision with canvas bottom
         if (this.y + this.height / 2 > canvas.height) {
           this.y = canvas.height - this.height / 2;
           this.velocity = 0;
@@ -134,7 +133,6 @@
           hitSound.play();
           updateHighScores();
         }
-        // Collision with canvas top
         if (this.y - this.height / 2 < 0) {
           this.y = this.height / 2;
           this.velocity = 0;
@@ -170,7 +168,7 @@
       }
     }
 
-    // Projectile functions
+    // ----------------------- PROJECTILE FUNCTIONS -----------------------
     function createProjectile() {
       const projY = Math.floor(Math.random() * (canvas.height - 60)) + 30;
       projectiles.push({
@@ -178,25 +176,35 @@
         y: projY,
         width: projectileWidth,
         height: projectileHeight,
-        velocity: projectileSpeed
+        velocity: projectileSpeed,
+        passed: false
       });
     }
 
     function updateProjectiles() {
       projectiles.forEach(proj => {
         proj.x -= proj.velocity;
-        // Simple AABB collision check
         if (
-          proj.x < bird.x + bird.width/2 &&
-          proj.x + proj.width > bird.x - bird.width/2 &&
-          proj.y < bird.y + bird.height/2 &&
-          proj.y + proj.height > bird.y - bird.height/2
+          proj.x < bird.x + bird.width / 2 &&
+          proj.x + proj.width > bird.x - bird.width / 2 &&
+          proj.y < bird.y + bird.height / 2 &&
+          proj.y + proj.height > bird.y - bird.height / 2
         ) {
           gameState = "gameover";
           hitSound.play();
           updateHighScores();
         }
+        if (!proj.passed && proj.x + proj.width < bird.x) {
+          proj.passed = true;
+          projectilePassCount++;
+        }
       });
+      // For every two projectiles passed, increment score by 1
+      if (projectilePassCount >= 2) {
+        score += Math.floor(projectilePassCount / 2);
+        projectilePassCount %= 2;
+        scoreSound.play();
+      }
       projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
     }
 
@@ -213,8 +221,8 @@
     }
 
     function drawPipes() {
-      // Only draw pipes if score is less than 50
-      if (score < 50) {
+      // Draw pipes only if score is less than 50 or if score >= 100.
+      if (score < 50 || score >= 100) {
         pipes.forEach(pipe => {
           ctx.drawImage(pipeNorthImg, pipe.x, 0, pipeWidth, pipe.top);
           ctx.drawImage(pipeSouthImg, pipe.x, canvas.height - pipe.bottom, pipeWidth, pipe.bottom);
@@ -222,14 +230,14 @@
       }
     }
 
-    // Draw foreground as a single layer by cropping the top half of the foreground image.
+    // Draw the foreground as a single layer (cropped to top half, tiled horizontally)
     function drawForeground() {
-      const destHeight = 45; // Fixed height for the foreground layer
+      const destHeight = 30;
       let x = fgLayer.x;
       while (x < canvas.width) {
         ctx.drawImage(
           fgLayer.image,
-          0, 0, fgLayer.image.width, fgLayer.image.height / 1.25,
+          0, 0, fgLayer.image.width, fgLayer.image.height / 2,
           x, canvas.height - destHeight, fgLayer.image.width, destHeight
         );
         x += fgLayer.image.width;
@@ -305,7 +313,8 @@
     }
 
     function updatePipes() {
-      if (score < 50) {
+      // Update pipes only if score < 50 or score >= 100
+      if (score < 50 || score >= 100) {
         pipes.forEach(pipe => {
           pipe.x -= pipeSpeed;
           if (
@@ -346,7 +355,16 @@
           hitSound.play();
           updateHighScores();
         }
+        if (!proj.passed && proj.x + proj.width < bird.x) {
+          proj.passed = true;
+          projectilePassCount++;
+        }
       });
+      if (projectilePassCount >= 2) {
+        score += Math.floor(projectilePassCount / 2);
+        projectilePassCount %= 2;
+        scoreSound.play();
+      }
       projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
     }
 
@@ -356,15 +374,24 @@
         if (score < 50) {
           if (frames >= nextPipeFrame) {
             createPipe();
-            nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100; // 100-200 frames
+            nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100;
           }
           updatePipes();
-        } else {
-          // Remove pipes when score reaches 50 or above
+        } else if (score >= 50 && score < 100) {
+          // In this range, only projectiles appear.
           pipes = [];
-          if (frames >= nextProjectileFrame) {
+          if (Math.random() < 0.02) {
             createProjectile();
-            nextProjectileFrame = frames + Math.floor(Math.random() * 131) + 120; // 120-250 frames
+          }
+          updateProjectiles();
+        } else { // score >= 100: both pipes and projectiles appear.
+          if (frames >= nextPipeFrame) {
+            createPipe();
+            nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100;
+          }
+          updatePipes();
+          if (Math.random() < 0.02) {
+            createProjectile();
           }
           updateProjectiles();
         }
@@ -405,7 +432,7 @@
       frames = 0;
       score = 0;
       nextPipeFrame = 100;
-      nextProjectileFrame = 0;
+      projectilePassCount = 0;
     }
 
     // ----------------------- MAIN GAME LOOP -----------------------
@@ -415,7 +442,7 @@
         drawMenu();
       } else if (gameState === "playing" || gameState === "paused") {
         updateGame();
-        if (score < 50) { drawPipes(); }
+        if (score < 50 || score >= 100) { drawPipes(); }
         drawProjectiles();
         bird.draw();
         drawForeground();
