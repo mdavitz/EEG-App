@@ -52,7 +52,7 @@
     }
     #scoreBoard {
       position: absolute;
-      top: 10px;
+      top: 400px;
       left: 50%;
       transform: translateX(-50%);
       color: #0f0;
@@ -142,7 +142,7 @@
         ctx.save();
         ctx.translate(this.x, this.y);
         ctx.rotate(this.rotation);
-        ctx.drawImage(neuronImg, -this.width/2, -this.height/2, this.width, this.height);
+        ctx.drawImage(neuronImg, -this.width / 2, -this.height / 2, this.width, this.height);
         if (this.shieldActive) {
           ctx.beginPath();
           ctx.arc(0, 0, this.width, 0, Math.PI * 2);
@@ -258,7 +258,8 @@
       let x = Math.random() < 0.5 ? 0 : canvas.width;
       let y = Math.random() * canvas.height;
       enemies.push({
-        x, y,
+        x: x,
+        y: y,
         width: 30,
         height: 30,
         rotation: 0,
@@ -308,11 +309,34 @@
       });
     }
 
+    // Check collisions between player bullets and enemy ships
+    function checkBulletEnemyCollisions() {
+      for (let i = bullets.length - 1; i >= 0; i--) {
+        for (let j = enemies.length - 1; j >= 0; j--) {
+          let dx = bullets[i].x - enemies[j].x;
+          let dy = bullets[i].y - enemies[j].y;
+          let dist = Math.sqrt(dx * dx + dy * dy);
+          if (dist < enemies[j].width / 2) {
+            // Bullet hit enemy
+            createParticles(enemies[j].x, enemies[j].y, 20);
+            explosionSound.currentTime = 0;
+            explosionSound.play();
+            score += 20;
+            updateScore();
+            enemies.splice(j, 1);
+            bullets.splice(i, 1);
+            break;
+          }
+        }
+      }
+    }
+
     // Particle explosion effects
     function createParticles(x, y, count) {
       for (let i = 0; i < count; i++) {
         particles.push({
-          x, y,
+          x: x,
+          y: y,
           velocity: {
             x: (Math.random() - 0.5) * 2,
             y: (Math.random() - 0.5) * 2
@@ -327,7 +351,9 @@
         particles[i].x += particles[i].velocity.x;
         particles[i].y += particles[i].velocity.y;
         particles[i].lifetime--;
-        if (particles[i].lifetime <= 0) particles.splice(i, 1);
+        if (particles[i].lifetime <= 0) {
+          particles.splice(i, 1);
+        }
       }
     }
     function drawParticles() {
@@ -339,7 +365,7 @@
       });
     }
 
-    // Draw power-ups
+    // Draw power-ups (if any)
     function drawPowerUps() {
       powerUps.forEach(p => {
         ctx.beginPath();
@@ -349,7 +375,7 @@
       });
     }
 
-    // Collision detection: bullets vs. asteroids and enemy bullets vs. player
+    // Collision detection: player bullets vs. asteroids and enemy bullets vs. player
     function checkCollisions() {
       // Bullets vs. asteroids
       for (let i = bullets.length - 1; i >= 0; i--) {
@@ -488,10 +514,10 @@
       if (gameState !== "playing") return;
       switch (event.key) {
         case "ArrowLeft":
-          player.rotation -= 0.1;
+          player.rotation -= 0.3; // Increased turning sensitivity
           break;
         case "ArrowRight":
-          player.rotation += 0.1;
+          player.rotation += 0.3; // Increased turning sensitivity
           break;
         case "ArrowUp":
           player.thrusting = true;
@@ -514,7 +540,6 @@
 
     // Main game loop
     function gameLoop() {
-      // Draw background (fallback will fill with black if image not loaded)
       drawBackground();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
@@ -527,6 +552,7 @@
         updateEnemies();
         updateParticles();
         checkCollisions();
+        checkBulletEnemyCollisions();  // Check if player bullets hit enemy ships
       }
       player.draw();
       drawAsteroids();
