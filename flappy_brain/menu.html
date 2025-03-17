@@ -30,33 +30,30 @@
     const canvas = document.getElementById("menuCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Define two button objects.
-    // Each button has x, y, width, height and a target URL.
+    // Updated buttons array with a new game option.
     const buttons = [
-      { text: "Flappy Brain", x: 35, y: 150, width: 250, height: 60, target: "flappy_brain.html" },
-      { text: "Galactibrain", x: 35, y: 260, width: 250, height: 60, target: "galactibrain.html" }
+      { text: "Flappy Brain", x: 35, y: 130, width: 250, height: 60, target: "flappy_brain.html" },
+      { text: "Galactibrain", x: 35, y: 230, width: 250, height: 60, target: "galactibrain.html" },
+      { text: "Astrobrain", x: 35, y: 330, width: 250, height: 60, target: "astrobrain.html" }
     ];
 
-    // Draw the two buttons with an 8-bit style.
+    // Draw the menu
     function drawMenu() {
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       
-      // Optional: Draw a small title above the buttons.
+      // Draw title
       ctx.fillStyle = "#0f0";
       ctx.font = "18px 'Press Start 2P'";
       ctx.textAlign = "center";
-      ctx.fillText("Select Game", canvas.width/2, 70);
+      ctx.fillText("Select Game", canvas.width / 2, 60);
       
-      // Draw each button.
+      // Draw each button
       buttons.forEach(btn => {
-        // Draw an 8-bit styled rectangle.
         ctx.strokeStyle = "#0f0";
         ctx.lineWidth = 4;
         ctx.strokeRect(btn.x, btn.y, btn.width, btn.height);
-        // Optionally, fill a dark background inside the button.
         ctx.fillStyle = "black";
         ctx.fillRect(btn.x, btn.y, btn.width, btn.height);
-        // Draw the button text.
         ctx.fillStyle = "#0f0";
         ctx.font = "14px 'Press Start 2P'";
         ctx.textAlign = "center";
@@ -67,7 +64,7 @@
 
     drawMenu();
 
-    // Helper function to get canvas coordinates from an event.
+    // Helper function: get canvas coordinates from event.
     function getCanvasCoordinates(e) {
       const rect = canvas.getBoundingClientRect();
       let x, y;
@@ -81,7 +78,7 @@
       return { x, y };
     }
 
-    // Handle selection: if a click/tap falls within a button, navigate to its target.
+    // Handle button selection: if a click/tap is inside a button, navigate to its target.
     function handleSelection(e) {
       const pos = getCanvasCoordinates(e);
       buttons.forEach(btn => {

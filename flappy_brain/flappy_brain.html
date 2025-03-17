@@ -89,7 +89,6 @@
     const hitSound = new Audio("hit.wav");
     const bgMusic = new Audio("music.m4a");
     bgMusic.loop = true;
-    // Lower the background music volume further
     bgMusic.volume = 0.2;
     document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
     document.addEventListener("touchstart", () => { if (bgMusic.paused) bgMusic.play(); });
@@ -97,14 +96,9 @@
     // ----------------------- VOLUME TOGGLE CODE -----------------------
     const muteButton = document.getElementById("muteButton");
     let isMuted = false;
-
     muteButton.addEventListener("click", function() {
       isMuted = !isMuted;
-      // Toggle muted state for all audio objects
-      [flapSound, scoreSound, hitSound, bgMusic].forEach(sound => {
-        sound.muted = isMuted;
-      });
-      // Update button text
+      [flapSound, scoreSound, hitSound, bgMusic].forEach(sound => { sound.muted = isMuted; });
       muteButton.textContent = isMuted ? "Unmute" : "Mute";
     });
 
@@ -112,26 +106,17 @@
     let frames = 0;
     let score = 0;
     let gameState = "menu"; // "menu", "playing", "paused", "gameover"
-
     const gravity = 0.3;
     const jumpStrength = -5;
-
-    // Pipe settings (active when score < 50 or score >= 100)
     const pipeSpeed = 2.3;
     const pipeWidth = 50;
     const gapMin = 130;
     const gapMax = 180;
     let pipes = [];
-    let nextPipeFrame = 90; // Next pipe spawns between 100 and 200 frames later
-
-    // High score (persisted)
+    let nextPipeFrame = 90;
     let bestScore = Number(localStorage.getItem("bestScore")) || 0;
-
-    // Collision margins
     const collisionMarginX = 5;
     const collisionMarginY = 5;
-
-    // Projectile settings (active when score >= 50)
     let projectiles = [];
     const projectileSpeed = 4;
     const projectileWidth = 100;
@@ -139,17 +124,48 @@
     let projectilePassCount = 0;
 
     // ----------------------- PARALLAX LAYER OBJECTS -----------------------
-    const bgLayer = {
-      x: 0,
-      speed: 0.5,
-      image: bgImg
-    };
+    const bgLayer = { x: 0, speed: 0.5, image: bgImg };
+    const fgLayer = { x: 0, speed: 2, image: fgImg };
 
-    const fgLayer = {
-      x: 0,
-      speed: 2,
-      image: fgImg
-    };
+    // ----------------------- PARTICLE FUNCTIONS -----------------------
+    // Create a burst of particles at (x,y)
+    function createParticles(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          velocity: {
+            x: (Math.random() - 0.5) * 2,
+            y: (Math.random() - 0.5) * 2
+          },
+          lifetime: 30,
+          size: Math.random() * 3 + 1
+        });
+      }
+    }
+    // Update particle positions and decrease lifetime
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].x += particles[i].velocity.x;
+        particles[i].y += particles[i].velocity.y;
+        particles[i].lifetime--;
+        if (particles[i].lifetime <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+    }
+    // Draw particles on the canvas
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff0";
+        ctx.fill();
+      });
+    }
+
+    // Array to hold particle objects
+    const particles = [];
 
     // ----------------------- BIRD OBJECT -----------------------
     const bird = {
@@ -167,6 +183,8 @@
         if (this.y + this.height / 2 > canvas.height) {
           this.y = canvas.height - this.height / 2;
           this.velocity = 0;
+          // Trigger particle burst on crash
+          createParticles(this.x, this.y, 30);
           gameState = "gameover";
           hitSound.play();
           updateHighScores();
@@ -237,7 +255,6 @@
           projectilePassCount++;
         }
       });
-      // For every two projectiles passed, increment score by 1
       if (projectilePassCount >= 2) {
         score += Math.floor(projectilePassCount / 2);
         projectilePassCount %= 2;
@@ -254,12 +271,14 @@
 
     // ----------------------- DRAWING FUNCTIONS -----------------------
     function drawBackground() {
-      ctx.drawImage(bgLayer.image, bgLayer.x, 0, canvas.width, canvas.height);
-      ctx.drawImage(bgLayer.image, bgLayer.x + canvas.width, 0, canvas.width, canvas.height);
+      if (bgImg.complete && bgImg.naturalWidth !== 0) {
+        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
     }
-
     function drawPipes() {
-      // Draw pipes only if score is less than 50 or if score >= 100.
       if (score < 50 || score >= 100) {
         pipes.forEach(pipe => {
           ctx.drawImage(pipeNorthImg, pipe.x, 0, pipeWidth, pipe.top);
@@ -267,15 +286,13 @@
         });
       }
     }
-
-    // Draw the foreground as a single layer (cropped to top half, tiled horizontally)
     function drawForeground() {
       const destHeight = 30;
       let x = fgLayer.x;
       while (x < canvas.width) {
         ctx.drawImage(
           fgLayer.image,
-          0, 0, fgLayer.image.width, fgLayer.image.height / 2,
+          0, 0, fgLayer.image.width, fgLayer.image.height/2,
           x, canvas.height - destHeight, fgLayer.image.width, destHeight
         );
         x += fgLayer.image.width;
@@ -285,14 +302,13 @@
         while (x > 0) {
           ctx.drawImage(
             fgLayer.image,
-            0, 0, fgLayer.image.width, fgLayer.image.height / 2,
+            0, 0, fgLayer.image.width, fgLayer.image.height/2,
             x - fgLayer.image.width, canvas.height - destHeight, fgLayer.image.width, destHeight
           );
           x -= fgLayer.image.width;
         }
       }
     }
-
     function drawHUD() {
       const margin = 20;
       ctx.fillStyle = "white";
@@ -304,39 +320,36 @@
       ctx.textBaseline = "bottom";
       ctx.fillText("Best Score: " + bestScore, margin, canvas.height - margin);
     }
-
     function drawMenu() {
       ctx.fillStyle = "rgba(0,0,0,0.5)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "white";
       ctx.font = "28px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("Flappy Brain", canvas.width / 2, canvas.height / 2 - 40);
+      ctx.fillText("Flappy Brain", canvas.width/2, canvas.height/2 - 40);
       ctx.font = "20px Arial";
-      ctx.fillText("Click or tap to start", canvas.width / 2, canvas.height / 2);
-      ctx.fillText("Press P to Pause", canvas.width / 2, canvas.height / 2 + 30);
+      ctx.fillText("Click or tap to start", canvas.width/2, canvas.height/2);
+      ctx.fillText("Press P to Pause", canvas.width/2, canvas.height/2 + 30);
     }
-
     function drawGameOver() {
       ctx.fillStyle = "rgba(0,0,0,0.5)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "white";
       ctx.font = "28px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("Game Over", canvas.width / 2, canvas.height / 2 - 20);
+      ctx.fillText("Game Over", canvas.width/2, canvas.height/2 - 20);
       ctx.font = "20px Arial";
-      ctx.fillText("Score: " + score, canvas.width / 2, canvas.height / 2 + 10);
-      ctx.fillText("Best Score: " + bestScore, canvas.width / 2, canvas.height / 2 + 35);
-      ctx.fillText("Click or tap to restart", canvas.width / 2, canvas.height / 2 + 70);
+      ctx.fillText("Score: " + score, canvas.width/2, canvas.height/2 + 10);
+      ctx.fillText("Best Score: " + bestScore, canvas.width/2, canvas.height/2 + 35);
+      ctx.fillText("Click or tap to restart", canvas.width/2, canvas.height/2 + 70);
     }
-
     function drawPause() {
       ctx.fillStyle = "rgba(0,0,0,0.3)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "white";
       ctx.font = "28px Arial";
       ctx.textAlign = "center";
-      ctx.fillText("Paused", canvas.width / 2, canvas.height / 2);
+      ctx.fillText("Paused", canvas.width/2, canvas.height/2);
     }
 
     // ----------------------- UPDATE FUNCTIONS -----------------------
@@ -344,14 +357,11 @@
       bgLayer.x -= bgLayer.speed;
       if (bgLayer.x <= -canvas.width) bgLayer.x = 0;
     }
-
     function updateForeground() {
       fgLayer.x -= fgLayer.speed;
       if (fgLayer.x <= -fgLayer.image.width) fgLayer.x += fgLayer.image.width;
     }
-
     function updatePipes() {
-      // Update pipes only if score < 50 or score >= 100
       if (score < 50 || score >= 100) {
         pipes.forEach(pipe => {
           pipe.x -= pipeSpeed;
@@ -363,6 +373,7 @@
               bird.y - bird.height/2 + collisionMarginY < pipe.top ||
               bird.y + bird.height/2 - collisionMarginY > canvas.height - pipe.bottom
             ) {
+              createParticles(bird.x, bird.y, 30);
               gameState = "gameover";
               hitSound.play();
               updateHighScores();
@@ -379,8 +390,6 @@
         }
       }
     }
-
-    // ----------------------- MAIN GAME LOOP -----------------------
     function updateGame() {
       if (gameState === "playing") {
         frames++;
@@ -391,21 +400,16 @@
           }
           updatePipes();
         } else if (score >= 50 && score < 100) {
-          // In this range, only projectiles appear.
           pipes = [];
-          if (Math.random() < 0.02) {
-            createProjectile();
-          }
+          if (Math.random() < 0.02) createProjectile();
           updateProjectiles();
-        } else { // score >= 100: both pipes and projectiles appear.
+        } else {
           if (frames >= nextPipeFrame) {
             createPipe();
             nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100;
           }
           updatePipes();
-          if (Math.random() < 0.02) {
-            createProjectile();
-          }
+          if (Math.random() < 0.02) createProjectile();
           updateProjectiles();
         }
         bird.update();
@@ -413,19 +417,20 @@
         updateForeground();
       }
     }
-
     function gameLoop() {
+      drawBackground();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
       if (gameState === "menu") {
         drawMenu();
       } else if (gameState === "playing" || gameState === "paused") {
         updateGame();
-        if (score < 50 || score >= 100) { drawPipes(); }
+        if (score < 50 || score >= 100) drawPipes();
         drawProjectiles();
         bird.draw();
         drawForeground();
         drawHUD();
-        if (gameState === "paused") { drawPause(); }
+        if (gameState === "paused") drawPause();
       } else if (gameState === "gameover") {
         drawPipes();
         drawProjectiles();
@@ -434,6 +439,8 @@
         drawHUD();
         drawGameOver();
       }
+      updateParticles();
+      drawParticles();
       requestAnimationFrame(gameLoop);
     }
 
@@ -458,23 +465,21 @@
         gameState = "playing";
       }
     }
-
     document.addEventListener("keydown", function(e) {
       if (e.code === "Space") { handleJump(); }
       if (e.code === "KeyP" && gameState === "playing") { gameState = "paused"; }
       else if (e.code === "KeyP" && gameState === "paused") { gameState = "playing"; }
     });
-
     canvas.addEventListener("click", handleJump);
     canvas.addEventListener("touchstart", function(e) {
-      e.preventDefault();
+      // Allow touch events to start the game
       handleJump();
     });
-
     function resetGame() {
       bird.reset();
       pipes = [];
       projectiles = [];
+      particles = []; // Clear leftover particles
       frames = 0;
       score = 0;
       nextPipeFrame = 100;
