@@ -5,6 +5,8 @@
   <!-- Mobile-friendly viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Flappy Brain – Pop-Up Game</title>
+  <!-- Load a retro 8-bit font -->
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -21,15 +23,24 @@
       height: auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-    /* Optional: style the mute button */
+    /* 8-bit style for the mute button */
     #muteButton {
       position: absolute;
       top: 20px;
       right: 20px;
       z-index: 1000;
-      padding: 1px 2px;
-      font-size: 16px;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: 'Press Start 2P', monospace;
+      background: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      box-shadow: 3px 3px 0 #0f0;
       cursor: pointer;
+    }
+    #muteButton:active {
+      box-shadow: none;
+      transform: translate(3px, 3px);
     }
   </style>
 </head>
@@ -78,7 +89,8 @@
     const hitSound = new Audio("hit.wav");
     const bgMusic = new Audio("music.m4a");
     bgMusic.loop = true;
-    bgMusic.volume = 0.3;
+    // Lower the background music volume further
+    bgMusic.volume = 0.2;
     document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
     document.addEventListener("touchstart", () => { if (bgMusic.paused) bgMusic.play(); });
 
