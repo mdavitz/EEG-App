@@ -79,12 +79,12 @@
     const jumpStrength = -5;
 
     // Pipe settings (active when score < 50 or score >= 100)
-    const pipeSpeed = 2;
+    const pipeSpeed = 2.3;
     const pipeWidth = 50;
-    const gapMin = 140;
+    const gapMin = 130;
     const gapMax = 180;
     let pipes = [];
-    let nextPipeFrame = 100; // Next pipe spawns between 100 and 200 frames later
+    let nextPipeFrame = 90; // Next pipe spawns between 100 and 200 frames later
 
     // High score (persisted)
     let bestScore = Number(localStorage.getItem("bestScore")) || 0;
