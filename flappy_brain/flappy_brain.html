@@ -21,10 +21,22 @@
       height: auto;
       box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
+    /* Optional: style the mute button */
+    #muteButton {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      padding: 1px 2px;
+      font-size: 16px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <canvas id="gameCanvas" width="320" height="480"></canvas>
+  <!-- Mute Button -->
+  <button id="muteButton">Mute</button>
   <script>
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
@@ -64,11 +76,25 @@
     const flapSound = new Audio("flap.wav");
     const scoreSound = new Audio("score.wav");
     const hitSound = new Audio("hit.wav");
-    const bgMusic = new Audio("music.mp3");
+    const bgMusic = new Audio("music.m4a");
     bgMusic.loop = true;
-    bgMusic.volume = 0.5;
+    bgMusic.volume = 0.3;
     document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
     document.addEventListener("touchstart", () => { if (bgMusic.paused) bgMusic.play(); });
+
+    // ----------------------- VOLUME TOGGLE CODE -----------------------
+    const muteButton = document.getElementById("muteButton");
+    let isMuted = false;
+
+    muteButton.addEventListener("click", function() {
+      isMuted = !isMuted;
+      // Toggle muted state for all audio objects
+      [flapSound, scoreSound, hitSound, bgMusic].forEach(sound => {
+        sound.muted = isMuted;
+      });
+      // Update button text
+      muteButton.textContent = isMuted ? "Unmute" : "Mute";
+    });
 
     // ----------------------- GAME VARIABLES -----------------------
     let frames = 0;
@@ -342,32 +368,7 @@
       }
     }
 
-    function updateProjectiles() {
-      projectiles.forEach(proj => {
-        proj.x -= proj.velocity;
-        if (
-          proj.x < bird.x + bird.width/2 &&
-          proj.x + proj.width > bird.x - bird.width/2 &&
-          proj.y < bird.y + bird.height/2 &&
-          proj.y + proj.height > bird.y - bird.height/2
-        ) {
-          gameState = "gameover";
-          hitSound.play();
-          updateHighScores();
-        }
-        if (!proj.passed && proj.x + proj.width < bird.x) {
-          proj.passed = true;
-          projectilePassCount++;
-        }
-      });
-      if (projectilePassCount >= 2) {
-        score += Math.floor(projectilePassCount / 2);
-        projectilePassCount %= 2;
-        scoreSound.play();
-      }
-      projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
-    }
-
+    // ----------------------- MAIN GAME LOOP -----------------------
     function updateGame() {
       if (gameState === "playing") {
         frames++;
@@ -398,6 +399,39 @@
         bird.update();
         updateBackground();
         updateForeground();
+      }
+    }
+
+    function gameLoop() {
+      drawBackground();
+      if (gameState === "menu") {
+        drawMenu();
+      } else if (gameState === "playing" || gameState === "paused") {
+        updateGame();
+        if (score < 50 || score >= 100) { drawPipes(); }
+        drawProjectiles();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        if (gameState === "paused") { drawPause(); }
+      } else if (gameState === "gameover") {
+        drawPipes();
+        drawProjectiles();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        drawGameOver();
+      }
+      requestAnimationFrame(gameLoop);
+    }
+
+    // ----------------------- ASSET LOADING COUNTER -----------------------
+    let imagesLoaded = 0;
+    const totalImages = 6;
+    function checkImagesLoaded() {
+      imagesLoaded++;
+      if (imagesLoaded === totalImages) {
+        gameLoop();
       }
     }
 
@@ -433,40 +467,6 @@
       score = 0;
       nextPipeFrame = 100;
       projectilePassCount = 0;
-    }
-
-    // ----------------------- MAIN GAME LOOP -----------------------
-    function gameLoop() {
-      drawBackground();
-      if (gameState === "menu") {
-        drawMenu();
-      } else if (gameState === "playing" || gameState === "paused") {
-        updateGame();
-        if (score < 50 || score >= 100) { drawPipes(); }
-        drawProjectiles();
-        bird.draw();
-        drawForeground();
-        drawHUD();
-        if (gameState === "paused") { drawPause(); }
-      } else if (gameState === "gameover") {
-        drawPipes();
-        drawProjectiles();
-        bird.draw();
-        drawForeground();
-        drawHUD();
-        drawGameOver();
-      }
-      requestAnimationFrame(gameLoop);
-    }
-
-    // ----------------------- ASSET LOADING COUNTER -----------------------
-    let imagesLoaded = 0;
-    const totalImages = 6;
-    function checkImagesLoaded() {
-      imagesLoaded++;
-      if (imagesLoaded === totalImages) {
-        gameLoop();
-      }
     }
   </script>
 </body>
