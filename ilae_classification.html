@@ -9,6 +9,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
   <!-- External CSS -->
   <link rel="stylesheet" href="assets/css/styles.css">
+  <!-- Inline styling for PDF link to ensure it looks good -->
+  <style>
+    #pdfLinkContainer {
+      margin-top: 20px;
+      text-align: center;
+    }
+    #pdfLink {
+      display: inline-block;
+      background-color: #007BFF;
+      color: #fff;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 4px;
+      font-family: 'Roboto', sans-serif;
+    }
+    #pdfLink:hover {
+      background-color: #0056b3;
+    }
+  </style>
 </head>
 <body>
   <!-- Main Content -->
@@ -99,7 +118,7 @@
             <h3>Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)</h3>
             <p>Focal centrotemporal seizures during sleep with remission by adolescence.</p>
           </div>
-          <!-- Card: Self-­ limited epilepsy with autonomic features (SelEAS) -->
+          <!-- Card: Self-­ limited epilepsy with autonomic features (SeLEAS) -->
           <div class="ilae-card"
                data-title="Self-­Limited epilepsy with autonomic seizures (SeLEAS)"
                data-summary="formerly known as Panayiotopoulos syndrome or early onset benign occipital epilepsy, is characterized by the onset in early childhood of focal autonomic seizures that are often prolonged."
@@ -142,7 +161,7 @@
             <h3>Childhood Absence Epilepsy (CAE)</h3>
             <p>Brief staring spells with classic 3 Hz spike‑and‑wave EEG activity.</p>
           </div>
-          <!-- Card: Epilepsy with eyelid myoclonia -->
+          <!-- Card: Epilepsy with eyelid myoclonia (EEM) -->
           <div class="ilae-card"
                data-title="Epilepsy with eyelid myoclonia (EEM)"
                data-summary="A triad of frequent eyelid myoclonia, with or without absences, induced by eye closure and photic stimulation. Eyelid myoclonia is often most prominent on awakening"
@@ -169,51 +188,47 @@
             <h3>Epilepsy with Myoclonic Absence (EMA)</h3>
             <p>Very rare childhood epilepsy syndrome that presents with daily myoclonic absence seizures</p>
           </div>
-
         </div>
       </details>
 
-      <!-- Section 3: Idiopathic Generalized Epilepsies -->
+      <!-- Section 4: Idiopathic Generalized Epilepsies (IGE) -->
       <details open>
         <summary class="section-header">Idiopathic Generalized Epilepsies (IGE)</summary>
         <div class="ilae-grid">
           <!-- Card: Juvenile Absence Epilepsy (JAE) -->
           <div class="ilae-card"
                data-title="Juvenile Absence Epilepsy (JAE)"
-               data-summary="Characterized by brief impaired awareness episodes and a regular 3 Hertz spike‑and‑wave pattern, with a strong genetic component."
-               data-eeg="EEG exhibits a consistent 3 Hertz spike‑and‑wave discharge on a normal background."
-               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=4">
+               data-summary="Characterized by brief impaired awareness episodes and a regular 3 Hertz spike‑and‑wave pattern, with a strong genetic component. >90% have GTCs"
+               data-eeg="EEG exhibits a consistent 3-5.5 Hz spike‑and‑wave discharge on a normal background."
+               data-pdf="assets/documents/idiopathic-generalized2.pdf#page=11">
             <h3>Juvenile Absence Epilepsy (JAE)</h3>
-            <p>Brief impaired awareness episodes with 3 Hertz spike‑and‑wave EEG.</p>
+            <p>Brief impaired awareness episodes with >3 Hertz spike‑and‑wave EEG and GTCs.</p>
           </div>
-           <!-- Card: Juvenile Myoclonic Epilepsy (JME) -->
+          <!-- Card: Juvenile Myoclonic Epilepsy (JME) -->
           <div class="ilae-card"
                data-title="Juvenile Myoclonic Epilepsy (JME)"
                data-summary="Begins in adolescence with myoclonic jerks soon after waking, and may include generalized tonic–clonic seizures."
-               data-eeg="EEG shows generalized polyspike‑and‑wave discharges with photic sensitivity."
-               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=5">
+               data-eeg="EEG shows generalized polyspike‑and‑wave discharges at 3-5.5 Hz with photic sensitivity."
+               data-pdf="assets/documents/idiopathic-generalized2.pdf#page=14">
             <h3>Juvenile Myoclonic Epilepsy (JME)</h3>
             <p>Adolescent-onset epilepsy with myoclonic jerks and generalized polyspike‑and‑wave EEG.</p>
           </div>
-            <!-- Card: Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA) -->
+          <!-- Card: Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA) -->
           <div class="ilae-card"
                data-title="Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)"
                data-summary="Isolated generalized tonic–clonic seizures without other seizure types, with standard treatment response."
-               data-eeg="EEG reveals generalized discharges on a normal background."
-               data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=6">
+               data-eeg="EEG reveals 3-5.5 Hz generalized discharges on a normal background."
+               data-pdf="assets/documents/idiopathic-generalized2.pdf#page=18">
             <h3>Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)</h3>
             <p>Isolated generalized tonic–clonic seizures with normal EEG.</p>
           </div>
         </div>
       </details>
       
-      <!-- Section 3: Epilepsy Syndromes with Onset at a Variable Age -->
+      <!-- Section 5: Epilepsy Syndromes with Onset at a Variable Age -->
       <details open>
         <summary class="section-header">Epilepsy Syndromes with Onset at a Variable Age<br><small>(ILAE Position Statement, 2022 – PDF pages renumbered 1–32)</small></summary>
         <div class="ilae-grid">
-
-         
-
           <!-- Card: Sleep-Related Hypermotor Epilepsy (SHE) -->
           <div class="ilae-card"
                data-title="Sleep-Related Hypermotor Epilepsy (SHE)"
@@ -310,29 +325,25 @@
     </div>
   </main>
   
-<!-- Modal Pop-Up -->
-<div id="modal" class="modal">
-  <div class="modal-content">
-    <span class="modal-close">&times;</span>
-    <h2 class="modal-title"></h2>
-    <div class="modal-overview"></div>
-    <div class="modal-eeg"></div>
-
-    <!-- PDF iframe container -->
-    <div class="pdf-iframe-container">
-      <!-- We'll dynamically set its "src" in JavaScript -->
-      <iframe id="pdfFrame" src="" frameborder="0"
-              style="width: 100%; height: 600px;">
-      </iframe>
+  <!-- Modal Pop-Up -->
+  <div id="modal" class="modal">
+    <div class="modal-content">
+      <span class="modal-close">&times;</span>
+      <h2 class="modal-title"></h2>
+      <div class="modal-overview"></div>
+      <div class="modal-eeg"></div>
+      <!-- Hyperlink for PDF instead of an iframe -->
+      <div id="pdfLinkContainer">
+        <a id="pdfLink" href="" target="_blank">View full PDF</a>
+      </div>
     </div>
   </div>
-</div>
   
   <!-- JavaScript for Search and Modal Functionality -->
   <script>
-  /*============================================
-     SEARCH AND MODAL
-  =============================================*/
+    /*============================================
+       SEARCH AND MODAL
+    =============================================*/
     // Scope search to ILAE cards only
     document.getElementById('searchBar').addEventListener('input', function(e) {
       const term = e.target.value.trim().toLowerCase();
@@ -344,30 +355,30 @@
       });
     });
     
-// Modal functionality for ILAE cards
-document.querySelectorAll('#ilae-classification-content .ilae-card')
-  .forEach(card => {
-    card.addEventListener('click', function() {
-      const modal = document.getElementById('modal');
-      const title = card.getAttribute('data-title');
-      const overview = card.getAttribute('data-summary');
-      const eeg = card.getAttribute('data-eeg');
-      const pdfLink = card.getAttribute('data-pdf');
+    // Modal functionality for ILAE cards
+    document.querySelectorAll('#ilae-classification-content .ilae-card')
+      .forEach(card => {
+        card.addEventListener('click', function() {
+          const modal = document.getElementById('modal');
+          const title = card.getAttribute('data-title');
+          const overview = card.getAttribute('data-summary');
+          const eeg = card.getAttribute('data-eeg');
+          const pdfLink = card.getAttribute('data-pdf');
 
-      // Fill the modal text
-      modal.querySelector('.modal-title').textContent = title;
-      modal.querySelector('.modal-overview').textContent = overview;
-      modal.querySelector('.modal-eeg').textContent = "EEG Findings: " + eeg;
+          // Fill the modal text
+          modal.querySelector('.modal-title').textContent = title;
+          modal.querySelector('.modal-overview').textContent = overview;
+          modal.querySelector('.modal-eeg').textContent = "EEG Findings: " + eeg;
+          
+          // Set the hyperlink for the PDF
+          const pdfLinkElement = document.getElementById('pdfLink');
+          pdfLinkElement.href = pdfLink;
 
-      // Set the iframe to load the PDF
-      const pdfFrame = document.getElementById('pdfFrame');
-      pdfFrame.src = pdfLink;
-
-      // Show the modal
-      modal.style.display = 'flex';
-    });
-  });
-    
+          // Show the modal
+          modal.style.display = 'flex';
+        });
+      });
+      
     // Close modal when clicking close button or outside modal content.
     document.querySelector('.modal-close').addEventListener('click', function() {
       document.getElementById('modal').style.display = 'none';
@@ -380,9 +391,9 @@ document.querySelectorAll('#ilae-classification-content .ilae-card')
   </script>
 
   <script>
-  /*============================================
-     FLASHCARD LOGIC (Shuffle + Flip)
-  =============================================*/
+    /*============================================
+       FLASHCARD LOGIC (Shuffle + Flip)
+    =============================================*/
 
     // Gather all ILAE cards data into an array
     const flashcards = Array.from(
@@ -478,7 +489,6 @@ document.querySelectorAll('#ilae-classification-content .ilae-card')
       // Toggle the is-flipped class
       flashcard.classList.toggle('is-flipped');
     });
-
   </script>
 
 </body>
