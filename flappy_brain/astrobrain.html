@@ -18,7 +18,6 @@
       touch-action: none;
       position: relative;
     }
-    /* Use CSS background as a fallback */
     canvas {
       background: url('space-background.jpg') no-repeat center center / cover;
       border: 2px solid #0f0;
@@ -50,7 +49,6 @@
       font-family: 'Press Start 2P', monospace;
       border: none;
     }
-    /* Mute button at bottom center */
     #muteButton {
       position: absolute;
       bottom: 10px;
@@ -122,7 +120,7 @@
     const bgImg = new Image();
     bgImg.src = "space-background.jpg";
 
-    // Load sounds (ensure these files exist in your directory)
+    // Load sounds
     const shootSound = new Audio("shoot.mp3");
     const explosionSound = new Audio("explosion.mp3");
     const gameOverSound = new Audio("gameover.mp3");
@@ -135,7 +133,7 @@
       muteButton.textContent = isMuted ? "Unmute" : "Mute";
     });
 
-    // Game state variables: "menu", "playing", "paused", "gameover"
+    // Game state variables
     let gameState = "menu";
     let score = 0;
     let level = 1;
@@ -177,7 +175,7 @@
       });
     }
 
-    // ----------------------- ARRAYS FOR POWER-UPS, ENEMIES, ENEMY BULLETS -----------------------
+    // ----------------------- ARRAYS -----------------------
     const powerUps = [];
     const enemies = [];
     const enemyBullets = [];
@@ -244,7 +242,6 @@
 
     // ----------------------- ASTEROIDS -----------------------
     const asteroids = [];
-    // Prevent asteroids from spawning too close to the player (threshold = 80)
     function createAsteroid(size = 40) {
       let x, y;
       const threshold = 80;
@@ -340,7 +337,7 @@
         width: 30,
         height: 30,
         rotation: 0,
-        shootTimer: 120, // enemy fires roughly every 2 seconds
+        shootTimer: 120,
         speed: 1.5
       });
     }
@@ -386,14 +383,13 @@
       });
     }
 
-    // ----------------------- BULLET COLLISIONS WITH ENEMIES -----------------------
+    // ----------------------- COLLISION DETECTION -----------------------
     function checkBulletEnemyCollisions() {
       for (let i = bullets.length - 1; i >= 0; i--) {
         for (let j = enemies.length - 1; j >= 0; j--) {
           let dx = bullets[i].x - enemies[j].x;
           let dy = bullets[i].y - enemies[j].y;
           let dist = Math.sqrt(dx * dx + dy * dy);
-          // Allow collision if distance is less than enemy radius plus bullet radius (3)
           if (dist < enemies[j].width / 2 + 3) {
             createParticles(enemies[j].x, enemies[j].y, 20);
             explosionSound.currentTime = 0;
@@ -407,10 +403,7 @@
         }
       }
     }
-
-    // ----------------------- COLLISION DETECTION -----------------------
     function checkCollisions() {
-      // Bullets vs. asteroids
       for (let i = bullets.length - 1; i >= 0; i--) {
         for (let j = asteroids.length - 1; j >= 0; j--) {
           let dx = bullets[i].x - asteroids[j].x;
@@ -432,7 +425,6 @@
           }
         }
       }
-      // Enemy bullets vs. player
       for (let i = enemyBullets.length - 1; i >= 0; i--) {
         let dx = enemyBullets[i].x - player.x;
         let dy = enemyBullets[i].y - player.y;
@@ -440,7 +432,6 @@
           gameState = "gameover";
           gameOverSound.play();
           updateHighScore();
-          // Update the DOM element for game over
           gameOverScreen.innerHTML = `GAME OVER<br>Score: ${score}<br>Level: ${level}<br>High Score: ${highScore}<br><br>Press Space or tap to Restart`;
           gameOverScreen.style.display = "block";
         }
@@ -474,7 +465,7 @@
       }
     }
 
-    // ----------------------- WRAP AROUND FUNCTION -----------------------
+    // ----------------------- WRAP AROUND -----------------------
     function wrapAround(obj) {
       if (obj.x < 0) obj.x = canvas.width;
       if (obj.x > canvas.width) obj.x = 0;
@@ -502,7 +493,7 @@
       }
     }
 
-    // ----------------------- DRAWING FUNCTIONS -----------------------
+    // ----------------------- DRAWING -----------------------
     function drawBackground() {
       if (bgImg.complete && bgImg.naturalWidth !== 0) {
         ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
@@ -534,14 +525,10 @@
       ctx.fillText("Press P to Pause", canvas.width / 2, canvas.height / 2 + 30);
     }
 
-    // ----------------------- UPDATE FUNCTIONS -----------------------
-    function updateBackground() {
-      // Background scrolling logic can be added here if desired
-    }
+    // ----------------------- UPDATE LOOP -----------------------
     function updateGame() {
       if (gameState === "playing") {
         frames++;
-        // Increase score over time until score 200; after that, spawn enemies
         if (score < 200) {
           if (frames % 60 === 0) { score++; updateScore(); }
         } else {
@@ -562,7 +549,6 @@
       drawBackground();
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       drawBackground();
-      
       if (gameState === "menu") {
         drawMenu();
       } else if (gameState === "playing" || gameState === "paused") {
@@ -591,6 +577,7 @@
     // ----------------------- INPUT HANDLING -----------------------
     function handleStartOrJump() {
       if (gameState === "menu") {
+        resetGame(); // Call resetGame here to spawn asteroids and other objects
         gameState = "playing";
         gameOverScreen.style.display = "none";
       } else if (gameState === "playing") {
@@ -601,8 +588,31 @@
         gameOverScreen.style.display = "none";
       }
     }
+    // Mobile shoot button
+    shootButton.addEventListener("click", function(e) {
+      e.stopPropagation();
+      shootBullet();
+    });
+    shootButton.addEventListener("touchstart", function(e) {
+      e.stopPropagation();
+      shootBullet();
+    });
+    // Joystick handling for mobile
+    let joystickCenter = { x: joystick.offsetWidth / 2, y: joystick.offsetHeight / 2 };
+    joystick.addEventListener("touchmove", function(e) {
+      e.preventDefault();
+      let touch = e.touches[0];
+      let rect = joystick.getBoundingClientRect();
+      let x = touch.clientX - rect.left;
+      let y = touch.clientY - rect.top;
+      let angle = Math.atan2(y - joystickCenter.y, x - joystickCenter.x);
+      player.rotation = angle;
+      player.thrusting = true;
+    });
+    joystick.addEventListener("touchend", function(e) {
+      player.thrusting = false;
+    });
     document.addEventListener("keydown", function(e) {
-      // If in menu or gameover, pressing Space starts/restarts the game
       if ((gameState === "menu" || gameState === "gameover") && e.code === "Space") {
         resetGame();
         gameState = "playing";
@@ -650,7 +660,6 @@
       frames = 0;
       score = 0;
       level = 1;
-      // Spawn initial asteroids to ensure immediate gameplay visibility
       for (let i = 0; i < level + 2; i++) {
         createAsteroid();
       }
