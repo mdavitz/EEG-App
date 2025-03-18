@@ -274,8 +274,11 @@
 
     // ----------------------- PLAYER BULLETS -----------------------
     const bullets = [];
+    // Global hue for cycling bullet colors
+    let bulletHue = 0;
     function shootBullet() {
       if (gameState !== "playing") return;
+      // Assign a rainbow color based on current hue
       bullets.push({
         x: player.x,
         y: player.y,
@@ -283,8 +286,11 @@
           x: Math.cos(player.rotation) * 3,
           y: Math.sin(player.rotation) * 3
         },
-        lifetime: 60
+        lifetime: 60,
+        hue: bulletHue
       });
+      // Cycle hue
+      bulletHue = (bulletHue + 20) % 360;
       shootSound.currentTime = 0;
       shootSound.play();
     }
@@ -302,7 +308,7 @@
       bullets.forEach(bullet => {
         ctx.beginPath();
         ctx.arc(bullet.x, bullet.y, 3, 0, Math.PI * 2);
-        ctx.fillStyle = "#fff";
+        ctx.fillStyle = `hsl(${bullet.hue}, 100%, 50%)`;
         ctx.fill();
       });
     }
@@ -465,7 +471,7 @@
       }
     }
 
-    // ----------------------- WRAP AROUND -----------------------
+    // ----------------------- WRAP AROUND FUNCTION -----------------------
     function wrapAround(obj) {
       if (obj.x < 0) obj.x = canvas.width;
       if (obj.x > canvas.width) obj.x = 0;
@@ -493,7 +499,7 @@
       }
     }
 
-    // ----------------------- DRAWING -----------------------
+    // ----------------------- DRAWING FUNCTIONS -----------------------
     function drawBackground() {
       if (bgImg.complete && bgImg.naturalWidth !== 0) {
         ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
@@ -525,7 +531,7 @@
       ctx.fillText("Press P to Pause", canvas.width / 2, canvas.height / 2 + 30);
     }
 
-    // ----------------------- UPDATE LOOP -----------------------
+    // ----------------------- UPDATE FUNCTIONS -----------------------
     function updateGame() {
       if (gameState === "playing") {
         frames++;
@@ -577,7 +583,7 @@
     // ----------------------- INPUT HANDLING -----------------------
     function handleStartOrJump() {
       if (gameState === "menu") {
-        resetGame(); // Call resetGame here to spawn asteroids and other objects
+        resetGame(); // Spawn initial objects
         gameState = "playing";
         gameOverScreen.style.display = "none";
       } else if (gameState === "playing") {
@@ -588,7 +594,6 @@
         gameOverScreen.style.display = "none";
       }
     }
-    // Mobile shoot button
     shootButton.addEventListener("click", function(e) {
       e.stopPropagation();
       shootBullet();
@@ -597,7 +602,6 @@
       e.stopPropagation();
       shootBullet();
     });
-    // Joystick handling for mobile
     let joystickCenter = { x: joystick.offsetWidth / 2, y: joystick.offsetHeight / 2 };
     joystick.addEventListener("touchmove", function(e) {
       e.preventDefault();
