@@ -228,7 +228,6 @@
       </div>
     </header>
 
-
     <!-- HOMEPAGE CARDS -->
     <div id="home-content" class="cards-container">
       <h2 class="page-title">Explore the EEG Curriculum</h2>
@@ -318,17 +317,43 @@
   
   <!-- Shared JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
+  
+  <!-- Combined JavaScript including cookie functionality and modal logic -->
   <script>
-    // Access Code Modal Logic with case-insensitive comparison
+    // Cookie helper functions
+    function setCookie(name, value, days) {
+      var expires = "";
+      if (days) {
+        var date = new Date();
+        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        expires = "; expires=" + date.toUTCString();
+      }
+      document.cookie = name + "=" + (value || "") + expires + "; path=/";
+    }
+    
+    function getCookie(name) {
+      var nameEQ = name + "=";
+      var ca = document.cookie.split(';');
+      for (var i = 0; i < ca.length; i++) {
+        var c = ca[i].trim();
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      }
+      return null;
+    }
+
+    // Modified access code check with cookie functionality
     function checkAccessCode() {
       var code = document.getElementById('access-code').value.trim().toLowerCase();
       if(code === 'mountsinai') {
+        // Set a cookie valid for 1 day
+        setCookie("accessGranted", "true", 1);
         document.getElementById('dev-modal').style.display = 'none';
         document.getElementById('page-content').classList.remove('disabled');
       } else {
         document.getElementById('code-error').style.display = 'block';
       }
     }
+    
     document.getElementById('submit-code').addEventListener('click', checkAccessCode);
     document.getElementById('access-code').addEventListener('keydown', function(e) {
       if (e.key === 'Enter') { checkAccessCode(); }
@@ -336,25 +361,7 @@
     document.getElementById('cancel-code').addEventListener('click', function() {
       window.location.href = 'index.html';
     });
-    
-    // Copyright Modal Logic
-    document.querySelector('.footer-copy').addEventListener('click', function() {
-      document.getElementById('copyright-modal').style.display = 'flex';
-    });
-    document.getElementById('copyright-modal')
-      .addEventListener('click', function(e) {
-        if (e.target === this) { this.style.display = 'none'; }
-      });
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        var modal = document.getElementById('copyright-modal');
-        if (modal.style.display === 'flex') { modal.style.display = 'none'; }
-      }
-    });
-    function closeCopyrightModal() {
-      document.getElementById('copyright-modal').style.display = 'none';
-    }
-    
+
     // Navigation and Page Loading Functions
     function renderHomePage() {
       document.getElementById("section-content").innerHTML = "";
@@ -364,6 +371,7 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
       history.pushState({ page: "home" }, "", "index.html");
     }
+    
     async function loadPage(url) {
       try {
         const response = await fetch(url);
@@ -385,6 +393,7 @@
         document.getElementById("section-content").innerHTML = "<p>Error loading content.</p>";
       }
     }
+    
     function loadSection(event, url) {
       event.preventDefault();
       document.getElementById("home-content").style.display = "none";
@@ -394,6 +403,7 @@
       hideMobileDropdown();
       history.pushState({ url: url }, "", url);
     }
+    
     function getTabName(url) {
       if(url.indexOf("epilepsy_rotation") > -1) return "Epilepsy Rotation";
       if(url.indexOf("seizure_management") > -1) return "Seizure Management";
@@ -404,23 +414,29 @@
       if(url.indexOf("faq") > -1) return "FAQ";
       return "Home";
     }
+    
     function toggleDarkMode() {
       document.body.classList.toggle("dark");
     }
+    
     function toggleFontSize() {
       document.body.classList.toggle("large-font");
     }
+    
     function toggleMobileDropdown(e) {
       e.preventDefault();
       const dropdown = document.getElementById("mobile-dropdown");
       dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
     }
+    
     function hideMobileDropdown() {
       document.getElementById("mobile-dropdown").style.display = "none";
     }
+    
     function setMobileTabLabel(label) {
       document.getElementById("current-mobile-tab").textContent = label;
     }
+    
     window.onpopstate = function(event) {
       if(event.state && event.state.page === "home") {
         renderHomePage();
@@ -430,9 +446,25 @@
         renderHomePage();
       }
     };
-    document.addEventListener("DOMContentLoaded", () => {
-      renderHomePage();
+
+    // Copyright Modal Logic
+    document.querySelector('.footer-copy').addEventListener('click', function() {
+      document.getElementById('copyright-modal').style.display = 'flex';
     });
+    document.getElementById('copyright-modal')
+      .addEventListener('click', function(e) {
+        if (e.target === this) { this.style.display = 'none'; }
+      });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') {
+        var modal = document.getElementById('copyright-modal');
+        if (modal.style.display === 'flex') { modal.style.display = 'none'; }
+      }
+    });
+    
+    function closeCopyrightModal() {
+      document.getElementById('copyright-modal').style.display = 'none';
+    }
     
     // Footer minimization on scroll (applies to mobile and desktop)
     document.addEventListener("DOMContentLoaded", function() {
@@ -462,25 +494,29 @@
         }
       });
     });
-  </script>
-  
-  <!-- Secret Game Modal Logic -->
-  <script>
-    // Open the secret game modal when the secret button is clicked
+    
+    // Secret Game Modal Logic
     document.getElementById('secret-game-trigger').addEventListener('click', function() {
       document.getElementById('secret-game-modal').style.display = 'flex';
     });
     
-    // Close the modal when the close button is clicked
     document.getElementById('close-secret-modal').addEventListener('click', function() {
       document.getElementById('secret-game-modal').style.display = 'none';
     });
     
-    // Optional: Close the modal when clicking outside the modal content
     document.getElementById('secret-game-modal').addEventListener('click', function(e) {
       if (e.target === this) {
         this.style.display = 'none';
       }
+    });
+
+    // On page load, check for the accessGranted cookie and bypass the modal if set
+    document.addEventListener("DOMContentLoaded", function() {
+      if(getCookie("accessGranted") === "true") {
+        document.getElementById('dev-modal').style.display = 'none';
+        document.getElementById('page-content').classList.remove('disabled');
+      }
+      renderHomePage();
     });
   </script>
 </body>
