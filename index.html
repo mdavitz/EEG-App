@@ -195,22 +195,35 @@
     <!-- HEADER (kept in original location) -->
     <header id="header">
       <div class="header-inner">
-      <!-- Secret Button (invisible) at bottom left of header -->
-      <button id="secret-game-trigger" 
-        style="position: absolute; bottom: 5px; left: 5px; width: 30px; height: 30px; opacity: 0; cursor: pointer; background: transparent; border: none;">
-      </button>
+        <!-- Secret Button (invisible) at bottom left of header -->
+        <button id="secret-game-trigger" 
+          style="position: absolute; bottom: 5px; left: 5px; width: 30px; height: 30px; opacity: 0; cursor: pointer; background: transparent; border: none;">
+        </button>
         <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
         <div class="desktop-tabs" id="desktop-tabs">
           <a href="#" onclick="renderHomePage()">Home</a>
-  			<a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
- 			 <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
-  <!-- NEW ILAE Classification Tab -->
-  			<a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
-  			<a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
-  			<a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
-  			<a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
-  			<a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
-		</div>
+          <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
+          <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
+          <!-- NEW ILAE Classification Tab -->
+          <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
+          <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
+          <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
+          <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
+          <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
+        </div>
+        <div class="mobile-tabs" id="mobile-tabs">
+          <!-- This mobile tab toggles the dropdown menu -->
+          <a href="#" id="current-mobile-tab" onclick="toggleMobileDropdown(event)">Home</a>
+          <div class="mobile-dropdown" id="mobile-dropdown">
+            <a href="#" onclick="renderHomePage(); hideMobileDropdown()">Home</a>
+            <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
+            <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
+            <!-- NEW ILAE Classification Tab -->
+            <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
+            <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
+            <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
+            <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
+            <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
           </div>
         </div>
       </div>
@@ -388,7 +401,10 @@
       document.getElementById("section-content").style.display = "block";
       loadPage(url);
       setMobileTabLabel(getTabName(url));
-      hideMobileDropdown();
+      // Only hide the mobile dropdown if an option within it was clicked:
+      if(event.target.parentElement.id === "mobile-dropdown") {
+        hideMobileDropdown();
+      }
       history.pushState({ url: url }, "", url);
     }
     
@@ -411,10 +427,11 @@
       document.body.classList.toggle("large-font");
     }
     
+    // --- Mobile Dropdown Functions ---
     function toggleMobileDropdown(e) {
       e.preventDefault();
       const dropdown = document.getElementById("mobile-dropdown");
-      dropdown.style.display = dropdown.style.display === "block" ? "none" : "block";
+      dropdown.style.display = (dropdown.style.display === "block") ? "none" : "block";
     }
     
     function hideMobileDropdown() {
