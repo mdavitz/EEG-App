@@ -75,20 +75,6 @@ body.dark .section-title {
   transition: background var(--transition-duration);
 }
 
-/* Make the white box narrower and center it */
-#acns-criteria.info-box {
-  max-width: 800px;    /* or whatever width you prefer */
-  margin: 2rem auto;   /* auto margins to center horizontally */
-  text-align: center;  /* center inline elements inside */
-}
-
-/* Ensure each PNG is also centered as a block */
-.step-image {
-  display: block;
-  margin: 1em auto;
-  max-width: 100%;     /* Prevent overflow on smaller screens */
-  height: auto;
-}
 /*-----------------------------------------------
   MODERNIZED TABLE STYLING
 -----------------------------------------------*/
@@ -650,7 +636,23 @@ footer {
   object-fit: cover;
   border-radius: 50%;
 }
+/*-----------------------------------------------
+ ACNS
+-----------------------------------------------*/
 
+.desktop-tabs a.acns-tab {
+  width: auto;          /* Let width be based on its content */
+  display: inline-block;/* Ensure it behaves like an inline element with block properties */
+  padding: 0 20px;      /* Adjust horizontal padding as needed */
+  text-align: center;   /* Center the text within the element */
+}
+
+.step-image {
+  display: inline-block;
+  margin: 1em 0; /* vertical margin only */
+  max-width: 100%;
+  height: auto;
+}
 /*-----------------------------------------------
   NATUS INSTRUCTIONS MODERNIZATION
 -----------------------------------------------*/
@@ -827,11 +829,6 @@ body.dark .natus-container p {
   background-color: rgba(0, 0, 0, 0.6);
   align-items: center;
   justify-content: center;
-}
-
-.modal {
-  display: none;  /* hides it initially */
-  /* ... all your other .modal properties ... */
 }
 .modal-content {
   background: var(--info-bg);
@@ -1102,48 +1099,6 @@ body.dark .modal-title {
   box-shadow: 0 0 5px var(--accent-color);
 }
 
-/* Outer container: perspective = 3D space */
-.flashcard {
-  width: 500px;            /* Adjust as needed */
-  height: 300px;           /* Adjust as needed */
-  perspective: 1000px;     /* Creates the 3D space for children */
-  margin: 0 auto;          /* Center horizontally (optional) */
-  position: relative;      /* If you want to position absolutely, etc. */
-}
-
-/* Inner wrapper that will be rotated. */
-.flashcard-inner {
-  width: 100%;
-  height: 100%;
-  transition: transform 0.4s;
-  transform-style: preserve-3d;  /* So child elements are 3D */
-  position: relative;
-}
-
-/* When "is-flipped" is on the parent, rotate 180deg around Y-axis */
-.flashcard.is-flipped .flashcard-inner {
-  transform: rotateY(180deg);
-}
-
-/* Front + Back */
-.flashcard-front,
-.flashcard-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  backface-visibility: hidden;   /* Hide the reversed side */
-  display: flex;                 /* So we can center text easily */
-  align-items: center;
-  justify-content: center;
-  padding: 1em;
-  box-sizing: border-box;
-}
-
-/* The back side is rotated 180°, so initially hidden. */
-.flashcard-back {
-  transform: rotateY(180deg);
-}
-
 /* Flashcard Button */
 .flashcard-button {
   display: block;
@@ -1264,278 +1219,82 @@ body.dark .modal-title {
   background: var(--primary-color);
 }
 
-.flashcard {
-  /* Width rules for desktop & mobile */
-  width: 70vw;            /* 70% of the viewport width */
-  max-width: 600px;       /* Don’t exceed 600px wide */
-  min-height: 300px;      /* Base minimum height */
-  max-height: 80vh;       /* At most 80% of the screen's height */
-  margin: 1rem auto;      /* Center it and add vertical spacing */
-  perspective: 1000px;    /* Enables 3D flip */
-  position: relative;     /* Needed for absolutely positioned child surfaces */
+/* Flashcard Display Container */
+#flashcard-container {
+  margin-bottom: 1rem;
+  text-align: center;
 }
 
-.flashcard-inner {
-  width: 100%;
-  height: 100%;
-  position: relative;
-  transition: transform 0.4s;
-  transform-style: preserve-3d;
-}
-
-/* Both surfaces fill the parent and can scroll if content is too big */
-.flashcard-front,
-.flashcard-back {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;  
-  backface-visibility: hidden;
-  overflow-y: auto;         /* Let content scroll if it exceeds the card height */
-  box-sizing: border-box;    /* So padding doesn’t blow up the width/height */
-  padding: 1rem;            /* Some breathing room for the text */
-  display: flex;            /* If you want centered text... */
-  align-items: center;
-  justify-content: center;
-}
-
-/* The back side is rotated so it’s hidden until flipped */
-.flashcard-back {
-  transform: rotateY(180deg);
-}
-
-.modal-content {
-  /* A wide, responsive modal */
-  width: 80vw;               /* 80% of viewport width on desktop */
-  max-width: 1000px;         /* cap it so it’s not too large */
-  margin: 2rem auto;
-  padding: 2rem;
+#flashcard {
+  border: 2px solid var(--accent-color);
   border-radius: 8px;
-  box-sizing: border-box;
-
-  /* flex layout to center items vertically & horizontally */
-  display: flex;
-  flex-direction: column;
-  align-items: center; 
-}
-
-/* The container for the PDF iframe */
-.pdf-iframe-container {
-  /* Fill the modal content width fully */
-  width: 100%;
-  max-width: 900px;    /* or some comfortable limit inside the modal */
-  margin: 1rem auto;
-  /* If you want to limit the vertical size, you can do:
-     max-height: 80vh;
-     overflow: auto;
-  */
-}
-
-/* The PDF iframe adapts to the container width. */
-.pdf-iframe-container iframe {
-  width: 100%;         /* Always match container’s width */
-  height: 600px;       /* Or pick a height that works for your layout */
-  border: none;
-  display: block;      /* Removes any default inline gaps */
-}
-
-/* On smaller screens, let the modal fill more space */
-@media (max-width: 768px) {
-  .modal-content {
-    width: 90vw;       
-    max-width: 600px;  
-  }
-  .pdf-iframe-container iframe {
-    height: 400px;     /* Maybe shorter on mobile */
-  }
-}
-
-/* (All your existing CSS up here) */
-
-/*-----------------------------------------------
-  END OF YOUR EXISTING STYLES
------------------------------------------------*/
-
-/*-----------------------------------------------
-  NEW MODAL + PDF IFRAME OVERRIDES
------------------------------------------------*/
-.modal-content {
-  width: 80vw; 
-  max-width: 1000px;
-  margin: 2rem auto;
-  padding: 2rem;
-  border-radius: 8px;
-  box-sizing: border-box;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.pdf-iframe-container {
-  width: 100%;
-  max-width: 900px;
-  margin: 1rem auto;
-  /* max-height: 80vh; overflow: auto;  If you want scrolling within the container */
-  -webkit-overflow-scrolling: touch;  /* helps iOS devices scroll PDFs smoothly */
-}
-
-.pdf-iframe-container iframe {
-  width: 100%;
-  height: 600px;
-  border: none;
-  display: block;
-}
-
-@media (max-width: 768px) {
-  .modal-content {
-    width: 90vw;
-    max-width: 600px;
-  }
-  .pdf-iframe-container iframe {
-    height: 400px;
-  }
-}
-
-/* (Larger screens) Default modal styling */
-.modal-content {
-  width: 80vw;              /* 80% of viewport width on desktop */
-  max-width: 1000px;        /* don’t exceed 1000px */
-  margin: 2rem auto;        /* center horizontally, add vertical spacing */
-  padding: 2rem;
-  border-radius: 8px;
-  box-sizing: border-box;
-
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-
-  font-size: 1rem;          /* base text size for bigger screens */
-  line-height: 1.5;
-}
-
-/* The PDF iframe container (if you have a PDF embedded) */
-.pdf-iframe-container {
-  width: 100%;
-  max-width: 900px; 
-  margin: 1rem auto;
-  /* If needed for scrolling:
-     max-height: 80vh;
-     overflow: auto;
-     -webkit-overflow-scrolling: touch;
-  */
-}
-.pdf-iframe-container iframe {
-  width: 100%;
-  height: 600px;            /* or set a different fixed height */
-  border: none;
-  display: block;
-}
-
-/* (Smaller screens) Shrink everything a bit */
-@media (max-width: 600px) {
-  .modal-content {
-    width: 90vw;            /* fill more of the screen width */
-    max-width: 500px;       /* narrower max on smaller devices */
-    padding: 1rem;          /* less padding so it fits better */
-    font-size: 0.9rem;      /* slightly smaller text on phones */
-    line-height: 1.4;
-  }
-  .pdf-iframe-container iframe {
-    height: 400px;          /* reduce iframe height on phones */
-  }
-}
-
-/* The outer overlay covers the screen fully */
-.modal {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  /* The dark overlay */
-  background: rgba(0, 0, 0, 0.7);
-  
-  /* Use flex to center the modal both horizontally + vertically */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 20000;       /* Above most other elements */
-
-  /* Typically 'display: none;' is toggled by JS to hide/show this */
-}
-
-/* The modal box itself */
-.modal-content {
-  position: relative;
-  width: 90vw;          /* 90% of the viewport width */
-  max-width: 600px;     /* cap width on larger screens */
-  
-  /* The critical piece: ensure it never exceeds 90% of viewport height. */
-  max-height: 70vh;
-  overflow-y: auto;     /* if content is taller than 90vh, scroll inside */
-  
   background: var(--info-bg);
-  border-radius: 8px;
-  box-sizing: border-box;
-  padding: 1.5rem;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-  
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-/* The “Close” (×) button positioning, if you want it in the corner */
-.modal-close {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  font-size: 1.5rem;
+  box-shadow: 0 2px 8px var(--shadow-color);
   cursor: pointer;
+  transition: transform 0.3s ease;
+  padding: 1.5rem;
+  min-height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
 }
 
-/* Slightly shrink spacing/font on very small screens if needed */
-@media (max-width: 600px) {
-  .modal-content {
-    padding: 1rem;
-    font-size: 0.9rem;
-  }
+#flashcard:hover {
+  transform: scale(1.02);
 }
 
-/* If you're embedding a PDF: container for the iframe */
-.pdf-iframe-container {
-  width: 100%;
-  /* Constrain the iframe so it doesn't push the modal bigger than 90vh */
-  /* If you want it to scroll: you can do max-height: 80vh; overflow: auto; here as well */
-  margin-top: 1rem;  /* spacing above iframe */
-}
-
-.pdf-iframe-container iframe {
-  width: 100%;
-  height: 60vh;      /* a typical default for the PDF height */
-  border: none;
-  display: block;
-}
-
-/* Base flashcard text sizes for desktop/tablet */
 .flashcard-front,
 .flashcard-back {
-  font-size: 2rem;      /* Or whatever default you like */
-  line-height: 1.4;     /* Ensures comfortable spacing */
+  width: 100%;
 }
 
-/* On smaller screens, shrink the font a bit */
-@media (max-width: 600px) {
-  .flashcard-front,
-  .flashcard-back {
-    font-size: 1.4rem;  /* slightly smaller font on phones */
-    line-height: 1.3;   /* adjust line spacing as needed */
-  }
+.flashcard-back {
+  display: none;
 }
 
-.modal {
-  display: none;  /* hides it initially */
-  /* ... all your other .modal properties ... */
+/* Rating Buttons (Quality ratings: 0: Again, 3: Hard, 4: Good, 5: Easy) */
+#rating-buttons {
+  text-align: center;
+  margin-bottom: 1rem;
 }
+
+#rating-buttons button {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+/* Example colors for each rating button */
+#rating-buttons button:nth-child(1) { background: #ff7675; color: #fff; }  /* Again */
+#rating-buttons button:nth-child(2) { background: #fab1a0; color: #fff; }  /* Hard */
+#rating-buttons button:nth-child(3) { background: #55efc4; color: #fff; }  /* Good */
+#rating-buttons button:nth-child(4) { background: #74b9ff; color: #fff; }  /* Easy */
+#rating-buttons button:hover { opacity: 0.9; }
+
+/* Navigation Buttons */
+#navigation {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+#navigation button {
+  margin: 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: 1px solid var(--accent-color);
+  border-radius: 4px;
+  background: #fff;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+#navigation button:hover {
+  background: var(--accent-color);
+  color: #fff;
+}
+/*============================================
+   END ILAE CLASSIFICATION SPECIFIC STYLES
+=============================================*/
