@@ -162,16 +162,16 @@
       #secret-game-modal .modal-content {
         width: auto;
         height: 100%;
-        margin: 0;
+        margin: 0px;
         background: transparent;
       }
       #secret-game-modal iframe {
         width: calc(100vw * 0.75);
       }
     }
-    /* Ensure the modal is hidden on load */
-    #secret-game-modal { display: none; }
-    #close-secret-modal { display: none !important; }
+    #close-secret-modal {
+      display: none !important;
+    }
   </style>
 
   <!-- Access Code Modal -->
@@ -192,10 +192,10 @@
 
   <!-- Main Content (initially disabled) -->
   <div id="page-content" class="disabled">
-    <!-- HEADER -->
+    <!-- HEADER (kept in original location) -->
     <header id="header">
       <div class="header-inner">
-        <!-- Secret Button (invisible) -->
+        <!-- Secret Button (invisible) at bottom left of header -->
         <button id="secret-game-trigger" 
           style="position: absolute; bottom: 5px; left: 5px; width: 30px; height: 30px; opacity: 0; cursor: pointer; background: transparent; border: none;">
         </button>
@@ -204,6 +204,7 @@
           <a href="#" onclick="renderHomePage()">Home</a>
           <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
           <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
+          <!-- NEW ILAE Classification Tab -->
           <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
           <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
           <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
@@ -211,12 +212,13 @@
           <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
         </div>
         <div class="mobile-tabs" id="mobile-tabs">
-          <!-- Mobile tab toggles the dropdown -->
+          <!-- This mobile tab toggles the dropdown menu -->
           <a href="#" id="current-mobile-tab" onclick="toggleMobileDropdown(event)">Home</a>
           <div class="mobile-dropdown" id="mobile-dropdown">
             <a href="#" onclick="renderHomePage(); hideMobileDropdown()">Home</a>
             <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
             <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
+            <!-- NEW ILAE Classification Tab -->
             <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
             <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
             <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
@@ -296,8 +298,7 @@
     <div class="modal-content">
       <span class="close-btn" onclick="closeCopyrightModal()">×</span>
       <h2><strong>Copyright</strong></h2>
-      <p>
-        Unless otherwise noted, all copyrights to the web site and its contents are the property of the Matthew S. Davitz MD. Except when indicated, permission is hereby granted to reproduce, distribute, and display copies of content material for nonprofit educational and nonprofit library purposes, provided that: (i) copies are distributed at or below costs; (ii) author and source are acknowledged; and (iii) a copyright notice is attached to the copies, such notice being in the form of "Matthew S. Davitz MD. 2025" (or as otherwise indicated on the materials as posted here). No commercial uses of any type are allowed without the prior express permission of the Matthew S. Davitz MD.
+      <p>Unless otherwise noted, all copyrights to the web site and its contents are the property of the Matthew S. Davitz MD. Except when indicated, permission is hereby granted to reproduce, distribute, and display copies of content material for nonprofit educational and nonprofit library purposes, provided that: (i) copies are distributed at or below costs; (ii) author and source are acknowledged; and (iii) a copyright notice is attached to the copies, such notice being in the form of "Matthew S. Davitz MD. 2025" (or as otherwise indicated on the materials as posted here). No commercial uses of any type are allowed without the prior express permission of the Matthew S. Davitz MD.
       </p>
     </div>
   </div>
@@ -318,7 +319,7 @@
   <!-- Shared JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
   
-  <!-- Combined JavaScript including SPA functionality, mobile dropdown, and other logic -->
+  <!-- Combined JavaScript including cookie functionality and modal logic -->
   <script>
     // Cookie helper functions
     function setCookie(name, value, days) {
@@ -362,7 +363,7 @@
       window.location.href = 'index.html';
     });
 
-    // SPA Navigation and Page Loading Functions
+    // Navigation and Page Loading Functions
     function renderHomePage() {
       document.getElementById("section-content").innerHTML = "";
       document.getElementById("home-content").style.display = "block";
@@ -400,7 +401,7 @@
       document.getElementById("section-content").style.display = "block";
       loadPage(url);
       setMobileTabLabel(getTabName(url));
-      // Only hide the dropdown if the link is from within the mobile dropdown
+      // Only hide the mobile dropdown if an option within it was clicked:
       if(event.target.parentElement.id === "mobile-dropdown") {
         hideMobileDropdown();
       }
@@ -426,7 +427,7 @@
       document.body.classList.toggle("large-font");
     }
     
-    // Mobile Dropdown Functions
+    // --- Mobile Dropdown Functions ---
     function toggleMobileDropdown(e) {
       e.preventDefault();
       const dropdown = document.getElementById("mobile-dropdown");
@@ -451,7 +452,7 @@
       }
     };
 
-    // Footer and Header Additional Logic
+    // Copyright Modal Logic
     document.querySelector('.footer-copy').addEventListener('click', function() {
       document.getElementById('copyright-modal').style.display = 'flex';
     });
@@ -470,6 +471,7 @@
       document.getElementById('copyright-modal').style.display = 'none';
     }
     
+    // Footer minimization on scroll (applies to mobile and desktop)
     document.addEventListener("DOMContentLoaded", function() {
       window.addEventListener("scroll", function() {
           const footerBtns = document.querySelector('.footer-btns');
@@ -486,6 +488,7 @@
       });
     });
     
+    // Header shrink on scroll for mobile
     document.addEventListener("DOMContentLoaded", function() {
       const header = document.getElementById("header");
       window.addEventListener("scroll", function() {
@@ -498,25 +501,18 @@
     });
     
     // Secret Game Modal Logic
-    document.addEventListener("DOMContentLoaded", function() {
-      // Ensure the secret game modal is hidden on load
+    document.getElementById('secret-game-trigger').addEventListener('click', function() {
+      document.getElementById('secret-game-modal').style.display = 'flex';
+    });
+    
+    document.getElementById('close-secret-modal').addEventListener('click', function() {
       document.getElementById('secret-game-modal').style.display = 'none';
-      
-      document.getElementById('secret-game-trigger').addEventListener('click', function(e) {
-        e.stopPropagation();
-        document.getElementById('secret-game-modal').style.display = 'flex';
-      });
-      
-      document.getElementById('close-secret-modal').addEventListener('click', function(e) {
-        e.stopPropagation();
-        document.getElementById('secret-game-modal').style.display = 'none';
-      });
-      
-      document.getElementById('secret-game-modal').addEventListener('click', function(e) {
-        if (e.target === this) {
-          this.style.display = 'none';
-        }
-      });
+    });
+    
+    document.getElementById('secret-game-modal').addEventListener('click', function(e) {
+      if (e.target === this) {
+        this.style.display = 'none';
+      }
     });
 
     // On page load, check for the accessGranted cookie and bypass the modal if set
