@@ -4,28 +4,26 @@
   <meta charset="UTF-8" />
   <!-- Responsive scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+
   <!-- Google Fonts and Font Awesome -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
+
   <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/logo.png" />
   <link rel="apple-touch-icon" href="assets/images/logo.png" />
-  
-  <!-- Open Graph meta tags -->
-  <meta property="og:title" content="EEG Curriculum" />
-  <meta property="og:description" content="Engaging Videos & Self-Assessment Tools" />
-  <meta property="og:image" content="https://example.com/assets/images/logo.png" />
-  <meta property="og:url" content="https://example.com" />
-  
+
+  <!-- Web App Manifest for PWA -->
+  <link rel="manifest" href="manifest.json">
+
   <title>EEG Curriculum</title>
-  
+
   <!-- Shared CSS -->
   <link rel="stylesheet" href="assets/css/styles.css" />
-  
-  <!-- Additional CSS for card height, modal, and pop-up -->
+
+  <!-- Additional Internal CSS -->
   <style>
+    /* HOMEPAGE CARDS */
     .cards-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -38,18 +36,18 @@
       justify-content: space-between;
       overflow: hidden;
     }
-    /* Modal Styling: Full-screen overlay for access code modal */
+
+    /* ACCESS CODE MODAL */
     #dev-modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.7);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 10000;
+      pointer-events: auto;
     }
     #dev-modal .modal-content {
       background: #fff;
@@ -59,6 +57,7 @@
       max-width: 500px;
       text-align: center;
       position: relative;
+      pointer-events: auto;
     }
     #dev-modal input[type="text"] {
       width: 80%;
@@ -70,7 +69,7 @@
       padding: 0.6rem 1.2rem;
       margin: 0.5rem;
       border: none;
-      background: var(--accent-color);
+      background: var(--accent-color, #007bff);
       color: #fff;
       border-radius: 4px;
       cursor: pointer;
@@ -80,23 +79,22 @@
       display: none;
       margin-top: 0.5rem;
     }
-    /* Make the background content visible but dimmed and non-interactive until unlocked */
     #page-content.disabled {
       pointer-events: none;
       opacity: 0.5;
     }
-    /* Copyright Modal */
+
+    /* COPYRIGHT MODAL */
     #copyright-modal {
       position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       background: rgba(0,0,0,0.5);
       display: none;
       justify-content: center;
       align-items: center;
       z-index: 11000;
+      pointer-events: auto;
     }
     #copyright-modal .modal-content {
       background: #fff;
@@ -107,53 +105,49 @@
       text-align: left;
       color: inherit;
       position: relative;
+      pointer-events: auto;
     }
-    #copyright-modal .close-btn {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.8rem;
-      cursor: pointer;
-      font-size: 1.2rem;
-    }
-    
-    /* Added CSS for font size toggle */
+
+    /* Font Size Toggle */
     body.large-font {
       font-size: 18px;
     }
 
-    /* Updated Centered Dropdown Menu – Desktop and Mobile */
+    /* DROPDOWN MENU */
     .dropdown-menu {
       position: relative;
       display: inline-block;
+      margin-left: auto;
     }
     .dropdown-toggle {
-      background: #ffffff;
-      color: #333;
+      background: transparent;
+      color: var(--header-text, #333);
       padding: 0.6rem 1.2rem;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
-      cursor: pointer;
+      border: none;
       font-size: 1rem;
       font-weight: 500;
-      transition: background 0.3s ease, box-shadow 0.3s ease;
+      cursor: pointer;
+      transition: color 0.3s ease, background 0.3s ease;
+      text-align: right;
     }
-    .dropdown-toggle:hover {
-      background: #f5f5f5;
-      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.1);
+    .dropdown-toggle:hover,
+    .dropdown-toggle:focus {
+      color: var(--accent-color, #007bff);
+      background: rgba(255, 255, 255, 0.1);
     }
     .dropdown-content {
       position: absolute;
       top: calc(100% + 4px);
-      left: 50%;
-      transform: translateX(-50%) translateY(10px);
+      right: 0; left: auto;
       display: none;
       background: #ffffff;
       min-width: 180px;
-      border: 1px solid #e0e0e0;
-      border-radius: 6px;
+      border: none;
+      border-radius: 4px;
       box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
       z-index: 1000;
       opacity: 0;
+      transform: translateY(10px);
       transition: opacity 0.3s ease, transform 0.3s ease;
     }
     .dropdown-content a {
@@ -169,7 +163,7 @@
     .dropdown-content.show {
       display: block;
       opacity: 1;
-      transform: translateX(-50%) translateY(0);
+      transform: translateY(0);
     }
     @media (max-width: 600px) {
       .dropdown-menu {
@@ -179,665 +173,20 @@
       .dropdown-toggle {
         width: 90%;
         margin: 0 auto;
+        text-align: center;
       }
       .dropdown-content {
-        left: 50%;
-        transform: translateX(-50%) translateY(10px);
-        width: 90%;
-      }
-    }
-    body.dark .dropdown-toggle {
-      background: #333;
-      color: #fff;
-      border: 1px solid #666;
-    }
-    body.dark .dropdown-toggle:hover {
-      background: #444;
-      box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.3);
-    }
-    body.dark .dropdown-content {
-      background: #2e2e2e;
-      border: 1px solid #666;
-      box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
-    }
-    body.dark .dropdown-content a {
-      color: #eee;
-    }
-    body.dark .dropdown-content a:hover {
-      background: #3e3e3e;
-    }
-  </style>
-</head>
-<body>
-  
-  <!-- Secret Game Modal Styles -->
-  <style>
-    /* The modal overlay covers the entire viewport and is hidden by default */
-    #secret-game-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 15000;
-      justify-content: center;
-      align-items: center;
-    }
-    #secret-game-modal .modal-content {
-      position: relative;
-      width: 400px;
-      height: 700px;
-      background: transparent;
-      border: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      overflow: hidden;
-    }
-    #secret-game-modal iframe {
-      width: 100%;
-      height: 100%;
-      border: none !important;
-      outline: none !important;
-    }
-    @media (max-width: 820px) {
-      #secret-game-modal .modal-content {
+        right: 0; left: auto;
+        transform: translateY(10px);
         width: auto;
-        height: 100%;
-        margin: 0px;
-        background: transparent;
-      }
-      #secret-game-modal iframe {
-        width: calc(100vw * 0.75);
-      }
-    }
-    #close-secret-modal {
-      display: none !important;
-    }
-  </style>
-
-  <!-- Access Code Modal -->
-  <div id="dev-modal">
-    <div class="modal-content">
-      <h2><strong>Disclaimer:</strong></h2>
-      <p>
-        Any information or materials provided on or accessed through this web site are intended solely for informational purposes and are NOT intended for individuals or patients seeking medical advice or treatment. The information and materials presented are not intended nor implied to be a substitute for professional medical advice, diagnosis or treatment. Every individual should always seek the advice of a physician or other qualified health care provider prior to starting or continuing any treatment. Medical professionals should not use or rely upon any of the information or content provided on or accessed through this web site to make any medical decisions.
-      </p>
-      <input type="text" id="access-code" placeholder="Enter access code">
-      <div>
-        <button id="submit-code">Enter</button>
-        <button id="cancel-code">Cancel</button>
-      </div>
-      <div class="error" id="code-error">Incorrect code. Please try again.</div>
-    </div>
-  </div>
-
-  <!-- Main Content (initially disabled) -->
-  <div id="page-content" class="disabled">
-    <!-- HEADER with Always‑Visible Dropdown Menu -->
-    <header id="header">
-      <div class="header-inner">
-        <!-- Secret Button (invisible) at bottom left of header -->
-        <button id="secret-game-trigger"
-          style="position: absolute; bottom: 5px; left: 5px; width: 30px; height: 30px; opacity: 0; cursor: pointer; background: transparent; border: none;">
-        </button>
-        <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
-        
-        <!-- Always-visible dropdown navigation -->
-        <div class="dropdown-menu" id="dropdown-menu">
-          <button class="dropdown-toggle" onclick="toggleDropdown(event)">Menu &#x25BC;</button>
-          <div class="dropdown-content" id="dropdown-content">
-            <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Epilepsy Rotation</a>
-            <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Seizure Management</a>
-            <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
-            <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
-            <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
-            <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
-            <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
-          </div>
-        </div>
-      </div>
-    </header>
-
-    <!-- HOMEPAGE CARDS (ID: home-content) -->
-    <div id="home-content" class="cards-container">
-      <h2 class="page-title">Explore the EEG Curriculum</h2>
-      <div class="cards-grid">
-        <div class="card">
-          <i class="fa-solid fa-brain"></i>
-          <h3>Epilepsy Rotation</h3>
-          <p>Delve into daily expectations with engaging videos, quizzes, and guidelines for EEG readings and milestones.</p>
-          <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Learn More</a>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-file-medical"></i>
-          <h3>Seizure Management</h3>
-          <p>Access concise guidelines for seizure management and ASM protocols.</p>
-          <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Learn More</a>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-file-alt"></i>
-          <h3>ILAE Classification</h3>
-          <p>Explore comprehensive ILAE epilepsy syndrome classifications and definitions.</p>
-          <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">Learn More</a>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-desktop"></i>
-          <h3>Natus Instructions</h3>
-          <p>Follow our step-by-step guide to launching Natus NeuroWorks, reviewing patient studies, and configuring the display.</p>
-          <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Learn More</a>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-file-pdf"></i>
-          <h3>ACNS Criteria</h3>
-          <p>Access detailed visual references and downloadable charts of ACNS guidelines to improve EEG interpretation.</p>
-          <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">Learn More</a>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-video"></i>
-          <h3>EEG Videos</h3>
-          <p>Engage with interactive EEG videos accompanied by quizzes to sharpen your knowledge and interpretation skills.</p>
-          <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">Learn More</a>
-        </div>
-        <div class="card">
-          <i class="fa-solid fa-circle-question"></i>
-          <h3>FAQ</h3>
-          <p>Find answers to common questions about EEG interpretation, seizure management, and epilepsy care.</p>
-          <a href="faq.html" onclick="loadSection(event, 'faq.html')">Learn More</a>
-        </div>
-      </div>
-    </div>
-    
-    <!-- MAIN CONTENT CONTAINER FOR LOADED PAGES -->
-    <div class="container">
-      <div id="section-content"></div>
-    </div>
-  </div>
-  
-  <!-- Secret Game Modal -->
-  <div id="secret-game-modal">
-    <div class="modal-content">
-      <button id="close-secret-modal" style="position: absolute; top: 10px; right: 10px;">Close</button>
-      <iframe src="flappy_brain/menu.html"></iframe>
-    </div>
-  </div>
-
-  <!-- Copyright Modal -->
-  <div id="copyright-modal">
-    <div class="modal-content">
-      <span class="close-btn" onclick="closeCopyrightModal()">×</span>
-      <h2><strong>Copyright</strong></h2>
-      <p>
-        Unless otherwise noted, all copyrights to the web site and its contents 
-        are the property of the Matthew S. Davitz MD. Except when indicated, 
-        permission is hereby granted to reproduce, distribute, and display 
-        copies of content material for nonprofit educational and nonprofit 
-        library purposes, provided that: (i) copies are distributed at or below 
-        costs; (ii) author and source are acknowledged; and (iii) a copyright 
-        notice is attached to the copies, such notice being in the form of 
-        "Matthew S. Davitz MD. 2025" (or as otherwise indicated on the materials 
-        as posted here). No commercial uses of any type are allowed without the 
-        prior express permission of the Matthew S. Davitz MD.
-      </p>
-    </div>
-  </div>
-  
-  <!-- Fixed Footer Controls -->
-  <footer id="footer">
-    <div class="footer-btns">
-      <button onclick="toggleFontSize()" aria-label="Toggle Font Size">
-        <span style="font-size:1.4em;">A</span>/<span style="font-size:0.8em;">a</span>
-      </button>
-      <button onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">Dark Mode</button>
-    </div>
-    <div class="footer-copy" style="margin-top: 0.5em; font-size: 0.8rem; color: var(--text-color);">
-      © 2025 Matthew S. Davitz, MD.
-    </div>
-  </footer>
-  
-  <!-- Shared JavaScript -->
-  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
-  
-  <!-- Combined JavaScript including cookie functionality, modal logic, and SPA routing -->
-  <script>
-    // Cookie helper functions
-    function setCookie(name, value, days) {
-      var expires = "";
-      if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-        expires = "; expires=" + date.toUTCString();
-      }
-      document.cookie = name + "=" + (value || "") + expires + "; path=/";
-    }
-    
-    function getCookie(name) {
-      var nameEQ = name + "=";
-      var ca = document.cookie.split(';');
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i].trim();
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-      }
-      return null;
-    }
-
-    // Access Code Check
-    function checkAccessCode() {
-      var code = document.getElementById('access-code').value.trim().toLowerCase();
-      if(code === 'mountsinai') {
-        setCookie("accessGranted", "true", 1);
-        document.getElementById('dev-modal').style.display = 'none';
-        document.getElementById('page-content').classList.remove('disabled');
-      } else {
-        document.getElementById('code-error').style.display = 'block';
-      }
-    }
-    document.getElementById('submit-code').addEventListener('click', checkAccessCode);
-    document.getElementById('access-code').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { checkAccessCode(); }
-    });
-    document.getElementById('cancel-code').addEventListener('click', function() {
-      window.location.href = 'index.html';
-    });
-
-    // On page load, check the cookie and bypass the modal if set
-    document.addEventListener("DOMContentLoaded", function() {
-      if(getCookie("accessGranted") === "true") {
-        document.getElementById('dev-modal').style.display = 'none';
-        document.getElementById('page-content').classList.remove('disabled');
-      }
-      // Hash-based routing
-      let page = window.location.hash.substring(1);
-      if (page) {
-        // Hide homepage content if a page is specified
-        document.getElementById("home-content").style.display = "none";
-        document.getElementById("section-content").style.display = "block";
-        loadPage(page);
-        setDropdownLabel(getTabName(page));
-      } else {
-        // Otherwise show the homepage
-        renderHomePage();
-      }
-    });
-
-    // SPA Functions
-    async function loadPage(url) {
-      try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("HTTP error " + response.status);
-        const html = await response.text();
-        document.getElementById("section-content").innerHTML = html;
-
-        // If subpage has inline <script> tags, re-inject them
-        document.getElementById("section-content").querySelectorAll("script").forEach(oldScript => {
-          const newScript = document.createElement("script");
-          if (oldScript.src) {
-            newScript.src = oldScript.src;
-          } else {
-            newScript.textContent = oldScript.textContent;
-          }
-          document.body.appendChild(newScript);
-        });
-      } catch (error) {
-        console.error("Error loading page:", error);
-        document.getElementById("section-content").innerHTML = "<p>Error loading content.</p>";
+        max-width: calc(100vw - 20px);
       }
     }
 
-    function loadSection(event, url) {
-      event.preventDefault();
-      // Hide homepage cards
-      document.getElementById("home-content").style.display = "none";
-      // Show the #section-content container
-      document.getElementById("section-content").style.display = "block";
-      loadPage(url);
-      setDropdownLabel(getTabName(url));
-      // Set the hash to e.g. #faq.html
-      window.location.hash = url;
-    }
-
-    function renderHomePage() {
-      // Clear the loaded content
-      document.getElementById("section-content").innerHTML = "";
-      // Show the homepage
-      document.getElementById("home-content").style.display = "block";
-      setDropdownLabel("Home");
-      // Clear the hash
-      window.location.hash = "";
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-    }
-
-    // If the user navigates back/forward, watch for hash changes
-    window.addEventListener("hashchange", function() {
-      let page = window.location.hash.substring(1);
-      if (page) {
-        document.getElementById("home-content").style.display = "none";
-        document.getElementById("section-content").style.display = "block";
-        loadPage(page);
-        setDropdownLabel(getTabName(page));
-      } else {
-        renderHomePage();
-      }
-    });
-
-    // Utility to determine a friendly label
-    function getTabName(url) {
-      if(url.indexOf("epilepsy_rotation") > -1) return "Epilepsy Rotation";
-      if(url.indexOf("seizure_management") > -1) return "Seizure Management";
-      if(url.indexOf("ilae_classification") > -1) return "ILAE Classification";
-      if(url.indexOf("natus_instructions") > -1) return "Natus Instructions";
-      if(url.indexOf("acns_criteria") > -1) return "ACNS Criteria";
-      if(url.indexOf("eeg_videos") > -1) return "EEG Videos";
-      if(url.indexOf("faq") > -1) return "FAQ";
-      return "Home";
-    }
-
-    // Update dropdown label
-    function setDropdownLabel(label) {
-      document.querySelector(".dropdown-toggle").textContent = label + " \u25BC";
-    }
-
-    // Dark Mode & Font Size
-    function toggleDarkMode() {
-      document.body.classList.toggle("dark");
-    }
-    function toggleFontSize() {
-      document.body.classList.toggle("large-font");
-    }
-
-    // Dropdown toggle
-    function toggleDropdown(e) {
-      e.preventDefault();
-      document.getElementById("dropdown-content").classList.toggle("show");
-    }
-
-    // Copyright Modal
-    document.querySelector('.footer-copy').addEventListener('click', function() {
-      document.getElementById('copyright-modal').style.display = 'flex';
-    });
-    function closeCopyrightModal() {
-      document.getElementById('copyright-modal').style.display = 'none';
-    }
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        if (document.getElementById('copyright-modal').style.display === 'flex')
-          closeCopyrightModal();
-      }
-    });
-
-    // Footer minimization on scroll
-    document.addEventListener("DOMContentLoaded", function() {
-      window.addEventListener("scroll", function() {
-        const footerBtns = document.querySelector('.footer-btns');
-        const footerCopy = document.querySelector('.footer-copy');
-        const scrollPosition = window.innerHeight + window.pageYOffset;
-        const threshold = document.documentElement.scrollHeight - 50;
-        if (scrollPosition >= threshold) {
-          footerBtns.style.display = 'inline-flex';
-          footerCopy.style.display = 'block';
-        } else {
-          footerBtns.style.display = 'none';
-          footerCopy.style.display = 'none';
-        }
-      });
-    });
-
-    // Header shrink on scroll
-    document.addEventListener("DOMContentLoaded", function() {
-      const header = document.getElementById("header");
-      window.addEventListener("scroll", function() {
-        if (window.scrollY > 50) {
-          header.classList.add("shrink");
-        } else {
-          header.classList.remove("shrink");
-        }
-      });
-    });
-
-    // Secret Game Modal
-    document.getElementById('secret-game-trigger').addEventListener('click', function() {
-      document.getElementById('secret-game-modal').style.display = 'flex';
-    });
-    document.getElementById('close-secret-modal').addEventListener('click', function() {
-      document.getElementById('secret-game-modal').style.display = 'none';
-    });
-    document.getElementById('secret-game-modal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        this.style.display = 'none';
-      }
-    });
-  </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <!-- Responsive scaling -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
-  <!-- Google Fonts and Font Awesome -->
-  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/png" href="assets/images/logo.png" />
-  <link rel="apple-touch-icon" href="assets/images/logo.png" />
-  <!-- Web App Manifest for PWA -->
-  <link rel="manifest" href="manifest.json">
-  
-  <!-- Open Graph meta tags -->
-  <meta property="og:title" content="EEG Curriculum" />
-  <meta property="og:description" content="Engaging Videos & Self-Assessment Tools" />
-  <meta property="og:image" content="https://example.com/assets/images/logo.png" />
-  <meta property="og:url" content="https://example.com" />
-  
-  <title>EEG Curriculum</title>
-  
-  <!-- Shared CSS -->
-  <link rel="stylesheet" href="assets/css/styles.css" />
-  
-  <!-- Additional CSS for card height, modal, pop-up, and install button -->
-  <style>
-    .cards-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-      gap: 1.5rem;
-      grid-auto-rows: 350px;
-    }
-    .cards-grid .card {
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      overflow: hidden;
-    }
-    /* Modal Styling: Full-screen overlay for access code modal */
-    #dev-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.7);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 10000;
-    }
-    #dev-modal .modal-content {
-      background: #fff;
-      padding: 1.5rem;
-      border-radius: 8px;
-      width: 90%;
-      max-width: 500px;
-      text-align: center;
-      position: relative;
-    }
-    #dev-modal input[type="text"] {
-      width: 80%;
-      padding: 0.8rem;
-      margin: 1rem 0;
-      font-size: 1rem;
-    }
-    #dev-modal button {
-      padding: 0.6rem 1.2rem;
-      margin: 0.5rem;
-      border: none;
-      background: var(--accent-color);
-      color: #fff;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-    #dev-modal .error {
-      color: red;
-      display: none;
-      margin-top: 0.5rem;
-    }
-    /* Make the background content visible but dimmed and non-interactive until unlocked */
-    #page-content.disabled {
-      pointer-events: none;
-      opacity: 0.5;
-    }
-    /* Copyright Modal */
-    #copyright-modal {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.5);
-      display: none;
-      justify-content: center;
-      align-items: center;
-      z-index: 11000;
-    }
-    #copyright-modal .modal-content {
-      background: #fff;
-      padding: 1rem;
-      border-radius: 8px;
-      max-width: 600px;
-      width: 90%;
-      text-align: left;
-      color: inherit;
-      position: relative;
-    }
-    #copyright-modal .close-btn {
-      position: absolute;
-      top: 0.5rem;
-      right: 0.8rem;
-      cursor: pointer;
-      font-size: 1.2rem;
-    }
-    
-    /* Added CSS for font size toggle */
-    body.large-font {
-      font-size: 18px;
-    }
-
-/* Dropdown container: flush right on desktop */
-.dropdown-menu {
-  position: relative;
-  display: inline-block;
-  margin-left: auto;  /* pushes the menu to the far right within header */
-}
-
-/* Toggle button: no background, right-aligned text */
-.dropdown-toggle {
-  background: transparent;
-  color: var(--header-text);
-  padding: 0.6rem 1.2rem;
-  border: none;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: color 0.3s ease, background 0.3s ease;
-  text-align: right;
-}
-
-.dropdown-toggle:hover,
-.dropdown-toggle:focus {
-  color: var(--accent-color);
-  background: rgba(255, 255, 255, 0.1);
-}
-
-/* Dropdown content: anchored to right edge on desktop */
-.dropdown-content {
-  position: absolute;
-  top: calc(100% + 4px); /* slight gap below toggle */
-  right: 0;
-  left: auto;
-  display: none;
-  background: #ffffff;
-  min-width: 180px;
-  border: none;
-  border-radius: 4px;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
-  z-index: 1000;
-  opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.3s ease, transform 0.3s ease;
-}
-
-.dropdown-content a {
-  display: block;
-  padding: 0.75rem 1.2rem;
-  color: #333;
-  text-decoration: none;
-  transition: background 0.2s ease;
-}
-.dropdown-content a:hover {
-  background: #f9f9f9;
-}
-
-.dropdown-content.show {
-  display: block;
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* --------------------------------------------
-   MOBILE: prevent overflow, keep flush to right
--------------------------------------------- */
-@media (max-width: 600px) {
-  .dropdown-menu {
-    /* The container can still be on the far right,
-       but the content will adapt below */
-  }
-  .dropdown-content {
-    /* Anchor to right: 0, but limit max-width 
-       so it won’t overflow off-screen. */
-    right: 0;
-    left: auto;
-    transform: translateY(10px); /* no horizontal shift */
-    width: auto;
-    max-width: calc(100vw - 20px); /* ensures it fits on small screens */
-  }
-}
-
-/* Dark Mode Overrides */
-body.dark .dropdown-toggle {
-  color: var(--header-text);
-}
-body.dark .dropdown-toggle:hover,
-body.dark .dropdown-toggle:focus {
-  color: var(--accent-color);
-  background: rgba(0, 0, 0, 0.2);
-}
-body.dark .dropdown-content {
-  background: #2e2e2e;
-  box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.4);
-}
-body.dark .dropdown-content a {
-  color: #eee;
-}
-body.dark .dropdown-content a:hover {
-  background: #3e3e3e;
-}
-    /* Install button styling */
+    /* INSTALL APP BUTTON */
     #installBtn {
       position: fixed;
-      bottom: 20px;
-      right: 20px;
+      bottom: 20px; right: 20px;
       padding: 0.8rem 1.2rem;
       background-color: var(--accent-color, #007bff);
       color: #fff;
@@ -850,54 +199,6 @@ body.dark .dropdown-content a:hover {
   </style>
 </head>
 <body>
-  
-  <!-- Secret Game Modal Styles -->
-  <style>
-    /* The modal overlay covers the entire viewport and is hidden by default */
-    #secret-game-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0,0,0,0.8);
-      z-index: 15000;
-      justify-content: center;
-      align-items: center;
-    }
-    #secret-game-modal .modal-content {
-      position: relative;
-      width: 400px;
-      height: 700px;
-      background: transparent;
-      border: none !important;
-      border-radius: 0 !important;
-      box-shadow: none !important;
-      overflow: hidden;
-    }
-    #secret-game-modal iframe {
-      width: 100%;
-      height: 100%;
-      border: none !important;
-      outline: none !important;
-    }
-    @media (max-width: 820px) {
-      #secret-game-modal .modal-content {
-        width: auto;
-        height: 100%;
-        margin: 0px;
-        background: transparent;
-      }
-      #secret-game-modal iframe {
-        width: calc(100vw * 0.75);
-      }
-    }
-    #close-secret-modal {
-      display: none !important;
-    }
-  </style>
-
   <!-- Access Code Modal -->
   <div id="dev-modal">
     <div class="modal-content">
@@ -916,16 +217,14 @@ body.dark .dropdown-content a:hover {
 
   <!-- Main Content (initially disabled) -->
   <div id="page-content" class="disabled">
-    <!-- HEADER with Always‑Visible Dropdown Menu -->
     <header id="header">
       <div class="header-inner">
-        <!-- Secret Button (invisible) at bottom left of header -->
-        <button id="secret-game-trigger"
-          style="position: absolute; bottom: 5px; left: 5px; width: 30px; height: 30px; opacity: 0; cursor: pointer; background: transparent; border: none;">
-        </button>
-        <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
+        <!-- Invisible secret game trigger -->
+        <button id="secret-game-trigger" style="position:absolute; bottom:5px; left:5px; width:30px; height:30px; opacity:0; background:transparent; border:none;"></button>
         
-        <!-- Always-visible dropdown navigation -->
+        <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
+
+        <!-- Right-aligned dropdown menu -->
         <div class="dropdown-menu" id="dropdown-menu">
           <button class="dropdown-toggle" onclick="toggleDropdown(event)">Menu &#x25BC;</button>
           <div class="dropdown-content" id="dropdown-content">
@@ -941,46 +240,53 @@ body.dark .dropdown-content a:hover {
       </div>
     </header>
 
-    <!-- HOMEPAGE CARDS (ID: home-content) -->
+    <!-- HOMEPAGE CARDS (home-content) -->
     <div id="home-content" class="cards-container">
       <h2 class="page-title">Explore the EEG Curriculum</h2>
       <div class="cards-grid">
+        <!-- Card 1 -->
         <div class="card">
           <i class="fa-solid fa-brain"></i>
           <h3>Epilepsy Rotation</h3>
           <p>Delve into daily expectations with engaging videos, quizzes, and guidelines for EEG readings and milestones.</p>
           <a href="epilepsy_rotation.html" onclick="loadSection(event, 'epilepsy_rotation.html')">Learn More</a>
         </div>
+        <!-- Card 2 -->
         <div class="card">
           <i class="fa-solid fa-file-medical"></i>
           <h3>Seizure Management</h3>
           <p>Access concise guidelines for seizure management and ASM protocols.</p>
           <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Learn More</a>
         </div>
+        <!-- Card 3 (ILAE Classification) -->
         <div class="card">
           <i class="fa-solid fa-file-alt"></i>
           <h3>ILAE Classification</h3>
           <p>Explore comprehensive ILAE epilepsy syndrome classifications and definitions.</p>
           <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">Learn More</a>
         </div>
+        <!-- Card 4 (Natus Instructions) -->
         <div class="card">
           <i class="fa-solid fa-desktop"></i>
           <h3>Natus Instructions</h3>
           <p>Follow our step-by-step guide to launching Natus NeuroWorks, reviewing patient studies, and configuring the display.</p>
           <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Learn More</a>
         </div>
+        <!-- Card 5 (ACNS Criteria) -->
         <div class="card">
           <i class="fa-solid fa-file-pdf"></i>
           <h3>ACNS Criteria</h3>
           <p>Access detailed visual references and downloadable charts of ACNS guidelines to improve EEG interpretation.</p>
           <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">Learn More</a>
         </div>
+        <!-- Card 6 (EEG Videos) -->
         <div class="card">
           <i class="fa-solid fa-video"></i>
           <h3>EEG Videos</h3>
           <p>Engage with interactive EEG videos accompanied by quizzes to sharpen your knowledge and interpretation skills.</p>
           <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">Learn More</a>
         </div>
+        <!-- Card 7 (FAQ) -->
         <div class="card">
           <i class="fa-solid fa-circle-question"></i>
           <h3>FAQ</h3>
@@ -989,18 +295,18 @@ body.dark .dropdown-content a:hover {
         </div>
       </div>
     </div>
-    
-    <!-- MAIN CONTENT CONTAINER FOR LOADED PAGES -->
+
+    <!-- MAIN CONTENT CONTAINER (section-content) -->
     <div class="container">
       <div id="section-content"></div>
     </div>
   </div>
-  
+
   <!-- Secret Game Modal -->
-  <div id="secret-game-modal">
-    <div class="modal-content">
-      <button id="close-secret-modal" style="position: absolute; top: 10px; right: 10px;">Close</button>
-      <iframe src="flappy_brain/menu.html"></iframe>
+  <div id="secret-game-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:15000; justify-content:center; align-items:center;">
+    <div class="modal-content" style="width:400px; height:700px; background:transparent; border:none; box-shadow:none;">
+      <button id="close-secret-modal" style="position:absolute; top:10px; right:10px;">Close</button>
+      <iframe src="flappy_brain/menu.html" style="width:100%; height:100%; border:none;"></iframe>
     </div>
   </div>
 
@@ -1010,21 +316,12 @@ body.dark .dropdown-content a:hover {
       <span class="close-btn" onclick="closeCopyrightModal()">×</span>
       <h2><strong>Copyright</strong></h2>
       <p>
-        Unless otherwise noted, all copyrights to the web site and its contents 
-        are the property of the Matthew S. Davitz MD. Except when indicated, 
-        permission is hereby granted to reproduce, distribute, and display 
-        copies of content material for nonprofit educational and nonprofit 
-        library purposes, provided that: (i) copies are distributed at or below 
-        costs; (ii) author and source are acknowledged; and (iii) a copyright 
-        notice is attached to the copies, such notice being in the form of 
-        "Matthew S. Davitz MD. 2025" (or as otherwise indicated on the materials 
-        as posted here). No commercial uses of any type are allowed without the 
-        prior express permission of the Matthew S. Davitz MD.
+        <!-- Original text about copyright -->
       </p>
     </div>
   </div>
-  
-  <!-- Fixed Footer Controls -->
+
+  <!-- Footer -->
   <footer id="footer">
     <div class="footer-btns">
       <button onclick="toggleFontSize()" aria-label="Toggle Font Size">
@@ -1032,58 +329,53 @@ body.dark .dropdown-content a:hover {
       </button>
       <button onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">Dark Mode</button>
     </div>
-    <div class="footer-copy" style="margin-top: 0.5em; font-size: 0.8rem; color: var(--text-color);">
+    <div class="footer-copy" style="margin-top:0.5em; font-size:0.8rem; color:var(--text-color);">
       © 2025 Matthew S. Davitz, MD.
     </div>
   </footer>
-  
+
   <!-- Install App Button -->
   <button id="installBtn">Install App</button>
-  
-  <!-- Shared JavaScript -->
+
+  <!-- Shared JS -->
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
-  
-  <!-- Combined JavaScript including cookie functionality, modal logic, SPA routing, and PWA installation -->
+
+  <!-- Combined JavaScript -->
   <script>
-    // Service Worker Registration
+    // Register Service Worker for PWA
     if ('serviceWorker' in navigator) {
-      window.addEventListener('load', function() {
+      window.addEventListener('load', () => {
         navigator.serviceWorker.register('/sw.js')
-          .then(function(registration) {
-            console.log('Service Worker registered with scope:', registration.scope);
-          })
-          .catch(function(error) {
-            console.log('Service Worker registration failed:', error);
-          });
+          .then(reg => console.log('Service Worker registered:', reg.scope))
+          .catch(err => console.log('Service Worker registration failed:', err));
       });
     }
 
-    // Cookie helper functions
+    // Cookie Helpers
     function setCookie(name, value, days) {
-      var expires = "";
+      let expires = "";
       if (days) {
-        var date = new Date();
-        date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
+        const date = new Date();
+        date.setTime(date.getTime() + (days*24*60*60*1000));
         expires = "; expires=" + date.toUTCString();
       }
       document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
-    
     function getCookie(name) {
-      var nameEQ = name + "=";
-      var ca = document.cookie.split(';');
-      for (var i = 0; i < ca.length; i++) {
-        var c = ca[i].trim();
-        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+      const nameEQ = name + "=";
+      const ca = document.cookie.split(';');
+      for (let i=0; i<ca.length; i++) {
+        let c = ca[i].trim();
+        if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length,c.length);
       }
       return null;
     }
 
-    // Access Code Check
+    // Access Code
     function checkAccessCode() {
-      var code = document.getElementById('access-code').value.trim().toLowerCase();
-      if(code === 'mountsinai') {
-        setCookie("accessGranted", "true", 1);
+      const code = document.getElementById('access-code').value.trim().toLowerCase();
+      if (code === 'mountsinai') {
+        setCookie("accessGranted","true",1);
         document.getElementById('dev-modal').style.display = 'none';
         document.getElementById('page-content').classList.remove('disabled');
       } else {
@@ -1091,42 +383,40 @@ body.dark .dropdown-content a:hover {
       }
     }
     document.getElementById('submit-code').addEventListener('click', checkAccessCode);
-    document.getElementById('access-code').addEventListener('keydown', function(e) {
-      if (e.key === 'Enter') { checkAccessCode(); }
+    document.getElementById('access-code').addEventListener('keydown', e => {
+      if (e.key === 'Enter') checkAccessCode();
     });
-    document.getElementById('cancel-code').addEventListener('click', function() {
+    document.getElementById('cancel-code').addEventListener('click', () => {
       window.location.href = 'index.html';
     });
 
-    // On page load, check the cookie and bypass the modal if set
-    document.addEventListener("DOMContentLoaded", function() {
-      if(getCookie("accessGranted") === "true") {
+    // On Page Load
+    document.addEventListener("DOMContentLoaded", () => {
+      // If user is authorized, hide the modal
+      if (getCookie("accessGranted") === "true") {
         document.getElementById('dev-modal').style.display = 'none';
         document.getElementById('page-content').classList.remove('disabled');
       }
-      // Hash-based routing
+
+      // Check for hash to load subpage
       let page = window.location.hash.substring(1);
       if (page) {
-        // Hide homepage content if a page is specified
         document.getElementById("home-content").style.display = "none";
         document.getElementById("section-content").style.display = "block";
         loadPage(page);
         setDropdownLabel(getTabName(page));
       } else {
-        // Otherwise show the homepage
         renderHomePage();
       }
     });
 
-    // SPA Functions
+    // SPA with Hash-based Routing
     async function loadPage(url) {
       try {
-        const response = await fetch(url);
-        if (!response.ok) throw new Error("HTTP error " + response.status);
-        const html = await response.text();
+        const res = await fetch(url);
+        if (!res.ok) throw new Error("HTTP error " + res.status);
+        const html = await res.text();
         document.getElementById("section-content").innerHTML = html;
-
-        // If subpage has inline <script> tags, re-inject them
         document.getElementById("section-content").querySelectorAll("script").forEach(oldScript => {
           const newScript = document.createElement("script");
           if (oldScript.src) {
@@ -1141,33 +431,25 @@ body.dark .dropdown-content a:hover {
         document.getElementById("section-content").innerHTML = "<p>Error loading content.</p>";
       }
     }
-
-    function loadSection(event, url) {
-      event.preventDefault();
-      // Hide homepage cards
+    function loadSection(e, url) {
+      e.preventDefault();
       document.getElementById("home-content").style.display = "none";
-      // Show the #section-content container
       document.getElementById("section-content").style.display = "block";
       loadPage(url);
       setDropdownLabel(getTabName(url));
-      // Set the hash to e.g. #faq.html
       window.location.hash = url;
+      // Auto-close the dropdown
+      document.getElementById("dropdown-content").classList.remove("show");
     }
-
     function renderHomePage() {
-      // Clear the loaded content
       document.getElementById("section-content").innerHTML = "";
-      // Show the homepage
       document.getElementById("home-content").style.display = "block";
       setDropdownLabel("Home");
-      // Clear the hash
       window.location.hash = "";
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
-
-    // If the user navigates back/forward, watch for hash changes
-    window.addEventListener("hashchange", function() {
-      let page = window.location.hash.substring(1);
+    window.addEventListener("hashchange", () => {
+      const page = window.location.hash.substring(1);
       if (page) {
         document.getElementById("home-content").style.display = "none";
         document.getElementById("section-content").style.display = "block";
@@ -1177,20 +459,16 @@ body.dark .dropdown-content a:hover {
         renderHomePage();
       }
     });
-
-    // Utility to determine a friendly label
     function getTabName(url) {
-      if(url.indexOf("epilepsy_rotation") > -1) return "Epilepsy Rotation";
-      if(url.indexOf("seizure_management") > -1) return "Seizure Management";
-      if(url.indexOf("ilae_classification") > -1) return "ILAE Classification";
-      if(url.indexOf("natus_instructions") > -1) return "Natus Instructions";
-      if(url.indexOf("acns_criteria") > -1) return "ACNS Criteria";
-      if(url.indexOf("eeg_videos") > -1) return "EEG Videos";
-      if(url.indexOf("faq") > -1) return "FAQ";
+      if (url.indexOf("epilepsy_rotation")>-1) return "Epilepsy Rotation";
+      if (url.indexOf("seizure_management")>-1) return "Seizure Management";
+      if (url.indexOf("ilae_classification")>-1) return "ILAE Classification";
+      if (url.indexOf("natus_instructions")>-1) return "Natus Instructions";
+      if (url.indexOf("acns_criteria")>-1) return "ACNS Criteria";
+      if (url.indexOf("eeg_videos")>-1) return "EEG Videos";
+      if (url.indexOf("faq")>-1) return "FAQ";
       return "Home";
     }
-
-    // Update dropdown label
     function setDropdownLabel(label) {
       document.querySelector(".dropdown-toggle").textContent = label + " \u25BC";
     }
@@ -1202,35 +480,45 @@ body.dark .dropdown-content a:hover {
     function toggleFontSize() {
       document.body.classList.toggle("large-font");
     }
-
-    // Dropdown toggle
     function toggleDropdown(e) {
       e.preventDefault();
       document.getElementById("dropdown-content").classList.toggle("show");
     }
 
-    // Copyright Modal
-    document.querySelector('.footer-copy').addEventListener('click', function() {
-      document.getElementById('copyright-modal').style.display = 'flex';
+    // PWA Install
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+    window.addEventListener('beforeinstallprompt', e => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block';
     });
-    function closeCopyrightModal() {
-      document.getElementById('copyright-modal').style.display = 'none';
-    }
-    document.addEventListener('keydown', function(e) {
-      if (e.key === 'Escape') {
-        if (document.getElementById('copyright-modal').style.display === 'flex')
-          closeCopyrightModal();
-      }
+    installBtn.addEventListener('click', async () => {
+      installBtn.style.display = 'none';
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log("Install prompt outcome:", outcome);
+      deferredPrompt = null;
     });
 
-    // Footer minimization on scroll
-    document.addEventListener("DOMContentLoaded", function() {
-      window.addEventListener("scroll", function() {
+    // Auto-close dropdown on link click
+    document.addEventListener("DOMContentLoaded", () => {
+      const dropdownLinks = document.querySelectorAll(".dropdown-content a");
+      dropdownLinks.forEach(link => {
+        link.addEventListener("click", () => {
+          document.getElementById("dropdown-content").classList.remove("show");
+        });
+      });
+    });
+
+    // Footer Minimization on Scroll
+    document.addEventListener("DOMContentLoaded", () => {
+      window.addEventListener("scroll", () => {
         const footerBtns = document.querySelector('.footer-btns');
         const footerCopy = document.querySelector('.footer-copy');
-        const scrollPosition = window.innerHeight + window.pageYOffset;
+        const scrollPos = window.innerHeight + window.pageYOffset;
         const threshold = document.documentElement.scrollHeight - 50;
-        if (scrollPosition >= threshold) {
+        if (scrollPos >= threshold) {
           footerBtns.style.display = 'inline-flex';
           footerCopy.style.display = 'block';
         } else {
@@ -1240,10 +528,10 @@ body.dark .dropdown-content a:hover {
       });
     });
 
-    // Header shrink on scroll
-    document.addEventListener("DOMContentLoaded", function() {
+    // Header Shrink on Scroll
+    document.addEventListener("DOMContentLoaded", () => {
       const header = document.getElementById("header");
-      window.addEventListener("scroll", function() {
+      window.addEventListener("scroll", () => {
         if (window.scrollY > 50) {
           header.classList.add("shrink");
         } else {
@@ -1253,54 +541,22 @@ body.dark .dropdown-content a:hover {
     });
 
     // Secret Game Modal
-    document.getElementById('secret-game-trigger').addEventListener('click', function() {
+    document.getElementById('secret-game-trigger').addEventListener('click', () => {
       document.getElementById('secret-game-modal').style.display = 'flex';
     });
-    document.getElementById('close-secret-modal').addEventListener('click', function() {
+    document.getElementById('close-secret-modal').addEventListener('click', () => {
       document.getElementById('secret-game-modal').style.display = 'none';
     });
-    document.getElementById('secret-game-modal').addEventListener('click', function(e) {
-      if (e.target === this) {
-        this.style.display = 'none';
+    document.getElementById('secret-game-modal').addEventListener('click', e => {
+      if (e.target === document.getElementById('secret-game-modal')) {
+        document.getElementById('secret-game-modal').style.display = 'none';
       }
     });
 
-    // PWA Install Button - beforeinstallprompt handling
-    let deferredPrompt;
-    const installBtn = document.getElementById('installBtn');
-
-    window.addEventListener('beforeinstallprompt', (e) => {
-      // Prevent the mini-infobar from appearing on mobile
-      e.preventDefault();
-      // Save the event for later use
-      deferredPrompt = e;
-      // Unhide the install button
-      installBtn.style.display = 'block';
-    });
-
-    installBtn.addEventListener('click', async () => {
-      // Hide the install button
-      installBtn.style.display = 'none';
-      // Show the install prompt
-      deferredPrompt.prompt();
-      // Wait for the user to respond to the prompt
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`User response to the install prompt: ${outcome}`);
-      // Clear the deferredPrompt variable so it can only be used once
-      deferredPrompt = null;
-    });
-    // After your DOMContentLoaded event or at the end of your SPA script:
-document.addEventListener("DOMContentLoaded", function() {
-  // Select all links inside the dropdown content
-  const dropdownLinks = document.querySelectorAll(".dropdown-content a");
-
-  // For each link, add a click event that closes the dropdown
-  dropdownLinks.forEach(link => {
-    link.addEventListener("click", function() {
-      document.getElementById("dropdown-content").classList.remove("show");
-    });
-  });
-});
+    // Copyright
+    function closeCopyrightModal() {
+      document.getElementById('copyright-modal').style.display = 'none';
+    }
   </script>
 </body>
 </html>
