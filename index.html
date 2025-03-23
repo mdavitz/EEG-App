@@ -108,10 +108,17 @@
       pointer-events: auto;
     }
 
-    /* Font Size Toggle */
-    body.large-font {
-      font-size: 18px;
-    }
+  /* Increase base font size when .large-font is applied */
+  body.large-font {
+    font-size: 110%; /* Increase base font size by 10% */
+  }
+
+  /* Optionally, if some elements are set in px and you want them to scale: */
+  /* Uncomment the next rule if needed—but test carefully!
+  body.large-font * {
+  font-size: 110% !important;
+  }
+  */
 
     /* DROPDOWN MENU */
     .dropdown-menu {
@@ -165,23 +172,27 @@
       opacity: 1;
       transform: translateY(0);
     }
-    @media (max-width: 600px) {
-      .dropdown-menu {
-        width: 100%;
-        text-align: center;
-      }
-      .dropdown-toggle {
-        width: 90%;
-        margin: 0 auto;
-        text-align: center;
-      }
-      .dropdown-content {
-        right: 0; left: auto;
-        transform: translateY(10px);
-        width: auto;
-        max-width: calc(100vw - 20px);
-      }
+      @media (max-width: 600px) {
+    .dropdown-menu {
+     width: 100%;
+      display: flex;
+      justify-content: flex-end;
+     padding-right: 10px; /* optional: adds space from the edge */
+   }
+    .dropdown-toggle {
+      padding: 0.4rem 0.6rem;
+      font-size: 0.9rem;
+      width: auto;
+      margin: 0;
+      text-align: right;
+   }
+    .dropdown-content {
+      right: 0;
+      left: auto;
+      width: 180px;
+      max-width: 90vw;
     }
+}
 
     /* INSTALL APP BUTTON */
     #installBtn {
@@ -233,6 +244,7 @@
             <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">ILAE Classification</a>
             <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Natus Instructions</a>
             <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
+            <a href="eeg_atlas.html" onclick="loadSection(event, 'eeg_atlas.html')">EEG Atlas</a>
             <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
             <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
           </div>
@@ -279,6 +291,13 @@
           <p>Access detailed visual references and downloadable charts of ACNS guidelines to improve EEG interpretation.</p>
           <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">Learn More</a>
         </div>
+        <!-- New Card (EEG Atlas) -->
+        <div class="card">
+          <i class="fa-solid fa-wave-square"></i>
+          <h3>EEG Atlas</h3>
+          <p>Explore categorized EEG patterns with images, flashcards, and search tools.</p>
+          <a href="eeg_atlas.html" onclick="loadSection(event, 'eeg_atlas.html')">Learn More</a>
+        </div>
         <!-- Card 6 (EEG Videos) -->
         <div class="card">
           <i class="fa-solid fa-video"></i>
@@ -316,7 +335,15 @@
       <span class="close-btn" onclick="closeCopyrightModal()">×</span>
       <h2><strong>Copyright</strong></h2>
       <p>
-        <!-- Original text about copyright -->
+        Unless otherwise noted, all copyrights to the web site and its contents 
+        are the property of the Matthew S. Davitz MD. Except when indicated, 
+        permission is hereby granted to reproduce, distribute, and display copies 
+        of content material for nonprofit educational and nonprofit library purposes, 
+        provided that: (i) copies are distributed at or below costs; (ii) author and 
+        source are acknowledged; and (iii) a copyright notice is attached to the copies, 
+        such notice being in the form of "Matthew S. Davitz MD. 2025" (or as otherwise 
+        indicated on the materials as posted here). No commercial uses of any type are allowed 
+        without the prior express permission of the Matthew S. Davitz MD.
       </p>
     </div>
   </div>
@@ -553,10 +580,28 @@
       }
     });
 
-    // Copyright
-    function closeCopyrightModal() {
-      document.getElementById('copyright-modal').style.display = 'none';
-    }
+// Function to open the copyright modal
+function openCopyrightModal() {
+  document.getElementById('copyright-modal').style.display = 'flex';
+}
+
+// Function to close the modal
+function closeCopyrightModal() {
+  document.getElementById('copyright-modal').style.display = 'none';
+}
+
+// Attach an event listener to the footer copyright text
+document.addEventListener("DOMContentLoaded", function() {
+  const footerCopy = document.querySelector('.footer-copy');
+  if (footerCopy) {
+    // Set the cursor to pointer to indicate it's clickable
+    footerCopy.style.cursor = 'pointer';
+    footerCopy.addEventListener('click', function() {
+      // Open the modal when the footer copy is clicked
+      openCopyrightModal();
+    });
+  }
+});
   </script>
 </body>
 </html>

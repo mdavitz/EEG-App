@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EEG Atlas</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="assets/css/styles.css" />
+  <style>
+    /* Uniform button sizing for all buttons using the btn class */
+    .btn {
+      min-width: 120px;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    /* Sidebar buttons arranged in a 2x2 grid */
+    #sidebar-buttons {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.5rem;
+      margin-bottom: 1rem;
+    }
+    
+    /* Base media query for mid-sized screens */
+    @media (max-width: 768px) {
+      #eeg-videos {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+      }
+      .video-list,
+      .main-content {
+        width: 100%;
+      }
+      .video-list {
+        order: 2;
+      }
+      .main-content {
+        order: 1;
+        margin-bottom: 2rem;
+      }
+    }
+    /* Additional adjustments for very small screens */
+    @media (max-width: 600px) {
+      #sidebar-buttons button {
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+        margin: 0 3px;
+      }
+      .favorite-star {
+        font-size: 1.5em;  /* Slightly larger for touch */
+        margin-left: 5px;
+      }
+      /* Increase touch target for list items */
+      #atlas-list li {
+        padding: 0.6em 0;
+      }
+    }
+    
+    /* Styles for favorite star (only used in detail view) */
+    .favorite-star {
+      font-size: 1.2em;
+      color: var(--accent-color);
+      margin-left: 10px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <!-- Main Content Area for EEG Atlas (header removed) -->
+  <main>
+    <section id="eeg-videos">
+      <!-- Sidebar with search and a grid of four uniform buttons -->
+      <aside class="video-list" aria-label="EEG Categories">
+        <h2>EEG Atlas</h2>
+        <div class="search-box" style="position: relative; margin-bottom: 1rem;">
+          <label for="atlas-search" class="visually-hidden">Search patterns</label>
+          <input type="text" id="atlas-search" placeholder="Search patterns..." autocomplete="off" />
+          <ul id="autocomplete" style="position:absolute; top:100%; left:0; right:0; background:white; z-index:1000; list-style:none; padding:0; margin:0; border:1px solid #ccc; display:none;"></ul>
+        </div>
+        <div id="sidebar-buttons">
+          <button id="all-btn" class="btn" onclick="showAllEEG()">All EEG</button>
+          <button id="favorites-btn" class="btn" onclick="showFavorites()">Favorites</button>
+          <button class="btn" onclick="toggleFlashcardMode()">Toggle Flashcard Mode</button>
+          <button class="btn" onclick="showRandomEEG()">Random EEG</button>
+        </div>
+        <!-- EEG list: now only the title is shown -->
+        <ul id="atlas-list" style="list-style: none; padding-left: 0;"></ul>
+      </aside>
+      <!-- Main Detail/Flashcard Display -->
+      <article class="main-content" id="atlas-content">
+        <div id="detail-content">
+          <h2>Select an EEG entry</h2>
+          <p>Click a category on the left to browse EEG patterns.</p>
+        </div>
+        <!-- Flashcard Mode -->
+        <div id="flashcard-container" style="display:none;">
+          <div id="flashcard" class="flashcard" tabindex="0">
+            <div class="flashcard-inner">
+              <div class="flashcard-front"></div>
+              <div class="flashcard-back"></div>
+            </div>
+          </div>
+          <div class="flashcard-controls">
+            <button class="btn" onclick="flipFlashcard()">Flip</button>
+            <button class="btn" onclick="nextFlashcard()">Next</button>
+            <button class="btn" onclick="shuffleFlashcards()">Shuffle</button>
+            <button class="btn" onclick="toggleFlashcardMode()">Back to List</button>
+          </div>
+          <!-- Fun fact display -->
+          <div id="fun-fact" style="margin-top: 1rem; font-style: italic; color: var(--accent-color);"></div>
+        </div>
+      </article>
+    </section>
+  </main>
+  <footer>
+    <p>&copy; 2025 EEG Atlas. All rights reserved.</p>
+  </footer>
+  
+  <script>
+    // EEG data array
+    const eegData = [
+      { title: "Alpha Rhythm", category: "Normal", front: "assets/atlas/alpha.jpg", back: "8–13 Hz posterior dominant rhythm." },
+      { title: "Mu Rhythm", category: "Normal", front: "assets/atlas/mu.jpg", back: "Blocked by movement or intention to move." },
+      { title: "Muscle Artifact", category: "Artifact", front: "assets/atlas/muscle.jpg", back: "High frequency jaw/facial artifact." },
+      { title: "FIRDA", category: "Slowing", front: "assets/atlas/firda.jpg", back: "Frontal rhythmic delta in diffuse encephalopathy." },
+      { title: "Spike-Wave", category: "Seizure", front: "assets/atlas/spike_wave.jpg", back: "3 Hz generalized spike-wave pattern." },
+      { title: "Triphasic Waves", category: "Other", front: "assets/atlas/triphasic.jpg", back: "Frontally dominant waves in hepatic encephalopathy." }
+    ];
+    
+    let flashcardDeck = [...eegData];
+    let currentFlashcard = 0;
+    let showingFront = true;
+    
+    // Array of fun facts to display with flashcards
+    const funFacts = [
+      "Did you know? The human brain produces enough electricity to power a small light bulb!",
+      "Fun Fact: EEG recordings are used to study sleep and diagnose neurological disorders.",
+      "Did you know? The first human EEG was recorded in 1929 by Hans Berger.",
+      "Fun Fact: Brain waves are classified by their frequency, from delta to gamma."
+    ];
+    
+    // --- Cookie helper functions for favorites ---
+    function getFavorites() {
+      const cookies = document.cookie.split(';');
+      for (let c of cookies) {
+        let [key, value] = c.split('=').map(s => s.trim());
+        if (key === 'eegFavorites') {
+          try {
+            return JSON.parse(decodeURIComponent(value));
+          } catch (e) {
+            return [];
+          }
+        }
+      }
+      return [];
+    }
+    function setFavorites(favorites) {
+      document.cookie = "eegFavorites=" + encodeURIComponent(JSON.stringify(favorites)) + "; path=/; max-age=" + (60*60*24*7);
+    }
+    function isFavorite(title) {
+      const favorites = getFavorites();
+      return favorites.includes(title);
+    }
+    // Toggle favorite only in detail view now
+    function toggleFavorite(title, event) {
+      event.stopPropagation();
+      let favorites = getFavorites();
+      if (favorites.includes(title)) {
+        favorites = favorites.filter(f => f !== title);
+      } else {
+        favorites.push(title);
+      }
+      setFavorites(favorites);
+      // Refresh view based on current tab
+      if (document.getElementById("favorites-btn").classList.contains("active")) {
+        showFavorites();
+      } else {
+        showAllEEG();
+      }
+    }
+    
+    // --- Flashcard Functions (with 3D flip) ---
+    function shuffleArray(array) {
+      for (let i = array.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+    }
+    
+    function showFlashcard() {
+      const card = flashcardDeck[currentFlashcard];
+      const flashcard = document.getElementById("flashcard");
+      const frontDiv = flashcard.querySelector(".flashcard-front");
+      const backDiv = flashcard.querySelector(".flashcard-back");
+      frontDiv.innerHTML = `<h3>${card.title}</h3>
+        <img src="${card.front}" alt="${card.title}" class="step-image" />`;
+      backDiv.innerHTML = `<p>${card.back}</p>`;
+      flashcard.classList.remove("is-flipped");
+      showingFront = true;
+      displayFunFact();
+    }
+    
+    function flipFlashcard() {
+      const flashcard = document.getElementById("flashcard");
+      flashcard.classList.toggle("is-flipped");
+      showingFront = !showingFront;
+    }
+    
+    function nextFlashcard() {
+      currentFlashcard = (currentFlashcard + 1) % flashcardDeck.length;
+      showFlashcard();
+    }
+    
+    function shuffleFlashcards() {
+      flashcardDeck = [...eegData];
+      shuffleArray(flashcardDeck);
+      currentFlashcard = 0;
+      showFlashcard();
+    }
+    
+    function displayFunFact() {
+      const funFactDiv = document.getElementById("fun-fact");
+      const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
+      funFactDiv.textContent = randomFact;
+    }
+    
+    function toggleFlashcardMode() {
+      const detailContent = document.getElementById("detail-content");
+      const flashcardContainer = document.getElementById("flashcard-container");
+      if (flashcardContainer.style.display === "none" || flashcardContainer.style.display === "") {
+        detailContent.style.display = "none";
+        flashcardContainer.style.display = "block";
+        flashcardDeck = [...eegData];
+        currentFlashcard = 0;
+        showingFront = true;
+        showFlashcard();
+      } else {
+        flashcardContainer.style.display = "none";
+        detailContent.style.display = "block";
+      }
+    }
+    
+    // --- Rendering EEG List with Accordion behavior ---
+    function renderList(data, autoExpand = false) {
+      const list = document.getElementById("atlas-list");
+      list.innerHTML = "";
+      
+      // Group entries by category
+      const grouped = {};
+      data.forEach(entry => {
+        if (!grouped[entry.category]) grouped[entry.category] = [];
+        grouped[entry.category].push(entry);
+      });
+      
+      for (const category in grouped) {
+        const categoryItem = document.createElement("li");
+        const header = document.createElement("div");
+        header.textContent = category;
+        header.style.cursor = "pointer";
+        header.style.fontWeight = "bold";
+        header.style.padding = "0.5em 0";
+        header.style.borderBottom = "1px solid var(--border-color)";
+        header.setAttribute("tabindex", "0");
+        // Accordion behavior: collapse all others when one is clicked
+        header.addEventListener("click", () => {
+          const allSublists = document.querySelectorAll("#atlas-list ul");
+          allSublists.forEach(s => s.style.display = "none");
+          // Toggle the current one
+          if (sublist.style.display === "none") {
+            sublist.style.display = "block";
+          } else {
+            sublist.style.display = "none";
+          }
+        });
+        const sublist = document.createElement("ul");
+        sublist.style.listStyle = "none";
+        sublist.style.margin = "0";
+        sublist.style.paddingLeft = "1em";
+        // Default state is collapsed unless autoExpand is true (for search)
+        sublist.style.display = autoExpand ? "block" : "none";
+        
+        grouped[category].forEach(entry => {
+          const subItem = document.createElement("li");
+          subItem.style.padding = "0.3em 0";
+          subItem.setAttribute("tabindex", "0");
+          
+          const titleSpan = document.createElement("span");
+          titleSpan.textContent = entry.title;
+          titleSpan.style.cursor = "pointer";
+          titleSpan.addEventListener("click", () => renderDetail(entry));
+          
+          subItem.appendChild(titleSpan);
+          sublist.appendChild(subItem);
+        });
+        categoryItem.appendChild(header);
+        categoryItem.appendChild(sublist);
+        list.appendChild(categoryItem);
+      }
+    }
+    
+    // --- Render detail view (with favorite star) ---
+    function renderDetail(entry) {
+      document.getElementById("flashcard-container").style.display = "none";
+      const detailContent = document.getElementById("detail-content");
+      detailContent.style.display = "block";
+      detailContent.innerHTML = `
+        <h2>${entry.title} 
+          <span class="favorite-star" onclick='toggleFavorite(${JSON.stringify(entry.title)}, event)'>
+            ${isFavorite(entry.title) ? "★" : "☆"}
+          </span>
+        </h2>
+        <img src="${entry.front}" alt="${entry.title}" class="step-image" />
+        <p style="margin-top:1rem;">${entry.back}</p>
+      `;
+    }
+    
+    // --- Autocomplete Functionality ---
+    const searchInput = document.getElementById("atlas-search");
+    const autocomplete = document.getElementById("autocomplete");
+    
+    searchInput.addEventListener("input", () => {
+      const query = searchInput.value.toLowerCase().trim();
+      if (!query) {
+        autocomplete.style.display = "none";
+        showAllEEG();
+        return;
+      }
+      
+      const suggestions = eegData.filter(entry =>
+        entry.title.toLowerCase().includes(query) ||
+        entry.category.toLowerCase().includes(query)
+      );
+      
+      if (suggestions.length === 0) {
+        autocomplete.style.display = "none";
+        return;
+      }
+      
+      autocomplete.innerHTML = "";
+      suggestions.forEach(entry => {
+        const item = document.createElement("li");
+        item.textContent = entry.title;
+        item.style.padding = "0.5em";
+        item.style.cursor = "pointer";
+        item.setAttribute("tabindex", "0");
+        item.addEventListener("click", () => {
+          searchInput.value = entry.title;
+          autocomplete.style.display = "none";
+          // When a search result is chosen, auto-expand the matching groups.
+          renderList([entry], true);
+        });
+        autocomplete.appendChild(item);
+      });
+      autocomplete.style.display = "block";
+      
+      const fuzzyFiltered = eegData.filter(entry =>
+        entry.title.toLowerCase().includes(query) ||
+        entry.category.toLowerCase().includes(query) ||
+        entry.back.toLowerCase().includes(query) ||
+        fuzzyMatch(entry, query)
+      );
+      renderList(fuzzyFiltered, true);
+    });
+    
+    document.addEventListener("click", e => {
+      if (e.target !== searchInput) {
+        autocomplete.style.display = "none";
+      }
+    });
+    
+    // Levenshtein Distance for fuzzy matching
+    function levenshtein(a, b) {
+      const dp = Array.from({ length: a.length + 1 }, () => []);
+      for (let i = 0; i <= a.length; i++) dp[i][0] = i;
+      for (let j = 0; j <= b.length; j++) dp[0][j] = j;
+      for (let i = 1; i <= a.length; i++) {
+        for (let j = 1; j <= b.length; j++) {
+          dp[i][j] = a[i - 1] === b[j - 1]
+            ? dp[i - 1][j - 1]
+            : 1 + Math.min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]);
+        }
+      }
+      return dp[a.length][b.length];
+    }
+    
+    function fuzzyMatch(entry, query) {
+      const score = Math.min(
+        levenshtein(entry.title.toLowerCase(), query),
+        levenshtein(entry.category.toLowerCase(), query),
+        levenshtein(entry.back.toLowerCase(), query)
+      );
+      return score <= 2;
+    }
+    
+    // --- Favorites Tab Functions ---
+    function showAllEEG() {
+      document.getElementById("all-btn").classList.add("active");
+      document.getElementById("favorites-btn").classList.remove("active");
+      renderList(eegData, false);
+    }
+    function showFavorites() {
+      document.getElementById("favorites-btn").classList.add("active");
+      document.getElementById("all-btn").classList.remove("active");
+      const favorites = getFavorites();
+      const filtered = eegData.filter(entry => favorites.includes(entry.title));
+      renderList(filtered, false);
+    }
+    
+    // Fun addition: show a random EEG entry from the list
+    function showRandomEEG() {
+      const randomIndex = Math.floor(Math.random() * eegData.length);
+      renderDetail(eegData[randomIndex]);
+    }
+    
+    document.addEventListener("DOMContentLoaded", () => {
+      // Start with All EEG view with sections collapsed by default
+      showAllEEG();
+    });
+  </script>
+</body>
+</html>
