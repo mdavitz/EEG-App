@@ -6,7 +6,7 @@
   <title>Discussion Forum - EEG Training</title>
   <link rel="stylesheet" href="assets/css/styles.css">
   <style>
-    /* Custom styles for the discussion forum new post form and listing */
+    /* Custom styles for discussion forum */
     #newPostFormContainer {
       display: none;
       margin: 20px 0;
@@ -70,11 +70,14 @@
 </head>
 <body>
   <header>
-    <!-- Insert your header/navigation here (from your index.html styling) -->
+    <!-- Insert your header/navigation here -->
   </header>
   <main class="container">
     <h2 class="page-title" style="text-align: center;">Discussion Forum</h2>
-    <p style="text-align: center;">Join the conversation below and share your insights on EEG findings! Please review our <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.</p>
+    <p style="text-align: center;">
+      Join the conversation below and share your insights on EEG findings! Please review our 
+      <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.
+    </p>
     
     <!-- Post Button -->
     <button id="postButton" onclick="toggleNewPostForm()">New Post</button>
@@ -99,7 +102,6 @@
         <!-- EEG Finding Section -->
         <fieldset class="category-group">
           <legend>EEG Finding Category:</legend>
-          <!-- Using radio buttons to allow only one selection -->
           <label><input type="radio" name="eegCategory" value="Normal" required> Normal</label>
           <label><input type="radio" name="eegCategory" value="Artifact" required> Artifact</label>
           <label><input type="radio" name="eegCategory" value="Slowing" required> Slowing</label>
@@ -150,8 +152,8 @@
   </footer>
   
   <script>
-    // Set API_BASE to your Cloudflare Worker endpoint URL
-    const API_BASE = 'https://eeg-training-discussion.workers.dev';
+    // Set your deployed Worker endpoint URL
+    const API_BASE = 'https://eeg-training-discussion.qysw49pxgy.workers.dev';
     
     // Toggle display of the new post form
     function toggleNewPostForm() {
@@ -159,11 +161,12 @@
       formContainer.style.display = (formContainer.style.display === 'none' || formContainer.style.display === '') ? 'block' : 'none';
     }
     
-    // Load posts from API and sort by EEG Category then alphabetically by Subcategory
+    // Load posts from the API and sort them by EEG Category, then alphabetically by Subcategory
     async function loadPosts() {
       const res = await fetch(`${API_BASE}/posts`);
       let data = await res.json();
-      // Expecting data.posts as an array of post objects with: id, name, trainingLevel, eegCategory, eegSubcategory, uploadUrl, upvotes, comments
+      // Expect data.posts to be an array of post objects with properties:
+      // id, name, trainingLevel, eegCategory, eegSubcategory, uploadUrl, upvotes, comments
       data.posts.sort((a, b) => {
         if (a.eegCategory === b.eegCategory) {
           return a.eegSubcategory.localeCompare(b.eegSubcategory);
@@ -187,7 +190,7 @@
       });
     }
     
-    // Handle submission of new post
+    // Handle submission of a new post
     document.getElementById('newPostForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
@@ -241,7 +244,7 @@
       document.getElementById('commentForm').dataset.postId = postId;
     }
     
-    // Handle submission of new comment for a post
+    // Handle submission of a new comment for a post
     document.getElementById('commentForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
