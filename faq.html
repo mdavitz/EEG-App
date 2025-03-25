@@ -1,20 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Community Forum - EEG Training</title>
-  <link rel="stylesheet" href="assets/css/styles.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discussion Forum - EEG Training</title>
+  <link rel="stylesheet" href="assets/css/styles.css" />
   <style>
-    /* Container to center and box the content */
+    /* Wrap the entire content in a boxed container to match other pages */
     .boxed-container {
-      max-width: 1200px;
-      margin: 2rem auto;
-      padding: 2rem;
       background: var(--info-bg);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       box-shadow: 0 2px 8px var(--shadow-color);
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 800px;
     }
     .page-title {
       text-align: center;
@@ -28,39 +28,67 @@
       font-size: 1.1rem;
       color: var(--text-color);
     }
-    .iframe-container {
-      border: 1px solid var(--border-color);
+    .disclaimer {
+      background: #ffecec;
+      border: 1px solid #ff5c5c;
+      color: #a94442;
+      font-weight: bold;
+      padding: 1rem;
+      margin: 1rem 0;
+      text-align: center;
       border-radius: 8px;
-      overflow: hidden;
-      box-shadow: 0 2px 8px var(--shadow-color);
     }
-    .iframe-container iframe {
-      width: 100%;
-      height: 800px; /* Adjust height as needed */
-      border: none;
+    /* Optional: adjust Disqus container size if needed */
+    #disqus_thread {
+      margin-top: 1.5rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <!-- Insert your header/navigation here -->
+    <!-- Insert your site's header/navigation here -->
   </header>
+  <h2 class="page-title">Discussion Forum</h2>
   <main class="container">
     <div class="boxed-container">
-      <h2 class="page-title">Community Forum</h2>
       <p class="description">
-        Join our community forum for discussions and insights on EEG Training.
-        For more details, please review our <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a>.
+        Join the conversation below and share your insights on EEG findings!
+        Please review our <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.
       </p>
-      <div class="iframe-container">
-        <iframe src="https://connect.aesnet.org/communities/community-home?communitykey=9717275e-6822-4a93-a50f-0192906123ca">
-          Your browser does not support iframes.
-        </iframe>
+      <!-- Disclaimer Box -->
+      <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Do not upload any Protected Health Information (PHI) or HIPAA-sensitive material. All posts are for educational purposes only.</p>
       </div>
+      <!-- Disqus Comment Thread Container -->
+      <div id="disqus_thread"></div>
+      <noscript>
+        Please enable JavaScript to view the comments powered by Disqus.
+      </noscript>
     </div>
   </main>
   <footer>
-    <!-- Insert your footer content here -->
+    <!-- Insert your website footer content here -->
   </footer>
+  
+  <!-- Disqus Universal Embed Code -->
+  <script>
+    /**
+    * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES
+    * FROM YOUR PLATFORM OR CMS.
+    *
+    * var disqus_config = function () {
+    *   this.page.url = window.location.href;  
+    *   this.page.identifier = "discussion_forum"; 
+    * };
+    */
+    (function() {  // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://eeg-training.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
+  </script>
+  <!-- Disqus Comment Count Script (if needed) -->
+  <script id="dsq-count-scr" src="https://eeg-training.disqus.com/count.js" async></script>
 </body>
 </html>
