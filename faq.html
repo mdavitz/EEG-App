@@ -1,51 +1,272 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <!-- Responsive scaling -->
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Discussion Forum - EEG Curriculum</title>
-  <link rel="stylesheet" href="assets/css/styles.css" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discussion Forum - EEG Training</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
+  <style>
+    /* Custom styles for the discussion forum new post form and listing */
+    #newPostFormContainer {
+      display: none;
+      margin: 20px 0;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--info-bg);
+    }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      font-weight: 500;
+      margin-bottom: 5px;
+    }
+    .form-group input[type="text"],
+    .form-group select,
+    .form-group input[type="file"] {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid var(--border-color);
+      border-radius: 4px;
+      font-size: 1rem;
+    }
+    .category-group {
+      margin-bottom: 15px;
+    }
+    .category-group label {
+      margin-right: 15px;
+    }
+    #postButton {
+      display: block;
+      margin: 20px auto;
+      padding: 10px 20px;
+      background: var(--accent-color);
+      color: #fff;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 1rem;
+    }
+    .post-item {
+      border: 1px solid var(--border-color);
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      background: var(--info-bg);
+    }
+    .post-item img {
+      max-width: 200px;
+      display: block;
+      margin: 10px 0;
+    }
+    .comment-item {
+      border-top: 1px solid var(--border-color);
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+  </style>
 </head>
 <body>
   <header>
-    <!-- Insert your existing header/navigation code here -->
+    <!-- Insert your header/navigation here (from your index.html styling) -->
   </header>
-  
   <main class="container">
-    <h2 class="page-title">Discussion Forum</h2>
-    <p style="text-align: center; margin-bottom: 20px;">Join the conversation below and share your thoughts! Please review our 
-      <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> 
-      before posting. Avoid posting any protected health information and/or HIPAA protected data.
-    </p>
-    <!-- Disqus Comment Thread Container -->
-    <div id="disqus_thread"></div>
-    <noscript>
-      Please enable JavaScript to view the 
-      <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
-    </noscript>
+    <h2 class="page-title" style="text-align: center;">Discussion Forum</h2>
+    <p style="text-align: center;">Join the conversation below and share your insights on EEG findings! Please review our <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.</p>
+    
+    <!-- Post Button -->
+    <button id="postButton" onclick="toggleNewPostForm()">New Post</button>
+    
+    <!-- New Post Form Container -->
+    <div id="newPostFormContainer">
+      <h3>Create a New Post</h3>
+      <form id="newPostForm" enctype="multipart/form-data">
+        <div class="form-group">
+          <label for="name">Your Name:</label>
+          <input type="text" name="name" id="name" placeholder="Your Name" required>
+        </div>
+        <div class="form-group">
+          <label for="trainingLevel">Training Level:</label>
+          <select name="trainingLevel" id="trainingLevel" required>
+            <option value="">Select Training Level</option>
+            <option value="Resident">Resident</option>
+            <option value="Fellow">Fellow</option>
+            <option value="Attending">Attending</option>
+          </select>
+        </div>
+        <!-- EEG Finding Section -->
+        <fieldset class="category-group">
+          <legend>EEG Finding Category:</legend>
+          <!-- Using radio buttons to allow only one selection -->
+          <label><input type="radio" name="eegCategory" value="Normal" required> Normal</label>
+          <label><input type="radio" name="eegCategory" value="Artifact" required> Artifact</label>
+          <label><input type="radio" name="eegCategory" value="Slowing" required> Slowing</label>
+          <label><input type="radio" name="eegCategory" value="Epileptiform Discharge" required> Epileptiform Discharge</label>
+          <label><input type="radio" name="eegCategory" value="Seizure" required> Seizure</label>
+          <label><input type="radio" name="eegCategory" value="Other" required> Other</label>
+        </fieldset>
+        <div class="form-group">
+          <label for="eegSubcategory">EEG Finding Subcategory:</label>
+          <input type="text" name="eegSubcategory" id="eegSubcategory" placeholder="Enter EEG Finding Subcategory" required>
+        </div>
+        <!-- Image Upload Option Only -->
+        <div class="form-group">
+          <label for="uploadFile">Upload Image:</label>
+          <input type="file" name="uploadFile" id="uploadFile" accept="image/*" required>
+        </div>
+        <button type="submit" class="btn">Submit Post</button>
+      </form>
+    </div>
+    
+    <!-- Posts Listing Section -->
+    <section id="postsContainer">
+      <!-- Posts will be dynamically loaded and sorted here -->
+    </section>
+    
+    <!-- Comment Section for Selected Post -->
+    <section id="commentSection" style="display:none;">
+      <button onclick="closeComments()">Back to Posts</button>
+      <div id="selectedPostDetails"></div>
+      <div id="commentsContainer">
+        <!-- Comments for the selected post will be loaded here -->
+      </div>
+      <form id="commentForm">
+        <div class="form-group">
+          <label for="commentName">Your Name:</label>
+          <input type="text" name="name" id="commentName" placeholder="Your Name" required>
+        </div>
+        <div class="form-group">
+          <label for="commentText">Your Comment:</label>
+          <textarea name="comment" id="commentText" placeholder="Your Comment" required></textarea>
+        </div>
+        <button type="submit" class="btn">Submit Comment</button>
+      </form>
+    </section>
   </main>
-  
   <footer>
-    <!-- Insert your existing footer code here -->
+    <!-- Insert your footer content here -->
   </footer>
   
-  <!-- Disqus Universal Code -->
   <script>
-    var disqus_config = function () {
-      this.page.url = window.location.href;  // Use the current page URL
-      this.page.identifier = "discussion_forum"; // Unique identifier for this discussion page
-      this.page.commentPolicyURL = 'https://www.eeg-training.com/comment-policy.html';
-    };
-    (function() { // DON'T EDIT BELOW THIS LINE
-      var d = document, s = d.createElement('script');
-      s.src = 'https://eeg-training.disqus.com/embed.js';
-      s.setAttribute('data-timestamp', +new Date());
-      (d.head || d.body).appendChild(s);
-    })();
+    // Set API_BASE to your Cloudflare Worker endpoint URL
+    const API_BASE = 'https://eeg-training-discussion.workers.dev';
+    
+    // Toggle display of the new post form
+    function toggleNewPostForm() {
+      const formContainer = document.getElementById('newPostFormContainer');
+      formContainer.style.display = (formContainer.style.display === 'none' || formContainer.style.display === '') ? 'block' : 'none';
+    }
+    
+    // Load posts from API and sort by EEG Category then alphabetically by Subcategory
+    async function loadPosts() {
+      const res = await fetch(`${API_BASE}/posts`);
+      let data = await res.json();
+      // Expecting data.posts as an array of post objects with: id, name, trainingLevel, eegCategory, eegSubcategory, uploadUrl, upvotes, comments
+      data.posts.sort((a, b) => {
+        if (a.eegCategory === b.eegCategory) {
+          return a.eegSubcategory.localeCompare(b.eegSubcategory);
+        }
+        return a.eegCategory.localeCompare(b.eegCategory);
+      });
+      const container = document.getElementById('postsContainer');
+      container.innerHTML = '';
+      data.posts.forEach(post => {
+        const div = document.createElement('div');
+        div.classList.add('post-item');
+        div.innerHTML = `
+          <h4>${post.eegCategory}: ${post.eegSubcategory}</h4>
+          <p><strong>${post.name}</strong> - ${post.trainingLevel}</p>
+          ${post.uploadUrl ? `<img src="${post.uploadUrl}" alt="Upload Image">` : ''}
+          <p>Upvotes: <span id="upvoteCount-${post.id}">${post.upvotes || 0}</span>
+          <button class="upvote-btn" onclick="upvotePost('${post.id}')">Upvote</button></p>
+          <button onclick="viewComments('${post.id}')">View Comments (${post.comments ? post.comments.length : 0})</button>
+        `;
+        container.appendChild(div);
+      });
+    }
+    
+    // Handle submission of new post
+    document.getElementById('newPostForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const res = await fetch(`${API_BASE}/posts`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Post created successfully!");
+        e.target.reset();
+        toggleNewPostForm();
+        loadPosts();
+      } else {
+        alert("Error: " + data.error);
+      }
+    });
+    
+    // Upvote a post
+    async function upvotePost(postId) {
+      const res = await fetch(`${API_BASE}/posts/${postId}/upvote`, { method: 'POST' });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById(`upvoteCount-${postId}`).textContent = data.upvotes;
+      } else {
+        alert("Error: " + data.error);
+      }
+    }
+    
+    // View comments for a specific post
+    async function viewComments(postId) {
+      document.getElementById('postsContainer').style.display = 'none';
+      document.getElementById('commentSection').style.display = 'block';
+      const res = await fetch(`${API_BASE}/posts/${postId}`);
+      const postData = await res.json();
+      const selectedPostDiv = document.getElementById('selectedPostDetails');
+      selectedPostDiv.innerHTML = `
+        <h3>${postData.eegCategory}: ${postData.eegSubcategory}</h3>
+        <p><strong>${postData.name}</strong> - ${postData.trainingLevel}</p>
+        ${postData.uploadUrl ? `<img src="${postData.uploadUrl}" alt="Upload Image">` : ''}
+        <p>Upvotes: ${postData.upvotes || 0}</p>
+      `;
+      const commentsContainer = document.getElementById('commentsContainer');
+      commentsContainer.innerHTML = '';
+      (postData.comments || []).forEach(comment => {
+        const div = document.createElement('div');
+        div.classList.add('comment-item');
+        div.innerHTML = `<strong>${comment.name}</strong>: ${comment.comment}<br><em>${new Date(comment.timestamp).toLocaleString()}</em>`;
+        commentsContainer.appendChild(div);
+      });
+      document.getElementById('commentForm').dataset.postId = postId;
+    }
+    
+    // Handle submission of new comment for a post
+    document.getElementById('commentForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const formData = new FormData(e.target);
+      const postId = e.target.dataset.postId;
+      const res = await fetch(`${API_BASE}/posts/${postId}/comments`, {
+        method: 'POST',
+        body: formData
+      });
+      const data = await res.json();
+      if (data.success) {
+        alert("Comment posted successfully!");
+        e.target.reset();
+        viewComments(postId);
+      } else {
+        alert("Error: " + data.error);
+      }
+    });
+    
+    // Close comments section and show posts listing
+    function closeComments() {
+      document.getElementById('commentSection').style.display = 'none';
+      document.getElementById('postsContainer').style.display = 'block';
+    }
+    
+    window.onload = loadPosts;
   </script>
-  
-  <!-- Disqus Comment Count Script -->
-  <script id="dsq-count-scr" src="https://eeg-training.disqus.com/count.js" async></script>
 </body>
 </html>
