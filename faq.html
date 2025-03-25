@@ -194,7 +194,8 @@
     // Load posts from the API and sort them by EEG Category, then alphabetically by Subcategory
     async function loadPosts() {
       try {
-        const res = await fetch(`${API_BASE}/posts`);
+        // Note the access query parameter added here:
+        const res = await fetch(`${API_BASE}/posts?access=epilepsy123`);
         let data = await res.json();
         console.log("Fetched posts:", data.posts); // Debug log
         if (!data.posts) data.posts = [];
