@@ -3,60 +3,187 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Shared stylesheet -->
   <link rel="stylesheet" href="assets/css/styles.css" />
-  <title>Natus Instructions - EEG Curriculum</title>
+  <title>EEG Instructions</title>
+  <style>
+    /* Inline styling for the tab buttons */
+    .tab-buttons {
+      text-align: center;
+      margin-bottom: 1.5em;
+    }
+    .tab-buttons button {
+      padding: 10px 20px;
+      margin: 0 10px;
+      border: none;
+      border-radius: 4px;
+      background: var(--accent-color);
+      color: #fff;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    .tab-buttons button.active {
+      background: #00509e;
+    }
+    /* Optional styling for the explainer paragraphs */
+    .explainer {
+      font-style: italic;
+      color: #555;
+      margin-top: 0.5em;
+    }
+  </style>
 </head>
 <body>
-  <div class="natus-container">
-    <h2 class="page-title">Natus Instructions</h2>
-    <div class="natus-steps">
-      <div class="natus-step">
-        <div class="natus-step-number">1</div>
-        <div class="natus-step-content">
-          <h3>Launch &amp; Log In</h3>
-          <p>Power on the workstation, launch the Natus NeuroWorks app, and log in with your secure credentials.</p>
-          <img src="assets/images/Step1.png" alt="Launch and Log In" class="natus-image step1-image">
-        </div>
-      </div>
-      <div class="natus-step">
-        <div class="natus-step-number">2</div>
-        <div class="natus-step-content">
-          <h3>Open Patient Study</h3>
-          <p>Navigate to the Patient Studies list or use the search function to locate a record. Then select the desired EEG study.</p>
-          <img src="assets/images/Step2.png" alt="Open a Patient Study" class="natus-image">
-        </div>
-      </div>
-      <div class="natus-step">
-        <div class="natus-step-number">3</div>
-        <div class="natus-step-content">
-          <h3>Configure Display</h3>
-          <p>Select the bipolar montage <em>Bipolar LT over RT</em> and adjust display settings: Sensitivity 7 μV, Time base 30 mm/sec, and Filters (High 70 Hz, Low 1 Hz).</p>
-          <img src="assets/images/Step3.png" alt="Configure the Display" class="natus-image">
-        </div>
-      </div>
-      <div class="natus-step">
-        <div class="natus-step-number">4</div>
-        <div class="natus-step-content">
-          <h3>Analyze the EEG</h3>
-          <p>Scroll through the recording to inspect waveforms. Use built-in tools to assess amplitude, frequency, and add annotations.</p>
-        </div>
-      </div>
-      <div class="natus-step">
-        <div class="natus-step-number">5</div>
-        <div class="natus-step-content">
-          <h3>Annotate Events</h3>
-          <p>Place event markers by clicking the designated buttons at the top of the screen.</p>
-          <img src="assets/images/Step5.png" alt="Annotate Events" class="natus-image">
-        </div>
-      </div>
-      <div class="natus-step">
-        <div class="natus-step-number">6</div>
-        <div class="natus-step-content">
-          <h3>Create EEG Report</h3>
-          <p>After review, open Epic’s reporting interface, generate a new report, and pend the note for review.</p>
+  <div class="instructions-container">
+    <!-- Tab Buttons -->
+    <div class="tab-buttons">
+      <button id="natus-btn" class="btn active" onclick="showInstructionTab('natus')">Natus Instructions</button>
+      <button id="persyst-btn" class="btn" onclick="showInstructionTab('persyst')">Persyst Instructions</button>
+    </div>
+    
+    <!-- Natus Instructions Tab (Complete original content) -->
+    <div id="natus-tab">
+      <div class="natus-container">
+        <h2 class="page-title">Natus Instructions</h2>
+        <div class="natus-steps">
+          <div class="natus-step">
+            <div class="natus-step-number">1</div>
+            <div class="natus-step-content">
+              <h3>Launch &amp; Log In</h3>
+              <p>Power on the workstation, launch the Natus NeuroWorks app, and log in with your secure credentials.</p>
+              <img src="assets/images/Step1.png" alt="Launch and Log In" class="natus-image step1-image">
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">2</div>
+            <div class="natus-step-content">
+              <h3>Open Patient Study</h3>
+              <p>Navigate to the Patient Studies list or use the search function to locate a record. Then select the desired EEG study.</p>
+              <img src="assets/images/Step2.png" alt="Open a Patient Study" class="natus-image">
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">3</div>
+            <div class="natus-step-content">
+              <h3>Configure Display</h3>
+              <p>Select the bipolar montage <em>Bipolar LT over RT</em> and adjust display settings: Sensitivity 7 μV, Time base 30 mm/sec, and Filters (High 70 Hz, Low 1 Hz).</p>
+              <img src="assets/images/Step3.png" alt="Configure the Display" class="natus-image">
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">4</div>
+            <div class="natus-step-content">
+              <h3>Analyze the EEG</h3>
+              <p>Scroll through the recording to inspect waveforms. Use built-in tools to assess amplitude, frequency, and add annotations.</p>
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">5</div>
+            <div class="natus-step-content">
+              <h3>Annotate Events</h3>
+              <p>Place event markers by clicking the designated buttons at the top of the screen.</p>
+              <img src="assets/images/Step5.png" alt="Annotate Events" class="natus-image">
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">6</div>
+            <div class="natus-step-content">
+              <h3>Create EEG Report</h3>
+              <p>After review, open Epic’s reporting interface, generate a new report, and pend the note for review.</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
+    
+    <!-- Persyst Instructions Tab with Explainers and Same Boxed Formatting -->
+    <div id="persyst-tab" style="display: none;">
+      <div class="natus-container">
+        <h2 class="page-title">Persyst Instructions</h2>
+        <div class="natus-steps">
+          <div class="natus-step">
+            <div class="natus-step-number">1</div>
+            <div class="natus-step-content">
+              <h3>Launch Persyst</h3>
+              <p>Once your EEG study is open go to Analysis and ensure Persyst (toolbar) is checked</p>
+              </p>
+              <img src="assets/images/PersystStep1.png" alt="Launch and Log In" class="natus-image">
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">2</div>
+            <div class="natus-step-content">
+              <h3>Persyst (toolbar)</h3>
+              <p>Locate the Persyst toolbar as pictured below. If using two screens, grab the toolbar and drag it to the second screen.</p>
+              </p>
+              <img src="assets/images/PersystStep2.png" alt="Open Patient Study" class="natus-image">
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">3</div>
+            <div class="natus-step-content">
+              <h3>Configure Panel Size</h3>
+              <p>Check that "Comprehensive" is selected. Adjust display size by grabbing the bottom right corner to expand the panel.</p>
+              </p>
+              <img src="assets/images/PersystStep3.png" alt="Configure Display" class="natus-image">
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">4</div>
+            <div class="natus-step-content">
+              <h3>Rhythmicity Spectrogram</h3>
+              <p>The rhythmicity spectrogram in Persyst shows rhythmic bursts and variations across frequency bands, helping us quickly spot rhythmic activity linked to seizures.</p>
+              <img src="assets/images/PersystStep4.png" alt="Configure Display" class="natus-image"> 
+            </p>
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">5</div>
+            <div class="natus-step-content">
+              <h3>FFT Spectrogram</h3>
+              <p>The FFT spectrogram in Persyst breaks the EEG signal into its frequency components over time, revealing transient power shifts where warm colors like red and orange highlight high power bursts—often linked to epileptic activity—while cool blues and greens indicate lower power levels.</p>
+              </p>
+              <img src="assets/images/PersystStep5.png" alt="Annotate Events" class="natus-image">
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">6</div>
+            <div class="natus-step-content">
+              <h3>Asymmetry and aEEG</h3>
+              <p>The Asymmetry panel in Persyst uses color contrasts (left blue and right red) to reveal lateral differences in EEG power between hemispheres sorted from delta to gamma frequency on the Y axis. The aEEG panel compresses long-term amplitude trends into a waveform, together providing a quick visual summary of focal imbalances and overall brain activity.</p>
+              <img src="assets/images/PersystStep6.png" alt="Annotate Events" class="natus-image">  
+            </p>
+            </div>
+          </div>
+          <div class="natus-step">
+            <div class="natus-step-number">1</div>
+            <div class="natus-step-content">
+              <h3>ADR</h3>
+              <p>The ADR panel quantifies the balance between alpha and  delta waves, offering a visual metric where higher ratios indicate normal cortical function and lower ratios suggest pathological slowing; in subarachnoid hemorrhage, it serves to detect early signs of delayed ischemia.</p>
+              </p>
+              <img src="assets/images/PersystStep7.png" alt="Launch and Log In" class="natus-image">
+            </div>
+        </div>
+      </div>
+    </div>
+  
   </div>
+  
+  <script>
+    function showInstructionTab(tab) {
+      if (tab === 'natus') {
+        document.getElementById('natus-tab').style.display = 'block';
+        document.getElementById('persyst-tab').style.display = 'none';
+        document.getElementById('natus-btn').classList.add('active');
+        document.getElementById('persyst-btn').classList.remove('active');
+      } else {
+        document.getElementById('natus-tab').style.display = 'none';
+        document.getElementById('persyst-tab').style.display = 'block';
+        document.getElementById('persyst-btn').classList.add('active');
+        document.getElementById('natus-btn').classList.remove('active');
+      }
+    }
+  </script>
 </body>
 </html>
