@@ -6,21 +6,25 @@
   <title>Discussion Forum - EEG Training</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
   <style>
-    /* Additional custom styling for the discussion forum page */
+    /* Wrap the entire content in a boxed container to match other pages */
+    .boxed-container {
+      background: var(--info-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      margin: 2rem auto;
+      padding: 2rem;
+      max-width: 800px;
+    }
     .page-title {
       text-align: center;
-      margin: 2rem 0;
+      margin-bottom: 1rem;
       font-size: 2.5rem;
       color: var(--primary-color);
     }
-    .container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 0 1rem 2rem;
-    }
     .description {
       text-align: center;
-      margin-bottom: 1rem;
+      margin-bottom: 1.5rem;
       font-size: 1.1rem;
       color: var(--text-color);
     }
@@ -30,37 +34,37 @@
       color: #a94442;
       font-weight: bold;
       padding: 1rem;
-      margin: 1rem auto;
-      max-width: 800px;
+      margin: 1rem 0;
       text-align: center;
       border-radius: 8px;
     }
-    /* Optional: Adjust the Disqus container size to better match your site's layout */
+    /* Optional: adjust Disqus container size if needed */
     #disqus_thread {
-      margin: 2rem auto;
-      max-width: 800px;
+      margin-top: 1.5rem;
     }
   </style>
 </head>
 <body>
   <header>
-    <!-- Insert your website header/navigation here -->
+    <!-- Insert your site's header/navigation here -->
   </header>
+  <h2 class="page-title">Discussion Forum</h2>
   <main class="container">
-    <h2 class="page-title">Discussion Forum</h2>
-    <p class="description">
-      Join the conversation below and share your insights on EEG findings!
-      Please review our <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.
-    </p>
-    <!-- Disclaimer -->
-    <div class="disclaimer">
-      <p><strong>Disclaimer:</strong> Do not upload any Protected Health Information (PHI) or HIPAA-sensitive material. All submissions are for educational purposes only.</p>
+    <div class="boxed-container">
+      <p class="description">
+        Join the conversation below and share your insights on EEG findings!
+        Please review our <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.
+      </p>
+      <!-- Disclaimer Box -->
+      <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Do not upload any Protected Health Information (PHI) or HIPAA-sensitive material. All posts are for educational purposes only.</p>
+      </div>
+      <!-- Disqus Comment Thread Container -->
+      <div id="disqus_thread"></div>
+      <noscript>
+        Please enable JavaScript to view the comments powered by Disqus.
+      </noscript>
     </div>
-    <!-- Disqus Comment Thread Container -->
-    <div id="disqus_thread"></div>
-    <noscript>
-      Please enable JavaScript to view the comments powered by Disqus.
-    </noscript>
   </main>
   <footer>
     <!-- Insert your website footer content here -->
@@ -72,13 +76,10 @@
     * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES
     * FROM YOUR PLATFORM OR CMS.
     *
-    * Uncomment and adjust these variables as needed.
-    */
-    /*
-    var disqus_config = function () {
-      this.page.url = window.location.href;  
-      this.page.identifier = "discussion_forum"; 
-    };
+    * var disqus_config = function () {
+    *   this.page.url = window.location.href;  
+    *   this.page.identifier = "discussion_forum"; 
+    * };
     */
     (function() {  // DON'T EDIT BELOW THIS LINE
       var d = document, s = d.createElement('script');
@@ -87,7 +88,7 @@
       (d.head || d.body).appendChild(s);
     })();
   </script>
-  <!-- Disqus Comment Count Script -->
+  <!-- Disqus Comment Count Script (if needed) -->
   <script id="dsq-count-scr" src="https://eeg-training.disqus.com/count.js" async></script>
 </body>
 </html>
