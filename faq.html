@@ -4,132 +4,49 @@
   <meta charset="UTF-8" />
   <!-- Responsive scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Discussion Forum - EEG Curriculum</title>
   <link rel="stylesheet" href="assets/css/styles.css" />
-  <title>FAQ - EEG Curriculum</title>
 </head>
 <body>
-  <div id="faq" class="faq-section">
-    <h2 class="page-title">Frequently Asked Questions(FAQ)</h2>
-    
-    <!-- Category: General EEG Questions -->
-    <div class="faq-category">
-      <h3>General EEG Questions</h3>
-      <details class="faq-item">
-        <summary>What is an EEG and why is it important?</summary>
-        <div class="answer">
-          <p>An EEG (electroencephalogram) is a noninvasive test that records the brain’s electrical activity through electrodes placed on the scalp. It is essential for diagnosing neurological conditions such as epilepsy.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>How is an EEG performed?</summary>
-        <div class="answer">
-          <p>During an EEG, electrodes are attached to the scalp using conductive paste. The recording is done while the patient is at rest and may include periods of eye opening/closing or hyperventilation to provoke abnormalities.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>How should I prepare for an EEG?</summary>
-        <div class="answer">
-          <p>Patients are generally advised to avoid caffeine and get adequate sleep prior to the test. Specific instructions may vary based on the protocol of the testing facility.</p>
-        </div>
-      </details>
-    </div>
-    
-    <!-- Category: Seizure & Epilepsy FAQs -->
-    <div class="faq-category">
-      <h3>Seizure &amp; Epilepsy FAQs</h3>
-      <details class="faq-item">
-        <summary>When should an EEG be obtained after a first seizure?</summary>
-        <div class="answer">
-          <p>Most guidelines recommend obtaining an EEG within 24–48 hours after a first unprovoked seizure to maximize the chance of capturing epileptiform discharges.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>What is status epilepticus?</summary>
-        <div class="answer">
-          <p>Status epilepticus is defined as a prolonged seizure (typically lasting more than 5 minutes) or a series of seizures without full recovery between them, and it is a medical emergency.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>How do anti-seizure medications affect EEG results?</summary>
-        <div class="answer">
-          <p>Anti-seizure medications can dampen epileptiform discharges and alter background rhythms, which may affect the sensitivity of the EEG in detecting abnormalities.</p>
-        </div>
-      </details>
-    </div>
-    
-    <!-- Category: Technical & Procedural FAQs -->
-    <div class="faq-category">
-      <h3>Technical &amp; Procedural FAQs</h3>
-      <details class="faq-item">
-        <summary>What do different EEG montages mean?</summary>
-        <div class="answer">
-          <p>Montages refer to the various arrangements of electrodes used during an EEG. They help localize electrical activity and differentiate between focal and generalized abnormalities.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>How are artifacts differentiated from true epileptiform activity?</summary>
-        <div class="answer">
-          <p>Artifacts (from muscle movement, eye blinks, etc.) tend to be irregular, localized, and inconsistent. True epileptiform discharges usually appear with a consistent morphology and spatial distribution.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>What common technical issues can affect an EEG?</summary>
-        <div class="answer">
-          <p>Issues such as poor electrode contact, 60 Hz interference, and movement artifacts can degrade EEG quality. Proper electrode application and minimizing patient movement help reduce these issues.</p>
-        </div>
-      </details>
-    </div>
-    
-    <!-- Category: Advanced Topics -->
-    <div class="faq-category">
-      <h3>Advanced Topics</h3>
-      <details class="faq-item">
-        <summary>How has genetic testing impacted epilepsy diagnosis?</summary>
-        <div class="answer">
-          <p>Genetic testing has enabled clinicians to identify specific mutations associated with epilepsy, thereby facilitating more precise diagnoses and targeted therapies.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>What are examples of precision therapies in epilepsy?</summary>
-        <div class="answer">
-          <p>For example, in patients with SCN1A mutations (as seen in Dravet syndrome), sodium channel blockers may worsen seizures, so alternative therapies are recommended. Similarly, mTOR inhibitors are used in tuberous sclerosis-related epilepsy.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>Why is understanding EEG patterns important?</summary>
-        <div class="answer">
-          <p>A thorough understanding of EEG patterns aids in accurate seizure classification, helps determine appropriate treatment plans, and provides insights into the underlying neurological condition.</p>
-        </div>
-      </details>
-    </div>
-    
-    <!-- Category: Miscellaneous FAQs (if applicable) -->
-    <div class="faq-category">
-      <h3>Miscellaneous</h3>
-      <details class="faq-item">
-        <summary>How do I interpret artifact versus true seizure activity on an EEG?</summary>
-        <div class="answer">
-          <p>Interpreting an EEG requires comparing waveforms across multiple leads. Artifacts are typically isolated and vary from one lead to another, whereas true seizure activity shows a consistent pattern across several channels.</p>
-        </div>
-      </details>
-      <details class="faq-item">
-        <summary>What are the limitations of EEG in diagnosing epilepsy?</summary>
-        <div class="answer">
-          <p>EEG has limitations such as the potential for false negatives (especially if the seizure is infrequent) and difficulties in capturing deep brain activity. Clinical correlation is always necessary.</p>
-        </div>
-      </details>
-    </div>
-  </div>
+  <header>
+    <!-- Insert your existing header/navigation code here -->
+  </header>
   
+  <main class="container">
+    <h2 class="page-title">Discussion Forum</h2>
+    <p>Join the conversation below and share your thoughts! Please review our 
+      <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> 
+      before posting.
+    </p>
+    
+    <!-- Disqus Comment Thread Container -->
+    <div id="disqus_thread"></div>
+    <noscript>
+      Please enable JavaScript to view the 
+      <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+    </noscript>
+  </main>
+  
+  <footer>
+    <!-- Insert your existing footer code here -->
+  </footer>
+  
+  <!-- Disqus Universal Code -->
   <script>
-    function filterFaq() {
-      const term = document.getElementById("faqSearch").value.trim().toLowerCase();
-      const items = document.querySelectorAll(".faq-item");
-      items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        item.style.display = text.includes(term) ? "" : "none";
-      });
-    }
+    var disqus_config = function () {
+      this.page.url = window.location.href;  // Use the current page URL
+      this.page.identifier = "discussion_forum"; // Unique identifier for this discussion page
+      this.page.commentPolicyURL = 'https://www.eeg-training.com/comment-policy.html';
+    };
+    (function() { // DON'T EDIT BELOW THIS LINE
+      var d = document, s = d.createElement('script');
+      s.src = 'https://eeg-training.disqus.com/embed.js';
+      s.setAttribute('data-timestamp', +new Date());
+      (d.head || d.body).appendChild(s);
+    })();
   </script>
+  
+  <!-- Disqus Comment Count Script -->
+  <script id="dsq-count-scr" src="https://eeg-training.disqus.com/count.js" async></script>
 </body>
 </html>
