@@ -66,6 +66,15 @@
       padding-top: 10px;
       margin-top: 10px;
     }
+    /* Access code section styles */
+    #accessCodeSection {
+      margin: 20px;
+      padding: 20px;
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      background: var(--info-bg);
+      text-align: center;
+    }
   </style>
 </head>
 <body>
@@ -79,8 +88,16 @@
       <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.
     </p>
     
+    <!-- Access Code Section -->
+    <section id="accessCodeSection">
+      <p>Please enter the access code to view the posts:</p>
+      <input type="text" id="accessCodeInput" placeholder="Enter Access Code">
+      <button onclick="checkAccessCode()">Submit</button>
+      <p id="accessCodeError" style="color: red;"></p>
+    </section>
+    
     <!-- Post Button -->
-    <button id="postButton" onclick="toggleNewPostForm()">New Post</button>
+    <button id="postButton" onclick="toggleNewPostForm()" style="display:none;">New Post</button>
     
     <!-- New Post Form Container -->
     <div id="newPostFormContainer">
@@ -123,7 +140,7 @@
     </div>
     
     <!-- Posts Listing Section -->
-    <section id="postsContainer">
+    <section id="postsContainer" style="display:none;">
       <!-- Posts will be dynamically loaded and sorted here -->
     </section>
     
@@ -152,21 +169,34 @@
   </footer>
   
   <script>
-    // Set your deployed Worker endpoint URL
+    // Use your deployed Worker endpoint URL
     const API_BASE = 'https://eeg-training-discussion.qysw49pxgy.workers.dev';
     
-    // Toggle display of the new post form
-    function toggleNewPostForm() {
-      const formContainer = document.getElementById('newPostFormContainer');
-      formContainer.style.display = (formContainer.style.display === 'none' || formContainer.style.display === '') ? 'block' : 'none';
+    // Check access code before showing posts
+    function checkAccessCode() {
+      const input = document.getElementById('accessCodeInput').value;
+      if (input === 'epilepsy123') {
+        document.getElementById('accessCodeSection').style.display = 'none';
+        document.getElementById('postsContainer').style.display = 'block';
+        document.getElementById('postButton').style.display = 'block';
+        loadPosts();
+      } else {
+        document.getElementById('accessCodeError').innerText = "Incorrect access code.";
+      }
     }
     
-    // Load posts from the API and sort them by EEG Category then alphabetically by Subcategory
+    // Toggle display of the New Post form
+    function toggleNewPostForm() {
+      const formContainer = document.getElementById('newPostFormContainer');
+      formContainer.style.display = formContainer.style.display === 'block' ? 'none' : 'block';
+    }
+    
+    // Load posts from the API and sort them by EEG Category, then alphabetically by Subcategory
     async function loadPosts() {
       try {
         const res = await fetch(`${API_BASE}/posts`);
         let data = await res.json();
-        // Ensure posts is an array even if KV returns null
+        console.log("Fetched posts:", data.posts); // Debug log
         if (!data.posts) data.posts = [];
         data.posts.sort((a, b) => {
           if (a.eegCategory === b.eegCategory) {
@@ -208,7 +238,7 @@
           alert("Post created successfully!");
           e.target.reset();
           toggleNewPostForm();
-          loadPosts(); // Reload posts to include the new one
+          loadPosts(); // Reload posts to show the new one
         } else {
           alert("Error: " + data.error);
         }
@@ -251,7 +281,8 @@
         (postData.comments || []).forEach(comment => {
           const div = document.createElement('div');
           div.classList.add('comment-item');
-          div.innerHTML = `<strong>${comment.name}</strong>: ${comment.comment}<br><em>${new Date(comment.timestamp).toLocaleString()}</em>`;
+          div.innerHTML = `<strong>${comment.name}</strong>: ${comment.comment}<br>
+                           <em>${new Date(comment.timestamp).toLocaleString()}</em>`;
           commentsContainer.appendChild(div);
         });
         document.getElementById('commentForm').dataset.postId = postId;
@@ -283,14 +314,11 @@
       }
     });
     
-    // Close comments section and show posts listing
+    // Close the comment section and show the posts listing
     function closeComments() {
       document.getElementById('commentSection').style.display = 'none';
       document.getElementById('postsContainer').style.display = 'block';
     }
-    
-    // Load posts automatically when the page loads
-    window.onload = loadPosts;
   </script>
 </body>
 </html>
