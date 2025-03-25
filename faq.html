@@ -6,7 +6,7 @@
   <title>Discussion Forum - EEG Training</title>
   <link rel="stylesheet" href="assets/css/styles.css">
   <style>
-    /* Custom styles for discussion forum */
+    /* Custom styles for the discussion forum */
     #newPostFormContainer {
       display: none;
       margin: 20px 0;
@@ -161,62 +161,74 @@
       formContainer.style.display = (formContainer.style.display === 'none' || formContainer.style.display === '') ? 'block' : 'none';
     }
     
-    // Load posts from the API and sort them by EEG Category, then alphabetically by Subcategory
+    // Load posts from the API and sort them by EEG Category then alphabetically by Subcategory
     async function loadPosts() {
-      const res = await fetch(`${API_BASE}/posts`);
-      let data = await res.json();
-      // Expect data.posts to be an array of post objects with properties:
-      // id, name, trainingLevel, eegCategory, eegSubcategory, uploadUrl, upvotes, comments
-      data.posts.sort((a, b) => {
-        if (a.eegCategory === b.eegCategory) {
-          return a.eegSubcategory.localeCompare(b.eegSubcategory);
-        }
-        return a.eegCategory.localeCompare(b.eegCategory);
-      });
-      const container = document.getElementById('postsContainer');
-      container.innerHTML = '';
-      data.posts.forEach(post => {
-        const div = document.createElement('div');
-        div.classList.add('post-item');
-        div.innerHTML = `
-          <h4>${post.eegCategory}: ${post.eegSubcategory}</h4>
-          <p><strong>${post.name}</strong> - ${post.trainingLevel}</p>
-          ${post.uploadUrl ? `<img src="${post.uploadUrl}" alt="Upload Image">` : ''}
-          <p>Upvotes: <span id="upvoteCount-${post.id}">${post.upvotes || 0}</span>
-          <button class="upvote-btn" onclick="upvotePost('${post.id}')">Upvote</button></p>
-          <button onclick="viewComments('${post.id}')">View Comments (${post.comments ? post.comments.length : 0})</button>
-        `;
-        container.appendChild(div);
-      });
+      try {
+        const res = await fetch(`${API_BASE}/posts`);
+        let data = await res.json();
+        // Ensure posts is an array even if KV returns null
+        if (!data.posts) data.posts = [];
+        data.posts.sort((a, b) => {
+          if (a.eegCategory === b.eegCategory) {
+            return a.eegSubcategory.localeCompare(b.eegSubcategory);
+          }
+          return a.eegCategory.localeCompare(b.eegCategory);
+        });
+        const container = document.getElementById('postsContainer');
+        container.innerHTML = '';
+        data.posts.forEach(post => {
+          const div = document.createElement('div');
+          div.classList.add('post-item');
+          div.innerHTML = `
+            <h4>${post.eegCategory}: ${post.eegSubcategory}</h4>
+            <p><strong>${post.name}</strong> - ${post.trainingLevel}</p>
+            ${post.uploadUrl ? `<img src="${post.uploadUrl}" alt="Upload Image">` : ''}
+            <p>Upvotes: <span id="upvoteCount-${post.id}">${post.upvotes || 0}</span>
+            <button class="upvote-btn" onclick="upvotePost('${post.id}')">Upvote</button></p>
+            <button onclick="viewComments('${post.id}')">View Comments (${post.comments ? post.comments.length : 0})</button>
+          `;
+          container.appendChild(div);
+        });
+      } catch (error) {
+        console.error("Error loading posts:", error);
+      }
     }
     
     // Handle submission of a new post
     document.getElementById('newPostForm').addEventListener('submit', async (e) => {
       e.preventDefault();
       const formData = new FormData(e.target);
-      const res = await fetch(`${API_BASE}/posts`, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert("Post created successfully!");
-        e.target.reset();
-        toggleNewPostForm();
-        loadPosts();
-      } else {
-        alert("Error: " + data.error);
+      try {
+        const res = await fetch(`${API_BASE}/posts`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Post created successfully!");
+          e.target.reset();
+          toggleNewPostForm();
+          loadPosts(); // Reload posts to include the new one
+        } else {
+          alert("Error: " + data.error);
+        }
+      } catch (error) {
+        console.error("Error submitting post:", error);
       }
     });
     
     // Upvote a post
     async function upvotePost(postId) {
-      const res = await fetch(`${API_BASE}/posts/${postId}/upvote`, { method: 'POST' });
-      const data = await res.json();
-      if (data.success) {
-        document.getElementById(`upvoteCount-${postId}`).textContent = data.upvotes;
-      } else {
-        alert("Error: " + data.error);
+      try {
+        const res = await fetch(`${API_BASE}/posts/${postId}/upvote`, { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById(`upvoteCount-${postId}`).textContent = data.upvotes;
+        } else {
+          alert("Error: " + data.error);
+        }
+      } catch (error) {
+        console.error("Error upvoting post:", error);
       }
     }
     
@@ -224,24 +236,28 @@
     async function viewComments(postId) {
       document.getElementById('postsContainer').style.display = 'none';
       document.getElementById('commentSection').style.display = 'block';
-      const res = await fetch(`${API_BASE}/posts/${postId}`);
-      const postData = await res.json();
-      const selectedPostDiv = document.getElementById('selectedPostDetails');
-      selectedPostDiv.innerHTML = `
-        <h3>${postData.eegCategory}: ${postData.eegSubcategory}</h3>
-        <p><strong>${postData.name}</strong> - ${postData.trainingLevel}</p>
-        ${postData.uploadUrl ? `<img src="${postData.uploadUrl}" alt="Upload Image">` : ''}
-        <p>Upvotes: ${postData.upvotes || 0}</p>
-      `;
-      const commentsContainer = document.getElementById('commentsContainer');
-      commentsContainer.innerHTML = '';
-      (postData.comments || []).forEach(comment => {
-        const div = document.createElement('div');
-        div.classList.add('comment-item');
-        div.innerHTML = `<strong>${comment.name}</strong>: ${comment.comment}<br><em>${new Date(comment.timestamp).toLocaleString()}</em>`;
-        commentsContainer.appendChild(div);
-      });
-      document.getElementById('commentForm').dataset.postId = postId;
+      try {
+        const res = await fetch(`${API_BASE}/posts/${postId}`);
+        const postData = await res.json();
+        const selectedPostDiv = document.getElementById('selectedPostDetails');
+        selectedPostDiv.innerHTML = `
+          <h3>${postData.eegCategory}: ${postData.eegSubcategory}</h3>
+          <p><strong>${postData.name}</strong> - ${postData.trainingLevel}</p>
+          ${postData.uploadUrl ? `<img src="${postData.uploadUrl}" alt="Upload Image">` : ''}
+          <p>Upvotes: ${postData.upvotes || 0}</p>
+        `;
+        const commentsContainer = document.getElementById('commentsContainer');
+        commentsContainer.innerHTML = '';
+        (postData.comments || []).forEach(comment => {
+          const div = document.createElement('div');
+          div.classList.add('comment-item');
+          div.innerHTML = `<strong>${comment.name}</strong>: ${comment.comment}<br><em>${new Date(comment.timestamp).toLocaleString()}</em>`;
+          commentsContainer.appendChild(div);
+        });
+        document.getElementById('commentForm').dataset.postId = postId;
+      } catch (error) {
+        console.error("Error loading comments:", error);
+      }
     }
     
     // Handle submission of a new comment for a post
@@ -249,17 +265,21 @@
       e.preventDefault();
       const formData = new FormData(e.target);
       const postId = e.target.dataset.postId;
-      const res = await fetch(`${API_BASE}/posts/${postId}/comments`, {
-        method: 'POST',
-        body: formData
-      });
-      const data = await res.json();
-      if (data.success) {
-        alert("Comment posted successfully!");
-        e.target.reset();
-        viewComments(postId);
-      } else {
-        alert("Error: " + data.error);
+      try {
+        const res = await fetch(`${API_BASE}/posts/${postId}/comments`, {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          alert("Comment posted successfully!");
+          e.target.reset();
+          viewComments(postId);
+        } else {
+          alert("Error: " + data.error);
+        }
+      } catch (error) {
+        console.error("Error submitting comment:", error);
       }
     });
     
@@ -269,6 +289,7 @@
       document.getElementById('postsContainer').style.display = 'block';
     }
     
+    // Load posts automatically when the page loads
     window.onload = loadPosts;
   </script>
 </body>
