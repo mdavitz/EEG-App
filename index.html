@@ -246,7 +246,7 @@
             <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">ACNS Criteria</a>
             <a href="eeg_atlas.html" onclick="loadSection(event, 'eeg_atlas.html')">EEG Atlas</a>
             <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
-            <a href="faq.html" onclick="loadSection(event, 'faq.html')">FAQ</a>
+            <a href="faq.html" onclick="loadSection(event, 'faq.html')">Discussion Forum</a>
           </div>
         </div>
       </div>
@@ -308,8 +308,8 @@
         <!-- Card 7 (FAQ) -->
         <div class="card">
           <i class="fa-solid fa-circle-question"></i>
-          <h3>FAQ</h3>
-          <p>Find answers to common questions about EEG interpretation, seizure management, and epilepsy care.</p>
+          <h3>Discussion Forum</h3>
+          <p>Post interesting EEGs and find answers to common questions about EEG interpretation, seizure management, and epilepsy care.</p>
           <a href="faq.html" onclick="loadSection(event, 'faq.html')">Learn More</a>
         </div>
       </div>
@@ -493,7 +493,7 @@
       if (url.indexOf("natus_instructions")>-1) return "Natus & Persyst";
       if (url.indexOf("acns_criteria")>-1) return "ACNS Criteria";
       if (url.indexOf("eeg_videos")>-1) return "EEG Videos";
-      if (url.indexOf("faq")>-1) return "FAQ";
+      if (url.indexOf("faq")>-1) return "Discussion Forum";
       return "Home";
     }
     function setDropdownLabel(label) {
