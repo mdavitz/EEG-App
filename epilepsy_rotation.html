@@ -121,7 +121,6 @@
       <!-- Quick Links for Residents -->
       <div class="quick-links">
         <ul>
-          <li><a href="#residents-daily" onclick="switchToTabAndScroll('residents', 'residents-daily'); return false;">Daily Expectations</a></li>
           <li><a href="#residents-rotation" onclick="switchToTabAndScroll('residents', 'residents-rotation'); return false;">Rotation Schedule</a></li>
           <li><a href="#residents-teaching" onclick="switchToTabAndScroll('residents', 'residents-teaching'); return false;">Teaching Rounds</a></li>
         </ul>
@@ -298,9 +297,9 @@
       <!-- Quick Links for Fellows -->
       <div class="quick-links">
         <ul>
-          <li><a href="#fellows-inpatient" onclick="switchToTabAndScroll('fellows', 'fellows-inpatient'); return false;">Inpatient Rotation</a></li>
-          <li><a href="#fellows-outpatient" onclick="switchToTabAndScroll('fellows', 'fellows-outpatient'); return false;">Outpatient Rotation</a></li>
-          <li><a href="#fellows-pediatric" onclick="switchToTabAndScroll('fellows', 'fellows-pediatric'); return false;">Pediatric Rotation</a></li>
+          <li><a href="#fellows-inpatient" onclick="switchToTabAndScroll('fellows', 'fellows-inpatient'); return false;">Inpatient</a></li>
+          <li><a href="#fellows-outpatient" onclick="switchToTabAndScroll('fellows', 'fellows-outpatient'); return false;">Outpatient</a></li>
+          <li><a href="#fellows-pediatric" onclick="switchToTabAndScroll('fellows', 'fellows-pediatric'); return false;">Pediatric</a></li>
         </ul>
       </div>
 
@@ -436,9 +435,13 @@
               <td>Friday Clinic</td>
               <td>MSH - Muxfeldt / MSW - Marcuse</td>
             </tr>
+            <tr>
+              <td>Follow-Up</td>
+              <td>          After clinics, EEGs must be followed up and sign-outs emailed to the on-call attending and fellow. During weekdays, only patients needing close monitoring are signed out; on weekends, all EMU and ICU EEGs are signed out.
+              </td>
+            </tr>
           </tbody>
         </table>
-
         <!-- EMU Elective Admissions & Consults -->
         <h3 style="margin-top: 20px;">EMU Elective Admissions &amp; Consults</h3>
         <table class="custom-table">
@@ -499,10 +502,6 @@
           </tbody>
         </table>
         <!-- Follow-Up and Elective Block -->
-        <h3 style="margin-top: 20px;">Follow-Up</h3>
-        <p>
-          After clinics, EEGs must be followed up and sign-outs emailed to the on-call attending and fellow. During weekdays, only patients needing close monitoring are signed out; on weekends, all EMU and ICU EEGs are signed out.
-        </p>
         <h3 style="margin-top: 20px;">Elective Block</h3>
         <p>
           Two AM faculty clinics per week:<br/>
@@ -587,41 +586,37 @@
   <!-- Container for the EEG Slide Generator Modal -->
   <div id="section-content"></div>
 
-<!-- Scripts for Slide Generation -->
-<script src="assets/js/pptx-merger.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-<script>
-  let pptxGlobal = new PptxGenJS();
-
-  // Function to switch tabs and scroll to the target element
-  function switchToTabAndScroll(tab, targetId) {
-    showTab(tab);
-    setTimeout(function() {
-      var targetElement = document.getElementById(targetId);
-      if (targetElement) {
-        targetElement.scrollIntoView({ behavior: 'smooth' });
-      }
-    }, 200);
-  }
-  
-  // EEG Slide Generator Popup function
-  function openEEGIndexApp(e) {
-    if (e) e.preventDefault();
-    const modalOverlay = document.createElement("div");
-    modalOverlay.className = "modal-overlay";
-    modalOverlay.addEventListener("click", function(event) {
-      if (event.target === modalOverlay) {
-        modalOverlay.remove();
-      }
-    });
-    const modalContent = document.createElement("div");
-    modalContent.className = "modal-content";
-    const closeButton = document.createElement("button");
-    closeButton.className = "modal-close";
-    closeButton.innerHTML = "&times;";
-    closeButton.addEventListener("click", () => modalOverlay.remove());
-    modalContent.innerHTML = `
+  <!-- PPTXGenJS for Slide Generation -->
+  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
+  <script>
+    // Function to switch tabs and scroll to the target element
+    function switchToTabAndScroll(tab, targetId) {
+      showTab(tab);
+      setTimeout(function() {
+        var targetElement = document.getElementById(targetId);
+        if (targetElement) {
+          targetElement.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 200);
+    }
+    
+    // EEG Slide Generator Popup function
+    function openEEGIndexApp(e) {
+      if (e) e.preventDefault();
+      const modalOverlay = document.createElement("div");
+      modalOverlay.className = "modal-overlay";
+      modalOverlay.addEventListener("click", function(event) {
+        if (event.target === modalOverlay) {
+          modalOverlay.remove();
+        }
+      });
+      const modalContent = document.createElement("div");
+      modalContent.className = "modal-content";
+      const closeButton = document.createElement("button");
+      closeButton.className = "modal-close";
+      closeButton.innerHTML = "&times;";
+      closeButton.addEventListener("click", () => modalOverlay.remove());
+      modalContent.innerHTML = `
   <header style="background: #f1f1f1; color: #333; padding: 20px; text-align: center; border-bottom: 1px solid #ddd;">
     <h2 style="font-size: 26px; margin: 0;">EEG Slide Generator</h2>
   </header>
@@ -638,104 +633,83 @@
       <label for="eegImage" style="font-size: 20px; margin-top: 15px; display: block;">Upload EEG Screenshot:</label>
       <input type="file" id="eegImage" accept="image/*" required style="width: 100%; padding: 14px; font-size: 20px;">
       <button type="button" onclick="generateSlide()" style="width: 100%; padding: 14px; font-size: 20px; margin-top: 15px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; cursor: pointer;">Generate Slide</button>
-      <button type="button" onclick="mergeSlides()" style="width: 100%; padding: 14px; font-size: 20px; margin-top: 15px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; cursor: pointer;">Merge Slides</button>
     </form>
   </div>
 `;
-    modalContent.prepend(closeButton);
-    modalOverlay.appendChild(modalContent);
-    document.body.appendChild(modalOverlay);
-  }
-  
-  // Slide generation function using PPTXGenJS
-  function generateSlide() {
-    const fullName = document.getElementById("fullName").value;
-    const residency = document.getElementById("residency").value;
-    const eegFinding = document.getElementById("eegFinding").value;
-    const oneLiner = document.getElementById("oneLiner").value;
-    const fileInput = document.getElementById("eegImage");
-    const file = fileInput.files[0];
+      modalContent.prepend(closeButton);
+      modalOverlay.appendChild(modalContent);
+      document.body.appendChild(modalOverlay);
+    }
     
-    let slide = pptxGlobal.addSlide();
-    
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        let imageData = e.target.result;
-        slide.addImage({ data: imageData, x: 0, y: 0, w: 10, h: 5.63 });
+    // Slide generation function using PPTXGenJS
+    function generateSlide() {
+      const fullName = document.getElementById("fullName").value;
+      const residency = document.getElementById("residency").value;
+      const eegFinding = document.getElementById("eegFinding").value;
+      const oneLiner = document.getElementById("oneLiner").value;
+      const fileInput = document.getElementById("eegImage");
+      const file = fileInput.files[0];
+      
+      let pptx = new PptxGenJS();
+      let slide = pptx.addSlide();
+      
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          let imageData = e.target.result;
+          slide.addImage({ data: imageData, x: 0, y: 0, w: 10, h: 5.63 });
+          slide.addText(
+            `EEG Finding: ${eegFinding}`,
+            { x: 0, y: 0, w: 3, h: 1.0, fill: { color: 'FFFFFF' }, color: '000000', align: 'left', autoFit: true, fontSize: 20, bold: true }
+          );
+          slide.addNotes(`Presented by: ${fullName} (${residency})\nOne Liner: ${oneLiner}`);
+          pptx.writeFile({ fileName: "EEG_Slide.pptx" })
+            .then(() => {
+              alert("Complete!");
+              const modalOverlay = document.querySelector('.modal-overlay');
+              if (modalOverlay) modalOverlay.remove();
+            })
+            .catch(error => {
+              alert("Error generating slide. Check console for details.");
+            });
+        };
+        reader.onerror = function(error) {
+          alert("Error reading image file.");
+        };
+        reader.readAsDataURL(file);
+      } else {
+        slide.background = { color: "F1F1F1" };
         slide.addText(
           `EEG Finding: ${eegFinding}`,
           { x: 0, y: 0, w: 3, h: 1.0, fill: { color: 'FFFFFF' }, color: '000000', align: 'left', autoFit: true, fontSize: 20, bold: true }
         );
         slide.addNotes(`Presented by: ${fullName} (${residency})\nOne Liner: ${oneLiner}`);
-        alert("Slide added!");
-        const modalOverlay = document.querySelector('.modal-overlay');
-        if (modalOverlay) modalOverlay.remove();
-      };
-      reader.onerror = function(error) {
-        alert("Error reading image file.");
-      };
-      reader.readAsDataURL(file);
-    } else {
-      slide.background = { color: "F1F1F1" };
-      slide.addText(
-        `EEG Finding: ${eegFinding}`,
-        { x: 0, y: 0, w: 3, h: 1.0, fill: { color: 'FFFFFF' }, color: '000000', align: 'left', autoFit: true, fontSize: 20, bold: true }
-      );
-      slide.addNotes(`Presented by: ${fullName} (${residency})\nOne Liner: ${oneLiner}`);
-      alert("Slide added!");
-      const modalOverlay = document.querySelector('.modal-overlay');
-      if (modalOverlay) modalOverlay.remove();
-    }
-  }
-  
-  async function mergeSlides() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.multiple = true;
-    input.accept = '.pptx';
-    input.onchange = async (e) => {
-      const files = Array.from(e.target.files);
-      console.log('Files selected:', files);
-      if (files.length === 0) {
-        alert('No files selected.');
-        return;
+        pptx.writeFile({ fileName: "EEG_Slide.pptx" })
+          .then(() => {
+            alert("Complete!");
+            const modalOverlay = document.querySelector('.modal-overlay');
+            if (modalOverlay) modalOverlay.remove();
+          })
+          .catch(error => {
+            alert("Error generating slide. Check console for details.");
+          });
       }
-      const merger = new PPTXMerger();
-      try {
-        // Add each file after converting it to an ArrayBuffer
-        for (const file of files) {
-          const buffer = await file.arrayBuffer();
-          console.log('Adding file:', file.name);
-          merger.add(buffer);
-        }
-        console.log('Merging slides...');
-        // Merge the slides and get the resulting blob explicitly
-        const mergedBlob = merger.merge('blob');
-        console.log('Merged blob created:', mergedBlob);
-        saveAs(mergedBlob, 'Merged_EEG_Slides.pptx');
-      } catch (error) {
-        console.error('Error merging slides:', error);
-        alert('Error merging slides: ' + error);
-      }
-    };
-    input.click();
-  }
-  
-  // Function to toggle between Residents and Fellows tabs
-  function showTab(tab) {
-    if (tab === 'residents') {
-      document.getElementById('residents-tab').style.display = 'block';
-      document.getElementById('fellows-tab').style.display = 'none';
-      document.getElementById('residents-btn').classList.add('active');
-      document.getElementById('fellows-btn').classList.remove('active');
-    } else {
-      document.getElementById('residents-tab').style.display = 'none';
-      document.getElementById('fellows-tab').style.display = 'block';
-      document.getElementById('fellows-btn').classList.add('active');
-      document.getElementById('residents-btn').classList.remove('active');
     }
-  }
-</script>
+    
+    // Function to toggle between Residents and Fellows tabs
+    function showTab(tab) {
+      if (tab === 'residents') {
+        document.getElementById('residents-tab').style.display = 'block';
+        document.getElementById('fellows-tab').style.display = 'none';
+        document.getElementById('residents-btn').classList.add('active');
+        document.getElementById('fellows-btn').classList.remove('active');
+      } else {
+        document.getElementById('residents-tab').style.display = 'none';
+        document.getElementById('fellows-tab').style.display = 'block';
+        document.getElementById('fellows-btn').classList.add('active');
+        document.getElementById('residents-btn').classList.remove('active');
+      }
+    }
+  </script>
 </body>
 </html>
