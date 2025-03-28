@@ -237,236 +237,576 @@
   <script>
     // EEG data array (sample entries; add the rest of your EEG entries as needed)
     const eegData = [
+  // Normal
+  {
+    title: "N Sleep",
+    category: "Normal",
+    front: "assets/atlas/N2sleep.png",
+    back: "The N stage is marked by sleep spindles and K-complexes, representing normal intermediate sleep architecture."
+  },
+  {
+    title: "Vertex Wave",
+    category: "Normal",
+    front: "assets/atlas/Vertex.png",
+    back: "Vertex waves are typically observed during the transition from wakefulness to sleep and are considered a normal variant."
+  },
+  {
+    title: "POSTS",
+    category: "Normal",
+    front: "assets/atlas/POSTS.png",
+    back: "Posterior slow transients (POSTS) are benign, transient EEG phenomena seen in the parieto-occipital regions."
+  },
+  {
+    title: "Bed PT",
+    category: "Normal",
+    front: "assets/atlas/BedPT.png",
+    back: "The Bed PT pattern is observed in certain sleep studies and typically represents a normal physiological variant."
+  },
+  {
+    title: "Photic Driving",
+    category: "Normal",
+    front: "assets/atlas/photic.png",
+    back: "Photic driving reflects normal cortical reactivity to visual stimuli under photic stimulation."
+  },
+  {
+    title: "Awake, adult PDR",
+    category: "Normal",
+    front: "assets/atlas/awake_adult_pdr.png",
+    back: "Rating: Description pending."
+  },
+  {
+    title: "Awake, pediatric PDR",
+    category: "Normal",
+    front: "assets/atlas/awake_pediatric_pdr.png",
+    back: "Rating: Description pending."
+  },
+  {
+    title: "Stage sleep, K complexes",
+    category: "Normal",
+    front: "assets/atlas/stage2_sleep_k_complexes.png",
+    back: "Rating: Description pending."
+  },
+  {
+    title: "Stage sleep, sleep spindles",
+    category: "Normal",
+    front: "assets/atlas/stage2_sleep_spindles.png",
+    back: "Rating: Description pending."
+  },
+  {
+    title: "Stage sleep, POSTS",
+    category: "Normal",
+    front: "assets/atlas/stage12_posts.png",
+    back: "Rating: Description pending."
+  },
+
   // Normal Variants
-  { 
-    title: "N2 Sleep", 
-    category: "Normal", 
-    front: "assets/atlas/N2sleep.png", 
-    back: "The N2 stage is marked by sleep spindles and K-complexes, representing normal intermediate sleep architecture." 
+  {
+    title: "Drowsiness, slowing of PDR",
+    category: "Normal Variants",
+    front: "assets/atlas/drowsiness_slowing_pdr.png",
+    back: "Rating: Description pending."
   },
-  { 
-    title: "Vertex Wave", 
-    category: "Normal", 
-    front: "assets/atlas/Vertex.png", 
-    back: "Vertex waves are typically observed during the transition from wakefulness to sleep and are considered a normal variant." 
+  {
+    title: "Stage sleep, vertex waves",
+    category: "Normal Variants",
+    front: "assets/atlas/stage12_vertex_waves.png",
+    back: "Rating: Description pending."
   },
-  { 
-    title: "POSTS", 
-    category: "Normal", 
-    front: "assets/atlas/POSTS.png", 
-    back: "Posterior slow transients (POSTS) are benign, transient EEG phenomena seen in the parieto-occipital regions." 
+  {
+    title: "Rapid eye movement (REM) sleep, erratic eye movements",
+    category: "Normal Variants",
+    front: "assets/atlas/rem_erratic_eye_movements.png",
+    back: "Rating: Description pending."
   },
-  { 
-    title: "Bed PT", 
-    category: "Normal", 
-    front: "assets/atlas/BedPT.png", 
-    back: "The Bed PT pattern is observed in certain sleep studies and typically represents a normal physiological variant." 
+  {
+    title: "Wickets",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Photic Driving", 
-    category: "Normal", 
-    front: "assets/atlas/photic.png", 
-    back: "Photic driving reflects normal cortical reactivity to visual stimuli under photic stimulation." 
+  {
+    title: "Hyperventilation-induced slowing",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  
+  {
+    title: "Small sharp spikes",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Breach",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Rhythmic mid-temporal theta of drowsiness",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Hypnopompic hypersynchrony",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Hypnagogic hypersynchrony",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Mu rhythm",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Posterior slow waves of youth",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Photomyogenic response",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Lambda waves",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Temporal slowing of the elderly",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Slow alpha variant",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Phantom spikes",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Frontal arousal rhythm",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Positive spikes",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Increased frontal beta activity",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Subclinical rhythmic electrographic discharges in adults",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Fast alpha variant",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Midline central theta (Ciganek rhythm)",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Occipital needle-like spikes of blindness",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Slow fused transient",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Fronto-central rhythm (texting rhythm)",
+    category: "Normal Variants",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+
   // Artifacts
-  { 
-    title: "Eye Blink", 
-    category: "Artifact", 
-    front: "assets/atlas/Eyeblink.png", 
-    back: "Rapid voltage deflections produced by eye blinks, seen in the frontal leads." 
+  {
+    title: "Eye Blink",
+    category: "Artifacts",
+    front: "assets/atlas/Eyeblink.png",
+    back: "Rapid voltage deflections produced by eye blinks, seen in the frontal leads."
   },
-  { 
-    title: "Chewing", 
-    category: "Artifact", 
-    front: "assets/atlas/Chewing.png", 
-    back: "Rhythmic muscle activity from mastication that can obscure cerebral activity." 
+  {
+    title: "Chewing",
+    category: "Artifacts",
+    front: "assets/atlas/Chewing.png",
+    back: "Rhythmic muscle activity from mastication that can obscure cerebral activity."
   },
-  { 
-    title: "Notch Filter Off", 
-    category: "Artifact", 
-    front: "assets/atlas/notch.png", 
-    back: "Absence of notch filtering may result in extraneous 50/60 Hz interference." 
+  {
+    title: "Notch Filter Off",
+    category: "Artifacts",
+    front: "assets/atlas/notch.png",
+    back: "Absence of notch filtering may result in extraneous 50/60 Hz interference."
   },
-  { 
-    title: "Eye Flutter", 
-    category: "Artifact", 
-    front: "assets/atlas/eyeflutter.png", 
-    back: "Subtle, repetitive eye flutter recognized as an artifact." 
+  {
+    title: "Eye Flutter",
+    category: "Artifacts",
+    front: "assets/atlas/eyeflutter.png",
+    back: "Subtle, repetitive eye flutter recognized as an artifact."
   },
-  { 
-    title: "Movement Artifact", 
-    category: "Artifact", 
-    front: "assets/atlas/movement.png", 
-    back: "Irregular waveforms resulting from patient movement." 
+  {
+    title: "Movement Artifact",
+    category: "Artifacts",
+    front: "assets/atlas/movement.png",
+    back: "Irregular waveforms resulting from patient movement."
   },
-  { 
-    title: "Shivering Artifact", 
-    category: "Artifact", 
-    front: "assets/atlas/Shivering.png", 
-    back: "Involuntary muscle activity from shivering causing diffusely irregular EEG patterns." 
+  {
+    title: "Shivering Artifact",
+    category: "Artifacts",
+    front: "assets/atlas/Shivering.png",
+    back: "Involuntary muscle activity from shivering causing diffusely irregular EEG patterns."
   },
-  { 
-    title: "Sweat Artifact", 
-    category: "Artifact", 
-    front: "assets/atlas/Sweat.png", 
-    back: "Slow, irregular artifacts induced by excessive sweating." 
+  {
+    title: "Sweat Artifact",
+    category: "Artifacts",
+    front: "assets/atlas/Sweat.png",
+    back: "Slow, irregular artifacts induced by excessive sweating."
   },
-  
-  // Slowing / Background Abnormalities
-  { 
-    title: "Mild Generalized Slowing", 
-    category: "Slowing", 
-    front: "assets/atlas/mildslow.png", 
-    back: "A diffuse, mild slowing which may be seen in encephalopathy or normal aging; clinical correlation is essential." 
+  {
+    title: "Drowsiness, diffuse irregular delta-theta slowing of background",
+    category: "Artifacts",
+    front: "assets/atlas/drowsiness_diffuse_delta_theta.png",
+    back: "Rating: Description pending."
   },
-  { 
-    title: "Sharply Contoured Slowing", 
-    category: "Slowing", 
-    front: "assets/atlas/sharpslow.png", 
-    back: "Abrupt transitions into slow activity warranting evaluation for structural or metabolic abnormalities." 
+  {
+    title: "Stage sleep, diffuse irregular delta slowing",
+    category: "Artifacts",
+    front: "assets/atlas/stage3_diffuse_delta.png",
+    back: "Rating: Description pending."
   },
-  { 
-    title: "Focal Attenuation", 
-    category: "Slowing", 
-    front: "assets/atlas/focalattenuation.png", 
-    back: "Localized diminution in EEG amplitude that may signal focal cerebral dysfunction." 
+  {
+    title: "EKG",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Discontinuous Background (10-49% Suppressed)", 
-    category: "Slowing", 
-    front: "assets/atlas/discontinuous.png", 
-    back: "Intermittent suppression with bursts of activity seen in metabolic encephalopathies." 
+  {
+    title: "Electrode pop",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Burst Suppression Background (50-99% Suppressed)", 
-    category: "Slowing", 
-    front: "assets/atlas/burst.png", 
-    back: "Alternating periods of high-amplitude bursts and suppression, typically associated with severe brain dysfunction." 
+  {
+    title: "Myogenic",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Suppressed Background (>99% Suppressed)", 
-    category: "Slowing", 
-    front: "assets/atlas/suppressed.png", 
-    back: "Near-complete background suppression, often indicating profound cerebral dysfunction." 
+  {
+    title: "Lateral eye movements",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  
-  // Epileptiform Findings
-  { 
-    title: "Spike (Bipolar Montage)", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/spikebp.png", 
-    back: "A distinct, sharp spike seen on a bipolar montage, suggesting an ictal propensity." 
+  {
+    title: "Line frequency artifact",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Spike (Average Montage)", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/spikeav.png", 
-    back: "Spike configuration on an average montage corroborating the presence of epileptiform activity." 
+  {
+    title: "Pulse",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Sharp (Bipolar Montage)", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/sharpbp.png", 
-    back: "Sharply contoured waveforms on a bipolar montage indicating a potential epileptogenic focus." 
+  {
+    title: "Lateral rectus spikes",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Sharp (Average Montage)", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/sharpav.png", 
-    back: "A sharp discharge on an average montage, consistent with epileptiform abnormality." 
+  {
+    title: "Chewing/bruxism",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Spike and Wave Discharge 3-3.5 Hz", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/spiekandwave.png", 
-    back: "The classic spike-and-wave complex at 3–3.5 Hz is characteristic of absence seizures and generalized epileptic syndromes." 
+  {
+    title: "Glossokinetic",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Epileptiform Burst", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/epileptiformburst.png", 
-    back: "Bursts of high-amplitude discharges indicating a hyperexcitable cortex, often seen in status epilepticus." 
+  {
+    title: "Nystagmus",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Generalized Periodic Discharge @ 1.5 Hz", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/GPD.png", 
-    back: "Generalized periodic discharges that may reflect severe diffuse cerebral dysfunction." 
+  {
+    title: "Respiration/breathing",
+    category: "Artifacts",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   },
-  { 
-    title: "Lateralized Rhythmic Discharge @ 2 Hz", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/LRDA.png", 
-    back: "Rhythmic discharges localized to one hemisphere suggest a focal irritative zone." 
+
+  // Abnormal
+  {
+    title: "Spike (Bipolar Montage)",
+    category: "Abnormal",
+    front: "assets/atlas/spikebp.png",
+    back: "A distinct, sharp spike seen on a bipolar montage, suggesting an ictal propensity."
   },
-  { 
-    title: "Lateralized Periodic Discharges (+R)", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/LRDAR.png", 
-    back: "Lateralized periodic discharges that are highly specific for focal cerebral pathology." 
+  {
+    title: "Spike (Average Montage)",
+    category: "Abnormal",
+    front: "assets/atlas/spikeav.png",
+    back: "Spike configuration on an average montage corroborating the presence of epileptiform activity."
   },
-  { 
-    title: "Temporal Seizure Onset", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/tseizure.png", 
-    back: "Focal discharges in the temporal lobe, correlating with clinical auras." 
+  {
+    title: "Sharp (Bipolar Montage)",
+    category: "Abnormal",
+    front: "assets/atlas/sharpbp.png",
+    back: "Sharply contoured waveforms on a bipolar montage indicating a potential epileptogenic focus."
   },
-  { 
-    title: "Posterior Quadrant Seizure Onset", 
-    category: "Epileptiform Findings", 
-    front: "assets/atlas/pseizure.png", 
-    back: "Discharges originating in the posterior quadrant, suggesting a parieto-occipital epileptogenic focus." 
+  {
+    title: "Sharp (Average Montage)",
+    category: "Abnormal",
+    front: "assets/atlas/sharpav.png",
+    back: "A sharp discharge on an average montage, consistent with epileptiform abnormality."
   },
-  
-  // Persyst Patterns
-  { 
-    title: "Persyst IIC", 
-    category: "Persyst", 
-    front: "assets/atlas/persystiic.png", 
-    back: "Computer-assisted analysis supporting the presence of epileptiform activity." 
+  {
+    title: "Spike and Wave Discharge",
+    category: "Abnormal",
+    front: "assets/atlas/spiekandwave.png",
+    back: "The classic spike-and-wave complex is characteristic of absence seizures and generalized epileptic syndromes."
   },
-  { 
-    title: "Persyst Slow", 
-    category: "Persyst", 
-    front: "assets/atlas/persystslow.png", 
-    back: "A slower pattern that may indicate a less aggressive epileptiform state." 
+  {
+    title: "Epileptiform Burst",
+    category: "Abnormal",
+    front: "assets/atlas/epileptiformburst.png",
+    back: "Bursts of high-amplitude discharges indicating a hyperexcitable cortex, often seen in status epilepticus."
   },
-  { 
-    title: "Persyst Suppressed", 
-    category: "Persyst", 
-    front: "assets/atlas/persystsup.png", 
-    back: "A suppressed pattern which can indicate either effective treatment or severe encephalopathy." 
+  {
+    title: "Generalized Periodic Discharge",
+    category: "Abnormal",
+    front: "assets/atlas/GPD.png",
+    back: "Generalized periodic discharges that may reflect severe diffuse cerebral dysfunction."
   },
-  { 
-    title: "Persyst Left LRDA", 
-    category: "Persyst", 
-    front: "assets/atlas/persystlrda.png", 
-    back: "A left-sided rhythmic discharge suggesting a focal abnormality in the left hemisphere." 
+  {
+    title: "Lateralized Rhythmic Discharge",
+    category: "Abnormal",
+    front: "assets/atlas/LRDA.png",
+    back: "Rhythmic discharges localized to one hemisphere suggest a focal irritative zone."
   },
-  { 
-    title: "Persyst Status Epilepticus", 
-    category: "Persyst", 
-    front: "assets/atlas/persyststatus.png", 
-    back: "Findings consistent with status epilepticus, warranting urgent clinical intervention." 
+  {
+    title: "Lateralized Periodic Discharges (+R)",
+    category: "Abnormal",
+    front: "assets/atlas/LRDAR.png",
+    back: "Lateralized periodic discharges that are highly specific for focal cerebral pathology."
   },
-  { 
-    title: "Persyst Excess Beta", 
-    category: "Persyst", 
-    front: "assets/atlas/persystbeta.png", 
-    back: "Excess beta activity which may be secondary to medications or indicate cortical hyperexcitability." 
+  {
+    title: "Temporal Seizure Onset",
+    category: "Abnormal",
+    front: "assets/atlas/tseizure.png",
+    back: "Focal discharges in the temporal lobe, correlating with clinical auras."
   },
-  { 
-    title: "Persyst Seizure", 
-    category: "Persyst", 
-    front: "assets/atlas/persystsz.png", 
-    back: "An automated detection of a seizure pattern requiring further clinical correlation." 
+  {
+    title: "Posterior Quadrant Seizure Onset",
+    category: "Abnormal",
+    front: "assets/atlas/pseizure.png",
+    back: "Discharges originating in the posterior quadrant, suggesting a parieto-occipital epileptogenic focus."
   },
-  { 
-    title: "Persyst CAPE", 
-    category: "Persyst", 
-    front: "assets/atlas/persystcape.png", 
-    back: "Quantification of epileptiform discharges using the CAPE metric." 
+  {
+    title: "Persyst",
+    category: "Persyst",
+    front: "assets/atlas/persystiic.png",
+    back: "Computer-assisted analysis supporting the presence of epileptiform activity."
+  },
+  {
+    title: "Persyst Slow",
+    category: "Persyst",
+    front: "assets/atlas/persystslow.png",
+    back: "A slower pattern that may indicate a less aggressive epileptiform state."
+  },
+  {
+    title: "Persyst Suppressed",
+    category: "Persyst",
+    front: "assets/atlas/persystsup.png",
+    back: "A suppressed pattern which can indicate either effective treatment or severe encephalopathy."
+  },
+  {
+    title: "Persyst Left LRDA",
+    category: "Persyst",
+    front: "assets/atlas/persystlrda.png",
+    back: "A left-sided rhythmic discharge suggesting a focal abnormality in the left hemisphere."
+  },
+  {
+    title: "Persyst Status Epilepticus",
+    category: "Persyst",
+    front: "assets/atlas/persyststatus.png",
+    back: "Findings consistent with status epilepticus, warranting urgent clinical intervention."
+  },
+  {
+    title: "Persyst Excess Beta",
+    category: "Persyst",
+    front: "assets/atlas/persystbeta.png",
+    back: "Excess beta activity which may be secondary to medications or indicate cortical hyperexcitability."
+  },
+  {
+    title: "Persyst Seizure",
+    category: "Persyst",
+    front: "assets/atlas/persystsz.png",
+    back: "An automated detection of a seizure pattern requiring further clinical correlation."
+  },
+  {
+    title: "Persyst CAPE",
+    category: "Persyst",
+    front: "assets/atlas/persystcape.png",
+    back: "Quantification of epileptiform discharges using the CAPE metric."
+  },
+  {
+    title: "Drowsiness, slow roving lateral eye movements",
+    category: "Abnormal",
+    front: "assets/atlas/drowsiness_slow_eye_movements.png",
+    back: "Rating: Description pending."
+  },
+  {
+    title: "Rapid eye movement (REM) sleep, sawtooth waves",
+    category: "Abnormal",
+    front: "assets/atlas/rem_sawtooth_waves.png",
+    back: "Description pending."
+  },
+  {
+    title: "Generalized epileptiform discharge",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Generalized epileptiform discharge, polyspike",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Focal seizure",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Focal epileptiform discharge, spike",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Focal epileptiform discharge, sharp",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Generalized seizure, absence",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Focal epileptiform polyspike",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Generalized seizure, tonic",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Infantile spasm",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Hypsarrhythmia",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Focal irregular/polymorphic slowing",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Focal regular/rhythmic slowing",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Diffuse irregular/polymorphic slowing",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Diffuse regular/rhythmic slowing",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Abnormal PDR, slow for age",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Abnormal PDR, asymmetric",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
+  },
+  {
+    title: "Asymmetric sleep spindles",
+    category: "Abnormal",
+    front: "UNDER CONSTRUCTION",
+    back: "Description pending."
   }
 ];
     let flashcardDeck = [...eegData];
@@ -657,6 +997,7 @@
     const searchInput = document.getElementById("atlas-search");
     const autocomplete = document.getElementById("autocomplete");
     
+    // Updated search input listener: render search results with collapsed subtabs
     searchInput.addEventListener("input", () => {
       const query = searchInput.value.toLowerCase().trim();
       if (!query) {
@@ -685,7 +1026,7 @@
         item.addEventListener("click", () => {
           searchInput.value = entry.title;
           autocomplete.style.display = "none";
-          renderList([entry], true);
+          renderList([entry], false); // Use false so the result remains collapsed
         });
         autocomplete.appendChild(item);
       });
@@ -697,13 +1038,7 @@
         entry.back.toLowerCase().includes(query) ||
         fuzzyMatch(entry, query)
       );
-      renderList(fuzzyFiltered, true);
-    });
-    
-    document.addEventListener("click", e => {
-      if (e.target !== searchInput) {
-        autocomplete.style.display = "none";
-      }
+      renderList(fuzzyFiltered, false); // Render search results with collapsed subtabs
     });
     
     // Levenshtein Distance for fuzzy matching
@@ -731,18 +1066,19 @@
     }
     
     // --- Favorites Tab Functions ---
-    function showAllEEG() {
-      document.getElementById("all-btn").classList.add("active");
-      document.getElementById("favorites-btn").classList.remove("active");
-      // Set autoExpand to true so that all categories (tabs) are expanded by default
-      renderList(eegData, true);
-    }
     function showFavorites() {
       document.getElementById("favorites-btn").classList.add("active");
       document.getElementById("all-btn").classList.remove("active");
       const favorites = getFavorites();
       const filtered = eegData.filter(entry => favorites.includes(entry.title));
       renderList(filtered, false);
+    }
+    
+    // Update to showAllEEG: Subtabs are collapsed by default (autoExpand = false)
+    function showAllEEG() {
+      document.getElementById("all-btn").classList.add("active");
+      document.getElementById("favorites-btn").classList.remove("active");
+      renderList(eegData, false); // Set to false to collapse subtabs on load
     }
     
     // --- Carousel Modal Functions ---
@@ -798,82 +1134,16 @@
       }
     });
     
+    // On page load, start on the All EEG tab with categories visible and EEG entries collapsed
     document.addEventListener("DOMContentLoaded", () => {
       showAllEEG();
     });
+    
     // Function to display a random EEG entry
-function showRandomEEG() {
-  const randomIndex = Math.floor(Math.random() * eegData.length);
-  renderDetail(eegData[randomIndex]);
-}
-
-// Update to showAllEEG: Subtabs are collapsed by default (autoExpand = false)
-function showAllEEG() {
-  document.getElementById("all-btn").classList.add("active");
-  document.getElementById("favorites-btn").classList.remove("active");
-  renderList(eegData, false); // Set to false to collapse subtabs on load
-}
-
-// Updated search input listener: render search results with collapsed subtabs
-searchInput.addEventListener("input", () => {
-  const query = searchInput.value.toLowerCase().trim();
-  if (!query) {
-    autocomplete.style.display = "none";
-    showAllEEG();
-    return;
-  }
-  
-  const suggestions = eegData.filter(entry =>
-    entry.title.toLowerCase().includes(query) ||
-    entry.category.toLowerCase().includes(query)
-  );
-  
-  if (suggestions.length === 0) {
-    autocomplete.style.display = "none";
-    return;
-  }
-  
-  autocomplete.innerHTML = "";
-  suggestions.forEach(entry => {
-    const item = document.createElement("li");
-    item.textContent = entry.title;
-    item.style.padding = "0.5em";
-    item.style.cursor = "pointer";
-    item.setAttribute("tabindex", "0");
-    item.addEventListener("click", () => {
-      searchInput.value = entry.title;
-      autocomplete.style.display = "none";
-      renderList([entry], false); // Use false so the result remains collapsed
-    });
-    autocomplete.appendChild(item);
-  });
-  autocomplete.style.display = "block";
-  
-  const fuzzyFiltered = eegData.filter(entry =>
-    entry.title.toLowerCase().includes(query) ||
-    entry.category.toLowerCase().includes(query) ||
-    entry.back.toLowerCase().includes(query) ||
-    fuzzyMatch(entry, query)
-  );
-  renderList(fuzzyFiltered, false); // Render search results with collapsed subtabs
-});
-
-// On page load, start on All EEG tab (with collapsed subtabs)
-document.addEventListener("DOMContentLoaded", () => {
-  showAllEEG();
-});
-// Update to showAllEEG: Subcategories (EEG entries) are collapsed by default
-function showAllEEG() {
-  document.getElementById("all-btn").classList.add("active");
-  document.getElementById("favorites-btn").classList.remove("active");
-  // Passing 'false' keeps all the sublists collapsed on page load.
-  renderList(eegData, false);
-}
-
-// On page load, start on the All EEG tab with categories visible and EEG entries collapsed
-document.addEventListener("DOMContentLoaded", () => {
-  showAllEEG();
-});
+    function showRandomEEG() {
+      const randomIndex = Math.floor(Math.random() * eegData.length);
+      renderDetail(eegData[randomIndex]);
+    }
   </script>
 </body>
 </html>
