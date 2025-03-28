@@ -194,13 +194,9 @@
         <!-- Flashcard Mode -->
         <div id="flashcard-container" style="display:none;">
           <div id="flashcard" class="flashcard" tabindex="0">
-            <div class="flashcard-inner">
-              <div class="flashcard-front"></div>
-              <div class="flashcard-back"></div>
-            </div>
+            <!-- Flashcard content will be dynamically generated with a split layout -->
           </div>
           <div class="flashcard-controls">
-            <button class="btn" onclick="flipFlashcard()">Flip</button>
             <button class="btn" onclick="nextFlashcard()">Next</button>
             <button class="btn" onclick="shuffleFlashcards()">Shuffle</button>
             <button class="btn" onclick="toggleFlashcardMode()">Back to List</button>
@@ -868,13 +864,17 @@
     function showFlashcard() {
       const card = flashcardDeck[currentFlashcard];
       const flashcard = document.getElementById("flashcard");
-      const frontDiv = flashcard.querySelector(".flashcard-front");
-      const backDiv = flashcard.querySelector(".flashcard-back");
-      frontDiv.innerHTML = `<h3>${card.title}</h3>
-        <img src="${card.front}" alt="${card.title}" class="step-image" onclick="renderDetail(${JSON.stringify(card)})" />`;
-      backDiv.innerHTML = `<p>${card.back}</p>`;
-      flashcard.classList.remove("is-flipped");
-      showingFront = true;
+      flashcard.innerHTML = `
+    <div class="flashcard-split" style="display: flex; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
+      <div class="flashcard-image" style="flex: 1; padding: 1rem; border-right: 1px solid var(--border-color);">
+        <img src="${card.front}" alt="${card.title}" style="width: 100%; height: auto;" />
+      </div>
+      <div class="flashcard-finding" style="flex: 1; padding: 1rem;">
+        <h3>${card.title}</h3>
+        <p>${card.back}</p>
+      </div>
+    </div>
+  `;
       displayFunFact();
     }
     
@@ -1134,9 +1134,10 @@
       }
     });
     
-    // On page load, start on the All EEG tab with categories visible and EEG entries collapsed
+    // On page load, start on the All EEG tab with categories visible and display a random EEG entry
     document.addEventListener("DOMContentLoaded", () => {
       showAllEEG();
+      showRandomEEG();
     });
     
     // Function to display a random EEG entry
@@ -1144,6 +1145,12 @@
       const randomIndex = Math.floor(Math.random() * eegData.length);
       renderDetail(eegData[randomIndex]);
     }
+  </script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Display a random EEG entry immediately on page load
+      showRandomEEG();
+    });
   </script>
 </body>
 </html>
