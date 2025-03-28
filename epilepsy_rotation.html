@@ -20,6 +20,8 @@
       align-items: center;
       z-index: 10000;
       animation: fadeIn 0.3s ease-in-out;
+      padding: 20px;
+      overflow-y: auto;
     }
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -28,11 +30,14 @@
     .modal-content {
       background: var(--info-bg);
       width: 90%;
-      max-width: 400px;
+      max-width: 600px;
       border-radius: 8px;
       box-shadow: 0 4px 8px var(--shadow-color);
       overflow: hidden;
       position: relative;
+      max-height: 80vh;
+      display: flex;
+      flex-direction: column;
     }
     .modal-close {
       position: absolute;
@@ -43,6 +48,20 @@
       font-size: 1.5rem;
       color: var(--text-color);
       cursor: pointer;
+      z-index: 1;
+    }
+    .modal-header {
+      background: #f1f1f1;
+      color: #333;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 1px solid #ddd;
+      flex-shrink: 0;
+    }
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex-grow: 1;
     }
     /* Simple styling for the tab buttons */
     .tab-buttons button {
@@ -99,10 +118,8 @@
   @media (max-width: 480px) {
     .modal-content {
       width: 95%;
-      max-width: none;
-      margin: 10px;
-      max-height: 90vh;
-      overflow-y: auto;
+      margin: 10px 0;
+      max-height: 85vh;
     }
   }
   </style>
@@ -458,7 +475,7 @@
             </tr>
             <tr>
               <td>Consults</td>
-              <td>NSICU and General Neurology teams may request consults. Fellows see patients, write notes, and staff with the attending. When a rotating resident is present, consults are divided at the fellow’s discretion.</td>
+              <td>NSICU and General Neurology teams may request consults. Fellows see patients, write notes, and staff with the attending. When a rotating resident is present, consults are divided at the fellow's discretion.</td>
             </tr>
           </tbody>
         </table>
@@ -589,13 +606,21 @@
   <!-- PPTXGenJS for Slide Generation -->
   <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
   <script>
-    // Function to switch tabs and scroll to the target element
+    // Function to toggle between Residents and Fellows tabs and scroll with header offset
     function switchToTabAndScroll(tab, targetId) {
       showTab(tab);
       setTimeout(function() {
         var targetElement = document.getElementById(targetId);
         if (targetElement) {
-          targetElement.scrollIntoView({ behavior: 'smooth' });
+          // Get the header element (assumes the index header has an id of 'index-header')
+          var header = document.getElementById('index-header');
+          var headerHeight = header ? header.offsetHeight : 0;
+          // Additional offset to scroll slightly higher than the section
+          var extraOffset = 20; // Adjust this value if needed
+          // Calculate the element's position, accounting for the header height and extra offset
+          var elementPosition = targetElement.getBoundingClientRect().top;
+          var offsetPosition = elementPosition + window.pageYOffset - headerHeight - extraOffset;
+          window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
         }
       }, 200);
     }
@@ -617,22 +642,37 @@
       closeButton.innerHTML = "&times;";
       closeButton.addEventListener("click", () => modalOverlay.remove());
       modalContent.innerHTML = `
-  <header style="background: #f1f1f1; color: #333; padding: 20px; text-align: center; border-bottom: 1px solid #ddd;">
+  <div class="modal-header">
     <h2 style="font-size: 26px; margin: 0;">EEG Slide Generator</h2>
-  </header>
-  <div class="content" style="padding: 20px;">
+  </div>
+  <div class="modal-body">
     <form id="slideForm">
       <label for="fullName" style="font-size: 20px; margin-top: 15px; display: block;">Full Name:</label>
       <input type="text" id="fullName" placeholder="Enter your full name" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
       <label for="residency" style="font-size: 20px; margin-top: 15px; display: block;">Residency Program:</label>
       <input type="text" id="residency" placeholder="e.g. PGY-2 Neurology" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
-      <label for="eegFinding" style="font-size: 20px; margin-top: 15px; display: block;">EEG Finding:</label>
-      <input type="text" id="eegFinding" placeholder="Enter the EEG finding" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
-      <label for="oneLiner" style="font-size: 20px; margin-top: 15px; display: block;">One Liner:</label>
-      <input type="text" id="oneLiner" placeholder="Enter a one-liner summary/teaching point" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
-      <label for="eegImage" style="font-size: 20px; margin-top: 15px; display: block;">Upload EEG Screenshot:</label>
-      <input type="file" id="eegImage" accept="image/*" required style="width: 100%; padding: 14px; font-size: 20px;">
-      <button type="button" onclick="generateSlide()" style="width: 100%; padding: 14px; font-size: 20px; margin-top: 15px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; cursor: pointer;">Generate Slide</button>
+      
+      <div id="slideEntries">
+        <div class="slide-entry" data-index="0">
+          <hr style="margin: 20px 0; border: none; border-top: 1px dashed #ccc;">
+          <h3 style="margin-top: 15px;">Slide 1</h3>
+          <label for="eegFinding_0" style="font-size: 20px; margin-top: 15px; display: block;">EEG Finding:</label>
+          <input type="text" id="eegFinding_0" placeholder="Enter the EEG finding" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
+          <label for="oneLiner_0" style="font-size: 20px; margin-top: 15px; display: block;">One Liner:</label>
+          <input type="text" id="oneLiner_0" placeholder="Enter a one-liner summary/teaching point" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
+          <label for="eegImage_0" style="font-size: 20px; margin-top: 15px; display: block;">Upload EEG Screenshot:</label>
+          <input type="file" id="eegImage_0" accept="image/*" required style="width: 100%; padding: 14px; font-size: 20px;">
+        </div>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+        <button type="button" onclick="addSlideEntry()" style="padding: 14px; font-size: 18px; background: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer; width: 48%;">
+          <i class="fa fa-plus"></i> Add Another Slide
+        </button>
+        <button type="button" onclick="generateMultipleSlides()" style="padding: 14px; font-size: 18px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; cursor: pointer; width: 48%;">
+          Generate Presentation
+        </button>
+      </div>
     </form>
   </div>
 `;
@@ -641,13 +681,163 @@
       document.body.appendChild(modalOverlay);
     }
     
-    // Slide generation function using PPTXGenJS
+    // Variable to keep track of the number of slide entries
+    let slideEntriesCount = 1;
+    
+    // Function to add a new slide entry
+    function addSlideEntry() {
+      const slideEntries = document.getElementById('slideEntries');
+      const newIndex = slideEntriesCount;
+      slideEntriesCount++;
+      
+      const newEntry = document.createElement('div');
+      newEntry.className = 'slide-entry';
+      newEntry.dataset.index = newIndex;
+      
+      newEntry.innerHTML = `
+        <hr style="margin: 20px 0; border: none; border-top: 1px dashed #ccc;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <h3 style="margin-top: 15px;">Slide ${slideEntriesCount}</h3>
+          <button type="button" onclick="removeSlideEntry(${newIndex})" style="background: #ff5252; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">
+            <i class="fa fa-trash"></i> Remove
+          </button>
+        </div>
+        <label for="eegFinding_${newIndex}" style="font-size: 20px; margin-top: 15px; display: block;">EEG Finding:</label>
+        <input type="text" id="eegFinding_${newIndex}" placeholder="Enter the EEG finding" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
+        <label for="oneLiner_${newIndex}" style="font-size: 20px; margin-top: 15px; display: block;">One Liner:</label>
+        <input type="text" id="oneLiner_${newIndex}" placeholder="Enter a one-liner summary/teaching point" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
+        <label for="eegImage_${newIndex}" style="font-size: 20px; margin-top: 15px; display: block;">Upload EEG Screenshot:</label>
+        <input type="file" id="eegImage_${newIndex}" accept="image/*" required style="width: 100%; padding: 14px; font-size: 20px;">
+      `;
+      
+      slideEntries.appendChild(newEntry);
+    }
+    
+    // Function to remove a slide entry
+    function removeSlideEntry(index) {
+      const slideEntries = document.getElementById('slideEntries');
+      const entryToRemove = document.querySelector(`.slide-entry[data-index="${index}"]`);
+      
+      if (entryToRemove && slideEntries.children.length > 1) {
+        slideEntries.removeChild(entryToRemove);
+        updateSlideNumbers();
+      } else if (slideEntries.children.length <= 1) {
+        alert("You must have at least one slide entry.");
+      }
+    }
+    
+    // Function to update slide numbers after removal
+    function updateSlideNumbers() {
+      const slideEntries = document.querySelectorAll('.slide-entry');
+      slideEntries.forEach((entry, index) => {
+        const heading = entry.querySelector('h3');
+        if (heading) {
+          heading.textContent = `Slide ${index + 1}`;
+        }
+      });
+    }
+    
+    // Function to generate multiple slides
+    function generateMultipleSlides() {
+      const fullName = document.getElementById("fullName").value;
+      const residency = document.getElementById("residency").value;
+      
+      if (!fullName || !residency) {
+        alert("Please enter your full name and residency program.");
+        return;
+      }
+      
+      // Create progress indicator
+      const modalBody = document.querySelector('.modal-body');
+      const progressDiv = document.createElement('div');
+      progressDiv.innerHTML = '<p style="text-align: center;">Creating your PowerPoint presentation... Please wait.</p>';
+      progressDiv.id = 'slideProgress';
+      modalBody.appendChild(progressDiv);
+      
+      // Create a new presentation
+      let pptx = new PptxGenJS();
+      let slideEntries = document.querySelectorAll('.slide-entry');
+      let entriesProcessed = 0;
+      let slidePromises = [];
+      
+      slideEntries.forEach((entry, index) => {
+        const entryIndex = entry.dataset.index;
+        const eegFinding = document.getElementById(`eegFinding_${entryIndex}`).value;
+        const oneLiner = document.getElementById(`oneLiner_${entryIndex}`).value;
+        const fileInput = document.getElementById(`eegImage_${entryIndex}`);
+        const file = fileInput.files[0];
+        
+        if (!eegFinding || !oneLiner || !file) {
+          alert(`Please fill in all fields for Slide ${index + 1}.`);
+          progressDiv.remove();
+          return;
+        }
+        
+        // Create a promise for each slide
+        const slidePromise = new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            try {
+              let slide = pptx.addSlide();
+              let imageData = e.target.result;
+              
+              // Add image and text to slide
+              slide.addImage({ data: imageData, x: 0, y: 0, w: 10, h: 5.63 });
+              slide.addText(
+                `EEG Finding: ${eegFinding}`,
+                { x: 0, y: 0, w: 3, h: 1.0, fill: { color: 'FFFFFF' }, color: '000000', align: 'left', autoFit: true, fontSize: 20, bold: true }
+              );
+              slide.addNotes(`Presented by: ${fullName} (${residency})\nOne Liner: ${oneLiner}`);
+              
+              entriesProcessed++;
+              progressDiv.innerHTML = `<p style="text-align: center;">Processed ${entriesProcessed} of ${slideEntries.length} slides...</p>`;
+              
+              resolve();
+            } catch (error) {
+              console.error(`Error processing slide ${index + 1}:`, error);
+              reject(error);
+            }
+          };
+          reader.onerror = function(error) {
+            console.error(`Error reading image for slide ${index + 1}:`, error);
+            reject(error);
+          };
+          reader.readAsDataURL(file);
+        });
+        
+        slidePromises.push(slidePromise);
+      });
+      
+      // When all slides are processed, save the presentation
+      Promise.all(slidePromises)
+        .then(() => {
+          pptx.writeFile({ fileName: "EEG_Presentation.pptx" })
+            .then(() => {
+              progressDiv.remove();
+              alert(`Successfully created presentation with ${entriesProcessed} slides!`);
+              const modalOverlay = document.querySelector('.modal-overlay');
+              if (modalOverlay) modalOverlay.remove();
+            })
+            .catch(error => {
+              progressDiv.remove();
+              alert("Error generating presentation. Check console for details.");
+              console.error("Error generating presentation:", error);
+            });
+        })
+        .catch(error => {
+          progressDiv.remove();
+          alert("Error processing slides. Check console for details.");
+          console.error("Error processing slides:", error);
+        });
+    }
+    
+    // Slide generation function using PPTXGenJS (for single slide)
     function generateSlide() {
       const fullName = document.getElementById("fullName").value;
       const residency = document.getElementById("residency").value;
-      const eegFinding = document.getElementById("eegFinding").value;
-      const oneLiner = document.getElementById("oneLiner").value;
-      const fileInput = document.getElementById("eegImage");
+      const eegFinding = document.getElementById("eegFinding_0").value;
+      const oneLiner = document.getElementById("oneLiner_0").value;
+      const fileInput = document.getElementById("eegImage_0");
       const file = fileInput.files[0];
       
       let pptx = new PptxGenJS();
