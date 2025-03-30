@@ -257,7 +257,7 @@
     }
 
     /* Auth Modals */
-    #login-modal, #signup-modal {
+    #login-modal, #signup-modal, #google-setup-modal {
       position: fixed;
       top: 0; left: 0;
       width: 100%; height: 100%;
@@ -267,10 +267,10 @@
       justify-content: center;
       align-items: center;
     }
-    #login-modal.active, #signup-modal.active {
+    #login-modal.active, #signup-modal.active, #google-setup-modal.active {
       display: flex !important;
     }
-    #login-modal .modal-content, #signup-modal .modal-content {
+    #login-modal .modal-content, #signup-modal .modal-content, #google-setup-modal .modal-content {
       background: #fff;
       padding: 2rem;
       border-radius: 8px;
@@ -278,6 +278,9 @@
       max-width: 400px;
       text-align: center;
       color: #333;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
     }
     #login-modal input, #signup-modal input, #google-setup-modal input {
       width: 100%;
@@ -466,7 +469,7 @@
   </div>
 
   <!-- Google Account Setup Modal -->
-  <div id="google-setup-modal" style="display: none;">
+  <div id="google-setup-modal">
     <div class="modal-content">
       <h2>Complete Your Profile</h2>
       <p>Please provide the following additional information to complete your registration.</p>
@@ -1008,7 +1011,6 @@
           iconDiv.setAttribute('data-icon-url', icon.url);
           iconDiv.innerHTML = `
             <img src="${icon.url}" alt="${icon.name}">
-            <span class="profile-icon-label">${icon.name}</span>
           `;
           
           // Set the first icon as selected by default
@@ -1039,7 +1041,6 @@
           iconDiv.setAttribute('data-icon-url', icon.url);
           iconDiv.innerHTML = `
             <img src="${icon.url}" alt="${icon.name}">
-            <span class="profile-icon-label">${icon.name}</span>
           `;
           
           // Set the first icon as selected by default
@@ -1239,7 +1240,7 @@
         signupModal.style.cssText = 'display: none !important';
         
         // Show Google setup modal
-        googleSetupModal.style.display = 'flex';
+        googleSetupModal.classList.add('active');
         document.getElementById('page-content').classList.add('disabled');
         
         // Pre-fill name if available from Google
@@ -1274,6 +1275,7 @@
         
         loginModal.classList.remove('active');
         signupModal.classList.remove('active');
+        googleSetupModal.classList.remove('active');
         
         loginModal.style.cssText = 'display: none !important';
         signupModal.style.cssText = 'display: none !important';
