@@ -45,7 +45,7 @@ body {
   line-height: 1.6;
   transition: background var(--transition-duration),
     color var(--transition-duration);
-  padding-bottom: 80px;
+  padding-bottom: 20px;
 }
 
 /*-----------------------------------------------
