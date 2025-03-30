@@ -602,9 +602,9 @@
 
   <!-- Secret Game Modal -->
   <div id="secret-game-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:15000; justify-content:center; align-items:center;">
-    <div class="modal-content" style="width:400px; height:700px; background:transparent; border:none; box-shadow:none;">
-      <button id="close-secret-modal" style="position:absolute; top:10px; right:10px;">Close</button>
-      <iframe src="flappy_brain/menu.html" style="width:100%; height:100%; border:none;"></iframe>
+    <div class="modal-content" style="width:400px; height:700px; background:transparent; border:none; box-shadow:none; position: relative;">
+      <button id="close-secret-modal" style="position:absolute; top:10px; right:10px; z-index:15001; background:#fff; color:#000; border:none; padding:5px 10px; border-radius:4px; cursor:pointer;">Close</button>
+      <iframe id="game-iframe" src="flappy_brain/flappy_brain.html" style="width:100%; height:100%; border:none;" allow="accelerometer; autoplay; encrypted-media; gyroscope;" allowfullscreen></iframe>
     </div>
   </div>
 
@@ -734,14 +734,21 @@
       return sendPasswordResetEmail(auth, email);
     }
     
-    function signInWithGoogle(accessCode) {
-      // We'll verify the access code later for new users
+    function signInWithGoogle() {
       return signInWithPopup(auth, googleProvider)
         .then(async (result) => {
           const user = result.user;
           
           // Check if this is a new user (first-time sign in)
           const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          // Debug logging
+          console.log("Google sign-in result:", {
+            uid: user.uid,
+            email: user.email, 
+            displayName: user.displayName,
+            docExists: userDoc.exists()
+          });
           
           if (!userDoc.exists()) {
             // This is a new user, we'll need to collect additional information
@@ -1129,6 +1136,8 @@
       document.getElementById("google-signup-button").addEventListener("click", () => {
         signInWithGoogle()
           .then((result) => {
+            console.log("Google signup result:", { isNewUser: result.isNewUser });
+            
             if (result.isNewUser) {
               // Show the Google setup modal to collect additional info
               showGoogleSetupModal();
@@ -1138,6 +1147,7 @@
             }
           })
           .catch((error) => {
+            console.error("Google signup error:", error);
             const errorEl = document.getElementById("signup-error");
             errorEl.textContent = error.message;
             errorEl.style.display = "block";
@@ -1148,6 +1158,8 @@
       document.getElementById("google-login-button").addEventListener("click", () => {
         signInWithGoogle()
           .then((result) => {
+            console.log("Google login result:", { isNewUser: result.isNewUser });
+            
             if (result.isNewUser) {
               // Show the Google setup modal to collect additional info
               showGoogleSetupModal();
@@ -1157,6 +1169,7 @@
             }
           })
           .catch((error) => {
+            console.error("Google login error:", error);
             const errorEl = document.getElementById("login-error");
             errorEl.textContent = error.message;
             errorEl.style.display = "block";
@@ -1169,6 +1182,10 @@
         const trainingLevel = document.getElementById("google-setup-training-level").value;
         const accessCode = document.getElementById("google-setup-access-code").value;
         const agreeDisclaimer = document.getElementById("google-agree-disclaimer").checked;
+        
+        // Get selected profile icon
+        const selectedIcon = document.querySelector('#google-profile-icons .profile-icon-option.selected');
+        const profileIcon = selectedIcon ? selectedIcon.getAttribute('data-icon-url') : null;
         
         // Validate inputs
         if (!fullName || !trainingLevel || !accessCode) {
@@ -1208,13 +1225,13 @@
         // Save the user data
         const user = auth.currentUser;
         if (user) {
-          saveGoogleUserData(user.uid, fullName, trainingLevel)
+          saveGoogleUserData(user.uid, fullName, trainingLevel, profileIcon)
             .then(() => {
-              // Update display name if needed
-              if (!user.displayName) {
-                updateProfile(user, { displayName: fullName })
-                  .catch(err => console.error("Error updating profile:", err));
-              }
+              // Update display name and photo URL if needed
+              updateProfile(user, { 
+                displayName: fullName,
+                photoURL: profileIcon
+              }).catch(err => console.error("Error updating profile:", err));
               
               // Complete the login process
               completeLogin(user, fullName);
@@ -2762,11 +2779,21 @@
       
       // Secret game modal handlers
       document.getElementById('secret-game-trigger').addEventListener('click', () => {
+        // Refresh the iframe content when reopening
+        const gameIframe = document.getElementById('game-iframe');
+        gameIframe.src = gameIframe.src;
         document.getElementById('secret-game-modal').style.display = 'flex';
+        
+        // Try to focus the iframe to help with event handling
+        setTimeout(() => {
+          gameIframe.focus();
+        }, 100);
       });
+      
       document.getElementById('close-secret-modal').addEventListener('click', () => {
         document.getElementById('secret-game-modal').style.display = 'none';
       });
+      
       document.getElementById('secret-game-modal').addEventListener('click', e => {
         if (e.target === document.getElementById('secret-game-modal')) {
           document.getElementById('secret-game-modal').style.display = 'none';
