@@ -2,26 +2,14 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <!-- Responsive scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Google Fonts and Font Awesome -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
-
-  <!-- Favicon -->
   <link rel="icon" type="image/png" href="assets/images/logo.png" />
   <link rel="apple-touch-icon" href="assets/images/logo.png" />
-
-  <!-- Web App Manifest for PWA -->
   <link rel="manifest" href="manifest.json">
-
   <title>EEG Curriculum</title>
-
-  <!-- Shared CSS -->
   <link rel="stylesheet" href="assets/css/styles.css" />
-
-  <!-- Additional Internal CSS -->
   <style>
     /* HOMEPAGE CARDS */
     .cards-grid {
@@ -43,11 +31,10 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       background: rgba(0,0,0,0.7);
-      display: flex;
+      display: none;
       justify-content: center;
       align-items: center;
       z-index: 10000;
-      pointer-events: auto;
     }
     #dev-modal .modal-content {
       background: #fff;
@@ -56,8 +43,6 @@
       width: 90%;
       max-width: 500px;
       text-align: center;
-      position: relative;
-      pointer-events: auto;
     }
     #dev-modal input[type="text"] {
       width: 80%;
@@ -94,7 +79,6 @@
       justify-content: center;
       align-items: center;
       z-index: 11000;
-      pointer-events: auto;
     }
     #copyright-modal .modal-content {
       background: #fff;
@@ -105,20 +89,10 @@
       text-align: left;
       color: inherit;
       position: relative;
-      pointer-events: auto;
     }
 
-  /* Increase base font size when .large-font is applied */
-  body.large-font {
-    font-size: 110%; /* Increase base font size by 10% */
-  }
-
-  /* Optionally, if some elements are set in px and you want them to scale: */
-  /* Uncomment the next rule if needed—but test carefully!
-  body.large-font * {
-  font-size: 110% !important;
-  }
-  */
+    /* Font sizing */
+    body.large-font { font-size: 110%; }
 
     /* DROPDOWN MENU */
     .dropdown-menu {
@@ -145,11 +119,10 @@
     .dropdown-content {
       position: absolute;
       top: calc(100% + 4px);
-      right: 0; left: auto;
+      right: 0;
       display: none;
       background: #ffffff;
       min-width: 180px;
-      border: none;
       border-radius: 4px;
       box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.1);
       z-index: 1000;
@@ -172,27 +145,27 @@
       opacity: 1;
       transform: translateY(0);
     }
-      @media (max-width: 600px) {
-    .dropdown-menu {
-     width: 100%;
-      display: flex;
-      justify-content: flex-end;
-     padding-right: 10px; /* optional: adds space from the edge */
-   }
-    .dropdown-toggle {
-      padding: 0.4rem 0.6rem;
-      font-size: 0.9rem;
-      width: auto;
-      margin: 0;
-      text-align: right;
-   }
-    .dropdown-content {
-      right: 0;
-      left: auto;
-      width: 180px;
-      max-width: 90vw;
+    @media (max-width: 600px) {
+      .dropdown-menu {
+        width: 100%;
+        display: flex;
+        justify-content: flex-end;
+        padding-right: 10px;
+      }
+      .dropdown-toggle {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+        width: auto;
+        margin: 0;
+        text-align: right;
+      }
+      .dropdown-content {
+        right: 0;
+        left: auto;
+        width: 180px;
+        max-width: 90vw;
+      }
     }
-}
 
     /* INSTALL APP BUTTON */
     #installBtn {
@@ -207,16 +180,227 @@
       z-index: 10000;
       display: none;
     }
+    
+    /* User profile and sign-out button - IMPROVED */
+    #user-profile {
+      display: flex;
+      align-items: center;
+      background-color: rgba(0,0,0,0.05);
+      padding: 6px 12px;
+      border-radius: 20px;
+      margin-right: 20px;
+      transition: background-color 0.3s ease;
+    }
+    
+    #user-profile:hover {
+      background-color: rgba(0,0,0,0.1);
+    }
+    
+    #user-email {
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      max-width: 150px;
+      margin-right: 10px;
+      font-size: 0.9em;
+      color: var(--header-text, #333);
+    }
+    
+    .btn-small {
+      padding: 4px 10px;
+      font-size: 0.8em;
+      background-color: transparent;
+      color: var(--header-text, #333);
+      border: 1px solid rgba(0,0,0,0.2);
+      border-radius: 15px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    
+    .btn-small:hover {
+      background-color: var(--accent-color, #007bff);
+      color: white;
+      border-color: transparent;
+    }
+    
+    @media (max-width: 768px) {
+      #user-profile {
+        padding: 4px 8px;
+      }
+      
+      #user-email {
+        display: none;
+      }
+      
+      .btn-small {
+        border-radius: 12px;
+        padding: 3px 8px;
+      }
+    }
+
+    /* Dark mode adjustments */
+    body.dark #user-profile {
+      background-color: rgba(255,255,255,0.1);
+    }
+    
+    body.dark #user-profile:hover {
+      background-color: rgba(255,255,255,0.2);
+    }
+    
+    body.dark #user-email,
+    body.dark .btn-small {
+      color: var(--header-text, #fff);
+    }
+    
+    body.dark .btn-small {
+      border-color: rgba(255,255,255,0.2);
+    }
+
+    /* Auth Modals */
+    #login-modal, #signup-modal {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: rgba(0,0,0,0.7);
+      z-index: 10000;
+      display: none;
+      justify-content: center;
+      align-items: center;
+    }
+    #login-modal.active, #signup-modal.active {
+      display: flex !important;
+    }
+    #login-modal .modal-content, #signup-modal .modal-content {
+      background: #fff;
+      padding: 2rem;
+      border-radius: 8px;
+      width: 90%;
+      max-width: 400px;
+      text-align: center;
+      color: #333;
+    }
+    #login-modal input, #signup-modal input, #google-setup-modal input {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    
+    #login-modal select, #signup-modal select, #google-setup-modal select {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      background: white;
+    }
+    
+    #login-modal button, #signup-modal button, #google-setup-modal button {
+      padding: 10px 20px;
+      background-color: var(--accent-color, #007bff);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 10px;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    
+    .google-btn {
+      background-color: #4285F4 !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    
+    .google-btn:before {
+      content: "";
+      background-image: url('assets/images/google-icon.svg');
+      background-repeat: no-repeat;
+      background-size: contain;
+      width: 18px;
+      height: 18px;
+      position: absolute;
+      left: 10px;
+    }
+    
+    #login-modal .error, #signup-modal .error, #google-setup-modal .error {
+      color: red;
+      margin-top: 10px;
+      display: none;
+    }
+    
+    /* Disclaimer scrollable box */
+    .disclaimer-box {
+      max-height: 120px;
+      overflow-y: auto;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background-color: #f9f9f9;
+      font-size: 0.85em;
+      text-align: left;
+    }
+    
+    /* Checkbox styling */
+    .checkbox-container {
+      display: inside;
+      align-items: right;
+      margin-bottom: 15px;
+      text-align: left;
+    }
+    
+    .checkbox-container input[type="checkbox"] {
+      width: auto;
+      margin-right: 10px;
+    }
+    
+    /* Profile icon selection styles */
+    .profile-icons-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .profile-icon-option {
+      cursor: pointer;
+      padding: 8px;
+      border: 2px solid transparent;
+      border-radius: 8px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+    
+    .profile-icon-option img {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+    
+    .profile-icon-option.selected {
+      border-color: var(--accent-color, #007bff);
+      background-color: rgba(0, 123, 255, 0.1);
+    }
+    
+    .profile-icon-label {
+      font-size: 0.8em;
+      margin-top: 5px;
+      display: block;
+    }
   </style>
 </head>
 <body>
-  <!-- Access Code Modal -->
+  <!-- Access Code Modal (legacy) -->
   <div id="dev-modal">
     <div class="modal-content">
       <h2><strong>Disclaimer:</strong></h2>
-      <p>
-        Any information or materials provided on or accessed through this web site are intended solely for informational purposes and are NOT intended for individuals or patients seeking medical advice or treatment. The information and materials presented are not intended nor implied to be a substitute for professional medical advice, diagnosis or treatment. Every individual should always seek the advice of a physician or other qualified health care provider prior to starting or continuing any treatment. Medical professionals should not use or rely upon any of the information or content provided on or accessed through this web site to make any medical decisions.
-      </p>
+      <p>Any information or materials provided on or accessed through this web site are intended solely for informational purposes and are NOT intended for individuals or patients seeking medical advice or treatment. The information and materials presented are not intended nor implied to be a substitute for professional medical advice, diagnosis or treatment.</p>
       <input type="text" id="access-code" placeholder="Enter access code">
       <div>
         <button id="submit-code">Enter</button>
@@ -226,16 +410,108 @@
     </div>
   </div>
 
-  <!-- Main Content (initially disabled) -->
+  <!-- Signup Modal - IMPROVED -->
+  <div id="signup-modal">
+    <div class="modal-content">
+      <h2>Sign Up</h2>
+      
+      <!-- Integrated disclaimer in a scrollable box -->
+      <div class="disclaimer-box">
+        <p><strong>Disclaimer:</strong> Any information or materials provided on or accessed through this web site are intended solely for informational purposes and are NOT intended for individuals or patients seeking medical advice or treatment. The information and materials presented are not intended nor implied to be a substitute for professional medical advice, diagnosis or treatment. Every individual should always seek the advice of a physician or other qualified health care provider prior to starting or continuing any treatment. Medical professionals should not use or rely upon any of the information or content provided on or accessed through this web site to make any medical decisions.</p>
+      </div>
+      
+      <input type="text" id="signup-name" placeholder="Full Name">
+      <input type="email" id="signup-email" placeholder="Email">
+      <input type="password" id="signup-password" placeholder="Password">
+      <input type="text" id="signup-access-code" placeholder="Access Code">
+      
+      <select id="signup-training-level" class="form-control">
+        <option value="" disabled selected>Select Training Level</option>
+        <option value="Medical Student">Medical Student</option>
+        <option value="Resident">Resident</option>
+        <option value="Fellow">Fellow</option>
+        <option value="Attending">Attending</option>
+      </select>
+      
+      <p style="text-align: left; margin-bottom: 5px;">Choose a profile icon:</p>
+      <div class="profile-icons-container" id="signup-profile-icons">
+        <!-- Icons will be added dynamically -->
+      </div>
+      
+      <div class="checkbox-container">
+        <input type="checkbox" id="agree-disclaimer" required>
+        <label for="agree-disclaimer">I have read and agree to the disclaimer</label>
+      </div>
+      
+      <div>
+        <button id="signup-button">Sign Up</button>
+        <button id="google-signup-button" class="google-btn">Sign Up with Google</button>
+        <button id="cancel-signup-button">Cancel</button>
+      </div>
+      <div class="error" id="signup-error"></div>
+    </div>
+  </div>
+
+  <!-- Login Modal -->
+  <div id="login-modal">
+    <div class="modal-content">
+      <h2>Login</h2>
+      <input type="email" id="login-email" placeholder="Email">
+      <input type="password" id="login-password" placeholder="Password">
+      <button id="login-button">Login</button>
+      <button id="google-login-button" class="google-btn">Login with Google</button>
+      <div class="error" id="login-error"></div>
+      <!-- Additional links will be added via JavaScript -->
+    </div>
+  </div>
+
+  <!-- Google Account Setup Modal -->
+  <div id="google-setup-modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Complete Your Profile</h2>
+      <p>Please provide the following additional information to complete your registration.</p>
+      
+      <input type="text" id="google-setup-name" placeholder="Full Name">
+      <select id="google-setup-training-level" class="form-control">
+        <option value="" disabled selected>Select Training Level</option>
+        <option value="Medical Student">Medical Student</option>
+        <option value="Resident">Resident</option>
+        <option value="Fellow">Fellow</option>
+        <option value="Attending">Attending</option>
+      </select>
+      <input type="text" id="google-setup-access-code" placeholder="Access Code">
+      
+      <p style="text-align: left; margin-bottom: 5px;">Choose a profile icon:</p>
+      <div class="profile-icons-container" id="google-profile-icons">
+        <!-- Icons will be added dynamically -->
+      </div>
+      
+      <div class="checkbox-container">
+        <input type="checkbox" id="google-agree-disclaimer" required>
+        <label for="google-agree-disclaimer">I have read and agree to the disclaimer</label>
+      </div>
+      
+      <button id="google-setup-submit">Complete Registration</button>
+      <div class="error" id="google-setup-error"></div>
+    </div>
+  </div>
+
+  <!-- Main Content -->
   <div id="page-content" class="disabled">
     <header id="header">
       <div class="header-inner">
-        <!-- Invisible secret game trigger -->
+        <!-- Secret game trigger -->
         <button id="secret-game-trigger" style="position:absolute; bottom:5px; left:5px; width:30px; height:30px; opacity:0; background:transparent; border:none;"></button>
         
         <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
 
-        <!-- Right-aligned dropdown menu -->
+        <!-- User profile section - IMPROVED -->
+        <div id="user-profile" style="display: none;">
+          <span id="user-email"></span>
+          <button id="sign-out-button" class="btn-small">Sign Out</button>
+        </div>
+
+        <!-- Dropdown menu -->
         <div class="dropdown-menu" id="dropdown-menu">
           <button class="dropdown-toggle" onclick="toggleDropdown(event)">Menu &#x25BC;</button>
           <div class="dropdown-content" id="dropdown-content">
@@ -252,7 +528,7 @@
       </div>
     </header>
 
-    <!-- HOMEPAGE CARDS (home-content) -->
+    <!-- Homepage Cards -->
     <div id="home-content" class="cards-container">
       <h2 class="page-title">Explore the Epilepsy Navigator</h2>
       <div class="cards-grid">
@@ -270,42 +546,42 @@
           <p>Access concise guidelines for seizure management and ASM protocols.</p>
           <a href="seizure_management.html" onclick="loadSection(event, 'seizure_management.html')">Learn More</a>
         </div>
-        <!-- Card 3 (ILAE Classification) -->
+        <!-- Card 3 -->
         <div class="card">
           <i class="fa-solid fa-file-alt"></i>
           <h3>ILAE Classification</h3>
           <p>Explore comprehensive ILAE epilepsy syndrome classifications and definitions.</p>
           <a href="ilae_classification.html" onclick="loadSection(event, 'ilae_classification.html')">Learn More</a>
         </div>
-        <!-- Card 4 (Natus Instructions) -->
+        <!-- Card 4 -->
         <div class="card">
           <i class="fa-solid fa-desktop"></i>
           <h3>Natus & Persyst</h3>
           <p>Follow our step-by-step guide to launching Natus and Persyst, reviewing patient studies, and configuring the display.</p>
           <a href="natus_instructions.html" onclick="loadSection(event, 'natus_instructions.html')">Learn More</a>
         </div>
-        <!-- Card 5 (ACNS Criteria) -->
+        <!-- Card 5 -->
         <div class="card">
           <i class="fa-solid fa-file-pdf"></i>
           <h3>ACNS Criteria</h3>
           <p>Access detailed visual references and downloadable charts of ACNS guidelines to improve EEG interpretation.</p>
           <a href="acns_criteria.html" onclick="loadSection(event, 'acns_criteria.html')">Learn More</a>
         </div>
-        <!-- New Card (EEG Atlas) -->
+        <!-- Card 6 -->
         <div class="card">
           <i class="fa-solid fa-wave-square"></i>
           <h3>EEG Atlas</h3>
           <p>Explore categorized EEG patterns with images, flashcards, and search tools.</p>
           <a href="eeg_atlas.html" onclick="loadSection(event, 'eeg_atlas.html')">Learn More</a>
         </div>
-        <!-- Card 6 (EEG Videos) -->
+        <!-- Card 7 -->
         <div class="card">
           <i class="fa-solid fa-video"></i>
           <h3>EEG Videos</h3>
           <p>Engage with interactive EEG videos accompanied by quizzes to sharpen your knowledge and interpretation skills.</p>
           <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">Learn More</a>
         </div>
-        <!-- Card 7 (FAQ) -->
+        <!-- Card 8 -->
         <div class="card">
           <i class="fa-solid fa-circle-question"></i>
           <h3>Discussion Forum</h3>
@@ -315,9 +591,9 @@
       </div>
     </div>
 
-    <!-- MAIN CONTENT CONTAINER (section-content) -->
+    <!-- Section Content -->
     <div class="container">
-      <div id="section-content"></div>
+      <div id="section-content" style="width: 100%; min-height: 85vh;"></div>
     </div>
   </div>
 
@@ -341,9 +617,7 @@
         of content material for nonprofit educational and nonprofit library purposes, 
         provided that: (i) copies are distributed at or below costs; (ii) author and 
         source are acknowledged; and (iii) a copyright notice is attached to the copies, 
-        such notice being in the form of "Matthew S. Davitz MD. 2025" (or as otherwise 
-        indicated on the materials as posted here). No commercial uses of any type are allowed 
-        without the prior express permission of the Matthew S. Davitz MD.
+        such notice being in the form of "Matthew S. Davitz MD. 2025".
       </p>
     </div>
   </div>
@@ -364,20 +638,744 @@
   <!-- Install App Button -->
   <button id="installBtn">Install App</button>
 
-  <!-- Shared JS -->
-  <script src="https://cdn.jsdelivr.net/npm/pptxgenjs@3.9.0/dist/pptxgen.bundle.js"></script>
+  <!-- Firebase SDK -->
+  <script type="module">
+    // Import Firebase Auth functions
+    import { 
+      getAuth, 
+      createUserWithEmailAndPassword, 
+      signInWithEmailAndPassword, 
+      setPersistence, 
+      browserLocalPersistence, 
+      onAuthStateChanged, 
+      sendPasswordResetEmail, 
+      signOut,
+      GoogleAuthProvider,
+      signInWithPopup,
+      updateProfile
+    } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
+    
+    import { 
+      getFirestore,
+      doc,
+      setDoc,
+      getDoc,
+      updateDoc,
+      arrayUnion
+    } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+    
+    import { 
+      initializeApp 
+    } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-app.js";
 
-  <!-- Combined JavaScript -->
-  <script>
-    // Register Service Worker for PWA
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/sw.js')
-          .then(reg => console.log('Service Worker registered:', reg.scope))
-          .catch(err => console.log('Service Worker registration failed:', err));
+    // Firebase configuration
+    const firebaseConfig = {
+      apiKey: "AIzaSyDhMhYzo2G0Efvj7zM0rwjJbEN4nIWZEgQ",
+      authDomain: "eeg-app-6968e.firebaseapp.com",
+      projectId: "eeg-app-6968e",
+      storageBucket: "eeg-app-6968e.firebasestorage.app",
+      messagingSenderId: "322977550023",
+      appId: "1:322977550023:web:9f91e6ffd07d31c80578e2"
+    };
+
+    // Initialize Firebase, Auth, and Firestore
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    const googleProvider = new GoogleAuthProvider();
+
+    // Define your required access code for new sign‑ups
+    const REQUIRED_ACCESS_CODE = "mountsinai";
+
+    // Set persistence to LOCAL - this will keep the user signed in even when they close the browser
+    // until they explicitly sign out or clear their browser data
+    setPersistence(auth, browserLocalPersistence)
+      .then(() => console.log("Auth persistence set to local"))
+      .catch((error) => console.error("Persistence error:", error));
+
+    // Authentication Functions
+    function handleSignUp(email, password, accessCode, fullName, trainingLevel, profileIcon) {
+      if (accessCode.trim().toLowerCase() !== REQUIRED_ACCESS_CODE) {
+        return Promise.reject(new Error("Invalid access code."));
+      }
+      return createUserWithEmailAndPassword(auth, email, password)
+        .then(async (userCredential) => {
+          // Update the user's display name
+          await updateProfile(userCredential.user, {
+            displayName: fullName,
+            photoURL: profileIcon
+          });
+          
+          // Store additional user data in Firestore
+          await setDoc(doc(db, "users", userCredential.user.uid), {
+            email: email,
+            fullName: fullName,
+            trainingLevel: trainingLevel,
+            profileIcon: profileIcon,
+            createdAt: new Date()
+          });
+          
+          return userCredential;
+        });
+    }
+
+    function handleLogin(email, password) {
+      return signInWithEmailAndPassword(auth, email, password);
+    }
+
+    function handleSignOut() {
+      return signOut(auth);
+    }
+
+    function handlePasswordReset(email) {
+      return sendPasswordResetEmail(auth, email);
+    }
+    
+    function signInWithGoogle(accessCode) {
+      // We'll verify the access code later for new users
+      return signInWithPopup(auth, googleProvider)
+        .then(async (result) => {
+          const user = result.user;
+          
+          // Check if this is a new user (first-time sign in)
+          const userDoc = await getDoc(doc(db, "users", user.uid));
+          
+          if (!userDoc.exists()) {
+            // This is a new user, we'll need to collect additional information
+            return {
+              user,
+              isNewUser: true
+            };
+          } else {
+            // Existing user, return the user data
+            return {
+              user,
+              isNewUser: false,
+              userData: userDoc.data()
+            };
+          }
+        });
+    }
+    
+    function saveGoogleUserData(userId, fullName, trainingLevel, profileIcon) {
+      return setDoc(doc(db, "users", userId), {
+        fullName: fullName,
+        trainingLevel: trainingLevel,
+        email: auth.currentUser.email,
+        profileIcon: profileIcon,
+        createdAt: new Date()
+      });
+    }
+    
+    // New function to delete user account if access code is incorrect
+    async function deleteCurrentUser() {
+      try {
+        await auth.currentUser.delete();
+        console.log("User account deleted due to invalid access code");
+      } catch (error) {
+        console.error("Error deleting user account:", error);
+        // Force sign out in case deletion fails
+        await signOut(auth);
+      }
+    }
+
+    async function getUserData(userId) {
+      const docRef = doc(db, "users", userId);
+      const docSnap = await getDoc(docRef);
+      
+      if (docSnap.exists()) {
+        return docSnap.data();
+      } else {
+        return null;
+      }
+    }
+
+    // Debug logging
+    console.log("Script loading...");
+
+    // Add debug button
+    const debugButton = document.createElement('button');
+    debugButton.textContent = "Debug Auth";
+    debugButton.style.position = 'fixed';
+    debugButton.style.bottom = '10px';
+    debugButton.style.left = '10px';
+    debugButton.style.zIndex = '99999';
+    
+    debugButton.addEventListener('click', () => {
+      console.log("Forcing login modal display");
+      showLoginModal();
+    });
+    
+    document.body.appendChild(debugButton);
+
+    // IMPROVED Modal Helper Functions with proper toggle
+    function showLoginModal() {
+      // First hide all modals
+      const loginModal = document.getElementById('login-modal');
+      const signupModal = document.getElementById('signup-modal');
+      const devModal = document.getElementById('dev-modal');
+      
+      // Hide signup modal first with !important
+      signupModal.classList.remove('active');
+      signupModal.style.cssText = 'display: none !important';
+      devModal.style.cssText = 'display: none !important';
+      
+      // Delay showing login modal slightly to ensure other modals are fully hidden
+      setTimeout(() => {
+        loginModal.classList.add('active');
+        loginModal.style.cssText = 'display: flex !important';
+        document.getElementById('page-content').classList.add('disabled');
+      }, 50);
+    }
+
+    function showSignupModal() {
+      // First hide all modals
+      const loginModal = document.getElementById('login-modal');
+      const signupModal = document.getElementById('signup-modal');
+      const devModal = document.getElementById('dev-modal');
+      
+      // Hide login modal first with !important
+      loginModal.classList.remove('active');
+      loginModal.style.cssText = 'display: none !important';
+      devModal.style.cssText = 'display: none !important';
+      
+      // Delay showing signup modal slightly to ensure other modals are fully hidden
+      setTimeout(() => {
+        signupModal.classList.add('active');
+        signupModal.style.cssText = 'display: flex !important';
+        document.getElementById('page-content').classList.add('disabled');
+      }, 50);
+    }
+
+    // IMPROVED hideAuthModals function to properly close modals
+    function hideAuthModals() {
+      // First make sure all modal elements are properly hidden
+      const loginModal = document.getElementById('login-modal');
+      const signupModal = document.getElementById('signup-modal');
+      const devModal = document.getElementById('dev-modal');
+      
+      // Remove active classes
+      loginModal.classList.remove('active');
+      signupModal.classList.remove('active');
+      
+      // Set display to none with !important
+      loginModal.style.cssText = 'display: none !important';
+      signupModal.style.cssText = 'display: none !important';
+      devModal.style.cssText = 'display: none !important';
+      
+      // Enable the main content
+      document.getElementById('page-content').classList.remove('disabled');
+      
+      // Force redraw (sometimes helps with stuck elements)
+      setTimeout(() => {
+        document.body.style.display = 'none';
+        document.body.offsetHeight; // Trigger a reflow
+        document.body.style.display = '';
+      }, 10);
+    }
+
+    // Initialize Auth UI Components
+    function initAuthUI() {
+      // Add "Switch to Signup" link to login modal
+      const loginModal = document.getElementById("login-modal").querySelector(".modal-content");
+      const switchToSignup = document.createElement("p");
+      switchToSignup.innerHTML = "Don't have an account? <a href='#' id='switch-to-signup'>Sign up</a>";
+      switchToSignup.style.marginTop = "10px";
+      loginModal.appendChild(switchToSignup);
+      
+      // IMPROVED event listener for switching to signup
+      document.getElementById("switch-to-signup").addEventListener("click", (e) => {
+        e.preventDefault();
+        
+        // First completely hide the login modal
+        const loginModal = document.getElementById('login-modal');
+        loginModal.classList.remove('active');
+        loginModal.style.cssText = 'display: none !important';
+        
+        // Short delay before showing signup modal
+        setTimeout(() => {
+          showSignupModal();
+        }, 50);
+      });
+      
+      // Add forgot password link
+      const forgotPassword = document.createElement("p");
+      forgotPassword.innerHTML = "<a href='#' id='forgot-password'>Forgot password?</a>";
+      forgotPassword.style.marginTop = "10px";
+      loginModal.appendChild(forgotPassword);
+      
+      document.getElementById("forgot-password").addEventListener("click", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("login-email").value;
+        if (!email) {
+          const errorEl = document.getElementById("login-error");
+          errorEl.textContent = "Please enter your email address";
+          errorEl.style.display = "block";
+          return;
+        }
+        
+        handlePasswordReset(email)
+          .then(() => {
+            alert("Password reset email sent. Please check your inbox.");
+          })
+          .catch((error) => {
+            const errorEl = document.getElementById("login-error");
+            errorEl.textContent = error.message;
+            errorEl.style.display = "block";
+          });
       });
     }
 
+    // Document Ready
+    document.addEventListener("DOMContentLoaded", () => {
+      console.log("DOM Content Loaded");
+      
+      // Initialize auth UI elements
+      initAuthUI();
+      
+      // Generate profile icons
+      generateProfileIcons();
+      
+      // Auth state listener
+      onAuthStateChanged(auth, async user => {
+        console.log("Auth state changed:", user ? "User logged in" : "Not logged in");
+        
+        if (user) {
+          // Enable the app
+          hideAuthModals();
+          
+          // Get user data from Firestore
+          const userData = await getUserData(user.uid);
+          
+          // Update user profile display
+          document.getElementById('user-profile').style.display = 'flex';
+          document.getElementById('user-email').textContent = user.displayName || user.email;
+          
+          // If user has a profile icon, display it
+          if (user.photoURL || (userData && userData.profileIcon)) {
+            const profileIcon = user.photoURL || userData.profileIcon;
+            const userProfileDiv = document.getElementById('user-profile');
+            
+            // Check if icon already exists
+            let iconElement = userProfileDiv.querySelector('.profile-icon-img');
+            if (!iconElement) {
+              iconElement = document.createElement('img');
+              iconElement.className = 'profile-icon-img';
+              iconElement.style.width = '30px';
+              iconElement.style.height = '30px';
+              iconElement.style.borderRadius = '50%';
+              iconElement.style.marginRight = '10px';
+              userProfileDiv.insertBefore(iconElement, userProfileDiv.firstChild);
+            }
+            
+            iconElement.src = profileIcon;
+          }
+          
+          // Store visit in localStorage
+          localStorage.setItem("hasVisited", "true");
+        } else {
+          // User is not signed in
+          if (localStorage.getItem("hasVisited")) {
+            // Return user - show login
+            showLoginModal();
+          } else {
+            // First-time visitor - show signup
+            showSignupModal();
+          }
+          document.getElementById('user-profile').style.display = 'none';
+        }
+      });
+      
+      // Function to generate and add profile icons
+      function generateProfileIcons() {
+        // Define the profile icons (you can update these URLs with your actual icons)
+        const profileIcons = [
+          { name: 'Doctor', url: 'assets/images/profile-icons/doctor.svg' },
+          { name: 'Researcher', url: 'assets/images/profile-icons/researcher.svg' },
+          { name: 'Scientist', url: 'assets/images/profile-icons/scientist.svg' },
+          { name: 'Medical', url: 'assets/images/profile-icons/medical.svg' },
+          { name: 'Physician', url: 'assets/images/profile-icons/physician.svg' },
+          { name: 'Nurse', url: 'assets/images/profile-icons/nurse.svg' }
+        ];
+        
+        // Add icons to signup modal
+        const signupIconsContainer = document.getElementById('signup-profile-icons');
+        signupIconsContainer.innerHTML = '';
+        
+        profileIcons.forEach((icon, index) => {
+          const iconDiv = document.createElement('div');
+          iconDiv.className = 'profile-icon-option';
+          iconDiv.setAttribute('data-icon-url', icon.url);
+          iconDiv.innerHTML = `
+            <img src="${icon.url}" alt="${icon.name}">
+            <span class="profile-icon-label">${icon.name}</span>
+          `;
+          
+          // Set the first icon as selected by default
+          if (index === 0) {
+            iconDiv.classList.add('selected');
+          }
+          
+          iconDiv.addEventListener('click', function() {
+            // Remove selected class from all icons
+            signupIconsContainer.querySelectorAll('.profile-icon-option').forEach(el => {
+              el.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked icon
+            this.classList.add('selected');
+          });
+          
+          signupIconsContainer.appendChild(iconDiv);
+        });
+        
+        // Add icons to Google setup modal
+        const googleIconsContainer = document.getElementById('google-profile-icons');
+        googleIconsContainer.innerHTML = '';
+        
+        profileIcons.forEach((icon, index) => {
+          const iconDiv = document.createElement('div');
+          iconDiv.className = 'profile-icon-option';
+          iconDiv.setAttribute('data-icon-url', icon.url);
+          iconDiv.innerHTML = `
+            <img src="${icon.url}" alt="${icon.name}">
+            <span class="profile-icon-label">${icon.name}</span>
+          `;
+          
+          // Set the first icon as selected by default
+          if (index === 0) {
+            iconDiv.classList.add('selected');
+          }
+          
+          iconDiv.addEventListener('click', function() {
+            // Remove selected class from all icons
+            googleIconsContainer.querySelectorAll('.profile-icon-option').forEach(el => {
+              el.classList.remove('selected');
+            });
+            
+            // Add selected class to clicked icon
+            this.classList.add('selected');
+          });
+          
+          googleIconsContainer.appendChild(iconDiv);
+        });
+      }
+      
+      // Signup form submission - IMPROVED with disclaimer validation
+      document.getElementById("signup-button").addEventListener("click", () => {
+        const fullName = document.getElementById("signup-name").value;
+        const email = document.getElementById("signup-email").value;
+        const password = document.getElementById("signup-password").value;
+        const accessCode = document.getElementById("signup-access-code").value;
+        const trainingLevel = document.getElementById("signup-training-level").value;
+        const agreeDisclaimer = document.getElementById("agree-disclaimer").checked;
+        
+        // Get selected profile icon
+        const selectedIcon = document.querySelector('#signup-profile-icons .profile-icon-option.selected');
+        const profileIcon = selectedIcon ? selectedIcon.getAttribute('data-icon-url') : null;
+        
+        // Validate inputs
+        if (!fullName || !email || !password || !accessCode || !trainingLevel) {
+          const errorEl = document.getElementById("signup-error");
+          errorEl.textContent = "All fields are required";
+          errorEl.style.display = "block";
+          return;
+        }
+        
+        if (!agreeDisclaimer) {
+          const errorEl = document.getElementById("signup-error");
+          errorEl.textContent = "You must agree to the disclaimer";
+          errorEl.style.display = "block";
+          return;
+        }
+        
+        // Attempt signup
+        handleSignUp(email, password, accessCode, fullName, trainingLevel, profileIcon)
+          .then((userCredential) => {
+            localStorage.setItem("hasVisited", "true");
+            
+            // IMPROVED: Force-hide all modals explicitly
+            const loginModal = document.getElementById('login-modal');
+            const signupModal = document.getElementById('signup-modal');
+            const devModal = document.getElementById('dev-modal');
+            const googleSetupModal = document.getElementById('google-setup-modal');
+            
+            loginModal.classList.remove('active');
+            signupModal.classList.remove('active');
+            
+            loginModal.style.cssText = 'display: none !important';
+            signupModal.style.cssText = 'display: none !important';
+            devModal.style.cssText = 'display: none !important';
+            googleSetupModal.style.cssText = 'display: none !important';
+            
+            document.getElementById('page-content').classList.remove('disabled');
+            
+            document.getElementById('user-profile').style.display = 'flex';
+            document.getElementById('user-email').textContent = fullName;
+            
+            // Scroll to top and show home content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderHomePage();
+          })
+          .catch((error) => {
+            const errorEl = document.getElementById("signup-error");
+            errorEl.textContent = error.message;
+            errorEl.style.display = "block";
+          });
+      });
+
+      // Google Sign-up Button
+      document.getElementById("google-signup-button").addEventListener("click", () => {
+        signInWithGoogle()
+          .then((result) => {
+            if (result.isNewUser) {
+              // Show the Google setup modal to collect additional info
+              showGoogleSetupModal();
+            } else {
+              // Existing user, proceed to home page
+              completeLogin(result.user, result.userData?.fullName || result.user.displayName || '');
+            }
+          })
+          .catch((error) => {
+            const errorEl = document.getElementById("signup-error");
+            errorEl.textContent = error.message;
+            errorEl.style.display = "block";
+          });
+      });
+      
+      // Google Login Button
+      document.getElementById("google-login-button").addEventListener("click", () => {
+        signInWithGoogle()
+          .then((result) => {
+            if (result.isNewUser) {
+              // Show the Google setup modal to collect additional info
+              showGoogleSetupModal();
+            } else {
+              // Existing user, proceed to home page
+              completeLogin(result.user, result.userData?.fullName || result.user.displayName || '');
+            }
+          })
+          .catch((error) => {
+            const errorEl = document.getElementById("login-error");
+            errorEl.textContent = error.message;
+            errorEl.style.display = "block";
+          });
+      });
+      
+      // Google Setup Form Submission
+      document.getElementById("google-setup-submit").addEventListener("click", () => {
+        const fullName = document.getElementById("google-setup-name").value;
+        const trainingLevel = document.getElementById("google-setup-training-level").value;
+        const accessCode = document.getElementById("google-setup-access-code").value;
+        const agreeDisclaimer = document.getElementById("google-agree-disclaimer").checked;
+        
+        // Validate inputs
+        if (!fullName || !trainingLevel || !accessCode) {
+          const errorEl = document.getElementById("google-setup-error");
+          errorEl.textContent = "All fields are required";
+          errorEl.style.display = "block";
+          return;
+        }
+        
+        if (!agreeDisclaimer) {
+          const errorEl = document.getElementById("google-setup-error");
+          errorEl.textContent = "You must agree to the disclaimer";
+          errorEl.style.display = "block";
+          return;
+        }
+        
+        // Verify access code
+        if (accessCode.trim().toLowerCase() !== REQUIRED_ACCESS_CODE) {
+          const errorEl = document.getElementById("google-setup-error");
+          errorEl.textContent = "Invalid access code";
+          errorEl.style.display = "block";
+          
+          // Delete the user account since they didn't provide the correct access code
+          deleteCurrentUser().then(() => {
+            setTimeout(() => {
+              // After deletion, show the signup modal again
+              showSignupModal();
+              // Clear the error after a delay
+              setTimeout(() => {
+                errorEl.style.display = "none";
+              }, 3000);
+            }, 1500);
+          });
+          return;
+        }
+        
+        // Save the user data
+        const user = auth.currentUser;
+        if (user) {
+          saveGoogleUserData(user.uid, fullName, trainingLevel)
+            .then(() => {
+              // Update display name if needed
+              if (!user.displayName) {
+                updateProfile(user, { displayName: fullName })
+                  .catch(err => console.error("Error updating profile:", err));
+              }
+              
+              // Complete the login process
+              completeLogin(user, fullName);
+            })
+            .catch((error) => {
+              const errorEl = document.getElementById("google-setup-error");
+              errorEl.textContent = error.message;
+              errorEl.style.display = "block";
+            });
+        }
+      });
+      
+      // Helper function to show the Google setup modal
+      function showGoogleSetupModal() {
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const googleSetupModal = document.getElementById('google-setup-modal');
+        
+        // Hide other modals
+        loginModal.classList.remove('active');
+        signupModal.classList.remove('active');
+        loginModal.style.cssText = 'display: none !important';
+        signupModal.style.cssText = 'display: none !important';
+        
+        // Show Google setup modal
+        googleSetupModal.style.display = 'flex';
+        document.getElementById('page-content').classList.add('disabled');
+        
+        // Pre-fill name if available from Google
+        const user = auth.currentUser;
+        if (user && user.displayName) {
+          document.getElementById("google-setup-name").value = user.displayName;
+        }
+        
+        // Add warning text about required access code
+        const accessCodeInput = document.getElementById("google-setup-access-code");
+        if (accessCodeInput && !accessCodeInput.nextElementSibling?.classList.contains('access-code-note')) {
+          const accessCodeNote = document.createElement('p');
+          accessCodeNote.className = 'access-code-note';
+          accessCodeNote.style.fontSize = '0.8em';
+          accessCodeNote.style.color = '#dc3545';
+          accessCodeNote.style.marginTop = '-10px';
+          accessCodeNote.style.textAlign = 'left';
+          accessCodeNote.innerHTML = '<strong>Note:</strong> A valid access code is required to complete registration.';
+          accessCodeInput.parentNode.insertBefore(accessCodeNote, accessCodeInput.nextSibling);
+        }
+      }
+      
+      // Helper function to complete login and hide modals
+      function completeLogin(user, displayName) {
+        localStorage.setItem("hasVisited", "true");
+        
+        // Hide all modals
+        const loginModal = document.getElementById('login-modal');
+        const signupModal = document.getElementById('signup-modal');
+        const devModal = document.getElementById('dev-modal');
+        const googleSetupModal = document.getElementById('google-setup-modal');
+        
+        loginModal.classList.remove('active');
+        signupModal.classList.remove('active');
+        
+        loginModal.style.cssText = 'display: none !important';
+        signupModal.style.cssText = 'display: none !important';
+        devModal.style.cssText = 'display: none !important';
+        googleSetupModal.style.cssText = 'display: none !important';
+        
+        document.getElementById('page-content').classList.remove('disabled');
+        
+        // Update user profile display
+        document.getElementById('user-profile').style.display = 'flex';
+        document.getElementById('user-email').textContent = displayName || user.email;
+        
+        // Scroll to top and show home content
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        renderHomePage();
+      }
+      
+      // IMPROVED cancel-signup-button event listener
+      document.getElementById("cancel-signup-button").addEventListener("click", () => {
+        // First completely hide the signup modal
+        const signupModal = document.getElementById('signup-modal');
+        signupModal.classList.remove('active');
+        signupModal.style.cssText = 'display: none !important';
+        
+        // Short delay before showing login modal
+        setTimeout(() => {
+          showLoginModal();
+        }, 50);
+      });
+      
+      // Login form submission
+      document.getElementById("login-button").addEventListener("click", () => {
+        const email = document.getElementById("login-email").value;
+        const password = document.getElementById("login-password").value;
+        
+        if (!email || !password) {
+          const errorEl = document.getElementById("login-error");
+          errorEl.textContent = "Email and password are required";
+          errorEl.style.display = "block";
+          return;
+        }
+        
+        handleLogin(email, password)
+          .then((userCredential) => {
+            localStorage.setItem("hasVisited", "true");
+            
+            // IMPROVED: Force-hide all modals explicitly
+            const loginModal = document.getElementById('login-modal');
+            const signupModal = document.getElementById('signup-modal');
+            const devModal = document.getElementById('dev-modal');
+            
+            loginModal.classList.remove('active');
+            signupModal.classList.remove('active');
+            
+            loginModal.style.cssText = 'display: none !important';
+            signupModal.style.cssText = 'display: none !important';
+            devModal.style.cssText = 'display: none !important';
+            
+            document.getElementById('page-content').classList.remove('disabled');
+            
+            document.getElementById('user-profile').style.display = 'flex';
+            document.getElementById('user-email').textContent = userCredential.user.email;
+            
+            // Scroll to top and show home content
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            renderHomePage();
+          })
+          .catch((error) => {
+            const errorEl = document.getElementById("login-error");
+            errorEl.textContent = error.message;
+            errorEl.style.display = "block";
+          });
+      });
+      
+      // Sign out
+      document.getElementById('sign-out-button').addEventListener('click', () => {
+        handleSignOut().then(() => {
+          console.log('User signed out');
+          showLoginModal();
+        }).catch((error) => {
+          console.error('Sign out error:', error);
+        });
+      });
+      
+      // Also add keyboard event listener for login
+      document.getElementById("login-password").addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
+          document.getElementById("login-button").click();
+        }
+      });
+      
+      // Also add keyboard event listener for signup
+      document.getElementById("signup-access-code").addEventListener("keyup", (e) => {
+        if (e.key === "Enter") {
+          document.getElementById("signup-button").click();
+        }
+      });
+    });
+  </script>
+
+  <!-- Main JavaScript -->
+  <script>
     // Cookie Helpers
     function setCookie(name, value, days) {
       let expires = "";
@@ -388,6 +1386,7 @@
       }
       document.cookie = name + "=" + (value || "") + expires + "; path=/";
     }
+    
     function getCookie(name) {
       const nameEQ = name + "=";
       const ca = document.cookie.split(';');
@@ -398,210 +1397,1395 @@
       return null;
     }
 
-    // Access Code
-    function checkAccessCode() {
-      const code = document.getElementById('access-code').value.trim().toLowerCase();
-      if (code === 'mountsinai') {
-        setCookie("accessGranted","true",1);
-        document.getElementById('dev-modal').style.display = 'none';
-        document.getElementById('page-content').classList.remove('disabled');
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js')
+          .then(reg => console.log("Service Worker registered"))
+          .catch(err => console.error("Service Worker registration failed:", err));
+      });
+    }
+
+    const BASE_TITLE = "Epilepsy Navigator"; // Define the base title
+
+    // Helper function to scope CSS styles to the section-content div
+    function scopeCSS(cssText, scopeSelector) {
+      // Improved CSS scoping - handles basic selectors and preserves media queries
+      return cssText
+        .replace(/\/\*[\s\S]*?\*\//g, '') // Remove comments
+        .split(/}[\s]*/)
+        .filter(rule => rule.trim())
+        .map(rule => {
+          // Check if it's a media query or keyframe
+          if (rule.includes('@media') || rule.includes('@keyframes') || rule.includes('@supports')) {
+            // For media queries, we need to process the rules inside them
+            const mediaQueryParts = rule.split('{');
+            const mediaQueryDefinition = mediaQueryParts[0] + '{';
+            
+            // Process the rules inside the media query
+            let mediaQueryContent = '';
+            if (mediaQueryParts.length > 1) {
+              const nestedContent = mediaQueryParts.slice(1).join('{');
+              // Recursively scope the nested content
+              mediaQueryContent = scopeCSS(nestedContent + '}', scopeSelector);
+            }
+            
+            return mediaQueryDefinition + mediaQueryContent;
+          }
+          
+          // Process normal CSS rules
+          const parts = rule.split('{');
+          if (parts.length < 2) return rule + '}';
+          
+          const selectors = parts[0].split(',');
+          const scopedSelectors = selectors.map(selector => {
+            selector = selector.trim();
+            if (selector.startsWith('@') || selector === '') {
+              return selector;
+            }
+            return `${scopeSelector} ${selector}`;
+          }).join(', ');
+          
+          return `${scopedSelectors} {${parts[1]}}`;
+        })
+        .join(' ');
+    }
+
+    // Function to initialize the EEG Atlas page
+    function initializeEEGAtlas() {
+      console.log("Auto-initializing EEG Atlas...");
+      
+      // Check if elements exist, if not retry after a brief delay
+      if (!document.getElementById("atlas-list") || !document.getElementById("atlas-search")) {
+        console.log("EEG Atlas elements not found, retrying...");
+        setTimeout(initializeEEGAtlas, 100);
+        return;
+      }
+      
+      // Initialize our enhanced search functionality if it exists
+      if (typeof window.initAtlasPage === 'function') {
+        console.log("Initializing Atlas with enhanced search functionality");
+        window.initAtlasPage();
+        return;
+      }
+      
+      // Fallback to old initialization
+      // Initialize showAllEEG function
+      if (typeof window.showAllEEG === 'function') {
+        window.showAllEEG();
+        // Show a random EEG
+        if (typeof window.showRandomEEG === 'function') {
+          window.showRandomEEG();
+        }
       } else {
-        document.getElementById('code-error').style.display = 'block';
+        // If showAllEEG isn't available, create a temporary implementation
+        console.log("Creating temporary showAllEEG implementation");
+        window.showAllEEG = function() {
+          const allBtn = document.getElementById("all-btn");
+          const favoritesBtn = document.getElementById("favorites-btn");
+          if (allBtn) allBtn.classList.add("active");
+          if (favoritesBtn) favoritesBtn.classList.remove("active");
+          
+          if (typeof window.renderList === 'function' && window.eegData) {
+            window.renderList(window.eegData, false);
+          }
+        };
+        
+        window.showRandomEEG = function() {
+          if (typeof window.renderDetail === 'function' && window.eegData) {
+            const randomIndex = Math.floor(Math.random() * window.eegData.length);
+            window.renderDetail(window.eegData[randomIndex]);
+          }
+        };
+        
+        // Retry with our new functions
+        window.showAllEEG();
+        window.showRandomEEG();
+      }
+      
+      // Initialize search functionality
+      const searchInput = document.getElementById("atlas-search");
+      if (searchInput) {
+        // Trigger a fake input event to initialize the search
+        const event = new Event('input', { bubbles: true });
+        searchInput.dispatchEvent(event);
       }
     }
-    document.getElementById('submit-code').addEventListener('click', checkAccessCode);
-    document.getElementById('access-code').addEventListener('keydown', e => {
-      if (e.key === 'Enter') checkAccessCode();
-    });
-    document.getElementById('cancel-code').addEventListener('click', () => {
-      window.location.href = 'index.html';
-    });
+    
+    // Function to initialize the ILAE Classification page
+    function initializeILAEClassification() {
+      console.log("Auto-initializing ILAE Classification...");
+      
+      // First try to load ILAE-specific elements
+      const contentContainer = document.getElementById("contentContainer");
+      const ilaeCards = document.querySelectorAll(".ilae-card");
+      const searchInput = document.getElementById("searchBar");
+      
+      if (!contentContainer || ilaeCards.length === 0) {
+        console.log("ILAE content not found, retrying...");
+        setTimeout(initializeILAEClassification, 150);
+        return;
+      }
+      
+      console.log("ILAE content found, initializing " + ilaeCards.length + " cards");
 
-    // On Page Load
-    document.addEventListener("DOMContentLoaded", () => {
-      // If user is authorized, hide the modal
-      if (getCookie("accessGranted") === "true") {
-        document.getElementById('dev-modal').style.display = 'none';
-        document.getElementById('page-content').classList.remove('disabled');
+      // Helper function to ensure modal exists
+      function ensureModalExists() {
+        let modal = document.getElementById("modal");
+        if (!modal) {
+          console.log("Modal not found, creating it dynamically");
+          modal = document.createElement("div");
+          modal.id = "modal";
+          modal.className = "modal";
+          modal.innerHTML = `
+            <div class="modal-content">
+              <span class="modal-close">&times;</span>
+              <h2 class="modal-title"></h2>
+              <div class="modal-overview"></div>
+              <div class="modal-eeg"></div>
+              <div id="pdfLinkContainer">
+                <a id="pdfLink" href="" target="_blank">View full PDF</a>
+              </div>
+            </div>
+          `;
+          document.body.appendChild(modal);
+        }
+        return modal;
       }
 
-      // Check for hash to load subpage
-      let page = window.location.hash.substring(1);
-      if (page) {
-        document.getElementById("home-content").style.display = "none";
-        document.getElementById("section-content").style.display = "block";
-        loadPage(page);
-        setDropdownLabel(getTabName(page));
+      // Initialize modal functionality
+      const modal = ensureModalExists();
+      console.log("Setting up ILAE card modal functionality...");
+      
+      // Add click event listeners to each card
+      ilaeCards.forEach((card, index) => {
+        card.addEventListener("click", function() {
+          console.log(`Card ${index + 1} clicked: ${card.getAttribute("data-title")}`);
+          
+          // Extract card data
+          const title = card.getAttribute("data-title");
+          const overview = card.getAttribute("data-summary");
+          const eeg = card.getAttribute("data-eeg");
+          const pdfLink = card.getAttribute("data-pdf");
+          
+          // Populate the modal with card data
+          modal.querySelector(".modal-title").textContent = title;
+          modal.querySelector(".modal-overview").textContent = overview;
+          modal.querySelector(".modal-eeg").textContent = "EEG Findings: " + eeg;
+          
+          // Set PDF link if available
+          const pdfLinkElement = document.getElementById("pdfLink");
+          if (pdfLinkElement && pdfLink) {
+            pdfLinkElement.href = pdfLink;
+          }
+          
+          // Show the modal
+          modal.style.display = "flex";
+        });
+      });
+      
+      // Close modal when clicking close button
+      const modalClose = modal.querySelector(".modal-close");
+      if (modalClose) {
+        modalClose.addEventListener("click", function() {
+          console.log("Modal close button clicked");
+          modal.style.display = "none";
+        });
       } else {
-        renderHomePage();
+        console.warn("Modal close button not found");
       }
-    });
+      
+      // Close modal when clicking outside content
+      modal.addEventListener("click", function(e) {
+        if (e.target === modal) {
+          console.log("Modal background clicked, closing modal");
+          modal.style.display = "none";
+        }
+      });
+      
+      // Initialize filters if available
+      const ageFilter = document.getElementById("age-filter");
+      const typeFilter = document.getElementById("type-filter");
+      const resetFiltersBtn = document.getElementById("reset-filters");
+      
+      if (ageFilter && typeFilter && resetFiltersBtn) {
+        // Setup filter event listeners
+        ageFilter.addEventListener("change", applyFilters);
+        typeFilter.addEventListener("change", applyFilters);
+        resetFiltersBtn.addEventListener("click", resetFilters);
+        
+        function resetFilters() {
+          ageFilter.value = "all";
+          typeFilter.value = "all";
+          applyFilters();
+        }
+        
+        function applyFilters() {
+          const ageValue = ageFilter.value;
+          const typeValue = typeFilter.value;
+          let visibleCount = 0;
+          
+          ilaeCards.forEach(card => {
+            const age = card.getAttribute("data-age") || "";
+            const type = card.getAttribute("data-type") || "";
+            const shouldShow = (ageValue === "all" || age === ageValue) && 
+                               (typeValue === "all" || type === typeValue);
+            
+            card.style.display = shouldShow ? "" : "none";
+            if (shouldShow) visibleCount++;
+          });
+          
+          // Show/hide no results message
+          const noResults = document.getElementById("no-results");
+          if (noResults) {
+            noResults.style.display = visibleCount === 0 ? "block" : "none";
+          }
+        }
+        
+        // Apply filters on load
+        applyFilters();
+      }
+      
+      // Initialize search if available
+      if (searchInput) {
+        console.log("Setting up ILAE search...");
+        searchInput.addEventListener("input", function() {
+          const query = this.value.toLowerCase().trim();
+          
+          // Show all cards if query is empty
+          if (!query) {
+            ilaeCards.forEach(card => card.style.display = "");
+            // Reset filters if they exist
+            if (ageFilter && typeFilter) {
+              applyFilters();
+            }
+            return;
+          }
+          
+          // Otherwise filter by search term
+          let visibleCount = 0;
+          ilaeCards.forEach(card => {
+            const title = (card.getAttribute("data-title") || "").toLowerCase();
+            const summary = (card.getAttribute("data-summary") || "").toLowerCase();
+            const eeg = (card.getAttribute("data-eeg") || "").toLowerCase();
+            const content = card.textContent.toLowerCase();
+            
+            const shouldShow = title.includes(query) || 
+                               summary.includes(query) || 
+                               eeg.includes(query) || 
+                               content.includes(query);
+            
+            card.style.display = shouldShow ? "" : "none";
+            if (shouldShow) visibleCount++;
+          });
+          
+          // Show/hide no results message
+          const noResults = document.getElementById("no-results");
+          if (noResults) {
+            noResults.style.display = visibleCount === 0 ? "block" : "none";
+          }
+        });
+        
+        // Trigger search with empty query to initialize
+        const event = new Event('input', { bubbles: true });
+        searchInput.dispatchEvent(event);
+      }
+      
+      // Initialize the EEGSearch if needed
+      if (window.EEGSearch && typeof window.EEGSearch.init === 'function') {
+        window.EEGSearch.init('ilae');
+      }
+      
+      console.log("ILAE Classification page initialized successfully");
+    }
 
-    // SPA with Hash-based Routing
+    // SPA Routing
     async function loadPage(url) {
       try {
+        // Show loading indicator
+        let loadingIndicator = document.getElementById("loading-indicator");
+        if (loadingIndicator) {
+          loadingIndicator.style.display = "flex";
+        }
+        
+        // Extract the page identifier from the URL
+        const pageIdentifier = url.replace(/\.html$/, '').replace(/^.*\//, '');
+        
+        // Clear previously applied page-specific styles
+        const previousStyles = document.querySelectorAll('style[data-page-styles]');
+        previousStyles.forEach(style => style.remove());
+        
+        // Remove any previously applied page classes from the section-content
+        const sectionContent = document.getElementById("section-content");
+        sectionContent.className = ""; // Reset classes
+        
+        // Add the current page identifier as a class
+        sectionContent.classList.add(`page-${pageIdentifier}`);
+        
         const res = await fetch(url);
         if (!res.ok) throw new Error("HTTP error " + res.status);
         const html = await res.text();
-        document.getElementById("section-content").innerHTML = html;
-        document.getElementById("section-content").querySelectorAll("script").forEach(oldScript => {
-          const newScript = document.createElement("script");
-          if (oldScript.src) {
-            newScript.src = oldScript.src;
+        
+        // Parse the content to extract styles and scripts
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, 'text/html');
+        
+        // Extract and apply styles with page-specific scoping
+        const styles = doc.querySelectorAll('style');
+        styles.forEach(style => {
+          const styleId = `imported-style-${url.replace(/[^a-zA-Z0-9]/g, '-')}`;
+          const existingStyle = document.getElementById(styleId);
+          
+          // Scope CSS to avoid conflicts with main page styles AND add page-specific scope
+          const scopedCSS = scopeCSS(style.textContent, `#section-content.page-${pageIdentifier}`);
+          
+          if (existingStyle) {
+            existingStyle.textContent = scopedCSS;
+            existingStyle.setAttribute('data-page-styles', pageIdentifier);
           } else {
+            const newStyle = document.createElement('style');
+            newStyle.id = styleId;
+            newStyle.textContent = scopedCSS;
+            newStyle.setAttribute('data-page-styles', pageIdentifier);
+            document.head.appendChild(newStyle);
+          }
+        });
+        
+        // Extract and apply external stylesheets
+        const links = doc.querySelectorAll('link[rel="stylesheet"]');
+        links.forEach(link => {
+          const href = link.getAttribute('href');
+          if (href && !document.querySelector(`link[href="${href}"]`)) {
+            const newLink = document.createElement('link');
+            newLink.rel = 'stylesheet';
+            newLink.href = href;
+            document.head.appendChild(newLink);
+          }
+        });
+        
+        // Set the inner HTML (without <head> content to avoid duplications)
+        const content = doc.querySelector('body').innerHTML;
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = content;
+
+        // Remove any title elements that might have been included in the body content
+        const titleElements = tempDiv.querySelectorAll('title');
+        titleElements.forEach(title => title.remove());
+        
+        // Preserve any inline styles by adding a special data attribute
+        const elementWithInlineStyles = tempDiv.querySelectorAll('[style]');
+        elementWithInlineStyles.forEach((el, index) => {
+          el.setAttribute('data-original-style', el.getAttribute('style'));
+        });
+
+        // Add a CSS reset for the #section-content to ensure consistent styling
+        const resetStyle = document.getElementById('section-content-reset');
+        if (!resetStyle) {
+          const style = document.createElement('style');
+          style.id = 'section-content-reset';
+          style.textContent = `
+            #section-content .info-box {
+              background: var(--info-bg);
+              padding: 1.2em;
+              border-radius: 8px;
+              box-shadow: 0 2px 8px var(--shadow-color);
+              margin-bottom: 1.5em;
+              transition: background var(--transition-duration);
+            }
+            #section-content .page-title,
+            #section-content .section-title {
+              text-align: center;
+              margin: 2rem 0;
+              font-size: 2rem;
+              color: var(--primary-color);
+            }
+            #section-content input[type="text"],
+            #section-content input[type="search"] {
+              padding: 8px 12px;
+              border: 1px solid var(--border-color);
+              border-radius: 4px;
+              font-size: 1rem;
+              width: 100%;
+              background: var(--info-bg);
+              color: var(--text-color);
+            }
+            #section-content img {
+              max-width: 100%;
+              height: auto;
+            }
+          `;
+          document.head.appendChild(style);
+        }
+
+        document.getElementById("section-content").innerHTML = tempDiv.innerHTML;
+        
+        // Re-apply inline styles after the content is loaded
+        document.querySelectorAll('[data-original-style]').forEach(el => {
+          el.style.cssText = el.getAttribute('data-original-style');
+        });
+        
+        // Execute any scripts in the content
+        const scripts = document.getElementById("section-content").querySelectorAll("script");
+        scripts.forEach(oldScript => {
+          const newScript = document.createElement("script");
+          
+          // Copy all attributes from the old script to the new one
+          Array.from(oldScript.attributes).forEach(attr => {
+            newScript.setAttribute(attr.name, attr.value);
+          });
+          
+          // Copy the content
+          if (!oldScript.src) {
             newScript.textContent = oldScript.textContent;
           }
-          document.body.appendChild(newScript);
+          
+          // Replace the old script with the new one
+          oldScript.parentNode.replaceChild(newScript, oldScript);
         });
+        
+        // Special processing for certain pages to ensure initialization scripts run
+        if (url.includes('eeg_atlas.html')) {
+          // Add EEG Atlas specific styles
+          const atlasStyle = document.getElementById('eeg-atlas-styles');
+          if (!atlasStyle) {
+            const style = document.createElement('style');
+            style.id = 'eeg-atlas-styles';
+            style.setAttribute('data-page-styles', 'eeg_atlas');
+            style.textContent = `
+              #section-content.page-eeg_atlas #eeg-videos {
+                display: flex;
+                flex-wrap: wrap;
+              }
+              #section-content.page-eeg_atlas .video-list {
+                flex: 1;
+                min-width: 250px;
+              }
+              #section-content.page-eeg_atlas .main-content {
+                flex: 3;
+                min-width: 400px;
+                padding: 20px;
+              }
+              #section-content.page-eeg_atlas #sidebar-buttons {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 0.5rem;
+                margin-bottom: 1rem;
+              }
+              #section-content.page-eeg_atlas .flashcard {
+                cursor: pointer;
+                perspective: 1000px;
+                width: 100%;
+                min-height: 300px;
+              }
+              #section-content.page-eeg_atlas #atlas-list {
+                list-style: none;
+                padding-left: 0;
+                margin-top: 20px;
+              }
+              #section-content.page-eeg_atlas .btn {
+                display: inline-block;
+                padding: 8px 15px;
+                background-color: var(--accent-color);
+                color: white;
+                border: none;
+                border-radius: 4px;
+                cursor: pointer;
+                text-align: center;
+              }
+              #section-content.page-eeg_atlas .btn:hover {
+                background-color: var(--primary-color);
+              }
+              #section-content.page-eeg_atlas .favorite-star {
+                font-size: 1.2em;
+                color: var(--accent-color);
+                margin-left: 10px;
+                cursor: pointer;
+                transition: transform 0.2s ease;
+              }
+            `;
+            document.head.appendChild(style);
+          }
+          
+          setTimeout(function() {
+            initializeEEGAtlas();
+          }, 200); // slightly longer delay to ensure DOM is fully ready
+        }
+        else if (url.includes('eeg_videos.html')) {
+          // Add EEG Videos specific styles
+          const videosStyle = document.getElementById('eeg-videos-styles');
+          if (!videosStyle) {
+            const style = document.createElement('style');
+            style.id = 'eeg-videos-styles';
+            style.setAttribute('data-page-styles', 'eeg_videos');
+            style.textContent = `
+              #section-content.page-eeg_videos #eeg-videos {
+                display: flex;
+                justify-content: space-between;
+                gap: 2rem;
+                width: 100%;
+              }
+              #section-content.page-eeg_videos .video-list {
+                flex: 0 0 280px;
+                min-width: 250px;
+                max-width: 280px;
+                background: var(--info-bg);
+                border-radius: 8px;
+                padding: 1rem;
+                margin-bottom: 1.5rem;
+                box-shadow: 0 2px 4px var(--shadow-color);
+              }
+              #section-content.page-eeg_videos .main-content {
+                flex: 1 1 auto;
+                width: 100%;
+              }
+              
+              /* Hide back-to-videos button on desktop */
+              #section-content.page-eeg_videos .back-to-videos {
+                display: none;
+              }
+              
+              @media (max-width: 768px) {
+                #section-content.page-eeg_videos #eeg-videos {
+                  flex-direction: column;
+                }
+                
+                /* Show back-to-videos button only on mobile */
+                #section-content.page-eeg_videos .back-to-videos {
+                  display: block;
+                  margin: 0.5rem 0 1rem;
+                  width: 100%;
+                  text-align: center;
+                }
+                
+                /* Make video library use full width on mobile */
+                #section-content.page-eeg_videos .video-list {
+                  flex: 1 1 auto;
+                  min-width: 100%;
+                  max-width: 100%;
+                  width: 100%;
+                  padding: 0.75rem;
+                  margin: 0 0 1rem 0;
+                }
+                
+                /* Space the list items more evenly on mobile */
+                #section-content.page-eeg_videos .video-list li {
+                  padding: 12px 8px;
+                  margin-bottom: 8px;
+                }
+              }
+              #section-content.page-eeg_videos .video-list-title {
+                text-align: center;
+                margin-bottom: 1rem;
+                color: var(--primary-color);
+                font-size: 1.3rem;
+                font-weight: 600;
+              }
+              #section-content.page-eeg_videos .video-list ul {
+                list-style: none;
+                padding: 0;
+                margin: 0;
+                display: flex;
+                flex-direction: column;
+                gap: 0.8rem;
+              }
+              
+              #section-content.page-eeg_videos .video-list li {
+                width: 100%;
+                padding: 0.8rem;
+                background: var(--bg-color);
+                border-radius: 6px;
+                cursor: pointer;
+                transition: background-color 0.2s, transform 0.2s;
+                text-align: center;
+                border: 1px solid var(--border-color);
+                color: var(--text-color);
+                font-weight: 500;
+              }
+              
+              #section-content.page-eeg_videos .video-list li:hover {
+                background-color: var(--hover-bg);
+                transform: translateY(-2px);
+                box-shadow: 0 2px 5px var(--shadow-color);
+              }
+              
+              #section-content.page-eeg_videos .video-list li.active {
+                background-color: var(--accent-color);
+                color: white;
+                border-color: var(--accent-color);
+              }
+              
+              #section-content.page-eeg_videos .video-list li.completed {
+                position: relative;
+                background-color: rgba(40, 167, 69, 0.1);
+                border-color: rgba(40, 167, 69, 0.5);
+              }
+              
+              #section-content.page-eeg_videos .video-list li.completed::after {
+                content: "✓";
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #28a745;
+                font-weight: bold;
+              }
+              
+              #section-content.page-eeg_videos .video-list li.quiz-completed {
+                position: relative;
+                background-color: rgba(0, 123, 255, 0.1);
+                border-color: rgba(0, 123, 255, 0.5);
+              }
+              
+              #section-content.page-eeg_videos .video-list li.quiz-completed::after {
+                content: "Q✓";
+                position: absolute;
+                right: 10px;
+                top: 50%;
+                transform: translateY(-50%);
+                color: #007bff;
+                font-weight: bold;
+              }
+            `;
+            document.head.appendChild(style);
+          }
+          
+          // Add script to initialize user progress tracking for EEG videos
+          const progressTrackingScript = document.createElement('script');
+          progressTrackingScript.type = 'module';
+          progressTrackingScript.id = 'video-progress-tracking';
+          progressTrackingScript.textContent = `
+            // Import needed Firebase modules
+            import { getAuth } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-auth.js";
+            import { 
+              getFirestore,
+              doc,
+              setDoc,
+              getDoc,
+              updateDoc,
+              arrayUnion
+            } from "https://www.gstatic.com/firebasejs/9.17.2/firebase-firestore.js";
+            
+            // Get auth and firestore instances
+            const auth = getAuth();
+            const db = getFirestore();
+            
+            // Global variables to track user progress
+            window.userProgress = {
+              completedVideos: [],
+              completedQuizzes: []
+            };
+            
+            // Function to load user progress
+            window.loadUserProgress = async function() {
+              const user = auth.currentUser;
+              if (!user) {
+                console.log('No user logged in to load progress');
+                return;
+              }
+              
+              try {
+                // Get user progress from Firestore
+                const userDocRef = doc(db, "users", user.uid);
+                const userDoc = await getDoc(userDocRef);
+                
+                if (userDoc.exists() && userDoc.data().progress) {
+                  // Store progress data
+                  window.userProgress = userDoc.data().progress || {
+                    completedVideos: [],
+                    completedQuizzes: []
+                  };
+                  
+                  // Update UI to reflect progress
+                  updateProgressUI();
+                  
+                  console.log('User progress loaded', window.userProgress);
+                } else {
+                  // Initialize progress data if it doesn't exist
+                  await updateDoc(userDocRef, {
+                    progress: {
+                      completedVideos: [],
+                      completedQuizzes: []
+                    }
+                  });
+                }
+              } catch (error) {
+                console.error('Error loading user progress:', error);
+              }
+            };
+            
+            // Function to mark video as completed
+            window.markVideoCompleted = async function(videoIndex) {
+              const user = auth.currentUser;
+              if (!user) {
+                console.log('No user logged in to save progress');
+                return;
+              }
+              
+              try {
+                // Only add if not already in the array
+                if (!window.userProgress.completedVideos.includes(videoIndex)) {
+                  window.userProgress.completedVideos.push(videoIndex);
+                  
+                  // Update Firestore
+                  const userDocRef = doc(db, "users", user.uid);
+                  await updateDoc(userDocRef, {
+                    "progress.completedVideos": window.userProgress.completedVideos
+                  });
+                  
+                  // Update UI
+                  updateProgressUI();
+                  
+                  console.log('Video marked as completed:', videoIndex);
+                }
+              } catch (error) {
+                console.error('Error marking video as completed:', error);
+              }
+            };
+            
+            // Function to mark quiz as completed
+            window.markQuizCompleted = async function(quizIndex) {
+              const user = auth.currentUser;
+              if (!user) {
+                console.log('No user logged in to save progress');
+                return;
+              }
+              
+              try {
+                // Only add if not already in the array
+                if (!window.userProgress.completedQuizzes.includes(quizIndex)) {
+                  window.userProgress.completedQuizzes.push(quizIndex);
+                  
+                  // Update Firestore
+                  const userDocRef = doc(db, "users", user.uid);
+                  await updateDoc(userDocRef, {
+                    "progress.completedQuizzes": window.userProgress.completedQuizzes
+                  });
+                  
+                  // Update UI
+                  updateProgressUI();
+                  
+                  console.log('Quiz marked as completed:', quizIndex);
+                }
+              } catch (error) {
+                console.error('Error marking quiz as completed:', error);
+              }
+            };
+            
+            // Function to update UI based on user progress
+            function updateProgressUI() {
+              // Update video list items to show completion status
+              const videoListItems = document.querySelectorAll('#videoList ul li');
+              
+              videoListItems.forEach((item, index) => {
+                // Reset classes
+                item.classList.remove('completed', 'quiz-completed');
+                
+                // Add appropriate classes based on completion status
+                if (window.userProgress.completedVideos.includes(index)) {
+                  item.classList.add('completed');
+                }
+                
+                if (window.userProgress.completedQuizzes.includes(index)) {
+                  item.classList.add('quiz-completed');
+                }
+              });
+              
+              // Update progress display
+              updateProgressDisplay();
+            }
+            
+            // Function to calculate and display overall progress
+            function updateProgressDisplay() {
+              const progressDisplay = document.getElementById('progressDisplay');
+              if (!progressDisplay) return;
+              
+              const totalVideos = window.videoSections ? window.videoSections.length : 10;
+              const completedVideos = window.userProgress.completedVideos.length;
+              const completedQuizzes = window.userProgress.completedQuizzes.length;
+              
+              const videoPercentage = Math.round((completedVideos / totalVideos) * 100);
+              const quizPercentage = Math.round((completedQuizzes / totalVideos) * 100);
+              
+              progressDisplay.innerHTML = \`
+                <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+                  <div>Videos Completed: <strong>\${completedVideos}/\${totalVideos}</strong> (\${videoPercentage}%)</div>
+                  <div>Quizzes Completed: <strong>\${completedQuizzes}/\${totalVideos}</strong> (\${quizPercentage}%)</div>
+                </div>
+                <div style="height:10px; background:#eee; border-radius:5px; overflow:hidden; position:relative;">
+                  <div style="position:absolute; left:0; top:0; height:100%; width:\${videoPercentage}%; background:#28a745; transition:width 0.3s;"></div>
+                </div>
+              \`;
+            }
+            
+            // Monitor auth state changes
+            auth.onAuthStateChanged(user => {
+              if (user) {
+                console.log('User signed in, loading progress...');
+                window.loadUserProgress();
+              } else {
+                console.log('User not signed in');
+                // Reset progress when logged out
+                window.userProgress = {
+                  completedVideos: [],
+                  completedQuizzes: []
+                };
+              }
+            });
+            
+            // Override existing video and quiz completion functions if they exist
+            if (typeof window.videoSections !== 'undefined') {
+              // Keep track of original functions to call them
+              const originalLoadVideo = window.loadVideo;
+              const originalShowQuizResults = window.showQuizResults;
+              
+              // Override loadVideo to add progress tracking
+              window.loadVideo = function() {
+                // Call original function
+                if (originalLoadVideo) originalLoadVideo();
+                
+                // Mark video as watched after 80% of its duration
+                const videoPlayer = document.getElementById('videoPlayer');
+                if (videoPlayer) {
+                  const markVideoAsWatched = () => {
+                    const threshold = videoPlayer.duration * 0.8;
+                    if (videoPlayer.currentTime >= threshold) {
+                      markVideoCompleted(window.currentVideo);
+                      // Remove listener after marking complete
+                      videoPlayer.removeEventListener('timeupdate', markVideoAsWatched);
+                    }
+                  };
+                  
+                  videoPlayer.addEventListener('timeupdate', markVideoAsWatched);
+                }
+              };
+              
+              // Override showQuizResults to add progress tracking
+              window.showQuizResults = function() {
+                // Call original function
+                if (originalShowQuizResults) originalShowQuizResults();
+                
+                // Mark quiz as completed
+                markQuizCompleted(window.currentVideo);
+              };
+            }
+          `;
+          
+          // Only add the script if it doesn't already exist
+          if (!document.getElementById('video-progress-tracking')) {
+            document.head.appendChild(progressTrackingScript);
+          }
+        }
+        else if (url.includes('ilae_classification.html')) {
+          // Add ILAE classification specific styles
+          const ilaeStyle = document.getElementById('ilae-styles');
+          if (!ilaeStyle) {
+            const style = document.createElement('style');
+            style.id = 'ilae-styles';
+            style.setAttribute('data-page-styles', 'ilae_classification');
+            style.textContent = `
+              #section-content.page-ilae_classification .ilae-card {
+                background: var(--info-bg);
+                border-radius: 8px;
+                box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+                padding: 20px;
+                margin-bottom: 20px;
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+                cursor: pointer;
+              }
+              #section-content.page-ilae_classification .ilae-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+              }
+              #section-content.page-ilae_classification .ilae-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+                gap: 20px;
+                margin-top: 1.5rem;
+              }
+              #section-content.page-ilae_classification .search-box {
+                margin-bottom: 2rem;
+                width: 100%;
+              }
+              #section-content.page-ilae_classification #searchBar {
+                width: 100%;
+                padding: 12px 15px;
+                border-radius: 6px;
+                border: 1px solid var(--border-color);
+                font-size: 1rem;
+              }
+              #section-content.page-ilae_classification .section-header {
+                font-size: 1.3rem;
+                font-weight: 600;
+                padding: 1rem 0;
+                cursor: pointer;
+                color: var(--primary-color);
+              }
+              #section-content.page-ilae_classification details {
+                margin-bottom: 1.5rem;
+              }
+              #section-content.page-ilae_classification .cross-ref {
+                cursor: help;
+                border-bottom: 1px dashed var(--accent-color);
+                position: relative;
+              }
+              #section-content.page-ilae_classification .cross-ref .tooltip {
+                visibility: hidden;
+                width: 300px;
+                background-color: var(--info-bg);
+                color: var(--text-color);
+                text-align: left;
+                border-radius: 6px;
+                padding: 10px;
+                position: absolute;
+                z-index: 100;
+                bottom: 125%;
+                left: 50%;
+                margin-left: -150px;
+                opacity: 0;
+                transition: opacity 0.3s;
+                box-shadow: 0 2px 8px var(--shadow-color);
+                border: 1px solid var(--border-color);
+                font-weight: normal;
+                font-size: 0.9rem;
+              }
+              #section-content.page-ilae_classification .cross-ref:hover .tooltip {
+                visibility: visible;
+                opacity: 1;
+              }
+              
+              /* Modal Styles */
+              #section-content.page-ilae_classification .modal {
+                display: none;
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-color: rgba(0, 0, 0, 0.7);
+                z-index: 1000;
+                justify-content: center;
+                align-items: center;
+                padding: 20px;
+              }
+              #section-content.page-ilae_classification .modal-content {
+                background-color: var(--info-bg);
+                border-radius: 8px;
+                max-width: 800px;
+                width: 90%;
+                max-height: 90vh;
+                overflow-y: auto;
+                padding: 30px;
+                position: relative;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+              }
+              #section-content.page-ilae_classification .modal-close {
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                font-size: 28px;
+                cursor: pointer;
+                color: var(--text-color);
+                transition: color 0.2s ease;
+              }
+              #section-content.page-ilae_classification .modal-close:hover {
+                color: var(--accent-color);
+              }
+              #section-content.page-ilae_classification .modal-title {
+                font-size: 1.8rem;
+                margin-bottom: 1rem;
+                color: var(--primary-color);
+              }
+              #section-content.page-ilae_classification .modal-overview {
+                margin-bottom: 1.5rem;
+                line-height: 1.6;
+              }
+              #section-content.page-ilae_classification .modal-eeg {
+                margin-bottom: 1.5rem;
+                padding: 15px;
+                background-color: rgba(0, 0, 0, 0.03);
+                border-radius: 6px;
+                border-left: 4px solid var(--accent-color);
+              }
+              #section-content.page-ilae_classification #pdfLinkContainer {
+                margin-top: 20px;
+                text-align: center;
+              }
+              #section-content.page-ilae_classification #pdfLink {
+                display: inline-block;
+                background-color: var(--accent-color);
+                color: white;
+                padding: 10px 20px;
+                text-decoration: none;
+                border-radius: 4px;
+                transition: background-color 0.2s ease;
+              }
+              #section-content.page-ilae_classification #pdfLink:hover {
+                background-color: var(--primary-color);
+              }
+              
+              /* Filter styles */
+              #section-content.page-ilae_classification .filter-container {
+                display: flex;
+                justify-content: flex-end;
+                gap: 1rem;
+                margin-bottom: 1rem;
+                flex-wrap: wrap;
+              }
+              #section-content.page-ilae_classification .filter-group {
+                display: flex;
+                align-items: center;
+              }
+              #section-content.page-ilae_classification .filter-container label {
+                display: flex;
+                align-items: center;
+                margin-right: 8px;
+                font-weight: 500;
+              }
+              #section-content.page-ilae_classification .filter-dropdown {
+                padding: 8px 12px;
+                border-radius: 4px;
+                border: 1px solid var(--border-color);
+                background-color: var(--info-bg);
+                color: var(--text-color);
+                font-size: 14px;
+                cursor: pointer;
+              }
+              #section-content.page-ilae_classification .filter-dropdown:focus {
+                outline: none;
+                border-color: var(--accent-color);
+                box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+              }
+              #section-content.page-ilae_classification .reset-filters {
+                padding: 8px 12px;
+                border-radius: 4px;
+                border: 1px solid var(--accent-color);
+                background-color: var(--accent-color);
+                color: white;
+                font-size: 14px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+              }
+              #section-content.page-ilae_classification .reset-filters:hover {
+                background-color: var(--primary-color);
+              }
+              #section-content.page-ilae_classification .no-results {
+                padding: 2rem;
+                text-align: center;
+                background-color: var(--info-bg);
+                border-radius: 8px;
+                margin: 1rem 0;
+              }
+            `;
+            document.head.appendChild(style);
+          }
+          
+          // Initialize ILAE content with a slightly longer delay to ensure DOM is fully rendered
+          console.log("Setting up ILAE Classification initialization...");
+          setTimeout(function() {
+            console.log("Delayed ILAE initialization starting...");
+            initializeILAEClassification();
+          }, 300); // slightly longer delay to ensure DOM is fully ready
+        }
+        
+        // Hide loading indicator
+        if (loadingIndicator) {
+          loadingIndicator.style.display = "none";
+        }
       } catch (error) {
         console.error("Error loading page:", error);
         document.getElementById("section-content").innerHTML = "<p>Error loading content.</p>";
+        
+        // Hide loading indicator
+        let loadingIndicator = document.getElementById("loading-indicator");
+        if (loadingIndicator) {
+          loadingIndicator.style.display = "none";
+        }
       }
     }
-    function loadSection(e, url) {
+
+    window.loadSection = function(e, url) {
       e.preventDefault();
       document.getElementById("home-content").style.display = "none";
       document.getElementById("section-content").style.display = "block";
+      const sectionName = getTabName(url);
+      document.title = `${sectionName} - ${BASE_TITLE}`; // Set the title
+      
+      // Show loading indicator
+      let loadingIndicator = document.getElementById("loading-indicator");
+      if (!loadingIndicator) {
+        loadingIndicator = document.createElement("div");
+        loadingIndicator.id = "loading-indicator";
+        loadingIndicator.innerHTML = '<div class="spinner"></div><p>Loading...</p>';
+        loadingIndicator.style.display = "flex";
+        loadingIndicator.style.flexDirection = "column";
+        loadingIndicator.style.alignItems = "center";
+        loadingIndicator.style.justifyContent = "center";
+        loadingIndicator.style.position = "absolute";
+        loadingIndicator.style.top = "0";
+        loadingIndicator.style.left = "0";
+        loadingIndicator.style.width = "100%";
+        loadingIndicator.style.height = "100%";
+        loadingIndicator.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+        loadingIndicator.style.zIndex = "10";
+        document.getElementById("section-content").appendChild(loadingIndicator);
+        
+        // Add spinner style
+        const style = document.createElement("style");
+        style.textContent = `
+          .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: var(--accent-color, #007bff);
+            animation: spin 1s ease-in-out infinite;
+          }
+          @keyframes spin {
+            to { transform: rotate(360deg); }
+          }
+        `;
+        document.head.appendChild(style);
+      } else {
+        loadingIndicator.style.display = "flex";
+      }
+      
+      // Go back to using direct content loading instead of iframe
       loadPage(url);
-      setDropdownLabel(getTabName(url));
+      
+      setDropdownLabel(sectionName);
       window.location.hash = url;
-      // Auto-close the dropdown
       document.getElementById("dropdown-content").classList.remove("show");
     }
-    function renderHomePage() {
-      document.getElementById("section-content").innerHTML = "";
+
+    window.renderHomePage = function() {
+      document.getElementById("section-content").innerHTML = ""; // Clear the iframe
       document.getElementById("home-content").style.display = "block";
       setDropdownLabel("Home");
+      document.title = BASE_TITLE; // Set title for homepage
       window.location.hash = "";
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+
     window.addEventListener("hashchange", () => {
       const page = window.location.hash.substring(1);
       if (page) {
         document.getElementById("home-content").style.display = "none";
         document.getElementById("section-content").style.display = "block";
+        const sectionName = getTabName(page);
+        document.title = `${sectionName} - ${BASE_TITLE}`; // Set title on hash change
+        
+        // Show loading indicator
+        let loadingIndicator = document.getElementById("loading-indicator");
+        if (!loadingIndicator) {
+          loadingIndicator = document.createElement("div");
+          loadingIndicator.id = "loading-indicator";
+          loadingIndicator.innerHTML = '<div class="spinner"></div><p>Loading...</p>';
+          loadingIndicator.style.display = "flex";
+          loadingIndicator.style.flexDirection = "column";
+          loadingIndicator.style.alignItems = "center";
+          loadingIndicator.style.justifyContent = "center";
+          loadingIndicator.style.position = "absolute";
+          loadingIndicator.style.top = "0";
+          loadingIndicator.style.left = "0";
+          loadingIndicator.style.width = "100%";
+          loadingIndicator.style.height = "100%";
+          loadingIndicator.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+          loadingIndicator.style.zIndex = "10";
+          document.getElementById("section-content").appendChild(loadingIndicator);
+        } else {
+          loadingIndicator.style.display = "flex";
+        }
+        
+        // Go back to using direct content loading instead of iframe
         loadPage(page);
-        setDropdownLabel(getTabName(page));
+        
+        setDropdownLabel(sectionName);
       } else {
         renderHomePage();
       }
     });
+
+    // Add this block for initial page load title setting
+    document.addEventListener("DOMContentLoaded", () => {
+      const initialPage = window.location.hash.substring(1);
+      if (initialPage) {
+        const sectionName = getTabName(initialPage);
+        document.title = `${sectionName} - ${BASE_TITLE}`;
+      } else {
+        document.title = BASE_TITLE;
+      }
+      // ... existing DOMContentLoaded code ...
+    });
+
     function getTabName(url) {
       if (url.indexOf("epilepsy_rotation")>-1) return "Epilepsy Rotation";
       if (url.indexOf("seizure_management")>-1) return "Seizure Management";
       if (url.indexOf("ilae_classification")>-1) return "ILAE Classification";
       if (url.indexOf("natus_instructions")>-1) return "Natus & Persyst";
       if (url.indexOf("acns_criteria")>-1) return "ACNS Criteria";
+      if (url.indexOf("eeg_atlas")>-1) return "EEG Atlas";
       if (url.indexOf("eeg_videos")>-1) return "EEG Videos";
       if (url.indexOf("faq")>-1) return "Discussion Forum";
       return "Home";
     }
-    function setDropdownLabel(label) {
+
+    window.setDropdownLabel = function(label) {
       document.querySelector(".dropdown-toggle").textContent = label + " \u25BC";
     }
 
-    // Dark Mode & Font Size
-    function toggleDarkMode() {
+    // UI Toggles
+    window.toggleDarkMode = function() {
       document.body.classList.toggle("dark");
+      localStorage.setItem("darkMode", document.body.classList.contains("dark"));
     }
-    function toggleFontSize() {
+
+    window.toggleFontSize = function() {
       document.body.classList.toggle("large-font");
+      localStorage.setItem("largeFont", document.body.classList.contains("large-font"));
     }
-    function toggleDropdown(e) {
+
+    window.toggleDropdown = function(e) {
       e.preventDefault();
       document.getElementById("dropdown-content").classList.toggle("show");
+    }
+
+    window.closeCopyrightModal = function() {
+      document.getElementById('copyright-modal').style.display = 'none';
+    }
+
+    window.openCopyrightModal = function() {
+      document.getElementById('copyright-modal').style.display = 'flex';
     }
 
     // PWA Install
     let deferredPrompt;
     const installBtn = document.getElementById('installBtn');
-    window.addEventListener('beforeinstallprompt', e => {
-      e.preventDefault();
-      deferredPrompt = e;
+    
+    function isIos() {
+      const userAgent = window.navigator.userAgent.toLowerCase();
+      return /iphone|ipad|ipod/.test(userAgent);
+    }
+    
+    function isInStandaloneMode() {
+      return ('standalone' in window.navigator) && window.navigator.standalone;
+    }
+    
+    if (isIos() && !isInStandaloneMode()) {
       installBtn.style.display = 'block';
-    });
-    installBtn.addEventListener('click', async () => {
-      installBtn.style.display = 'none';
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log("Install prompt outcome:", outcome);
-      deferredPrompt = null;
+      installBtn.addEventListener('click', () => {
+        alert("To install this app on your iOS device, tap the Share icon and then 'Add to Home Screen'.");
+      });
+    } else {
+      window.addEventListener('beforeinstallprompt', e => {
+        e.preventDefault();
+        deferredPrompt = e;
+        installBtn.style.display = 'block';
+      });
+    
+      installBtn.addEventListener('click', async () => {
+        installBtn.style.display = 'none';
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        console.log("Install prompt outcome:", outcome);
+        deferredPrompt = null;
+      });
+    }
+    
+    window.addEventListener('appinstalled', () => {
+      console.log('PWA installed');
     });
 
-    // Auto-close dropdown on link click
+    // Scroll behaviors
+    window.addEventListener("scroll", () => {
+      // Footer visibility
+      const footerBtns = document.querySelector('.footer-btns');
+      const footerCopy = document.querySelector('.footer-copy');
+      const scrollPos = window.innerHeight + window.pageYOffset;
+      const threshold = document.documentElement.scrollHeight - 50;
+      if (scrollPos >= threshold) {
+        footerBtns.style.display = 'inline-flex';
+        footerCopy.style.display = 'block';
+      } else {
+        footerBtns.style.display = 'none';
+        footerCopy.style.display = 'none';
+      }
+      
+      // Header shrink
+      const header = document.getElementById("header");
+      if (window.scrollY > 50) {
+        header.classList.add("shrink");
+      } else {
+        header.classList.remove("shrink");
+      }
+    });
+
+    // Apply saved preferences
+    if (localStorage.getItem("darkMode") === "true") {
+      document.body.classList.add("dark");
+    }
+    
+    if (localStorage.getItem("largeFont") === "true") {
+      document.body.classList.add("large-font");
+    }
+
+    // Check for hash to load subpage on page load
     document.addEventListener("DOMContentLoaded", () => {
+      const page = window.location.hash.substring(1);
+      if (page) {
+        document.getElementById("home-content").style.display = "none";
+        document.getElementById("section-content").style.display = "block";
+        
+        // Show loading indicator
+        const loadingIndicator = document.createElement("div");
+        loadingIndicator.id = "loading-indicator";
+        loadingIndicator.innerHTML = '<div class="spinner"></div><p>Loading...</p>';
+        loadingIndicator.style.display = "flex";
+        loadingIndicator.style.flexDirection = "column";
+        loadingIndicator.style.alignItems = "center";
+        loadingIndicator.style.justifyContent = "center";
+        loadingIndicator.style.position = "absolute";
+        loadingIndicator.style.top = "0";
+        loadingIndicator.style.left = "0";
+        loadingIndicator.style.width = "100%";
+        loadingIndicator.style.height = "100%";
+        loadingIndicator.style.backgroundColor = "rgba(255, 255, 255, 0.8)";
+        loadingIndicator.style.zIndex = "10";
+        document.getElementById("section-content").appendChild(loadingIndicator);
+        
+        // Go back to using direct content loading instead of iframe
+        loadPage(page);
+        
+        setDropdownLabel(getTabName(page));
+      }
+      
+      // Secret game modal handlers
+      document.getElementById('secret-game-trigger').addEventListener('click', () => {
+        document.getElementById('secret-game-modal').style.display = 'flex';
+      });
+      document.getElementById('close-secret-modal').addEventListener('click', () => {
+        document.getElementById('secret-game-modal').style.display = 'none';
+      });
+      document.getElementById('secret-game-modal').addEventListener('click', e => {
+        if (e.target === document.getElementById('secret-game-modal')) {
+          document.getElementById('secret-game-modal').style.display = 'none';
+        }
+      });
+      
+      // Auto-close dropdown on link click
       const dropdownLinks = document.querySelectorAll(".dropdown-content a");
       dropdownLinks.forEach(link => {
         link.addEventListener("click", () => {
           document.getElementById("dropdown-content").classList.remove("show");
         });
       });
-    });
-
-    // Footer Minimization on Scroll
-    document.addEventListener("DOMContentLoaded", () => {
-      window.addEventListener("scroll", () => {
-        const footerBtns = document.querySelector('.footer-btns');
-        const footerCopy = document.querySelector('.footer-copy');
-        const scrollPos = window.innerHeight + window.pageYOffset;
-        const threshold = document.documentElement.scrollHeight - 50;
-        if (scrollPos >= threshold) {
-          footerBtns.style.display = 'inline-flex';
-          footerCopy.style.display = 'block';
-        } else {
-          footerBtns.style.display = 'none';
-          footerCopy.style.display = 'none';
-        }
-      });
-    });
-
-    // Header Shrink on Scroll
-    document.addEventListener("DOMContentLoaded", () => {
-      const header = document.getElementById("header");
-      window.addEventListener("scroll", () => {
-        if (window.scrollY > 50) {
-          header.classList.add("shrink");
-        } else {
-          header.classList.remove("shrink");
-        }
-      });
-    });
-
-    // Secret Game Modal
-    document.getElementById('secret-game-trigger').addEventListener('click', () => {
-      document.getElementById('secret-game-modal').style.display = 'flex';
-    });
-    document.getElementById('close-secret-modal').addEventListener('click', () => {
-      document.getElementById('secret-game-modal').style.display = 'none';
-    });
-    document.getElementById('secret-game-modal').addEventListener('click', e => {
-      if (e.target === document.getElementById('secret-game-modal')) {
-        document.getElementById('secret-game-modal').style.display = 'none';
+      
+      // Footer copyright click
+      const footerCopy = document.querySelector('.footer-copy');
+      if (footerCopy) {
+        footerCopy.style.cursor = 'pointer';
+        footerCopy.addEventListener('click', openCopyrightModal);
       }
     });
-
-// Function to open the copyright modal
-function openCopyrightModal() {
-  document.getElementById('copyright-modal').style.display = 'flex';
-}
-
-// Function to close the modal
-function closeCopyrightModal() {
-  document.getElementById('copyright-modal').style.display = 'none';
-}
-
-// Attach an event listener to the footer copyright text
-document.addEventListener("DOMContentLoaded", function() {
-  const footerCopy = document.querySelector('.footer-copy');
-  if (footerCopy) {
-    // Set the cursor to pointer to indicate it's clickable
-    footerCopy.style.cursor = 'pointer';
-    footerCopy.addEventListener('click', function() {
-      // Open the modal when the footer copy is clicked
-      openCopyrightModal();
-    });
-  }
-});
   </script>
 </body>
 </html>

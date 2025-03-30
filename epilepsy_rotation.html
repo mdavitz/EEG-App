@@ -1,12 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <!-- Link to the shared stylesheet with updated modern styles -->
-  <link rel="stylesheet" href="assets/css/styles.css" />
-  <title>Epilepsy Rotation - EEG Curriculum</title>
-  <style>
+<style>
     /* Modal overlay for EEG Slide Generator */
     .modal-overlay {
       position: fixed;
@@ -14,14 +6,14 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0, 0, 0, 0.6);
+      background: rgba(0, 0, 0, 0.7);
       display: flex;
       justify-content: center;
       align-items: center;
       z-index: 10000;
       animation: fadeIn 0.3s ease-in-out;
       padding: 20px;
-      overflow-y: auto;
+      overflow: hidden; /* Prevent scrolling on the overlay */
     }
     @keyframes fadeIn {
       from { opacity: 0; }
@@ -35,9 +27,11 @@
       box-shadow: 0 4px 8px var(--shadow-color);
       overflow: hidden;
       position: relative;
-      max-height: 80vh;
+      height: auto;
+      max-height: min(680px, 80vh); /* Limit height to fit about 2 slides or 80vh, whichever is smaller */
       display: flex;
       flex-direction: column;
+      margin: auto;
     }
     .modal-close {
       position: absolute;
@@ -48,22 +42,72 @@
       font-size: 1.5rem;
       color: var(--text-color);
       cursor: pointer;
-      z-index: 1;
+      z-index: 10;
     }
     .modal-header {
       background: #f1f1f1;
       color: #333;
-      padding: 20px;
+      padding: 15px 20px;
       text-align: center;
       border-bottom: 1px solid #ddd;
       flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 5;
     }
     .modal-body {
-      padding: 20px;
-      overflow-y: auto;
+      padding: 15px;
+      overflow-y: auto; /* Enable vertical scrolling inside the modal body */
       flex-grow: 1;
+      -webkit-overflow-scrolling: touch; /* Smooth scrolling on mobile */
+    }
+    /* Slide entry styling */
+    .slide-entry {
+      background: rgba(255, 255, 255, 0.5);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+      box-sizing: border-box;
+    }
+    .slide-entry-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .slide-actions {
+      position: sticky;
+      bottom: 0;
+      background: var(--info-bg);
+      padding: 10px 0;
+      margin-top: 12px;
+      border-top: 1px solid #eee;
+      z-index: 5;
+    }
+    /* Visual indicator for scrollable content */
+    .modal-body:after {
+      content: '';
+      display: block;
+      position: absolute;
+      bottom: 60px;
+      left: 0;
+      right: 0;
+      height: 20px;
+      background: linear-gradient(to top, var(--info-bg), transparent);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      z-index: 4;
+    }
+    .modal-body.can-scroll:after {
+      opacity: 1;
     }
     /* Simple styling for the tab buttons */
+    .tab-buttons {
+      text-align: center;
+      margin-bottom: 1.5em;
+    }
     .tab-buttons button {
       padding: 10px 20px;
       margin: 0 10px;
@@ -76,7 +120,20 @@
       transition: background 0.3s ease;
     }
     .tab-buttons button.active {
-      background: #00509e;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+      min-width: 140px;
+    }
+    
+    .tab-buttons button:hover {
+      background: #e9ecef;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+    }
+    
+    .tab-buttons button.active {
+      background: var(--accent-color);
+      color: white;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
     }
     /* Info box styling */
     .info-box {
@@ -88,26 +145,34 @@
     }
     /* Quick Links styling (same for both tabs) */
     .quick-links {
-      margin-bottom: 1em;
+      margin: 0 auto 1.5em;
       text-align: center;
+      padding: 8px 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
     }
-    .quick-links ul {
-      list-style: none;
-      padding: 0;
+    .quick-links a {
+      display: inline-block;
       margin: 0;
-    }
-    .quick-links ul li {
-      display: inline;
-      margin: 0 10px;
-    }
-    .quick-links ul li a {
+      padding: 8px 16px;
       text-decoration: none;
       color: var(--accent-color);
-      font-weight: bold;
+      font-weight: 600;
       cursor: pointer;
+      border: 1px solid var(--accent-color);
+      border-radius: 20px;
+      transition: all 0.2s ease-in-out;
+      background-color: rgba(255, 255, 255, 0.6);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
-    .quick-links ul li a:hover {
-      text-decoration: underline;
+    .quick-links a:hover {
+      background-color: var(--accent-color);
+      color: white;
+      transform: translateY(-1px);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
     }
     /* Optional: style lists inside tables */
     .custom-table ul {
@@ -115,32 +180,75 @@
       padding-left: 1.2em;
       list-style: disc;
     }
+    /* When the modal is open, prevent scrolling on the main body */
+    body.modal-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+    /* Ensure EEG Index Modal has fixed height and is scrollable */
+    /* Assuming the modal has an ID like #eeg-index-modal */
+    #eeg-index-modal .modal-content {
+        max-height: 75vh; /* Adjust as needed - e.g., 75% of viewport height */
+        display: flex;
+        flex-direction: column; /* Important for body scrolling */
+        overflow: hidden; /* Prevent content overflow */
+    }
+
+    #eeg-index-modal .modal-body {
+        overflow-y: auto; /* Enable vertical scrolling ONLY for the body */
+        flex-grow: 1;     /* Allow body to fill available space */
+        padding: 15px;    /* Maintain padding */
+        /* Add some extra bottom padding if footer overlaps */
+        padding-bottom: 30px;
+    }
+
+    /* Styles for the modal likely opened by openEEGIndexApp */
+    /* Apply general modal scrolling rules if specific ID isn't used */
+    .eeg-index-modal-class .modal-content { /* Use a class if ID is unknown */
+        max-height: 75vh;
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .eeg-index-modal-class .modal-body {
+        overflow-y: auto;
+        flex-grow: 1;
+        padding: 15px;
+        padding-bottom: 30px;
+    }
+
   @media (max-width: 480px) {
-    .modal-content {
+    .modal-content,
+    #eeg-index-modal .modal-content,
+    .eeg-index-modal-class .modal-content { /* Apply to mobile */
       width: 95%;
       margin: 10px 0;
-      max-height: 85vh;
+      max-height: 85vh; /* Slightly more height on mobile */
     }
   }
   </style>
-</head>
-<body>
+
   <div class="container" id="epilepsy-rotation">
     <h2 class="page-title">Epilepsy Rotation</h2>
     <!-- Tab Buttons -->
-    <div class="tab-buttons" style="text-align:center; margin-bottom:1.5em;">
-      <button id="residents-btn" class="btn active" onclick="showTab('residents')">For Residents</button>
-      <button id="fellows-btn" class="btn" onclick="showTab('fellows')">For Fellows</button>
+    <div class="tab-buttons" style="display: flex; justify-content: center; width: 100%; margin-bottom: 2em;">
+      <button id="residents-btn" class="btn active" onclick="showTab('residents')" style="background-color: #0d6efd; color: white; margin: 0 8px; min-width: 140px; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">For Residents</button>
+      <button id="fellows-btn" class="btn" onclick="showTab('fellows')" style="background-color: #f8f9fa; color: #212529; margin: 0 8px; min-width: 140px; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">For Fellows</button>
     </div>
 
     <!-- Residents Tab Content -->
     <div id="residents-tab">
       <!-- Quick Links for Residents -->
-      <div class="quick-links">
-        <ul>
-          <li><a href="#residents-rotation" onclick="switchToTabAndScroll('residents', 'residents-rotation'); return false;">Rotation Schedule</a></li>
-          <li><a href="#residents-teaching" onclick="switchToTabAndScroll('residents', 'residents-teaching'); return false;">Teaching Rounds</a></li>
-        </ul>
+      <div class="quick-links" style="display: flex; justify-content: center; width: 100%; text-align: center;">
+        <div style="display: inline-flex; justify-content: center; gap: 10px;">
+          <a href="#residents-rotation" onclick="switchToTabAndScroll('residents', 'residents-rotation'); return false;">Rotation Schedule</a>
+          <a href="#residents-teaching" onclick="switchToTabAndScroll('residents', 'residents-teaching'); return false;">Teaching Rounds</a>
+        </div>
       </div>
       <!-- Daily Expectations & Goals Section -->
       <div class="info-box" id="residents-daily">
@@ -312,12 +420,12 @@
     <!-- Fellows Tab Content with Single Info Boxes for Each Category -->
     <div id="fellows-tab" style="display: none;">
       <!-- Quick Links for Fellows -->
-      <div class="quick-links">
-        <ul>
-          <li><a href="#fellows-inpatient" onclick="switchToTabAndScroll('fellows', 'fellows-inpatient'); return false;">Inpatient</a></li>
-          <li><a href="#fellows-outpatient" onclick="switchToTabAndScroll('fellows', 'fellows-outpatient'); return false;">Outpatient</a></li>
-          <li><a href="#fellows-pediatric" onclick="switchToTabAndScroll('fellows', 'fellows-pediatric'); return false;">Pediatric</a></li>
-        </ul>
+      <div class="quick-links" style="display: flex; justify-content: center; width: 100%; text-align: center;">
+        <div style="display: inline-flex; justify-content: center; gap: 10px;">
+          <a href="#fellows-inpatient" onclick="switchToTabAndScroll('fellows', 'fellows-inpatient'); return false;">Inpatient</a>
+          <a href="#fellows-outpatient" onclick="switchToTabAndScroll('fellows', 'fellows-outpatient'); return false;">Outpatient</a>
+          <a href="#fellows-pediatric" onclick="switchToTabAndScroll('fellows', 'fellows-pediatric'); return false;">Pediatric</a>
+        </div>
       </div>
 
       <!-- Daily Expectations & Goals Section -->
@@ -628,50 +736,110 @@
     // EEG Slide Generator Popup function
     function openEEGIndexApp(e) {
       if (e) e.preventDefault();
+      
+      // Store current scroll position
+      const scrollY = window.scrollY;
+      
+      // Add modal-open class to body to prevent background scrolling
+      document.body.classList.add('modal-open');
+      
+      // Apply the scroll position as a negative top margin to maintain visual position
+      document.body.style.top = `-${scrollY}px`;
+      
+      // Create modal overlay with proper dimming effect
       const modalOverlay = document.createElement("div");
       modalOverlay.className = "modal-overlay";
+      modalOverlay.style.position = "fixed";
+      modalOverlay.style.top = "0";
+      modalOverlay.style.left = "0";
+      modalOverlay.style.right = "0";
+      modalOverlay.style.bottom = "0";
+      modalOverlay.style.display = "flex";
+      modalOverlay.style.justifyContent = "center";
+      modalOverlay.style.alignItems = "center";
+      modalOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.7)"; // Set overlay background with opacity
+      modalOverlay.style.zIndex = "10000";
+      
+      // Close modal and remove modal-open class on background click
       modalOverlay.addEventListener("click", function(event) {
         if (event.target === modalOverlay) {
-          modalOverlay.remove();
+          closeModal(scrollY);
         }
       });
+      
       const modalContent = document.createElement("div");
       modalContent.className = "modal-content";
+      
       const closeButton = document.createElement("button");
       closeButton.className = "modal-close";
       closeButton.innerHTML = "&times;";
-      closeButton.addEventListener("click", () => modalOverlay.remove());
+      
+      // Remove modal-open class when closing modal with the X button
+      closeButton.addEventListener("click", () => {
+        closeModal(scrollY);
+      });
+      
       modalContent.innerHTML = `
   <div class="modal-header">
-    <h2 style="font-size: 26px; margin: 0;">EEG Slide Generator</h2>
+    <h2 style="font-size: 24px; margin: 0;">EEG Slide Generator</h2>
   </div>
   <div class="modal-body">
     <form id="slideForm">
-      <label for="fullName" style="font-size: 20px; margin-top: 15px; display: block;">Full Name:</label>
-      <input type="text" id="fullName" placeholder="Enter your full name" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
-      <label for="residency" style="font-size: 20px; margin-top: 15px; display: block;">Residency Program:</label>
-      <input type="text" id="residency" placeholder="e.g. PGY-2 Neurology" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
+      <div style="margin-bottom: 15px;">
+        <label for="fullName" style="font-size: 16px; display: block; font-weight: 500;">Full Name:</label>
+        <input type="text" id="fullName" placeholder="Enter your full name" required 
+               style="width: 100%; padding: 8px 10px; font-size: 15px; border: 1px solid var(--border-color); 
+               border-radius: 4px; margin-top: 4px; box-sizing: border-box;">
+      </div>
+      
+      <div style="margin-bottom: 15px;">
+        <label for="residency" style="font-size: 16px; display: block; font-weight: 500;">Residency Program:</label>
+        <input type="text" id="residency" placeholder="e.g. PGY-2 Neurology" required 
+               style="width: 100%; padding: 8px 10px; font-size: 15px; border: 1px solid var(--border-color); 
+               border-radius: 4px; margin-top: 4px; box-sizing: border-box;">
+      </div>
       
       <div id="slideEntries">
         <div class="slide-entry" data-index="0">
-          <hr style="margin: 20px 0; border: none; border-top: 1px dashed #ccc;">
-          <h3 style="margin-top: 15px;">Slide 1</h3>
-          <label for="eegFinding_0" style="font-size: 20px; margin-top: 15px; display: block;">EEG Finding:</label>
-          <input type="text" id="eegFinding_0" placeholder="Enter the EEG finding" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
-          <label for="oneLiner_0" style="font-size: 20px; margin-top: 15px; display: block;">One Liner:</label>
-          <input type="text" id="oneLiner_0" placeholder="Enter a one-liner summary/teaching point" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
-          <label for="eegImage_0" style="font-size: 20px; margin-top: 15px; display: block;">Upload EEG Screenshot:</label>
-          <input type="file" id="eegImage_0" accept="image/*" required style="width: 100%; padding: 14px; font-size: 20px;">
+          <div class="slide-entry-header">
+            <h3 style="margin: 0; font-size: 16px; color: var(--primary-color);">Slide 1</h3>
+          </div>
+          
+          <div style="margin-bottom: 10px;">
+            <label for="eegFinding_0" style="font-size: 15px; display: block; font-weight: 500;">EEG Finding:</label>
+            <input type="text" id="eegFinding_0" placeholder="Enter the EEG finding" required 
+                   style="width: 100%; padding: 8px 10px; font-size: 15px; border: 1px solid var(--border-color); 
+                   border-radius: 4px; margin-top: 4px; box-sizing: border-box;">
+          </div>
+          
+          <div style="margin-bottom: 10px;">
+            <label for="oneLiner_0" style="font-size: 15px; display: block; font-weight: 500;">One Liner:</label>
+            <input type="text" id="oneLiner_0" placeholder="Enter a one-liner summary/teaching point" required 
+                   style="width: 100%; padding: 8px 10px; font-size: 15px; border: 1px solid var(--border-color); 
+                   border-radius: 4px; margin-top: 4px; box-sizing: border-box;">
+          </div>
+          
+          <div>
+            <label for="eegImage_0" style="font-size: 15px; display: block; font-weight: 500;">Upload EEG Screenshot:</label>
+            <input type="file" id="eegImage_0" accept="image/*" required 
+                   style="width: 100%; padding: 5px 0; font-size: 15px; box-sizing: border-box;">
+          </div>
         </div>
       </div>
       
-      <div style="display: flex; justify-content: space-between; margin-top: 20px;">
-        <button type="button" onclick="addSlideEntry()" style="padding: 14px; font-size: 18px; background: #4CAF50; color: #fff; border: none; border-radius: 4px; cursor: pointer; width: 48%;">
-          <i class="fa fa-plus"></i> Add Another Slide
-        </button>
-        <button type="button" onclick="generateMultipleSlides()" style="padding: 14px; font-size: 18px; background: var(--accent-color); color: #fff; border: none; border-radius: 4px; cursor: pointer; width: 48%;">
-          Generate Presentation
-        </button>
+      <div class="slide-actions">
+        <div style="display: flex; justify-content: space-between; gap: 10px;">
+          <button type="button" onclick="addSlideEntry()" 
+                  style="padding: 8px 10px; font-size: 15px; background: #4CAF50; color: #fff; 
+                  border: none; border-radius: 4px; cursor: pointer; flex: 1;">
+            <i class="fa fa-plus"></i> Add Another Slide
+          </button>
+          <button type="button" onclick="generateMultipleSlides()" 
+                  style="padding: 8px 10px; font-size: 15px; background: var(--accent-color); color: #fff; 
+                  border: none; border-radius: 4px; cursor: pointer; flex: 1;">
+            Generate Presentation
+          </button>
+        </div>
       </div>
     </form>
   </div>
@@ -679,6 +847,96 @@
       modalContent.prepend(closeButton);
       modalOverlay.appendChild(modalContent);
       document.body.appendChild(modalOverlay);
+      
+      // Get user information from Firebase and autofill form fields
+      if (typeof firebase !== 'undefined') {
+        console.log("Firebase detected, attempting to get user info");
+        try {
+          // Get the current user (assuming already logged in)
+          const user = firebase.auth().currentUser;
+          
+          if (user) {
+            console.log("User is signed in:", user.uid);
+            // User is already signed in
+            getUserDataAndFill(user);
+          } else {
+            // Wait for auth state to change
+            console.log("Waiting for auth state change");
+            firebase.auth().onAuthStateChanged(function(user) {
+              if (user) {
+                console.log("User signed in via state change:", user.uid);
+                getUserDataAndFill(user);
+              } else {
+                console.log("No user is signed in");
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error accessing Firebase auth:", error);
+        }
+      } else {
+        console.warn("Firebase is not defined - autofill not available");
+      }
+      
+      // Helper function to get user data and fill the form
+      function getUserDataAndFill(user) {
+        try {
+          const db = firebase.firestore();
+          console.log("Fetching user document from Firestore");
+          
+          db.collection("users").doc(user.uid).get()
+            .then((doc) => {
+              if (doc.exists) {
+                console.log("User document found");
+                const userData = doc.data();
+                console.log("User data:", userData);
+                
+                // Autofill form fields with user data if available
+                const fullNameInput = document.getElementById('fullName');
+                const residencyInput = document.getElementById('residency');
+                
+                // Try multiple possible field names for name
+                if (fullNameInput) {
+                  const nameValue = 
+                    userData.displayName || 
+                    userData.fullName || 
+                    userData.name || 
+                    user.displayName;
+                    
+                  if (nameValue) {
+                    console.log("Setting name to:", nameValue);
+                    fullNameInput.value = nameValue;
+                  } else {
+                    console.log("No name field found in user data");
+                  }
+                }
+                
+                // Try multiple possible field names for training level
+                if (residencyInput) {
+                  const trainingValue = 
+                    userData.trainingLevel || 
+                    userData.residencyProgram || 
+                    userData.residency || 
+                    userData.training;
+                    
+                  if (trainingValue) {
+                    console.log("Setting training level to:", trainingValue);
+                    residencyInput.value = trainingValue;
+                  } else {
+                    console.log("No training level field found in user data");
+                  }
+                }
+              } else {
+                console.log("No user document found in Firestore");
+              }
+            })
+            .catch((error) => {
+              console.error("Error getting user data from Firestore:", error);
+            });
+        } catch (error) {
+          console.error("Error in getUserDataAndFill:", error);
+        }
+      }
     }
     
     // Variable to keep track of the number of slide entries
@@ -695,22 +953,63 @@
       newEntry.dataset.index = newIndex;
       
       newEntry.innerHTML = `
-        <hr style="margin: 20px 0; border: none; border-top: 1px dashed #ccc;">
-        <div style="display: flex; justify-content: space-between; align-items: center;">
-          <h3 style="margin-top: 15px;">Slide ${slideEntriesCount}</h3>
-          <button type="button" onclick="removeSlideEntry(${newIndex})" style="background: #ff5252; color: white; border: none; border-radius: 4px; padding: 5px 10px; cursor: pointer;">
+        <div class="slide-entry-header">
+          <h3 style="margin: 0; font-size: 16px; color: var(--primary-color);">Slide ${slideEntriesCount}</h3>
+          <button type="button" onclick="removeSlideEntry(${newIndex})" 
+                  style="background: #ff5252; color: white; border: none; border-radius: 4px; 
+                  padding: 4px 8px; cursor: pointer; font-size: 13px;">
             <i class="fa fa-trash"></i> Remove
           </button>
         </div>
-        <label for="eegFinding_${newIndex}" style="font-size: 20px; margin-top: 15px; display: block;">EEG Finding:</label>
-        <input type="text" id="eegFinding_${newIndex}" placeholder="Enter the EEG finding" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
-        <label for="oneLiner_${newIndex}" style="font-size: 20px; margin-top: 15px; display: block;">One Liner:</label>
-        <input type="text" id="oneLiner_${newIndex}" placeholder="Enter a one-liner summary/teaching point" required style="width: 100%; padding: 14px; font-size: 20px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px;">
-        <label for="eegImage_${newIndex}" style="font-size: 20px; margin-top: 15px; display: block;">Upload EEG Screenshot:</label>
-        <input type="file" id="eegImage_${newIndex}" accept="image/*" required style="width: 100%; padding: 14px; font-size: 20px;">
+        
+        <div style="margin-bottom: 10px;">
+          <label for="eegFinding_${newIndex}" style="font-size: 15px; display: block; font-weight: 500;">EEG Finding:</label>
+          <input type="text" id="eegFinding_${newIndex}" placeholder="Enter the EEG finding" required 
+                 style="width: 100%; padding: 8px 10px; font-size: 15px; border: 1px solid var(--border-color); 
+                 border-radius: 4px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+        
+        <div style="margin-bottom: 10px;">
+          <label for="oneLiner_${newIndex}" style="font-size: 15px; display: block; font-weight: 500;">One Liner:</label>
+          <input type="text" id="oneLiner_${newIndex}" placeholder="Enter a one-liner summary/teaching point" required 
+                 style="width: 100%; padding: 8px 10px; font-size: 15px; border: 1px solid var(--border-color); 
+                 border-radius: 4px; margin-top: 4px; box-sizing: border-box;">
+        </div>
+        
+        <div>
+          <label for="eegImage_${newIndex}" style="font-size: 15px; display: block; font-weight: 500;">Upload EEG Screenshot:</label>
+          <input type="file" id="eegImage_${newIndex}" accept="image/*" required 
+                 style="width: 100%; padding: 5px 0; font-size: 15px; box-sizing: border-box;">
+        </div>
       `;
       
       slideEntries.appendChild(newEntry);
+      
+      // Add visual indicator when there are more than 2 slides
+      const modalBody = document.querySelector('.modal-body');
+      if (slideEntriesCount > 2 && modalBody) {
+        modalBody.classList.add('can-scroll');
+      }
+      
+      // Wait for DOM update then scroll to the newly added slide
+      setTimeout(() => {
+        // Get the modal body for scrolling
+        if (modalBody) {
+          // Calculate position to scroll - the bottom of the modal body minus some padding
+          modalBody.scrollTop = modalBody.scrollHeight;
+          
+          // Check if scrolling is needed and update visual indicator
+          if (modalBody.scrollHeight > modalBody.clientHeight) {
+            modalBody.classList.add('can-scroll');
+          } else {
+            modalBody.classList.remove('can-scroll');
+          }
+        }
+        
+        // Focus on the first input of the new slide for better UX
+        const firstInput = document.getElementById(`eegFinding_${newIndex}`);
+        if (firstInput) firstInput.focus();
+      }, 50);
     }
     
     // Function to remove a slide entry
@@ -721,6 +1020,18 @@
       if (entryToRemove && slideEntries.children.length > 1) {
         slideEntries.removeChild(entryToRemove);
         updateSlideNumbers();
+        slideEntriesCount--;
+        
+        // Update scroll indicator
+        const modalBody = document.querySelector('.modal-body');
+        if (modalBody) {
+          // Check if scrolling is still needed after removal
+          setTimeout(() => {
+            if (slideEntriesCount <= 2 || modalBody.scrollHeight <= modalBody.clientHeight) {
+              modalBody.classList.remove('can-scroll');
+            }
+          }, 50);
+        }
       } else if (slideEntries.children.length <= 1) {
         alert("You must have at least one slide entry.");
       }
@@ -747,18 +1058,9 @@
         return;
       }
       
-      // Create progress indicator
-      const modalBody = document.querySelector('.modal-body');
-      const progressDiv = document.createElement('div');
-      progressDiv.innerHTML = '<p style="text-align: center;">Creating your PowerPoint presentation... Please wait.</p>';
-      progressDiv.id = 'slideProgress';
-      modalBody.appendChild(progressDiv);
-      
-      // Create a new presentation
-      let pptx = new PptxGenJS();
-      let slideEntries = document.querySelectorAll('.slide-entry');
-      let entriesProcessed = 0;
-      let slidePromises = [];
+      // Check all slide entries for completeness
+      let allSlidesComplete = true;
+      const slideEntries = document.querySelectorAll('.slide-entry');
       
       slideEntries.forEach((entry, index) => {
         const entryIndex = entry.dataset.index;
@@ -768,10 +1070,53 @@
         const file = fileInput.files[0];
         
         if (!eegFinding || !oneLiner || !file) {
-          alert(`Please fill in all fields for Slide ${index + 1}.`);
-          progressDiv.remove();
+          allSlidesComplete = false;
+          entry.style.borderColor = "#ff5252";
           return;
+        } else {
+          entry.style.borderColor = "var(--border-color)";
         }
+      });
+      
+      if (!allSlidesComplete) {
+        alert("Please complete all required fields in the highlighted slides.");
+        return;
+      }
+      
+      // Disable form elements during processing
+      document.querySelectorAll('#slideForm input, #slideForm button').forEach(el => {
+        el.disabled = true;
+      });
+      
+      // Create progress indicator
+      const progressDiv = document.createElement('div');
+      progressDiv.id = 'slideProgress';
+      progressDiv.style.position = 'sticky';
+      progressDiv.style.bottom = '70px';
+      progressDiv.style.backgroundColor = '#fff9c4';
+      progressDiv.style.padding = '10px';
+      progressDiv.style.borderRadius = '4px';
+      progressDiv.style.margin = '15px 0 5px 0';
+      progressDiv.style.textAlign = 'center';
+      progressDiv.style.fontWeight = 'bold';
+      progressDiv.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+      progressDiv.style.zIndex = '6';
+      progressDiv.innerHTML = '<p style="margin: 0;">Creating your PowerPoint presentation... Please wait.</p>';
+      
+      const slideActionsDiv = document.querySelector('.slide-actions');
+      slideActionsDiv.insertBefore(progressDiv, slideActionsDiv.firstChild);
+      
+      // Create a new presentation
+      let pptx = new PptxGenJS();
+      let entriesProcessed = 0;
+      let slidePromises = [];
+      
+      slideEntries.forEach((entry, index) => {
+        const entryIndex = entry.dataset.index;
+        const eegFinding = document.getElementById(`eegFinding_${entryIndex}`).value;
+        const oneLiner = document.getElementById(`oneLiner_${entryIndex}`).value;
+        const fileInput = document.getElementById(`eegImage_${entryIndex}`);
+        const file = fileInput.files[0];
         
         // Create a promise for each slide
         const slidePromise = new Promise((resolve, reject) => {
@@ -790,7 +1135,7 @@
               slide.addNotes(`Presented by: ${fullName} (${residency})\nOne Liner: ${oneLiner}`);
               
               entriesProcessed++;
-              progressDiv.innerHTML = `<p style="text-align: center;">Processed ${entriesProcessed} of ${slideEntries.length} slides...</p>`;
+              progressDiv.innerHTML = `<p style="margin: 0;">Processed ${entriesProcessed} of ${slideEntries.length} slides...</p>`;
               
               resolve();
             } catch (error) {
@@ -813,21 +1158,44 @@
         .then(() => {
           pptx.writeFile({ fileName: "EEG_Presentation.pptx" })
             .then(() => {
-              progressDiv.remove();
-              alert(`Successfully created presentation with ${entriesProcessed} slides!`);
-              const modalOverlay = document.querySelector('.modal-overlay');
-              if (modalOverlay) modalOverlay.remove();
+              progressDiv.style.backgroundColor = '#e8f5e9';
+              progressDiv.innerHTML = `<p style="margin: 0; color: #2e7d32;">Successfully created presentation with ${entriesProcessed} slides!</p>`;
+              
+              // Re-enable form elements
+              document.querySelectorAll('#slideForm input, #slideForm button').forEach(el => {
+                el.disabled = false;
+              });
+              
+              // Automatically close after success (optional)
+              setTimeout(() => {
+                const modalOverlay = document.querySelector('.modal-overlay');
+                if (modalOverlay) {
+                  // Get the scroll position from the body's top style
+                  const scrollY = parseInt(document.body.style.top || '0') * -1;
+                  closeModal(scrollY);
+                }
+              }, 3000);
             })
             .catch(error => {
-              progressDiv.remove();
-              alert("Error generating presentation. Check console for details.");
+              progressDiv.style.backgroundColor = '#ffebee';
+              progressDiv.innerHTML = `<p style="margin: 0; color: #c62828;">Error generating presentation. Please try again.</p>`;
               console.error("Error generating presentation:", error);
+              
+              // Re-enable form elements
+              document.querySelectorAll('#slideForm input, #slideForm button').forEach(el => {
+                el.disabled = false;
+              });
             });
         })
         .catch(error => {
-          progressDiv.remove();
-          alert("Error processing slides. Check console for details.");
+          progressDiv.style.backgroundColor = '#ffebee';
+          progressDiv.innerHTML = `<p style="margin: 0; color: #c62828;">Error processing slides. Please try again.</p>`;
           console.error("Error processing slides:", error);
+          
+          // Re-enable form elements
+          document.querySelectorAll('#slideForm input, #slideForm button').forEach(el => {
+            el.disabled = false;
+          });
         });
     }
     
@@ -856,8 +1224,9 @@
           pptx.writeFile({ fileName: "EEG_Slide.pptx" })
             .then(() => {
               alert("Complete!");
-              const modalOverlay = document.querySelector('.modal-overlay');
-              if (modalOverlay) modalOverlay.remove();
+              // Get the scroll position from the body's top style
+              const scrollY = parseInt(document.body.style.top || '0') * -1;
+              closeModal(scrollY);
             })
             .catch(error => {
               alert("Error generating slide. Check console for details.");
@@ -877,8 +1246,9 @@
         pptx.writeFile({ fileName: "EEG_Slide.pptx" })
           .then(() => {
             alert("Complete!");
-            const modalOverlay = document.querySelector('.modal-overlay');
-            if (modalOverlay) modalOverlay.remove();
+            // Get the scroll position from the body's top style
+            const scrollY = parseInt(document.body.style.top || '0') * -1;
+            closeModal(scrollY);
           })
           .catch(error => {
             alert("Error generating slide. Check console for details.");
@@ -888,18 +1258,66 @@
     
     // Function to toggle between Residents and Fellows tabs
     function showTab(tab) {
+      const residentBtn = document.getElementById('residents-btn');
+      const fellowBtn = document.getElementById('fellows-btn');
+      const activeStyle = {
+        backgroundColor: '#0d6efd',
+        color: 'white',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
+      };
+      const inactiveStyle = {
+        backgroundColor: '#f8f9fa',
+        color: '#212529',
+        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
+      };
+
       if (tab === 'residents') {
         document.getElementById('residents-tab').style.display = 'block';
         document.getElementById('fellows-tab').style.display = 'none';
-        document.getElementById('residents-btn').classList.add('active');
-        document.getElementById('fellows-btn').classList.remove('active');
+        
+        // Update button styles
+        Object.assign(residentBtn.style, {
+          backgroundColor: activeStyle.backgroundColor,
+          color: activeStyle.color,
+          boxShadow: activeStyle.boxShadow
+        });
+        Object.assign(fellowBtn.style, {
+          backgroundColor: inactiveStyle.backgroundColor,
+          color: inactiveStyle.color,
+          boxShadow: inactiveStyle.boxShadow
+        });
       } else {
         document.getElementById('residents-tab').style.display = 'none';
         document.getElementById('fellows-tab').style.display = 'block';
-        document.getElementById('fellows-btn').classList.add('active');
-        document.getElementById('residents-btn').classList.remove('active');
+        
+        // Update button styles
+        Object.assign(fellowBtn.style, {
+          backgroundColor: activeStyle.backgroundColor,
+          color: activeStyle.color,
+          boxShadow: activeStyle.boxShadow
+        });
+        Object.assign(residentBtn.style, {
+          backgroundColor: inactiveStyle.backgroundColor,
+          color: inactiveStyle.color,
+          boxShadow: inactiveStyle.boxShadow
+        });
       }
+    }
+
+    // Function to close modal and restore scroll position
+    function closeModal(scrollY) {
+      // Remove modal-open class
+      document.body.classList.remove('modal-open');
+      
+      // Reset the body position
+      document.body.style.top = '';
+      
+      // Remove the modal overlay
+      const modalOverlay = document.querySelector('.modal-overlay');
+      if (modalOverlay) modalOverlay.remove();
+      
+      // Restore scroll position
+      window.scrollTo(0, scrollY);
     }
   </script>
 </body>
-</html>

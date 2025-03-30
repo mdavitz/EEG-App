@@ -1,10 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <title>EEG Atlas</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link rel="stylesheet" href="assets/css/styles.css" />
+<title>EEG Atlas</title>
   <style>
     /* Uniform button sizing for all buttons using the btn class */
     .btn {
@@ -19,6 +13,25 @@
       grid-template-columns: repeat(2, 1fr);
       gap: 0.5rem;
       margin-bottom: 1rem;
+      max-width: 600px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* Video list styling */
+    .video-list {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    
+    /* EEG videos container */
+    #eeg-videos {
+      display: flex;
+      justify-content: space-between;
+      gap: 2rem;
+      width: 100%;
     }
     
     /* Base media query for mid-sized screens */
@@ -55,6 +68,29 @@
       #atlas-list li {
         padding: 0.6em 0;
       }
+    }
+    
+    /* Search and filter styles */
+    .search-container {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .search-box {
+      width: 100%;
+      max-width: 600px;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 15px;
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+      font-size: 1rem;
+      background: var(--info-bg);
+      color: var(--text-color);
     }
     
     /* Styles for favorite star (used in detail view) */
@@ -162,35 +198,91 @@
       margin-top: 10px;
       font-size: 24px;
     }
+    /* Atlas list styling */
+    #atlas-list {
+      list-style: none; 
+      padding-left: 0;
+      max-width: 600px;
+      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    
+    /* Main content styling */
+    .main-content {
+      flex: 1;
+      min-width: 0;
+      padding: 1rem;
+      background: var(--info-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 4px var(--shadow-color);
+    }
+    
+    /* Detail content styling */
+    #detail-content {
+      padding: 1rem;
+      border-radius: 8px;
+    }
+    
+    /* Flashcard styling */
+    #flashcard-container {
+      width: 100%;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .flashcard {
+      width: 100%;
+      min-height: 300px;
+      padding: 1rem;
+      background: var(--info-bg);
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 4px 8px var(--shadow-color);
+      margin-bottom: 1rem;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .flashcard-controls {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
   </style>
-</head>
-<body>
-  <!-- Main Content Area for EEG Atlas -->
-  <main>
+
+  <h2 class="page-title">EEG Atlas</h2>
+  
+  <div class="info-box">
     <section id="eeg-videos">
       <!-- Sidebar with search and grid of buttons -->
       <aside class="video-list" aria-label="EEG Categories">
-        <h2>EEG Atlas</h2>
-        <div class="search-box" style="position: relative; margin-bottom: 1rem;">
-          <label for="atlas-search" class="visually-hidden">Search patterns</label>
-          <input type="text" id="atlas-search" placeholder="Search patterns..." autocomplete="off" />
-          <ul id="autocomplete" style="position:absolute; top:100%; left:0; right:0; background:white; z-index:1000; list-style:none; padding:0; margin:0; border:1px solid #ccc; display:none;"></ul>
-        </div>
-        <div id="sidebar-buttons">
-          <button id="all-btn" class="btn" onclick="showAllEEG()">All EEG</button>
-          <button id="favorites-btn" class="btn" onclick="showFavorites()">Favorites</button>
-          <button class="btn" onclick="toggleFlashcardMode()">Toggle Flashcard Mode</button>
-          <button class="btn" onclick="showRandomEEG()">Random EEG</button>
+        <div class="search-container">
+          <div class="search-box">
+            <label for="atlas-search" class="visually-hidden">Search patterns</label>
+            <input type="text" id="atlas-search" placeholder="Search patterns..." autocomplete="off" />
+            <ul id="autocomplete" style="position:absolute; top:100%; left:0; right:0; background:var(--info-bg); z-index:1000; list-style:none; padding:0; margin:0; border:1px solid var(--border-color); border-radius: 6px; display:none;"></ul>
+          </div>
+          <div id="sidebar-buttons">
+            <button id="all-btn" class="btn" onclick="showAllEEG()">All EEG</button>
+            <button id="favorites-btn" class="btn" onclick="showFavorites()">Favorites</button>
+            <button class="btn" onclick="toggleFlashcardMode()">Toggle Flashcard Mode</button>
+            <button class="btn" onclick="showRandomEEG()">Random EEG</button>
+          </div>
         </div>
         <!-- EEG list: now only the title is shown -->
-        <ul id="atlas-list" style="list-style: none; padding-left: 0;"></ul>
+        <ul id="atlas-list"></ul>
       </aside>
+      
       <!-- Main Detail/Flashcard Display -->
       <article class="main-content" id="atlas-content">
         <div id="detail-content">
           <h2>Select an EEG entry</h2>
           <p>Click a category on the left to browse EEG patterns.</p>
         </div>
+        
         <!-- Flashcard Mode -->
         <div id="flashcard-container" style="display:none;">
           <div id="flashcard" class="flashcard" tabindex="0">
@@ -205,11 +297,7 @@
         </div>
       </article>
     </section>
-  </main>
-  
-  <footer>
-    <p>&copy; 2025 EEG Atlas. All rights reserved.</p>
-  </footer>
+  </div>
   
   <!-- Full-Screen Carousel Modal (only opens when an image is clicked) -->
   <div id="carousel-modal" class="modal">
@@ -811,6 +899,7 @@
     
     // Global variable for carousel index
     let currentCarouselIndex = 0;
+    let initialized = false;
     
     // --- Cookie helper functions for favorites ---
     function getFavorites() {
@@ -922,6 +1011,73 @@
       }
     }
     
+    // --- Initialize UI and Event Listeners ---
+    function initializeUI() {
+      if (initialized) return;
+      
+      // Setup search input listener
+      const searchInput = document.getElementById("atlas-search");
+      const autocomplete = document.getElementById("autocomplete");
+      
+      if (searchInput) {
+        searchInput.addEventListener("input", function() {
+          const query = this.value.toLowerCase().trim();
+          if (!query) {
+            autocomplete.style.display = "none";
+            showAllEEG();
+            return;
+          }
+          
+          const suggestions = eegData.filter(entry =>
+            entry.title.toLowerCase().includes(query) ||
+            entry.category.toLowerCase().includes(query)
+          );
+          
+          if (suggestions.length === 0) {
+            autocomplete.style.display = "none";
+            return;
+          }
+          
+          autocomplete.innerHTML = "";
+          suggestions.forEach(entry => {
+            const item = document.createElement("li");
+            item.textContent = entry.title;
+            item.style.padding = "0.5em";
+            item.style.cursor = "pointer";
+            item.setAttribute("tabindex", "0");
+            item.addEventListener("click", () => {
+              searchInput.value = entry.title;
+              autocomplete.style.display = "none";
+              renderList([entry], true);
+            });
+            autocomplete.appendChild(item);
+          });
+          autocomplete.style.display = "block";
+          
+          const fuzzyFiltered = eegData.filter(entry =>
+            entry.title.toLowerCase().includes(query) ||
+            entry.category.toLowerCase().includes(query) ||
+            entry.back.toLowerCase().includes(query) ||
+            fuzzyMatch(entry, query)
+          );
+          renderList(fuzzyFiltered, true);
+        });
+        
+        // Close autocomplete when clicking outside
+        document.addEventListener("click", function(event) {
+          if (!event.target.closest("#atlas-search") && !event.target.closest("#autocomplete")) {
+            autocomplete.style.display = "none";
+          }
+        });
+      }
+      
+      // Initialize with all EEG entries and show a random one
+      showAllEEG();
+      showRandomEEG();
+      
+      initialized = true;
+    }
+    
     // --- Rendering EEG List with Accordion behavior ---
     function renderList(data, autoExpand = false) {
       const list = document.getElementById("atlas-list");
@@ -934,6 +1090,19 @@
         grouped[entry.category].push(entry);
       });
       
+      // If we're searching, we want to expand all categories that have matches
+      const shouldExpandCategory = category => {
+        // Always expand if autoExpand is true (global setting)
+        if (autoExpand) return true;
+        
+        // Don't expand if there's no search (showing all categories)
+        const searchInput = document.getElementById("atlas-search");
+        if (!searchInput || !searchInput.value.trim()) return false;
+        
+        // If we're searching, check if this category has matches
+        return Boolean(grouped[category] && grouped[category].length > 0);
+      };
+      
       for (const category in grouped) {
         const categoryItem = document.createElement("li");
         const header = document.createElement("div");
@@ -944,8 +1113,7 @@
         header.style.borderBottom = "1px solid var(--border-color)";
         header.setAttribute("tabindex", "0");
         header.addEventListener("click", () => {
-          const allSublists = document.querySelectorAll("#atlas-list ul");
-          allSublists.forEach(s => s.style.display = "none");
+          const sublist = categoryItem.querySelector("ul");
           if (sublist.style.display === "none") {
             sublist.style.display = "block";
           } else {
@@ -956,7 +1124,7 @@
         sublist.style.listStyle = "none";
         sublist.style.margin = "0";
         sublist.style.paddingLeft = "1em";
-        sublist.style.display = autoExpand ? "block" : "none";
+        sublist.style.display = shouldExpandCategory(category) ? "block" : "none";
         
         grouped[category].forEach(entry => {
           const subItem = document.createElement("li");
@@ -988,60 +1156,17 @@
             ${isFavorite(entry.title) ? "★" : "☆"}
           </span>
         </h2>
-        <img src="${entry.front}" alt="${entry.title}" class="step-image" onclick="openCarouselBySrc('${entry.front}')" style="cursor:pointer;" />
+        <div style="position: relative; display: inline-block;">
+          <img src="${entry.front}" alt="${entry.title}" class="step-image" onclick="openCarouselBySrc('${entry.front}')" style="cursor:pointer;" />
+          <div style="position: absolute; top: 10px; right: 10px; background-color: rgba(0,0,0,0.5); color: white; padding: 5px 8px; border-radius: 4px; font-size: 12px; pointer-events: none;">
+            <i class="fa-solid fa-expand"></i> Click for fullscreen
+          </div>
+        </div>
         <p style="margin-top:1rem;">${entry.back}</p>
       `;
     }
     
-    // --- Autocomplete Functionality ---
-    const searchInput = document.getElementById("atlas-search");
-    const autocomplete = document.getElementById("autocomplete");
-    
-    // Updated search input listener: render search results with collapsed subtabs
-    searchInput.addEventListener("input", () => {
-      const query = searchInput.value.toLowerCase().trim();
-      if (!query) {
-        autocomplete.style.display = "none";
-        showAllEEG();
-        return;
-      }
-      
-      const suggestions = eegData.filter(entry =>
-        entry.title.toLowerCase().includes(query) ||
-        entry.category.toLowerCase().includes(query)
-      );
-      
-      if (suggestions.length === 0) {
-        autocomplete.style.display = "none";
-        return;
-      }
-      
-      autocomplete.innerHTML = "";
-      suggestions.forEach(entry => {
-        const item = document.createElement("li");
-        item.textContent = entry.title;
-        item.style.padding = "0.5em";
-        item.style.cursor = "pointer";
-        item.setAttribute("tabindex", "0");
-        item.addEventListener("click", () => {
-          searchInput.value = entry.title;
-          autocomplete.style.display = "none";
-          renderList([entry], false); // Use false so the result remains collapsed
-        });
-        autocomplete.appendChild(item);
-      });
-      autocomplete.style.display = "block";
-      
-      const fuzzyFiltered = eegData.filter(entry =>
-        entry.title.toLowerCase().includes(query) ||
-        entry.category.toLowerCase().includes(query) ||
-        entry.back.toLowerCase().includes(query) ||
-        fuzzyMatch(entry, query)
-      );
-      renderList(fuzzyFiltered, false); // Render search results with collapsed subtabs
-    });
-    
-    // Levenshtein Distance for fuzzy matching
+    // --- Levenshtein Distance for fuzzy matching ---
     function levenshtein(a, b) {
       const dp = Array.from({ length: a.length + 1 }, () => []);
       for (let i = 0; i <= a.length; i++) dp[i][0] = i;
@@ -1134,23 +1259,25 @@
       }
     });
     
-    // On page load, start on the All EEG tab with categories visible and display a random EEG entry
-    document.addEventListener("DOMContentLoaded", () => {
-      showAllEEG();
-      showRandomEEG();
-    });
-    
     // Function to display a random EEG entry
     function showRandomEEG() {
       const randomIndex = Math.floor(Math.random() * eegData.length);
       renderDetail(eegData[randomIndex]);
     }
-  </script>
-  <script>
-    document.addEventListener("DOMContentLoaded", () => {
-      // Display a random EEG entry immediately on page load
-      showRandomEEG();
-    });
+    
+    // Call initializeUI on DOM load and also when page content is dynamically loaded
+    document.addEventListener("DOMContentLoaded", initializeUI);
+    
+    // This will help with dynamically loaded content through the main app
+    function initAtlasPage() {
+      if (document.getElementById("atlas-search")) {
+        initializeUI();
+      }
+    }
+    
+    // On page load and when accessed through main navigation
+    document.addEventListener("DOMContentLoaded", initializeUI);
+    window.initAtlasPage = initializeUI;  // Export for external access
   </script>
 </body>
 </html>
