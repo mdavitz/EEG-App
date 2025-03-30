@@ -98,7 +98,6 @@
     .dropdown-menu {
       position: relative;
       display: inline-block;
-      margin-left: auto;
     }
     .dropdown-toggle {
       background: transparent;
@@ -147,16 +146,12 @@
     }
     @media (max-width: 600px) {
       .dropdown-menu {
-        width: 100%;
-        display: flex;
-        justify-content: flex-end;
-        padding-right: 10px;
+        width: auto;
+        padding-right: 5px;
       }
       .dropdown-toggle {
         padding: 0.4rem 0.6rem;
         font-size: 0.9rem;
-        width: auto;
-        margin: 0;
         text-align: right;
       }
       .dropdown-content {
@@ -164,6 +159,10 @@
         left: auto;
         width: 180px;
         max-width: 90vw;
+      }
+      #user-profile {
+        padding: 4px 8px;
+        margin-left: 5px;
       }
     }
 
@@ -188,7 +187,7 @@
       background-color: rgba(0,0,0,0.05);
       padding: 6px 12px;
       border-radius: 20px;
-      margin-right: 20px;
+      margin-left: 15px;
       transition: background-color 0.3s ease;
     }
     
@@ -396,6 +395,22 @@
       margin-top: 5px;
       display: block;
     }
+
+    /* Added CSS to improve header layout */
+    .header-inner {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 1rem 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+    }
+    
+    /* This pushes both menu and user icon to the right */
+    .logo {
+      margin-right: auto;
+    }
   </style>
 </head>
 <body>
@@ -508,12 +523,6 @@
         
         <img src="assets/images/logo.png" alt="Home" class="logo" onclick="renderHomePage()" />
 
-        <!-- User profile section - IMPROVED -->
-        <div id="user-profile" style="display: none;">
-          <span id="user-email"></span>
-          <button id="sign-out-button" class="btn-small">Sign Out</button>
-        </div>
-
         <!-- Dropdown menu -->
         <div class="dropdown-menu" id="dropdown-menu">
           <button class="dropdown-toggle" onclick="toggleDropdown(event)">Menu &#x25BC;</button>
@@ -527,6 +536,12 @@
             <a href="eeg_videos.html" onclick="loadSection(event, 'eeg_videos.html')">EEG Videos</a>
             <a href="faq.html" onclick="loadSection(event, 'faq.html')">Discussion Forum</a>
           </div>
+        </div>
+
+        <!-- User profile section - IMPROVED -->
+        <div id="user-profile" style="display: none;">
+          <span id="user-email"></span>
+          <button id="sign-out-button" class="btn-small">Sign Out</button>
         </div>
       </div>
     </header>
@@ -596,7 +611,7 @@
 
     <!-- Section Content -->
     <div class="container">
-      <div id="section-content" style="width: 100%; min-height: 85vh;"></div>
+      <div id="section-content" style="width: 100%; min-height: auto;"></div>
     </div>
   </div>
 
@@ -637,9 +652,6 @@
       © 2025 Matthew S. Davitz, MD.
     </div>
   </footer>
-
-  <!-- Install App Button -->
-  <button id="installBtn">Install App</button>
 
   <!-- Firebase SDK -->
   <script type="module">
@@ -804,21 +816,6 @@
     console.log("Script loading...");
 
     // Add debug button
-    const debugButton = document.createElement('button');
-    debugButton.textContent = "Debug Auth";
-    debugButton.style.position = 'fixed';
-    debugButton.style.bottom = '10px';
-    debugButton.style.left = '10px';
-    debugButton.style.zIndex = '99999';
-    
-    debugButton.addEventListener('click', () => {
-      console.log("Forcing login modal display");
-      showLoginModal();
-    });
-    
-    document.body.appendChild(debugButton);
-
-    // IMPROVED Modal Helper Functions with proper toggle
     function showLoginModal() {
       // First hide all modals
       const loginModal = document.getElementById('login-modal');
