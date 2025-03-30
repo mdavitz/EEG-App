@@ -1346,3 +1346,15 @@ body.dark .modal-title {
 /*============================================
    END ILAE CLASSIFICATION SPECIFIC STYLES
 =============================================*/
+
+/* Increase base font size when .large-font is applied */
+body.large-font {
+  font-size: 110%; /* Increase base font size by 10% */
+}
+
+/* Optionally, if some elements are set in px and you want them to scale: */
+/* Uncomment the next rule if needed—but test carefully!
+body.large-font * {
+  font-size: 110% !important;
+}
+*/
