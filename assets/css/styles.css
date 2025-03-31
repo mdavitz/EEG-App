@@ -2,31 +2,39 @@
   THEME VARIABLES & TRANSITIONS
 -----------------------------------------------*/
 :root {
-  --primary-color: #003366;
-  --secondary-color: #00509e;
-  --accent-color: #007bff;
-  --bg-color: #fafafa;
-  --text-color: #333;
-  --info-bg: #fff;
-  --border-color: #ddd;
-  --header-text: #fff;
-  --hover-bg: #f0f0f0;
-  --shadow-color: rgba(0, 0, 0, 0.08);
+  --primary-color: #1d1d1f;
+  --secondary-color: #424245;
+  --accent-color: #0066cc;
+  --accent-hover: #0055b3;
+  --accent-active: #004499;
+  --bg-color: #f5f5f7;
+  --text-color: #1d1d1f;
+  --text-secondary: #6e6e73;
+  --info-bg: #ffffff;
+  --border-color: #d2d2d7;
+  --header-text: #ffffff;
+  --hover-bg: #f2f2f2;
+  --shadow-color: rgba(0, 0, 0, 0.1);
   --transition-duration: 0.3s;
-  --footer-bg: rgba(255, 255, 255, 0.8);
+  --footer-bg: rgba(245, 245, 247, 0.8);
+  --card-icon-color: #0066cc;
 }
 .dark {
-  --primary-color: #1a1a1a;
-  --secondary-color: #333;
-  --accent-color: #0099ff;
-  --bg-color: #121212;
-  --text-color: #eee;
-  --info-bg: #1e1e1e;
-  --border-color: #444;
-  --header-text: #fff;
-  --hover-bg: #222;
+  --primary-color: #f5f5f7;
+  --secondary-color: #a1a1a6;
+  --accent-color: #2997ff;
+  --accent-hover: #0077ed;
+  --accent-active: #0068d6;
+  --bg-color: #1d1d1f;
+  --text-color: #f5f5f7;
+  --text-secondary: #a1a1a6;
+  --info-bg: #2c2c2e;
+  --border-color: #424245;
+  --header-text: #ffffff;
+  --hover-bg: #3a3a3c;
   --shadow-color: rgba(0, 0, 0, 0.3);
-  --footer-bg: rgba(30, 30, 30, 0.8);
+  --footer-bg: rgba(29, 29, 31, 0.8);
+  --card-icon-color: #2997ff;
 }
 
 /*-----------------------------------------------
@@ -38,14 +46,15 @@
   box-sizing: border-box;
 }
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen,
-    Ubuntu, Cantarell, "Open Sans", "Helvetica Neue", sans-serif;
+  font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
   background: var(--bg-color);
   color: var(--text-color);
-  line-height: 1.6;
+  line-height: 1.5;
   transition: background var(--transition-duration),
     color var(--transition-duration);
   padding-bottom: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /*-----------------------------------------------
@@ -55,12 +64,25 @@ body {
 .section-title {
   text-align: center;
   margin: 2rem 0;
-  font-size: 2rem;
+  font-size: 2.5rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
   color: var(--primary-color);
+  transition: color var(--transition-duration);
 }
 body.dark .page-title,
 body.dark .section-title {
   color: var(--header-text);
+}
+.section-header {
+  text-align: center;
+  font-size: 1.5rem;
+  margin: 1.5rem 0 1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--accent-color);
+  transition: color var(--transition-duration);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
 /*-----------------------------------------------
@@ -129,11 +151,18 @@ header {
   position: sticky;
   top: 0;
   z-index: 1000;
-  background: rgba(0, 51, 102, 0.6);
-  backdrop-filter: blur(8px);
-  box-shadow: 0 2px 6px var(--shadow-color);
-  transition: padding 0.3s ease, backdrop-filter 0.3s ease;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+  transition: padding 0.3s ease, backdrop-filter 0.3s ease, background 0.3s ease;
 }
+
+body.dark header {
+  background: rgba(0, 0, 0, 0.8);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
 .header-inner {
   max-width: 1200px;
   margin: 0 auto;
@@ -142,6 +171,7 @@ header {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
+  transition: padding 0.3s ease;
 }
 header.shrink .header-inner {
   padding: 0.4rem 2rem;
@@ -253,6 +283,8 @@ header.shrink .logo {
   margin-bottom: 1.5rem;
   font-size: 2rem;
   text-align: center;
+  font-weight: 600;
+  letter-spacing: -0.02em;
 }
 .cards-grid {
   display: grid;
@@ -264,54 +296,56 @@ header.shrink .logo {
   display: flex;
   flex-direction: column;
   background: var(--info-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 16px;
-  box-shadow: 0 2px 8px var(--shadow-color);
+  border: none;
+  border-radius: 20px;
+  padding: 24px;
+  box-shadow: 0 2px 12px var(--shadow-color);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-align: center;
 }
 .card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 8px 24px var(--shadow-color);
 }
 .card i {
   font-size: 3rem;
-  color: var(--accent-color);
-  margin-bottom: 1rem;
+  color: var(--card-icon-color);
+  margin-bottom: 1.2rem;
   transition: transform 0.3s;
 }
 .card i:hover {
   transform: scale(1.1);
 }
 .card h3 {
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   margin-bottom: 0.75rem;
   color: var(--primary-color);
-}
-/* Ensure dark mode applies correctly to card headers */
-body.dark .card h3 {
-  color: var(--header-text);
+  transition: color var(--transition-duration);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 .card p {
   font-size: 1rem;
-  margin-bottom: 1rem;
-  line-height: 1.4;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
 }
 .card a {
   margin-top: auto;
   display: inline-block;
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 1.2rem;
   background: var(--accent-color);
   color: #fff;
-  border-radius: 4px;
+  border-radius: 980px;
   text-decoration: none;
   font-weight: 500;
+  font-size: 0.9rem;
   transition: background 0.3s ease, transform 0.3s;
+  letter-spacing: 0.02em;
 }
 .card a:hover {
-  background: #0056b3;
-  transform: scale(1.05);
+  background: var(--accent-hover);
+  transform: scale(1.02);
 }
 
 /*-----------------------------------------------
@@ -322,41 +356,46 @@ footer {
   bottom: 0;
   left: 0;
   width: 100%;
-  background: var(--footer-bg);
-  border-top: 1px solid var(--border-color);
+  background: rgba(245, 245, 247, 0.8);
+  border-top: 1px solid rgba(210, 210, 215, 0.3);
   padding: 1em;
   text-align: center;
   z-index: 2000;
   opacity: 1;
   pointer-events: auto;
   transition: opacity var(--transition-duration);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
 }
+
+body.dark footer {
+  background: rgba(29, 29, 31, 0.8);
+  border-top: 1px solid rgba(66, 66, 69, 0.3);
+}
+
 .footer-btns {
   display: inline-flex;
   gap: 1em;
   align-items: center;
 }
+
 .footer-btns button {
-  background: var(--accent-color);
-  color: #fff;
-  border: none;
-  padding: 10px 14px;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background var(--transition-duration), transform 0.3s;
+  padding: 8px 16px;
+  border-radius: 980px;
   font-size: 0.9rem;
+  letter-spacing: 0.01em;
 }
-.footer-btns button:hover {
-  background: #00509e;
-  transform: scale(1.05);
+
+.footer-copy {
+  margin-top: 0.8em;
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  font-weight: 400;
+  letter-spacing: 0.01em;
 }
-/* Media Query: Hide Footer Buttons on Mobile by Default */
-@media (max-width: 600px) {
-  .footer-btns {
-    display: none;
-  }
+
+body.dark .footer-copy {
+  color: var(--text-secondary);
 }
 
 /*-----------------------------------------------
@@ -442,11 +481,11 @@ footer {
   transition: background-color 0.3s, transform 0.3s;
 }
 .video-nav .btn:hover {
-  background-color: #0056b3;
+  background-color: var(--accent-hover);
   transform: scale(1.03);
 }
 .video-nav .btn:active {
-  background-color: #004080;
+  background-color: var(--accent-active);
 }
 .video-wrapper {
   width: 100%;
@@ -564,331 +603,65 @@ footer {
 /*-----------------------------------------------
   APPLE-STYLE BUTTONS (Unified)
 -----------------------------------------------*/
-.btn {
-  appearance: none;
-  background-color: #fff;
-  border: 1px solid #d1d1d6;
-  border-radius: 10px;
-  color: #007aff;
-  font-size: 16px;
+.btn, 
+.footer-btns button,
+.card a,
+.modal-button,
+.flashcard-button,
+.flashcard-controls button,
+.video-nav .btn {
+  background-color: var(--accent-color);
+  color: #fff;
+  border: none;
+  border-radius: 980px;
+  padding: 8px 16px;
+  font-size: 14px;
   font-weight: 500;
-  padding: 10px 20px;
   text-align: center;
-  text-decoration: none;
   cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
-}
-.btn:hover {
-  background-color: #f7f7f7;
-  transform: scale(1.03);
-}
-.btn:active {
-  background-color: #e5e5ea;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-}
-.btn-prev {
-  background-color: var(--btn-prev);
-  color: #fff;
-}
-.btn-skip {
-  background-color: var(--btn-skip);
-  color: #fff;
-}
-.btn-next {
-  background-color: var(--btn-next);
-  color: #fff;
-}
-.correct-msg {
-  color: #155724;
-  background-color: #d4edda;
-  padding: 8px;
-  border: 1px solid #c3e6cb;
-  border-radius: 4px;
-  margin-top: 8px;
-  text-align: center;
-  font-weight: 600;
-}
-.incorrect-msg {
-  color: #721c24;
-  background-color: #f8d7da;
-  padding: 8px;
-  border: 1px solid #f5c6cb;
-  border-radius: 4px;
-  margin-top: 8px;
-  text-align: center;
-  font-weight: 600;
-}
-.kitten-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
-}
-.kitten-overlay img {
-  width: 200px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 50%;
-}
-/*-----------------------------------------------
- ACNS
------------------------------------------------*/
-
-.desktop-tabs a.acns-tab {
-  width: auto;          /* Let width be based on its content */
-  display: inline-block;/* Ensure it behaves like an inline element with block properties */
-  padding: 0 20px;      /* Adjust horizontal padding as needed */
-  text-align: center;   /* Center the text within the element */
+  transition: background-color 0.3s, transform 0.3s;
 }
 
-.step-image {
-  display: inline-block;
-  margin: 1em 0; /* vertical margin only */
-  max-width: 100%;
-  height: auto;
-}
-/*-----------------------------------------------
-  NATUS INSTRUCTIONS MODERNIZATION
------------------------------------------------*/
-.natus-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: var(--info-bg);
-  border-radius: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-}
-.natus-container h1 {
-  font-size: 2.5rem;
-  margin-bottom: 1rem;
-  color: var(--primary-color);
-}
-.natus-steps {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
-}
-.natus-step {
-  display: flex;
-  gap: 1.5rem;
-  align-items: flex-start;
-  padding: 1rem;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  transition: transform 0.3s;
-}
-.natus-step:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-.natus-step-number {
-  flex-shrink: 0;
-  width: 40px;
-  height: 40px;
-  background: var(--primary-color);
-  color: #fff;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.2rem;
-  font-weight: bold;
-}
-.natus-step-content h3 {
-  margin-top: 0;
-  font-size: 1.5rem;
-  color: var(--secondary-color);
-}
-.natus-step-content p {
-  font-size: 1rem;
-  color: var(--text-color);
-  line-height: 1.5;
-}
-.natus-image {
-  display: block;
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  margin-top: 1rem;
-  border-radius: 4px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-.natus-step:nth-child(1) .natus-image.step1-image {
-  max-width: 150px;
-  margin: 1rem auto 0;
+.btn:hover, 
+.footer-btns button:hover,
+.card a:hover,
+.modal-button:hover,
+.flashcard-button:hover,
+.flashcard-controls button:hover,
+.video-nav .btn:hover {
+  background-color: var(--accent-hover);
+  transform: scale(1.02);
 }
 
-/*-----------------------------------------------
-  Dark Mode Overrides for Natus Instructions
------------------------------------------------*/
-body.dark .natus-container h1,
-body.dark .natus-container h3,
-body.dark .natus-container p {
-  color: #fff;
+.btn:active,
+.footer-btns button:active,
+.card a:active,
+.modal-button:active,
+.flashcard-button:active,
+.flashcard-controls button:active,
+.video-nav .btn:active {
+  background-color: var(--accent-active);
 }
 
-/*-----------------------------------------------
-  RESPONSIVE TABLE: New Card Layout on Mobile
------------------------------------------------*/
-@media (max-width: 768px) {
-  .custom-table {
-    table-layout: fixed;
-    width: 100%;
-    font-size: 0.9rem;
-  }
-  .custom-table th,
-  .custom-table td {
-    white-space: normal;
-    word-wrap: break-word;
-    padding: 8px;
-  }
-}
-@media (max-width: 600px) {
-  .custom-table thead {
-    display: none;
-  }
-  .custom-table tr {
-    display: block;
-    margin-bottom: 1rem;
-    padding: 0.5rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-  }
-  .custom-table td {
-    display: block;
-    text-align: left;
-    padding: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
-  }
-  .custom-table td:last-child {
-    border-bottom: 0;
-  }
-  .custom-table td:before {
-    content: attr(data-label);
-    display: block;
-    font-weight: bold;
-    margin-bottom: 0.25rem;
-  }
-}
-
-/*-----------------------------------------------
-  FAQ PAGE STYLING (Modernized)
------------------------------------------------*/
-.faq-container {
-  max-width: 800px;
-  margin: 2rem auto;
-  padding: 2rem;
-  background: var(--info-bg);
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-.faq-header {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-.faq-header h1 {
-  font-size: 2.5rem;
-  color: var(--primary-color);
-}
-.faq-item {
-  margin-bottom: 1.5rem;
-}
-.faq-question {
-  font-size: 1.2rem;
-  font-weight: bold;
-  color: var(--primary-color);
-  margin-bottom: 0.5rem;
-}
-.faq-answer {
-  font-size: 1rem;
-  color: var(--text-color);
-  line-height: 1.6;
-  border-left: 3px solid var(--accent-color);
-  padding-left: 1rem;
-  margin-bottom: 1rem;
-}
-
-/*-----------------------------------------------
-  MODAL STYLES (if using modals)
------------------------------------------------*/
-.detail-modal {
-  display: none;
-  position: fixed;
-  z-index: 100;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.6);
-  align-items: center;
-  justify-content: center;
-}
-.modal-content {
-  background: var(--info-bg);
-  margin: auto;
-  padding: 2rem;
-  border-radius: 8px;
-  width: 90%;
-  max-width: 600px;
-  box-shadow: 0 2px 10px var(--shadow-color);
-}
-.modal-content h2 {
-  margin-top: 0;
-  color: var(--primary-color);
-}
-.modal-content ul {
-  list-style: disc;
-  padding-left: 1.5rem;
-  color: var(--text-color);
-}
-.modal-content .close {
-  float: right;
-  font-size: 1.5rem;
-  cursor: pointer;
+/* For lighter styled buttons */
+.btn-light {
+  background-color: rgba(0, 102, 204, 0.1);
   color: var(--accent-color);
 }
 
-/*-----------------------------------------------
-  MOBILE & RESPONSIVE STYLES
------------------------------------------------*/
-@media (max-width: 600px) {
-  .cards-container {
-    max-width: 95%;
-  }
+.btn-light:hover {
+  background-color: rgba(0, 102, 204, 0.15);
 }
 
-/*-----------------------------------------------
-  BUTTONS & MISC
------------------------------------------------*/
-.btn {
-  appearance: none;
-  background-color: #fff;
-  border: 1px solid #d1d1d6;
-  border-radius: 10px;
-  color: #007aff;
-  font-size: 16px;
-  font-weight: 500;
-  padding: 10px 20px;
-  text-align: center;
-  text-decoration: none;
-  cursor: pointer;
-  transition: background-color 0.3s, box-shadow 0.3s, transform 0.3s;
+body.dark .btn-light {
+  background-color: rgba(41, 151, 255, 0.15);
+  color: var(--accent-color);
 }
-.btn:hover {
-  background-color: #f7f7f7;
-  transform: scale(1.03);
+
+body.dark .btn-light:hover {
+  background-color: rgba(41, 151, 255, 0.25);
 }
-.btn:active {
-  background-color: #e5e5ea;
-  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
-}
+
 /*-----------------------------------------------
   SECTION TITLES (Keep Original Look)
 -----------------------------------------------*/
@@ -898,6 +671,7 @@ body.dark .natus-container p {
   margin: 1.5rem 0 1rem;
   padding-bottom: 0.25rem;
   border-bottom: 2px solid var(--accent-color);
+  transition: color var(--transition-duration);
 }
 
 /*-----------------------------------------------
@@ -951,401 +725,378 @@ body.dark .modal-eeg {
 
 #ilae-classification-content .ilae-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 1.5rem;
-  padding: 0;
+  margin: 1.5rem 0;
 }
 
 #ilae-classification-content .ilae-card {
-  background: var(--info-bg);
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 2px 8px var(--shadow-color);
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
   cursor: pointer;
-  transition: transform 0.2s ease;
+  height: 100%;
 }
 
 #ilae-classification-content .ilae-card:hover {
-  transform: translateY(-5px);
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
 }
 
 #ilae-classification-content .ilae-card h3 {
-  font-size: 1.4rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  margin-bottom: 0.8rem;
   color: var(--primary-color);
+  font-weight: 600;
 }
 
-/* Dark mode override for ILAE card titles */
 body.dark #ilae-classification-content .ilae-card h3 {
-  color: var(--header-text) !important;
+  color: var(--dark-primary-text);
 }
 
 #ilae-classification-content .ilae-card p {
   font-size: 0.95rem;
-  margin: 0.5rem 0;
-  line-height: 1.4;
+  line-height: 1.5;
+  color: var(--text-color);
 }
 
-/* Modal Styles for ILAE Pop-Ups */
-.modal {
+/* Cross-reference styles */
+#ilae-classification-content .cross-ref {
+  cursor: help;
+  border-bottom: 1px dashed var(--accent-color);
+  position: relative;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+#ilae-classification-content .cross-ref .tooltip {
+  visibility: hidden;
+  width: 300px;
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  text-align: left;
+  border-radius: 8px;
+  padding: 12px;
+  position: absolute;
+  z-index: 100;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -150px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+  font-weight: normal;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+#ilae-classification-content .cross-ref:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ILAE filter styles */
+#ilae-classification-content .filter-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  background-color: var(--info-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+#ilae-classification-content .filter-group {
+  display: flex;
+  align-items: center;
+}
+
+#ilae-classification-content .filter-container label {
+  display: flex;
+  align-items: center;
+  margin-right: 0.75rem;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+#ilae-classification-content .filter-dropdown {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#ilae-classification-content .filter-dropdown:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+#ilae-classification-content .reset-filters {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+#ilae-classification-content .reset-filters:hover {
+  background-color: var(--btn-next);
+  transform: translateY(-1px);
+}
+
+#ilae-classification-content .search-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 1.5rem auto;
+}
+
+#ilae-classification-content .search-box {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+#ilae-classification-content .search-box input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  background: white;
+  color: var(--text-color);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+#ilae-classification-content .search-box input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.15);
+}
+
+#ilae-classification-content .no-results {
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--info-bg);
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#ilae-classification-content .no-results h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+#ilae-classification-content .no-results p {
+  color: var(--text-color);
+}
+
+/* ILAE modal styles */
+#ilae-classification-content .modal {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.7);
+  background: rgba(0, 0, 0, 0.5);
   display: none;
   justify-content: center;
   align-items: center;
-  z-index: 20000;
-  padding: 1rem;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
 }
 
-.modal-content {
-  background: var(--info-bg);
-  padding: 1.5rem;
-  border-radius: 8px;
-  max-width: 600px;
-  width: 100%;
-  position: relative;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+#ilae-classification-content .modal-content {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
 }
 
-.modal-close {
+#ilae-classification-content .modal-close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 1rem;
+  right: 1.5rem;
   font-size: 1.5rem;
   cursor: pointer;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+#ilae-classification-content .modal-close:hover {
+  color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+#ilae-classification-content .modal-title {
+  font-size: 1.5rem;
   color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
 }
 
-.modal-title {
-  margin: 0;
-  font-size: 1.8rem;
-  color: var(--primary-color);
-  text-align: center;
+#ilae-classification-content .modal-overview {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  color: var(--text-color);
 }
 
-/* Dark mode override for modal titles */
-body.dark .modal-title {
-  color: var(--header-text) !important;
+#ilae-classification-content .modal-eeg {
+  background-color: var(--info-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  line-height: 1.6;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
 }
 
-.modal-overview,
-.modal-eeg {
-  margin-top: 1rem;
-  font-size: 1rem;
-  line-height: 1.4;
-}
-
-.modal-eeg {
-  border-left: 4px solid var(--accent-color);
-  padding-left: 0.75rem;
-  color: var(--secondary-color);
-}
-
-.button-group {
+#ilae-classification-content #pdfLinkContainer {
   margin-top: 1.5rem;
-  display: flex;
-  gap: 1rem;
+  text-align: center;
 }
 
-.modal-button {
-  flex: 1;
-  background: var(--accent-color);
+#ilae-classification-content #pdfLink {
+  display: inline-block;
+  background-color: var(--accent-color);
   color: #fff;
-  padding: 0.75rem;
-  text-align: center;
+  padding: 10px 20px;
   text-decoration: none;
-  border-radius: 4px;
-  font-size: 1rem;
-  transition: background 0.2s ease;
-}
-
-.modal-button:hover {
-  background: var(--primary-color);
-}
-
-/* ILAE Search Bar Styles */
-.search-box {
-  max-width: 600px;
-  margin: 0 auto 2rem;
-  padding: 0.5rem;
-  border: 2px solid var(--accent-color);
   border-radius: 8px;
-  background: var(--info-bg);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  font-weight: 500;
+  transition: all 0.3s ease;
 }
 
-.search-box input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  background: transparent;
-  color: var(--text-color);
+#ilae-classification-content #pdfLink:hover {
+  background-color: var(--btn-next);
+  transform: translateY(-1px);
 }
 
-.search-box input::placeholder {
-  color: var(--border-color);
-  opacity: 0.8;
+/* Dark mode overrides */
+body.dark #ilae-classification-content .ilae-card {
+  background: var(--dark-card-bg);
 }
 
-.search-box input:focus {
-  outline: none;
-  box-shadow: 0 0 5px var(--accent-color);
+body.dark #ilae-classification-content .cross-ref {
+  border-bottom: 1px dashed var(--dark-accent-color);
+  color: var(--dark-accent-color);
 }
 
-/* Flashcard Button */
-.flashcard-button {
-  display: block;
-  margin: 1rem auto;
-  padding: 0.75rem 1.5rem;
-  background: var(--accent-color);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-size: 1rem;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-.flashcard-button:hover {
-  background: var(--primary-color);
+body.dark #ilae-classification-content .cross-ref .tooltip {
+  background-color: var(--dark-info-bg);
+  color: var(--dark-text-color);
+  border-color: var(--dark-border-color);
 }
 
-/* Flashcard Container & Card Styles */
-#flashcard-container {
-  text-align: center;
-  margin-top: 1rem;
+body.dark #ilae-classification-content .filter-container {
+  background-color: var(--dark-info-bg);
 }
 
-.flashcard {
-  margin: 1rem auto;
-  padding: 1.5rem;
-  max-width: 600px; /* increased size */
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  background: var(--info-bg);
-  box-shadow: 0 2px 8px var(--shadow-color);
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  font-size: 1.5rem; /* increased font size */
-}
-.flashcard:hover {
-  transform: scale(1.02);
+body.dark #ilae-classification-content .filter-container label {
+  color: var(--dark-primary-text);
 }
 
-/* Flashcard front/back styling */
-.flashcard-front,
-.flashcard-back {
-  padding: 1rem;
+body.dark #ilae-classification-content .filter-dropdown {
+  background-color: var(--dark-card-bg);
+  color: var(--dark-text-color);
+  border-color: var(--dark-border-color);
 }
 
-/* Flashcard controls */
-.flashcard-controls {
-  margin-top: 1rem;
-}
-.flashcard-controls button {
-  margin: 0 0.5rem;
-  padding: 0.5rem 1rem;
-  background: var(--accent-color);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-.flashcard-controls button:hover {
-  background: var(--primary-color);
+body.dark #ilae-classification-content .reset-filters {
+  background-color: var(--dark-accent-color);
 }
 
-/* Enable 3D flip effect */
-.flashcard {
-  perspective: 1000px;
+body.dark #ilae-classification-content .reset-filters:hover {
+  background-color: var(--dark-btn-next);
 }
 
-.flashcard-inner {
-  position: relative;
-  width: 100%;
-  height: 100%;
-  transition: transform 0.6s;
-  transform-style: preserve-3d;
+body.dark #ilae-classification-content .no-results {
+  background-color: var(--dark-info-bg);
 }
 
-/* When the flashcard is flipped, rotate the inner container */
-.flashcard.is-flipped .flashcard-inner {
-  transform: rotateY(180deg);
+body.dark #ilae-classification-content .no-results h3 {
+  color: var(--dark-primary-text);
 }
 
-/* Style both the front and back sides */
-.flashcard-front,
-.flashcard-back {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  backface-visibility: hidden;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 1rem;
-  box-sizing: border-box;
-  overflow-wrap: break-word;
-  word-wrap: break-word;
-  white-space: normal;
+body.dark #ilae-classification-content .no-results p {
+  color: var(--dark-text-color);
 }
 
-/* Rotate the back side so it shows when flipped */
-.flashcard-back {
-  transform: rotateY(180deg);
+body.dark #ilae-classification-content .modal-content {
+  background: var(--dark-card-bg);
 }
 
-/* Override any rule that hides the back side */
-#flashcard .flashcard-back {
-  display: flex !important;
+body.dark #ilae-classification-content .modal-title {
+  color: var(--dark-primary-text);
 }
 
-/*============================================
-   NEW: SEARCH AND TEST CONTAINER (Combined & Centered)
-=============================================*/
-.search-and-test {
-  display: flex;
-  align-items: stretch;       /* Children share the same height */
-  justify-content: center;     /* Center the container horizontally */
-  margin-bottom: 2rem;
+body.dark #ilae-classification-content .modal-overview,
+body.dark #ilae-classification-content .modal-eeg {
+  color: var(--dark-text-color);
 }
 
-/* Style the search box inside the container */
-.search-and-test .search-box {
-  flex: 1;
-  max-width: 600px;
-  margin: 0;
-  /* Use the same border, padding, and background as before */
-  border: 2px solid var(--accent-color);
-  border-right: none;         /* Remove right border so it touches the button */
-  border-top-left-radius: 8px;
-  border-bottom-left-radius: 8px;
-  background: var(--info-bg);
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  display: flex;
-  align-items: center;
+body.dark #ilae-classification-content .modal-eeg {
+  background-color: var(--dark-info-bg);
 }
 
-.search-and-test .search-box input {
-  width: 100%;
-  padding: 0.5rem 0.75rem;
-  border: none;
-  outline: none;
-  font-size: 1rem;
-  background: transparent;
-  color: var(--text-color);
+body.dark #ilae-classification-content #pdfLink {
+  background-color: var(--dark-accent-color);
 }
 
-/* Style the Test Yourself button inside the container */
-.search-and-test .flashcard-button {
-  margin: 0;
-  padding: 0.5rem 1.5rem;
-  border: 2px solid var(--accent-color);
-  border-left: none;          /* Remove left border so it touches the search box */
-  border-top-right-radius: 8px;
-  border-bottom-right-radius: 8px;
-  background: var(--accent-color);
-  color: #fff;
-  font-size: 1rem;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s ease;
-}
-.search-and-test .flashcard-button:hover {
-  background: var(--primary-color);
+body.dark #ilae-classification-content #pdfLink:hover {
+  background-color: var(--dark-btn-next);
 }
 
-/* Flashcard Display Container */
-#flashcard-container {
-  margin-bottom: 1rem;
-  text-align: center;
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  #ilae-classification-content .ilae-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  #ilae-classification-content .filter-container {
+    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  #ilae-classification-content .filter-group {
+    margin-bottom: 0.75rem;
+  }
+  
+  #ilae-classification-content .cross-ref .tooltip {
+    width: 250px;
+    margin-left: -125px;
+  }
+  
+  #ilae-classification-content .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
 }
-
-#flashcard {
-  border: 2px solid var(--accent-color);
-  border-radius: 8px;
-  background: var(--info-bg);
-  box-shadow: 0 2px 8px var(--shadow-color);
-  cursor: pointer;
-  transition: transform 0.3s ease;
-  padding: 1.5rem;
-  min-height: 150px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.5rem;
-}
-
-#flashcard:hover {
-  transform: scale(1.02);
-}
-
-.flashcard-front,
-.flashcard-back {
-  width: 100%;
-}
-
-.flashcard-back {
-  display: none;
-}
-
-/* Rating Buttons (Quality ratings: 0: Again, 3: Hard, 4: Good, 5: Easy) */
-#rating-buttons {
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-#rating-buttons button {
-  margin: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-
-/* Example colors for each rating button */
-#rating-buttons button:nth-child(1) { background: #ff7675; color: #fff; }  /* Again */
-#rating-buttons button:nth-child(2) { background: #fab1a0; color: #fff; }  /* Hard */
-#rating-buttons button:nth-child(3) { background: #55efc4; color: #fff; }  /* Good */
-#rating-buttons button:nth-child(4) { background: #74b9ff; color: #fff; }  /* Easy */
-#rating-buttons button:hover { opacity: 0.9; }
-
-/* Navigation Buttons */
-#navigation {
-  text-align: center;
-  margin-bottom: 2rem;
-}
-#navigation button {
-  margin: 0.5rem;
-  padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border: 1px solid var(--accent-color);
-  border-radius: 4px;
-  background: #fff;
-  cursor: pointer;
-  transition: background 0.3s ease;
-}
-#navigation button:hover {
-  background: var(--accent-color);
-  color: #fff;
-}
-/*============================================
-   END ILAE CLASSIFICATION SPECIFIC STYLES
-=============================================*/
 
 /* Increase base font size when .large-font is applied */
 body.large-font {
@@ -1358,3 +1109,913 @@ body.large-font * {
   font-size: 110% !important;
 }
 */
+
+/* Header buttons and icons */
+header button,
+header .btn {
+  background: transparent;
+  color: var(--header-text, #fff);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.3s ease, color 0.3s ease, transform 0.3s ease;
+}
+
+header button:hover,
+header .btn:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--accent-color);
+  transform: scale(1.05);
+}
+
+header .icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+header .icon-btn i {
+  font-size: 1.1rem;
+}
+
+/* Make sure dropdown matches header styling */
+.dropdown-toggle {
+  background: transparent;
+  color: var(--header-text);
+  padding: 8px 12px;
+  border: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.3s;
+}
+
+.dropdown-toggle:hover {
+  opacity: 0.7;
+  background: transparent;
+  color: var(--header-text);
+  transform: none;
+}
+
+.dropdown-content {
+  background: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px var(--shadow-color);
+}
+
+body.dark .dropdown-content {
+  background: rgba(44, 44, 46, 0.7);
+}
+
+.dropdown-content a {
+  color: var(--text-color);
+  font-weight: 400;
+}
+
+.dropdown-content a:hover {
+  background: var(--hover-bg);
+  color: var(--accent-color);
+}
+
+/* Dark mode adjustments */
+body.dark header button,
+body.dark header .btn,
+body.dark .dropdown-toggle {
+  color: var(--header-text);
+}
+
+body.dark header button:hover,
+body.dark header .btn:hover,
+body.dark .dropdown-toggle:hover {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+body.dark .dropdown-content {
+  background: var(--info-bg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25);
+}
+
+body.dark .dropdown-content a {
+  color: var(--text-color);
+}
+
+body.dark .dropdown-content a:hover {
+  background: var(--hover-bg);
+}
+
+/* Dark mode button overrides */
+body.dark .btn {
+  color: var(--accent-color);
+}
+
+body.dark .card h3,
+body.dark .faq-question,
+body.dark .modal-title,
+body.dark .natus-container h1,
+body.dark .natus-step-content h3 {
+  color: var(--header-text) !important;
+}
+
+/*-----------------------------------------------
+  DARK MODE TITLE OVERRIDES - COMPREHENSIVE
+-----------------------------------------------*/
+/* Ensure ALL headings adapt to dark mode */
+body.dark h1,
+body.dark h2,
+body.dark h3,
+body.dark h4,
+body.dark h5,
+body.dark h6,
+body.dark .page-title,
+body.dark .section-title,
+body.dark .section-header,
+body.dark .card h3,
+body.dark .faq-question,
+body.dark .modal-title,
+body.dark .natus-container h1,
+body.dark .natus-step-content h3,
+body.dark #section-content h1,
+body.dark #section-content h2,
+body.dark #section-content h3,
+body.dark #section-content h4,
+body.dark #section-content .title,
+body.dark #section-content .page-title,
+body.dark #section-content .section-title,
+body.dark #section-content .header,
+body.dark #section-content .sub-header,
+body.dark .video-list h2,
+body.dark .ilae-card h3,
+body.dark .quiz-header h3 {
+  color: var(--header-text) !important;
+}
+
+/* Ensure specific elements have proper transitions for dark mode */
+h1, h2, h3, h4, h5, h6,
+.title, .header, .sub-header,
+.page-title, .section-title, .section-header,
+.card h3, .faq-question, .modal-title,
+.natus-container h1, .natus-step-content h3,
+.video-list h2, .ilae-card h3, .quiz-header h3 {
+  transition: color var(--transition-duration) !important;
+}
+
+/*-----------------------------------------------
+  NATUS INSTRUCTIONS MODERNIZATION
+-----------------------------------------------*/
+.natus-container {
+  max-width: 800px;
+  margin: 2rem auto;
+  padding: 2rem;
+  background: var(--info-bg);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+}
+
+.natus-container h3.tab-title {
+  font-size: 1.8rem;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+
+.natus-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.natus-step {
+  display: flex;
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 1.5rem;
+  border: none;
+  border-radius: 16px;
+  background: var(--bg-color);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.natus-step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+.natus-step-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  background: var(--accent-color);
+  color: #fff;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.2rem;
+  font-weight: 600;
+}
+
+.natus-step-content {
+  flex: 1;
+}
+
+.natus-step-content h3 {
+  margin-top: 0;
+  font-size: 1.4rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.8rem;
+}
+
+.natus-step-content p {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+  margin-bottom: 1.2rem;
+}
+
+.natus-image {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  margin-top: 1rem;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+}
+
+/* Special styling for the inline layout in step 1 */
+#natus-tab .natus-step:first-of-type .natus-step-content {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+#natus-tab .natus-step:first-of-type .natus-step-content .step1-text-container {
+  flex: 1;
+}
+
+#natus-tab .step1-image {
+  max-width: 40%;
+  height: auto;
+  align-self: center;
+  margin-top: 0;
+}
+
+/* Tab buttons - Apple style */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 2em;
+}
+
+.tab-buttons button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 980px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 140px;
+  transition: background-color 0.3s, transform 0.3s;
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.tab-buttons button:hover {
+  transform: scale(1.02);
+  background-color: var(--accent-hover);
+}
+
+.tab-buttons button.active {
+  background-color: var(--accent-color);
+}
+
+.tab-buttons button:not(.active) {
+  background-color: rgba(0, 102, 204, 0.1);
+  color: var(--accent-color);
+}
+
+/* Dark mode overrides */
+body.dark .natus-container {
+  background: var(--info-bg);
+}
+
+body.dark .natus-step {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+body.dark .natus-container h3.tab-title,
+body.dark .natus-step-content h3 {
+  color: var(--header-text);
+}
+
+body.dark .natus-step-content p {
+  color: var(--text-secondary);
+}
+
+body.dark .tab-buttons button:not(.active) {
+  background-color: rgba(41, 151, 255, 0.15);
+  color: var(--accent-color);
+}
+
+/*-----------------------------------------------
+  EPILEPSY ROTATION STYLING - APPLE DESIGN LANGUAGE
+-----------------------------------------------*/
+#epilepsy-rotation .tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 2em;
+}
+
+#epilepsy-rotation .tab-buttons button {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 980px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 140px;
+  transition: background-color 0.3s, transform 0.3s;
+  background-color: var(--accent-color);
+  color: white;
+}
+
+#epilepsy-rotation .tab-buttons button:hover {
+  transform: scale(1.02);
+  background-color: var(--accent-hover);
+}
+
+#epilepsy-rotation .tab-buttons button.active {
+  background-color: var(--accent-color);
+}
+
+#epilepsy-rotation .tab-buttons button:not(.active) {
+  background-color: rgba(0, 102, 204, 0.1);
+  color: var(--accent-color);
+}
+
+#epilepsy-rotation .quick-links {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+}
+
+#epilepsy-rotation .quick-links a {
+  display: inline-block;
+  padding: 6px 16px;
+  margin: 0 5px;
+  color: var(--accent-color);
+  text-decoration: none;
+  border-radius: 980px;
+  background-color: rgba(0, 102, 204, 0.08);
+  transition: background-color 0.2s, transform 0.2s;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#epilepsy-rotation .quick-links a:hover {
+  background-color: rgba(0, 102, 204, 0.15);
+  transform: scale(1.05);
+}
+
+#epilepsy-rotation .info-box {
+  background: var(--info-bg);
+  padding: 1.5rem;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px var(--shadow-color);
+  margin-bottom: 2rem;
+  transition: transform 0.3s;
+}
+
+#epilepsy-rotation .info-box:hover {
+  transform: translateY(-5px);
+}
+
+#epilepsy-rotation .info-box h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+#epilepsy-rotation .info-box h3 {
+  font-size: 1.4rem;
+  margin: 1.5rem 0 1rem;
+  color: var(--primary-color);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+
+#epilepsy-rotation .info-box h4 {
+  font-size: 1.2rem;
+  margin: 1.2rem 0 0.8rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+#epilepsy-rotation .custom-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  margin-top: 1rem;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+#epilepsy-rotation .custom-table thead th {
+  background-color: rgba(0, 102, 204, 0.08);
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 500;
+  color: var(--primary-color);
+  border-bottom: 1px solid var(--border-color);
+}
+
+#epilepsy-rotation .custom-table tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-secondary);
+}
+
+#epilepsy-rotation .custom-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+#epilepsy-rotation .custom-table tbody tr:hover td {
+  background-color: rgba(0, 102, 204, 0.03);
+}
+
+#epilepsy-rotation .table-link {
+  display: inline-block;
+  margin-top: 5px;
+  color: var(--accent-color);
+  text-decoration: none;
+  font-size: 0.9rem;
+  transition: opacity 0.2s;
+}
+
+#epilepsy-rotation .table-link:hover {
+  opacity: 0.8;
+}
+
+#epilepsy-rotation .table-link i {
+  margin-right: 5px;
+}
+
+/* Modal styling for EEG Index/Generator */
+#epilepsy-rotation .modal-overlay {
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+#epilepsy-rotation .modal-content {
+  background: var(--info-bg);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+#epilepsy-rotation .modal-header {
+  background: var(--accent-color);
+  color: white;
+  padding: 15px 20px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+}
+
+#epilepsy-rotation .modal-close {
+  color: var(--text-secondary);
+  transition: color 0.2s;
+}
+
+#epilepsy-rotation .modal-close:hover {
+  color: var(--accent-color);
+}
+
+#epilepsy-rotation .slide-entry {
+  background: var(--bg-color);
+  border-radius: 12px;
+  border: none;
+  padding: 16px;
+  margin-bottom: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s;
+}
+
+#epilepsy-rotation .slide-entry:hover {
+  transform: translateY(-3px);
+}
+
+#epilepsy-rotation .slide-actions button {
+  background-color: var(--accent-color);
+  color: white;
+  border: none;
+  border-radius: 980px;
+  padding: 8px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.3s;
+}
+
+#epilepsy-rotation .slide-actions button:hover {
+  background-color: var(--accent-hover);
+  transform: scale(1.02);
+}
+
+/* Dark mode overrides */
+body.dark #epilepsy-rotation .info-box h2,
+body.dark #epilepsy-rotation .info-box h3,
+body.dark #epilepsy-rotation .info-box h4 {
+  color: var(--header-text);
+}
+
+body.dark #epilepsy-rotation .custom-table thead th {
+  background-color: rgba(41, 151, 255, 0.1);
+  color: var(--header-text);
+}
+
+body.dark #epilepsy-rotation .table-link {
+  color: var(--accent-color);
+}
+
+body.dark #epilepsy-rotation .quick-links a {
+  background-color: rgba(41, 151, 255, 0.15);
+}
+
+body.dark #epilepsy-rotation .quick-links a:hover {
+  background-color: rgba(41, 151, 255, 0.25);
+}
+
+body.dark #epilepsy-rotation .slide-entry {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+/* Seizure Management Styles */
+#seizure-management .section-detail {
+  margin-bottom: 1.5rem;
+}
+
+#seizure-management .section-header {
+  font-size: 1.3rem;
+  font-weight: 600;
+  padding: 1rem 0;
+  cursor: pointer;
+  color: var(--primary-color);
+  transition: color 0.2s ease;
+}
+
+#seizure-management .section-header:hover {
+  color: var(--accent-color);
+}
+
+#seizure-management .info-box {
+  background: var(--info-bg);
+  padding: 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+
+#seizure-management .info-box:hover {
+  box-shadow: 0 4px 12px var(--shadow-color);
+}
+
+#seizure-management .search-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 1.5rem auto;
+}
+
+#seizure-management .search-box {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+#seizure-management .search-box input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  background: white;
+  color: var(--text-color);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+#seizure-management .search-box input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.15);
+}
+
+#seizure-management .filter-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2rem;
+  margin: 1rem auto;
+  flex-wrap: nowrap;
+  width: 100%;
+  text-align: center;
+  background-color: var(--info-bg);
+  padding: 1.2rem;
+  border-radius: 8px;
+  max-width: 800px;
+}
+
+#seizure-management .filter-group {
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+}
+
+#seizure-management .filter-container label {
+  display: flex;
+  align-items: center;
+  margin-right: 0.5rem;
+  font-weight: 500;
+}
+
+#seizure-management .filter-dropdown {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: white;
+  color: var(--text-color);
+  font-size: 14px;
+  cursor: pointer;
+  min-width: 150px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#seizure-management .reset-filters {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+#seizure-management .reset-filters:hover {
+  background-color: #0056b3;
+  transform: translateY(-1px);
+}
+
+#seizure-management .custom-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 1.5rem;
+  background: var(--card-bg);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+#seizure-management .custom-table thead th {
+  background-color: var(--table-header-bg);
+  color: var(--table-header-text);
+  padding: 12px 15px;
+  text-align: left;
+  font-weight: 600;
+  border-bottom: 1px solid var(--border-color);
+}
+
+#seizure-management .custom-table tbody td {
+  padding: 12px 15px;
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-color);
+}
+
+#seizure-management .custom-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+#seizure-management .custom-table tbody tr:hover td {
+  background-color: var(--hover-bg);
+}
+
+#seizure-management .no-bullets {
+  list-style: none;
+  margin: 0;
+  padding-left: 0;
+}
+
+#seizure-management .reference {
+  color: var(--accent-color);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+#seizure-management .reference:hover {
+  color: var(--btn-next);
+  text-decoration: underline;
+}
+
+/* Modal Styling */
+#seizure-management #dev-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10000;
+}
+
+#seizure-management #dev-modal .modal-content {
+  background: var(--info-bg);
+  padding: 2rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px var(--shadow-color);
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+#seizure-management #dev-modal h2 {
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+#seizure-management #dev-modal p {
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+}
+
+#seizure-management #dev-modal input[type="text"] {
+  padding: 0.5rem;
+  font-size: 1rem;
+  width: 80%;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--info-bg);
+  color: var(--text-color);
+}
+
+#seizure-management #dev-modal button {
+  margin: 0 0.5rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  background: var(--accent-color);
+  color: #fff;
+  transition: background var(--transition-duration);
+}
+
+#seizure-management #dev-modal button:hover {
+  background: var(--btn-next);
+}
+
+#seizure-management #dev-modal .error {
+  color: #ff3b30;
+  margin-top: 0.5rem;
+  display: none;
+}
+
+/* Dark mode overrides */
+body.dark #seizure-management .info-box {
+  background: var(--dark-card-bg);
+}
+
+body.dark #seizure-management .custom-table thead th {
+  background-color: var(--dark-table-header-bg);
+  color: var(--dark-table-header-text);
+}
+
+body.dark #seizure-management .custom-table {
+  background: var(--dark-card-bg);
+}
+
+body.dark #seizure-management .reference {
+  color: var(--dark-accent-color);
+}
+
+body.dark #seizure-management .reference:hover {
+  color: var(--dark-btn-next);
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  #seizure-management .filter-container {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  #seizure-management .custom-table {
+    font-size: 0.9rem;
+  }
+  
+  #seizure-management .custom-table thead th,
+  #seizure-management .custom-table tbody td {
+    padding: 8px 10px;
+  }
+}
+
+/* Natus & Persyst Instructions Container */
+#natus-persyst {
+  background: var(--card-bg);
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  margin-bottom: 30px;
+  max-width: 1000px;
+  margin: 0 auto 30px;
+}
+
+#natus-persyst .tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+
+#natus-persyst .tab-buttons button {
+  padding: 10px 24px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--button-secondary-bg);
+  color: var(--button-secondary-text);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  min-width: 120px;
+  text-align: center;
+}
+
+#natus-persyst .tab-buttons button:hover {
+  transform: translateY(-2px);
+  background-color: var(--button-secondary-hover-bg);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#natus-persyst .tab-buttons button.active {
+  background-color: var(--accent-color);
+  color: white;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+}
+
+#natus-persyst .tab-buttons button:not(.active) {
+  opacity: 0.85;
+}
+
+#natus-persyst .tab-title {
+  text-align: center;
+  margin-bottom: 1.5rem;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* Dark mode overrides for Natus & Persyst tab */
+@media (prefers-color-scheme: dark) {
+  #natus-persyst {
+    background: var(--card-bg);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+  }
+  
+  #natus-persyst .tab-buttons button:not(.active) {
+    background-color: var(--button-secondary-bg);
+    color: var(--button-secondary-text);
+  }
+  
+  #natus-persyst .tab-buttons button:hover {
+    background-color: var(--button-secondary-hover-bg);
+  }
+  
+  #natus-persyst .natus-step {
+    border-color: var(--border-color);
+  }
+}
