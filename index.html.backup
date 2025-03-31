@@ -3443,47 +3443,47 @@
         }
         
         /* Specific fixes for therapeutic range column */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"] {
           word-break: break-word;
           hyphens: auto;
           white-space: normal;
         }
         
         /* Keep µg/mL units together */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"] {
           font-variant-numeric: tabular-nums;
         }
         
         /* Make sure numeric values don't break */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] span,
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] sup {
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"] span,
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"] sup {
           display: inline-block;
         }
         
         /* Special handling for unit strings to prevent breaking */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"] {
           font-size: 13px;
         }
         
         /* Prevent breaking between numbers and units */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"]:not(:empty) {
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"]:not(:empty) {
           white-space: pre-wrap;
         }
         
         /* Handle specific units formatting */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"] {
           position: relative;
         }
         
         /* Target specific unit patterns and ensure they don't break */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"]::after {
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"]::after {
           content: "";
           display: block;
           clear: both;
         }
         
         /* Custom formatting for N/A values */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"]:contains("N/A") {
+        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"]:contains("N/A") {
           opacity: 0.7;
         }
         
@@ -3494,7 +3494,7 @@
             min-width: 35%;
           }
           
-          #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
+          #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range & Metabolite"] {
             font-size: 12px;
           }
         }
