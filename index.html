@@ -82,13 +82,40 @@
     }
     #copyright-modal .modal-content {
       background: #fff;
-      padding: 1rem;
+      padding: 1.5rem;
       border-radius: 8px;
       max-width: 600px;
       width: 90%;
       text-align: left;
       color: inherit;
       position: relative;
+    }
+    #copyright-modal .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #333;
+      transition: color 0.3s ease;
+    }
+    #copyright-modal .close-btn:hover {
+      color: #005b96;
+    }
+    
+    /* Dark mode overrides for copyright modal */
+    body.dark #copyright-modal .modal-content {
+      background: var(--info-bg);
+      color: var(--text-color);
+    }
+    body.dark #copyright-modal .close-btn {
+      color: #eee;
+    }
+    body.dark #copyright-modal .close-btn:hover {
+      color: #0077b6;
+    }
+    body.dark #copyright-modal h2 {
+      color: var(--header-text);
     }
 
     /* Font sizing */
@@ -655,7 +682,7 @@
       </button>
       <button onclick="toggleDarkMode()" aria-label="Toggle Dark Mode">Dark Mode</button>
     </div>
-    <div class="footer-copy" style="margin-top:0.5em; font-size:0.8rem; color:var(--text-color);">
+    <div class="footer-copy" style="margin-top:0.5em; font-size:0.8rem; color:var(--text-color); cursor:pointer;" onclick="openCopyrightModal()">
       © 2025 Matthew S. Davitz, MD.
     </div>
   </footer>
@@ -2659,6 +2686,17 @@
       } else {
         document.title = BASE_TITLE;
       }
+      
+      // Add header shrink on scroll effect
+      const header = document.getElementById('header');
+      window.addEventListener('scroll', () => {
+        if (window.scrollY > 50) {
+          header.classList.add('shrink');
+        } else {
+          header.classList.remove('shrink');
+        }
+      });
+      
       // ... existing DOMContentLoaded code ...
     });
 
@@ -2839,6 +2877,16 @@
       if (footerCopy) {
         footerCopy.style.cursor = 'pointer';
         footerCopy.addEventListener('click', openCopyrightModal);
+        
+        // Close modal when clicking outside the content
+        const copyrightModal = document.getElementById('copyright-modal');
+        if (copyrightModal) {
+          copyrightModal.addEventListener('click', function(e) {
+            if (e.target === copyrightModal) {
+              closeCopyrightModal();
+            }
+          });
+        }
       }
     });
   </script>

@@ -1,203 +1,106 @@
 <title>EEG Atlas</title>
+  <link rel="stylesheet" href="assets/css/styles.css">
   <style>
-    /* Uniform button sizing for all buttons using the btn class */
-    .btn {
-      min-width: 120px;
-      display: inline-block;
-      text-align: center;
+    /* EEG Atlas Specific Styles - Apple Design Language */
+    #eeg-atlas-container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px;
+      background: var(--card-bg);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
     }
     
-    /* Sidebar buttons arranged in a 2x2 grid */
+    /* Sidebar buttons in a 2x2 grid */
     #sidebar-buttons {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: 0.5rem;
-      margin-bottom: 1rem;
+      gap: 12px;
+      margin-bottom: 24px;
       max-width: 600px;
       width: 100%;
       margin-left: auto;
       margin-right: auto;
     }
     
-    /* Video list styling */
-    .video-list {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+    #sidebar-buttons button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      background-color: var(--accent-color);
+      color: white;
+      min-width: 120px;
+      display: inline-block;
+      text-align: center;
+    }
+    
+    #sidebar-buttons button:hover {
+      transform: scale(1.02);
+      background-color: var(--accent-hover);
+    }
+    
+    #sidebar-buttons button.active {
+      background-color: var(--accent-color);
+    }
+    
+    #sidebar-buttons button:not(.active) {
+      background-color: rgba(0, 102, 204, 0.1);
+      color: var(--accent-color);
     }
     
     /* EEG videos container */
     #eeg-videos {
       display: flex;
       justify-content: space-between;
-      gap: 2rem;
+      gap: 24px;
       width: 100%;
     }
     
-    /* Base media query for mid-sized screens */
-    @media (max-width: 768px) {
-      #eeg-videos {
-        display: flex;
-        flex-direction: column;
-        padding: 10px;
-      }
-      .video-list,
-      .main-content {
-        width: 100%;
-      }
-      .video-list {
-        order: 2;
-      }
-      .main-content {
-        order: 1;
-        margin-bottom: 2rem;
-      }
-    }
-    /* Additional adjustments for very small screens */
-    @media (max-width: 600px) {
-      #sidebar-buttons button {
-        padding: 0.75rem 1rem;
-        font-size: 1rem;
-        margin: 0 3px;
-      }
-      .favorite-star {
-        font-size: 1.5em;
-        margin-left: 5px;
-      }
-      /* Increase touch target for list items */
-      #atlas-list li {
-        padding: 0.6em 0;
-      }
-    }
-    
-    /* Search and filter styles */
-    .search-container {
-      margin-bottom: 1.5rem;
+    /* Video list styling */
+    .video-list {
+      flex: 0 0 300px;
       display: flex;
       flex-direction: column;
       align-items: center;
     }
+    
+    /* Search and filter styles */
+    .search-container {
+      margin-bottom: 24px;
+      width: 100%;
+    }
+    
     .search-box {
       width: 100%;
       max-width: 600px;
-      margin-bottom: 1rem;
+      margin-bottom: 16px;
       position: relative;
+      margin-left: auto;
+      margin-right: auto;
     }
+    
     .search-box input {
       width: 100%;
       padding: 12px 15px;
-      border-radius: 6px;
+      border-radius: 8px;
       border: 1px solid var(--border-color);
       font-size: 1rem;
       background: var(--info-bg);
       color: var(--text-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: all 0.3s ease;
     }
     
-    /* Styles for favorite star (used in detail view) */
-    .favorite-star {
-      font-size: 1.2em;
-      color: var(--accent-color);
-      margin-left: 10px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
-    }
-    .favorite-animate {
-      transform: scale(1.2);
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 1px 8px rgba(0,0,0,0.15);
     }
     
-    /* Modal styles for the full screen carousel mode */
-    .modal {
-      display: none; /* Hidden by default */
-      position: fixed;
-      z-index: 2000;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.9);
-      overflow: auto;
-      justify-content: center;
-      align-items: center;
-    }
-    .carousel-container {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      max-width: 90%;
-      max-height: 90%;
-      width: 100%;
-      background: transparent;
-    }
-    /* Carousel previews */
-    .carousel-preview {
-      flex: 1;
-      max-width: 15%;
-      text-align: center;
-      cursor: pointer;
-    }
-    .carousel-preview img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      opacity: 0.7;
-      transition: opacity 0.3s;
-    }
-    .carousel-preview:hover img {
-      opacity: 1;
-    }
-    /* Preview caption style */
-    .carousel-preview .preview-caption {
-      margin-top: 0.5rem;
-      color: #fff;
-      font-size: 14px;
-    }
-    /* Carousel center */
-    .carousel-main {
-      flex: 4;
-      max-width: 70%;
-      text-align: center;
-    }
-    .carousel-main img {
-      width: 100%;
-      height: auto;
-      object-fit: contain;
-      display: block;
-      margin: 0 auto;
-    }
-    .modal-close {
-      position: absolute;
-      top: 20px;
-      right: 35px;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      z-index: 2100;
-    }
-    /* Carousel navigation arrows */
-    .carousel-prev,
-    .carousel-next {
-      position: absolute;
-      top: 50%;
-      color: #fff;
-      font-size: 40px;
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
-      padding: 0 10px;
-      transform: translateY(-50%);
-    }
-    .carousel-prev { left: 10px; }
-    .carousel-next { right: 10px; }
-    /* Caption text under the center image */
-    #carousel-caption {
-      text-align: center;
-      color: #fff;
-      margin-top: 10px;
-      font-size: 24px;
-    }
     /* Atlas list styling */
     #atlas-list {
       list-style: none; 
@@ -208,20 +111,105 @@
       margin-right: auto;
     }
     
+    #atlas-list li {
+      margin-bottom: 8px;
+    }
+    
+    #atlas-list .category-header {
+      cursor: pointer;
+      font-weight: 600;
+      padding: 12px 0;
+      border-bottom: 1px solid var(--border-color);
+      color: var(--text-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      transition: color 0.2s ease;
+    }
+    
+    #atlas-list .category-header:hover {
+      color: var(--accent-color);
+    }
+    
+    #atlas-list .category-header::after {
+      content: "+";
+      font-size: 1.2rem;
+      transition: transform 0.3s ease;
+    }
+    
+    #atlas-list .category-header.open::after {
+      transform: rotate(45deg);
+    }
+    
+    #atlas-list .category-items {
+      list-style: none;
+      margin: 0;
+      padding-left: 16px;
+      overflow: hidden;
+      max-height: 0;
+      transition: max-height 0.3s ease-out;
+    }
+    
+    #atlas-list .category-items.open {
+      max-height: 1000px;
+      transition: max-height 0.5s ease-in;
+    }
+    
+    #atlas-list .eeg-item {
+      padding: 10px 0;
+      cursor: pointer;
+      color: var(--text-color);
+      transition: color 0.2s, transform 0.2s;
+    }
+    
+    #atlas-list .eeg-item:hover {
+      color: var(--accent-color);
+      transform: translateX(4px);
+    }
+    
     /* Main content styling */
     .main-content {
       flex: 1;
       min-width: 0;
-      padding: 1rem;
+      padding: 24px;
       background: var(--info-bg);
-      border-radius: 8px;
-      box-shadow: 0 2px 4px var(--shadow-color);
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      transition: background 0.3s ease, box-shadow 0.3s ease;
     }
     
     /* Detail content styling */
     #detail-content {
-      padding: 1rem;
+      padding: 16px;
       border-radius: 8px;
+    }
+    
+    #detail-content h2 {
+      margin-bottom: 20px;
+      color: var(--primary-color);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+    
+    #detail-content img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s;
+      cursor: pointer;
+    }
+    
+    #detail-content img:hover {
+      transform: scale(1.02);
+    }
+    
+    #detail-content p {
+      margin-top: 20px;
+      line-height: 1.6;
+      color: var(--text-color);
     }
     
     /* Flashcard styling */
@@ -234,28 +222,356 @@
     .flashcard {
       width: 100%;
       min-height: 300px;
-      padding: 1rem;
+      padding: 24px;
       background: var(--info-bg);
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 4px 8px var(--shadow-color);
-      margin-bottom: 1rem;
+      border-radius: 12px;
+      border: none;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      margin-bottom: 24px;
       cursor: pointer;
       position: relative;
       overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+    }
+    
+    .flashcard:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+    
+    .flashcard-front, .flashcard-back {
+      width: 100%;
+      text-align: center;
+    }
+    
+    .flashcard-front img, .flashcard-back img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 8px;
+      margin-bottom: 16px;
+    }
+    
+    .flashcard-back h3 {
+      margin-bottom: 16px;
+      color: var(--primary-color);
+      font-weight: 600;
+    }
+    
+    .flashcard-back p {
+      line-height: 1.6;
+      color: var(--text-color);
     }
     
     .flashcard-controls {
       display: flex;
       justify-content: center;
-      gap: 1rem;
-      margin-top: 1rem;
+      gap: 16px;
+      margin-top: 24px;
+    }
+    
+    .flashcard-controls button {
+      padding: 10px 18px;
+      border: none;
+      border-radius: 980px;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.3s;
+      background-color: var(--accent-color);
+      color: white;
+    }
+    
+    .flashcard-controls button:hover {
+      transform: scale(1.02);
+      background-color: var(--accent-hover);
+    }
+    
+    /* Styles for favorite star */
+    .favorite-star {
+      font-size: 1.4em;
+      color: var(--accent-color);
+      cursor: pointer;
+      transition: transform 0.2s ease;
+    }
+    
+    .favorite-star:hover {
+      transform: scale(1.2);
+    }
+    
+    .favorite-animate {
+      transform: scale(1.2);
+    }
+    
+    /* Modal styles for the full screen carousel mode */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      overflow: auto;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .carousel-container {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      max-width: 90%;
+      max-height: 90%;
+      width: 100%;
+      background: transparent;
+    }
+    
+    /* Carousel previews */
+    .carousel-preview {
+      flex: 1;
+      max-width: 15%;
+      text-align: center;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.3s, transform 0.3s;
+    }
+    
+    .carousel-preview:hover {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+    
+    .carousel-preview img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      border-radius: 8px;
+    }
+    
+    /* Preview caption style */
+    .carousel-preview .preview-caption {
+      margin-top: 8px;
+      color: #fff;
+      font-size: 14px;
+    }
+    
+    /* Carousel center */
+    .carousel-main {
+      flex: 4;
+      max-width: 70%;
+      text-align: center;
+    }
+    
+    .carousel-main img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      margin: 0 auto;
+      border-radius: 12px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-close {
+      position: absolute;
+      top: 20px;
+      right: 35px;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      z-index: 2100;
+      transition: color 0.2s, transform 0.2s;
+    }
+    
+    .modal-close:hover {
+      color: var(--accent-color);
+      transform: scale(1.1);
+    }
+    
+    /* Carousel navigation arrows */
+    .carousel-prev,
+    .carousel-next {
+      position: absolute;
+      top: 50%;
+      color: #fff;
+      font-size: 40px;
+      font-weight: bold;
+      cursor: pointer;
+      user-select: none;
+      padding: 0 10px;
+      transform: translateY(-50%);
+      transition: color 0.2s, transform 0.2s;
+    }
+    
+    .carousel-prev:hover,
+    .carousel-next:hover {
+      color: var(--accent-color);
+      transform: translateY(-50%) scale(1.1);
+    }
+    
+    .carousel-prev { left: 10px; }
+    .carousel-next { right: 10px; }
+    
+    /* Caption text under the center image */
+    #carousel-caption {
+      text-align: center;
+      color: #fff;
+      margin-top: 16px;
+      font-size: 20px;
+      font-weight: 500;
+    }
+    
+    /* Autocomplete styling */
+    #autocomplete {
+      position:absolute;
+      top:100%;
+      left:0;
+      right:0;
+      background:var(--info-bg);
+      z-index:1000;
+      list-style:none;
+      padding:0;
+      margin:0;
+      border:1px solid var(--border-color);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      display:none;
+      max-height: 300px;
+      overflow-y: auto;
+    }
+    
+    #autocomplete li {
+      padding: 10px 15px;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+    
+    #autocomplete li:hover {
+      background-color: var(--hover-bg);
+    }
+    
+    /* Fullscreen button for images */
+    .fullscreen-hint {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background-color: rgba(0,0,0,0.5);
+      color: white;
+      padding: 5px 8px;
+      border-radius: 8px;
+      font-size: 12px;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    
+    .image-container {
+      position: relative;
+      display: inline-block;
+    }
+    
+    .image-container:hover .fullscreen-hint {
+      opacity: 1;
+    }
+    
+    /* Dark mode overrides */
+    @media (prefers-color-scheme: dark) {
+      #eeg-atlas-container {
+        background: var(--card-bg);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      #sidebar-buttons button:not(.active) {
+        background-color: rgba(41, 151, 255, 0.15);
+        color: var(--accent-color);
+      }
+      
+      .main-content {
+        background: var(--info-bg);
+        box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+      }
+      
+      .flashcard {
+        background: var(--info-bg);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+      }
+      
+      #autocomplete {
+        background: var(--info-bg);
+        border-color: var(--border-color);
+      }
+    }
+    
+    /* Media queries for responsive design */
+    @media (max-width: 768px) {
+      #eeg-videos {
+        display: flex;
+        flex-direction: column;
+        padding: 10px;
+      }
+      
+      .video-list,
+      .main-content {
+        width: 100%;
+      }
+      
+      .video-list {
+        order: 2;
+        flex: none;
+      }
+      
+      .main-content {
+        order: 1;
+        margin-bottom: 24px;
+      }
+      
+      .carousel-preview {
+        max-width: 20%;
+      }
+      
+      .carousel-main {
+        max-width: 60%;
+      }
+    }
+    
+    @media (max-width: 600px) {
+      #sidebar-buttons {
+        grid-template-columns: 1fr;
+      }
+      
+      #sidebar-buttons button {
+        padding: 8px 16px;
+        font-size: 0.9rem;
+      }
+      
+      .favorite-star {
+        font-size: 1.3em;
+        margin-left: 5px;
+      }
+      
+      .carousel-preview {
+        display: none;
+      }
+      
+      .carousel-main {
+        max-width: 90%;
+      }
+      
+      #carousel-caption {
+        font-size: 16px;
+      }
     }
   </style>
 
   <h2 class="page-title">EEG Atlas</h2>
   
-  <div class="info-box">
+  <div id="eeg-atlas-container">
     <section id="eeg-videos">
       <!-- Sidebar with search and grid of buttons -->
       <aside class="video-list" aria-label="EEG Categories">
@@ -263,16 +579,16 @@
           <div class="search-box">
             <label for="atlas-search" class="visually-hidden">Search patterns</label>
             <input type="text" id="atlas-search" placeholder="Search patterns..." autocomplete="off" />
-            <ul id="autocomplete" style="position:absolute; top:100%; left:0; right:0; background:var(--info-bg); z-index:1000; list-style:none; padding:0; margin:0; border:1px solid var(--border-color); border-radius: 6px; display:none;"></ul>
+            <ul id="autocomplete"></ul>
           </div>
           <div id="sidebar-buttons">
-            <button id="all-btn" class="btn" onclick="showAllEEG()">All EEG</button>
-            <button id="favorites-btn" class="btn" onclick="showFavorites()">Favorites</button>
-            <button class="btn" onclick="toggleFlashcardMode()">Toggle Flashcard Mode</button>
-            <button class="btn" onclick="showRandomEEG()">Random EEG</button>
+            <button id="all-btn" class="active" onclick="showAllEEG()">All EEG</button>
+            <button id="favorites-btn" onclick="showFavorites()">Favorites</button>
+            <button id="flashcard-btn" onclick="toggleFlashcardMode()">Flashcard Mode</button>
+            <button id="random-btn" onclick="showRandomEEG()">Random EEG</button>
           </div>
         </div>
-        <!-- EEG list: now only the title is shown -->
+        <!-- EEG list -->
         <ul id="atlas-list"></ul>
       </aside>
       
@@ -289,9 +605,9 @@
             <!-- Flashcard content will be dynamically generated with a split layout -->
           </div>
           <div class="flashcard-controls">
-            <button class="btn" onclick="nextFlashcard()">Next</button>
-            <button class="btn" onclick="shuffleFlashcards()">Shuffle</button>
-            <button class="btn" onclick="toggleFlashcardMode()">Back to List</button>
+            <button onclick="nextFlashcard()">Next</button>
+            <button onclick="shuffleFlashcards()">Shuffle</button>
+            <button onclick="toggleFlashcardMode()">Back to List</button>
           </div>
           <div id="fun-fact" style="margin-top:1rem; font-style: italic; color: var(--accent-color);"></div>
         </div>
@@ -901,98 +1217,164 @@
     let currentCarouselIndex = 0;
     let initialized = false;
     
-    // --- Cookie helper functions for favorites ---
+    // Initialize on document load
+    document.addEventListener("DOMContentLoaded", initializeUI);
+    
+    // --- Favorites Management ---
     function getFavorites() {
-      const cookies = document.cookie.split(';');
-      for (let c of cookies) {
-        let [key, value] = c.split('=').map(s => s.trim());
-        if (key === 'eegFavorites') {
-          try {
-            return JSON.parse(decodeURIComponent(value));
-          } catch (e) {
-            return [];
-          }
-        }
-      }
-      return [];
-    }
-    function setFavorites(favorites) {
-      document.cookie = "eegFavorites=" + encodeURIComponent(JSON.stringify(favorites)) + "; path=/; max-age=" + (60*60*24*7);
-    }
-    function isFavorite(title) {
-      const favorites = getFavorites();
-      return favorites.includes(title);
+      const storedFavorites = localStorage.getItem("eegFavorites");
+      return storedFavorites ? JSON.parse(storedFavorites) : [];
     }
     
-    // Toggle favorite (updates star in detail view)
     function toggleFavorite(title, event) {
       event.stopPropagation();
-      let favorites = getFavorites();
-      if (favorites.includes(title)) {
-        favorites = favorites.filter(f => f !== title);
-        event.target.textContent = "☆";
+      const favorites = getFavorites();
+      const index = favorites.indexOf(title);
+      
+      if (index > -1) {
+        favorites.splice(index, 1);
       } else {
         favorites.push(title);
-        event.target.textContent = "★";
-        event.target.classList.add("favorite-animate");
-        setTimeout(() => {
-          event.target.classList.remove("favorite-animate");
-        }, 200);
       }
-      setFavorites(favorites);
+      
+      localStorage.setItem("eegFavorites", JSON.stringify(favorites));
+      
+      // Update the star display
+      const star = event.target;
+      star.textContent = isFavorite(title) ? "★" : "☆";
+      star.classList.add("favorite-animate");
+      setTimeout(() => star.classList.remove("favorite-animate"), 300);
+      
+      return false;
+    }
+    
+    function isFavorite(title) {
+      return getFavorites().includes(title);
+    }
+    
+    // --- Main Tab Functions ---
+    function showAllEEG() {
+      document.getElementById("all-btn").classList.add("active");
+      document.getElementById("favorites-btn").classList.remove("active");
+      renderList(eegData);
+    }
+    
+    function showFavorites() {
+      document.getElementById("favorites-btn").classList.add("active");
+      document.getElementById("all-btn").classList.remove("active");
+      const favorites = getFavorites();
+      const filtered = eegData.filter(entry => favorites.includes(entry.title));
+      renderList(filtered, true);
+    }
+    
+    function showRandomEEG() {
+      const randomIndex = Math.floor(Math.random() * eegData.length);
+      renderDetail(eegData[randomIndex]);
+    }
+    
+    // --- Carousel Functions ---
+    function openCarouselBySrc(src) {
+      // Find the index of the current image in the eegData array
+      const index = eegData.findIndex(entry => entry.front === src);
+      if (index !== -1) {
+        openCarousel(index);
+      }
+    }
+    
+    function openCarousel(index) {
+      carouselData = eegData;
+      currentCarouselIndex = index;
+      updateCarouselDisplay();
+      document.getElementById("carousel-modal").style.display = "flex";
+    }
+    
+    function closeCarousel() {
+      document.getElementById("carousel-modal").style.display = "none";
+    }
+    
+    function prevCarousel() {
+      currentCarouselIndex = (currentCarouselIndex - 1 + carouselData.length) % carouselData.length;
+      updateCarouselDisplay();
+    }
+    
+    function nextCarousel() {
+      currentCarouselIndex = (currentCarouselIndex + 1) % carouselData.length;
+      updateCarouselDisplay();
+    }
+    
+    function updateCarouselDisplay() {
+      const entry = carouselData[currentCarouselIndex];
+      const prevIndex = (currentCarouselIndex - 1 + carouselData.length) % carouselData.length;
+      const nextIndex = (currentCarouselIndex + 1) % carouselData.length;
+      
+      document.getElementById("carousel-image").src = entry.front;
+      document.getElementById("carousel-caption").textContent = entry.title;
+      
+      document.getElementById("carousel-preview-left").src = carouselData[prevIndex].front;
+      document.getElementById("carousel-preview-left-caption").textContent = carouselData[prevIndex].title;
+      
+      document.getElementById("carousel-preview-right").src = carouselData[nextIndex].front;
+      document.getElementById("carousel-preview-right-caption").textContent = carouselData[nextIndex].title;
     }
     
     // --- Flashcard Functions ---
-    function shuffleArray(array) {
-      for (let i = array.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
-      }
-    }
-    
     function showFlashcard() {
-      const card = flashcardDeck[currentFlashcard];
+      const entry = flashcardDeck[currentFlashcard];
       const flashcard = document.getElementById("flashcard");
-      flashcard.innerHTML = `
-    <div class="flashcard-split" style="display: flex; border: 1px solid var(--border-color); border-radius: 8px; overflow: hidden;">
-      <div class="flashcard-image" style="flex: 1; padding: 1rem; border-right: 1px solid var(--border-color);">
-        <img src="${card.front}" alt="${card.title}" style="width: 100%; height: auto;" />
-      </div>
-      <div class="flashcard-finding" style="flex: 1; padding: 1rem;">
-        <h3>${card.title}</h3>
-        <p>${card.back}</p>
-      </div>
-    </div>
-  `;
-      displayFunFact();
-    }
-    
-    function flipFlashcard() {
-      const flashcard = document.getElementById("flashcard");
-      flashcard.classList.toggle("is-flipped");
-      showingFront = !showingFront;
+      
+      if (showingFront) {
+        flashcard.innerHTML = `
+          <div class="flashcard-front">
+            <img src="${entry.front}" alt="${entry.title}" />
+            <h3>${entry.title}</h3>
+            <p>Click to flip</p>
+          </div>
+        `;
+      } else {
+        flashcard.innerHTML = `
+          <div class="flashcard-back">
+            <h3>${entry.title}</h3>
+            <p>${entry.back}</p>
+            <p>Click to flip back</p>
+          </div>
+        `;
+      }
+      
+      // Generate a fun fact about EEG
+      const funFacts = [
+        "The first human EEG was recorded by Hans Berger in 1924.",
+        "The adult human EEG typically ranges from 1 to 30 Hz in frequency.",
+        "Epileptic seizures can sometimes be predicted by specific EEG patterns.",
+        "Sleep stages were first classified using EEG in the 1930s.",
+        "Gamma waves (>30 Hz) are associated with higher cognitive processing.",
+        "Richard Caton discovered electrical signals in animal brains in 1875, predating human EEGs."
+      ];
+      document.getElementById("fun-fact").textContent = "Fun fact: " + funFacts[Math.floor(Math.random() * funFacts.length)];
+      
+      // Add click event to flip
+      flashcard.onclick = flipFlashcard;
     }
     
     function nextFlashcard() {
       currentFlashcard = (currentFlashcard + 1) % flashcardDeck.length;
+      showingFront = true;
       showFlashcard();
     }
     
     function shuffleFlashcards() {
-      flashcardDeck = [...eegData];
-      shuffleArray(flashcardDeck);
+      // Fisher-Yates shuffle
+      for (let i = flashcardDeck.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [flashcardDeck[i], flashcardDeck[j]] = [flashcardDeck[j], flashcardDeck[i]];
+      }
       currentFlashcard = 0;
+      showingFront = true;
       showFlashcard();
     }
     
-    function displayFunFact() {
-      const funFactDiv = document.getElementById("fun-fact");
-      const funFacts = [
-        "Did you know? EEG can detect subtle changes in brain activity.",
-        "Fun Fact: Sleep spindles are linked to memory consolidation."
-      ];
-      const randomFact = funFacts[Math.floor(Math.random() * funFacts.length)];
-      funFactDiv.textContent = randomFact;
+    function flipFlashcard() {
+      showingFront = !showingFront;
+      showFlashcard();
     }
     
     function toggleFlashcardMode() {
@@ -1042,8 +1424,6 @@
           suggestions.forEach(entry => {
             const item = document.createElement("li");
             item.textContent = entry.title;
-            item.style.padding = "0.5em";
-            item.style.cursor = "pointer";
             item.setAttribute("tabindex", "0");
             item.addEventListener("click", () => {
               searchInput.value = entry.title;
@@ -1105,40 +1485,37 @@
       
       for (const category in grouped) {
         const categoryItem = document.createElement("li");
+        
+        // Create category header
         const header = document.createElement("div");
         header.textContent = category;
-        header.style.cursor = "pointer";
-        header.style.fontWeight = "bold";
-        header.style.padding = "0.5em 0";
-        header.style.borderBottom = "1px solid var(--border-color)";
-        header.setAttribute("tabindex", "0");
+        header.className = "category-header";
+        if (shouldExpandCategory(category)) {
+          header.classList.add("open");
+        }
+        
         header.addEventListener("click", () => {
-          const sublist = categoryItem.querySelector("ul");
-          if (sublist.style.display === "none") {
-            sublist.style.display = "block";
-          } else {
-            sublist.style.display = "none";
-          }
+          header.classList.toggle("open");
+          sublist.classList.toggle("open");
         });
+        
+        // Create sublist for category items
         const sublist = document.createElement("ul");
-        sublist.style.listStyle = "none";
-        sublist.style.margin = "0";
-        sublist.style.paddingLeft = "1em";
-        sublist.style.display = shouldExpandCategory(category) ? "block" : "none";
+        sublist.className = "category-items";
+        if (shouldExpandCategory(category)) {
+          sublist.classList.add("open");
+        }
         
         grouped[category].forEach(entry => {
           const subItem = document.createElement("li");
-          subItem.style.padding = "0.3em 0";
+          subItem.className = "eeg-item";
           subItem.setAttribute("tabindex", "0");
+          subItem.textContent = entry.title;
+          subItem.addEventListener("click", () => renderDetail(entry));
           
-          const titleSpan = document.createElement("span");
-          titleSpan.textContent = entry.title;
-          titleSpan.style.cursor = "pointer";
-          titleSpan.addEventListener("click", () => renderDetail(entry));
-          
-          subItem.appendChild(titleSpan);
           sublist.appendChild(subItem);
         });
+        
         categoryItem.appendChild(header);
         categoryItem.appendChild(sublist);
         list.appendChild(categoryItem);
@@ -1150,20 +1527,43 @@
       document.getElementById("flashcard-container").style.display = "none";
       const detailContent = document.getElementById("detail-content");
       detailContent.style.display = "block";
-      detailContent.innerHTML = `
-        <h2>${entry.title} 
-          <span class="favorite-star" onclick='toggleFavorite(${JSON.stringify(entry.title)}, event)'>
-            ${isFavorite(entry.title) ? "★" : "☆"}
-          </span>
-        </h2>
-        <div style="position: relative; display: inline-block;">
-          <img src="${entry.front}" alt="${entry.title}" class="step-image" onclick="openCarouselBySrc('${entry.front}')" style="cursor:pointer;" />
-          <div style="position: absolute; top: 10px; right: 10px; background-color: rgba(0,0,0,0.5); color: white; padding: 5px 8px; border-radius: 4px; font-size: 12px; pointer-events: none;">
-            <i class="fa-solid fa-expand"></i> Click for fullscreen
-          </div>
-        </div>
-        <p style="margin-top:1rem;">${entry.back}</p>
-      `;
+      
+      // Clear the content
+      detailContent.innerHTML = "";
+      
+      // Create title with favorite star
+      const titleElement = document.createElement("h2");
+      titleElement.textContent = entry.title + " ";
+      
+      const favoriteIcon = document.createElement("span");
+      favoriteIcon.className = "favorite-star";
+      favoriteIcon.textContent = isFavorite(entry.title) ? "★" : "☆";
+      favoriteIcon.onclick = (event) => toggleFavorite(entry.title, event);
+      
+      titleElement.appendChild(favoriteIcon);
+      detailContent.appendChild(titleElement);
+      
+      // Create image container with fullscreen hint
+      const imageContainer = document.createElement("div");
+      imageContainer.className = "image-container";
+      
+      const image = document.createElement("img");
+      image.src = entry.front;
+      image.alt = entry.title;
+      image.onclick = () => openCarouselBySrc(entry.front);
+      
+      const fullscreenHint = document.createElement("div");
+      fullscreenHint.className = "fullscreen-hint";
+      fullscreenHint.innerHTML = '<i class="fa-solid fa-expand"></i> Click for fullscreen';
+      
+      imageContainer.appendChild(image);
+      imageContainer.appendChild(fullscreenHint);
+      detailContent.appendChild(imageContainer);
+      
+      // Create description
+      const description = document.createElement("p");
+      description.textContent = entry.back;
+      detailContent.appendChild(description);
     }
     
     // --- Levenshtein Distance for fuzzy matching ---
@@ -1189,95 +1589,9 @@
       );
       return score <= 2;
     }
-    
-    // --- Favorites Tab Functions ---
-    function showFavorites() {
-      document.getElementById("favorites-btn").classList.add("active");
-      document.getElementById("all-btn").classList.remove("active");
-      const favorites = getFavorites();
-      const filtered = eegData.filter(entry => favorites.includes(entry.title));
-      renderList(filtered, false);
-    }
-    
-    // Update to showAllEEG: Subtabs are collapsed by default (autoExpand = false)
-    function showAllEEG() {
-      document.getElementById("all-btn").classList.add("active");
-      document.getElementById("favorites-btn").classList.remove("active");
-      renderList(eegData, false); // Set to false to collapse subtabs on load
-    }
-    
-    // --- Carousel Modal Functions ---
-    // Opens the carousel modal when an image is clicked
-    function openCarouselBySrc(src) {
-      if (window.innerWidth < 768) return; // Keep mobile behavior unchanged
-      currentCarouselIndex = eegData.findIndex(entry => entry.front === src);
-      if (currentCarouselIndex === -1) return;
-      updateCarousel();
-      document.getElementById("carousel-modal").style.display = "flex";
-    }
-    function updateCarousel() {
-      const carouselImage = document.getElementById("carousel-image");
-      const carouselCaption = document.getElementById("carousel-caption");
-      carouselImage.src = eegData[currentCarouselIndex].front;
-      carouselImage.alt = eegData[currentCarouselIndex].title;
-      carouselCaption.textContent = eegData[currentCarouselIndex].title;
-      // Update mini preview images and captions
-      const prevIndex = (currentCarouselIndex - 1 + eegData.length) % eegData.length;
-      const nextIndex = (currentCarouselIndex + 1) % eegData.length;
-      
-      document.getElementById("carousel-preview-left").src = eegData[prevIndex].front;
-      document.getElementById("carousel-preview-left").alt = eegData[prevIndex].title;
-      document.getElementById("carousel-preview-left-caption").textContent = eegData[prevIndex].title;
-      
-      document.getElementById("carousel-preview-right").src = eegData[nextIndex].front;
-      document.getElementById("carousel-preview-right").alt = eegData[nextIndex].title;
-      document.getElementById("carousel-preview-right-caption").textContent = eegData[nextIndex].title;
-    }
-    function prevCarousel() {
-      currentCarouselIndex = (currentCarouselIndex - 1 + eegData.length) % eegData.length;
-      updateCarousel();
-    }
-    function nextCarousel() {
-      currentCarouselIndex = (currentCarouselIndex + 1) % eegData.length;
-      updateCarousel();
-    }
-    function closeCarousel() {
-      document.getElementById("carousel-modal").style.display = "none";
-    }
-    
-    // Close carousel if clicking outside the carousel container
-    document.getElementById("carousel-modal").addEventListener("click", function(e) {
-      if (!e.target.closest(".carousel-container")) {
-        closeCarousel();
-      }
-    });
-    
-    // Listen for Escape key to close carousel
-    document.addEventListener("keydown", function(e) {
-      if (e.key === "Escape") {
-        closeCarousel();
-      }
-    });
-    
-    // Function to display a random EEG entry
-    function showRandomEEG() {
-      const randomIndex = Math.floor(Math.random() * eegData.length);
-      renderDetail(eegData[randomIndex]);
-    }
-    
-    // Call initializeUI on DOM load and also when page content is dynamically loaded
-    document.addEventListener("DOMContentLoaded", initializeUI);
-    
-    // This will help with dynamically loaded content through the main app
-    function initAtlasPage() {
-      if (document.getElementById("atlas-search")) {
-        initializeUI();
-      }
-    }
-    
-    // On page load and when accessed through main navigation
-    document.addEventListener("DOMContentLoaded", initializeUI);
-    window.initAtlasPage = initializeUI;  // Export for external access
   </script>
+
+  <!-- Global Search Functionality -->
+  <script src="assets/js/search.js"></script>
 </body>
 </html>

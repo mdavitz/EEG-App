@@ -1,4 +1,20 @@
 <style>
+    /* Any custom styling that should remain in the HTML file */
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+    
+    /* When the modal is open, prevent scrolling on the main body */
+    body.modal-open {
+      overflow: hidden;
+      position: fixed;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+    }
+    
     /* Modal Styling */
     #dev-modal {
       position: fixed;
@@ -187,6 +203,7 @@
     }
   </style>
 
+<div id="seizure-management">
   <h2 class="page-title">Seizure Management</h2>
   <!-- Search Box -->
   <div class="info-box search-container">
@@ -217,7 +234,7 @@
               <td>Stabilization Phase</td>
               <td>0–5 minutes</td>
               <td>
-                <ul class="list no-bullets">
+                <ul class="no-bullets">
                   <li>ABCs (Airway, Breathing, Circulation)</li>
                   <li>Record seizure onset and monitor vitals</li>
                   <li>Establish IV access</li>
@@ -231,7 +248,7 @@
               <td>Initial Therapy Phase</td>
               <td>5–20 minutes</td>
               <td>
-                <ul class="list no-bullets">
+                <ul class="no-bullets">
                   <li>IV Lorazepam: 0.1 mg/kg, max 4 mg (may repeat once)</li>
                   <li>OR IV Midazolam: 0.2 mg/kg, max 10 mg (IM if no IV access)</li>
                   <li>OR IV Diazepam: 0.15–0.2 mg/kg, max 10 mg (may repeat once)</li>
@@ -242,7 +259,7 @@
               <td>Second-line Therapy</td>
               <td>20–40 minutes</td>
               <td>
-                <ul class="list no-bullets">
+                <ul class="no-bullets">
                   <li>IV Fosphenytoin/Phenytoin: 20 mg/kg, single dose</li>
                   <li>OR IV Valproic Acid: 40 mg/kg, max 3000 mg/dose, single dose</li>
                   <li>OR IV Levetiracetam: 60 mg/kg, max 4500 mg/dose, single dose</li>
@@ -254,11 +271,11 @@
               <td>Refractory Therapy</td>
               <td>&ge; 40 minutes</td>
               <td>
-                <ul class="list no-bullets">
+                <ul class="no-bullets">
                   <li>Intubate the patient</li>
                   <li>
                     Initiate continuous infusion therapy:
-                    <ul class="list no-bullets" style="list-style-type: circle; padding-left: 20px;">
+                    <ul class="no-bullets">
                       <li>Midazolam: 0.2 mg/kg bolus, then infusion 0.2–2.9 mg/kg/h</li>
                       <li>OR/AND Propofol: 1 mg/kg bolus, then infusion 20–60 mg/kg/min</li>
                     </ul>
@@ -271,12 +288,12 @@
               <td>Breakthrough/Recurrence</td>
               <td>N/A</td>
               <td>
-                <ul class="list no-bullets">
+                <ul class="no-bullets">
                   <li>Up-titrate available drips or initiate propofol if not already started</li>
                   <li>Address underlying cause of seizures</li>
                   <li>
                     If super refractory SE, consider additional continuous infusion:
-                    <ul class="list no-bullets" style="list-style-type: circle; padding-left: 20px;">
+                    <ul class="no-bullets">
                       <li>Ketamine: 1–2 mg/kg bolus followed by 2–10 mg/kg/h (repeat bolus as needed)</li>
                     </ul>
                   </li>
@@ -287,7 +304,7 @@
               <td>Additional Therapies</td>
               <td>N/A</td>
               <td>
-                <ul class="list no-bullets">
+                <ul class="no-bullets">
                   <li>Ketogenic diet</li>
                   <li>Phenobarbital: 15–20 mg/kg</li>
                   <li>Pentobarbital: 5–15 mg/kg then 0.5–5 mg/kg/h</li>
@@ -568,77 +585,82 @@
       </div>
     </details>
   </div>
+</div>
   
-  <script>
-    // Modal Logic: Check code input
-    document.getElementById('submit-code').addEventListener('click', function() {
-      var code = document.getElementById('access-code').value.trim();
-      if(code === 'mountsinai') {
-        document.getElementById('dev-modal').style.display = 'none';
-        document.getElementById('page-content').style.display = 'block';
-      } else {
-        document.getElementById('code-error').style.display = 'block';
+<script>
+  // Modal Logic: Check code input
+  document.getElementById('submit-code')?.addEventListener('click', function() {
+    var code = document.getElementById('access-code').value.trim();
+    if(code === 'mountsinai') {
+      document.getElementById('dev-modal').style.display = 'none';
+      document.getElementById('page-content').style.display = 'block';
+    } else {
+      document.getElementById('code-error').style.display = 'block';
+    }
+  });
+  document.getElementById('cancel-code')?.addEventListener('click', function() {
+    window.location.href = 'index.html';
+  });
+  
+  // Updated Search Functionality
+  (function initializeSearch() {
+    const searchBar = document.getElementById('searchBar');
+    if (!searchBar) return;
+    
+    // Get all details elements in the container
+    const detailsElements = document.querySelectorAll('#contentContainer details');
+    
+    // For each details element, save its original HTML if not already saved
+    detailsElements.forEach(function(detail) {
+      if (!detail.getAttribute('data-original')) {
+        detail.setAttribute('data-original', detail.innerHTML);
       }
     });
-    document.getElementById('cancel-code').addEventListener('click', function() {
-      window.location.href = 'index.html';
-    });
     
-    // Updated Search Functionality
-    (function initializeSearch() {
-      const searchBar = document.getElementById('searchBar');
-      if (!searchBar) return;
+    searchBar.addEventListener('input', function(e) {
+      const term = e.target.value.trim().toLowerCase();
       
-      // Get all details elements in the container
-      const detailsElements = document.querySelectorAll('#contentContainer details');
-      
-      // For each details element, save its original HTML if not already saved
       detailsElements.forEach(function(detail) {
-        if (!detail.getAttribute('data-original')) {
-          detail.setAttribute('data-original', detail.innerHTML);
-        }
-      });
-      
-      searchBar.addEventListener('input', function(e) {
-        const term = e.target.value.trim().toLowerCase();
+        // Check if this details element contains a medications table by looking for an element with id "medicationsTableBody"
+        const medsTableBody = detail.querySelector('#medicationsTableBody');
         
-        detailsElements.forEach(function(detail) {
-          // Check if this details element contains a medications table by looking for an element with id "medicationsTableBody"
-          const medsTableBody = detail.querySelector('#medicationsTableBody');
-          
-          if (medsTableBody) {
-            // For the medications table, filter each row
-            const rows = medsTableBody.querySelectorAll('tr');
-            let anyRowVisible = false;
-            rows.forEach(function(row) {
-              const rowText = row.textContent.toLowerCase();
-              if (term === "" || rowText.includes(term)) {
-                row.style.display = "";
-                anyRowVisible = true;
-              } else {
-                row.style.display = "none";
-              }
-            });
-            // Hide or show the entire details element based on whether any row is visible
-            detail.style.display = anyRowVisible ? "" : "none";
+        if (medsTableBody) {
+          // For the medications table, filter each row
+          const rows = medsTableBody.querySelectorAll('tr');
+          let anyRowVisible = false;
+          rows.forEach(function(row) {
+            const rowText = row.textContent.toLowerCase();
+            if (term === "" || rowText.includes(term)) {
+              row.style.display = "";
+              anyRowVisible = true;
+            } else {
+              row.style.display = "none";
+            }
+          });
+          // Hide or show the entire details element based on whether any row is visible
+          detail.style.display = anyRowVisible ? "" : "none";
+        } else {
+          // For other details elements, use the original highlighting approach
+          const originalHTML = detail.getAttribute('data-original');
+          if (term === "") {
+            detail.innerHTML = originalHTML;
+            detail.style.display = "";
           } else {
-            // For other details elements, use the original highlighting approach
-            const originalHTML = detail.getAttribute('data-original');
-            if (term === "") {
-              detail.innerHTML = originalHTML;
+            if (originalHTML.toLowerCase().includes(term)) {
+              const regex = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+              detail.innerHTML = originalHTML.replace(regex, '<mark>$1</mark>');
               detail.style.display = "";
             } else {
-              if (originalHTML.toLowerCase().includes(term)) {
-                const regex = new RegExp('(' + term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
-                detail.innerHTML = originalHTML.replace(regex, '<mark>$1</mark>');
-                detail.style.display = "";
-              } else {
-                detail.style.display = "none";
-              }
+              detail.style.display = "none";
             }
           }
-        });
+        }
       });
-    })();
-  </script>
+    });
+  })();
+</script>
+
+<!-- Global Search Functionality -->
+<script src="assets/js/search.js"></script>
 </body>
+</html>

@@ -11,178 +11,39 @@
   <link rel="stylesheet" href="assets/css/styles.css">
   <!-- Unified Search JS -->
   <script src="assets/js/search.js" defer></script>
-  <!-- Inline styling for PDF link and dropdown -->
-  <style>
-    #pdfLinkContainer {
-      margin-top: 20px;
-      text-align: center;
-    }
-    #pdfLink {
-      display: inline-block;
-      background-color: #007BFF;
-      color: #fff;
-      padding: 10px 20px;
-      text-decoration: none;
-      border-radius: 4px;
-      font-family: 'Roboto', sans-serif;
-    }
-    #pdfLink:hover {
-      background-color: #0056b3;
-    }
-    /* Cross-reference tooltip styles */
-    .cross-ref {
-      cursor: help;
-      border-bottom: 1px dashed var(--accent-color);
-      position: relative;
-    }
-    .cross-ref .tooltip {
-      visibility: hidden;
-      width: 300px;
-      background-color: var(--info-bg);
-      color: var(--text-color);
-      text-align: left;
-      border-radius: 6px;
-      padding: 10px;
-      position: absolute;
-      z-index: 1;
-      bottom: 125%;
-      left: 50%;
-      margin-left: -150px;
-      opacity: 0;
-      transition: opacity 0.3s;
-      box-shadow: 0 2px 8px var(--shadow-color);
-      border: 1px solid var(--border-color);
-      font-weight: normal;
-      font-size: 0.9rem;
-    }
-    .cross-ref:hover .tooltip {
-      visibility: visible;
-      opacity: 1;
-    }
-    /* Filter container styles */
-    .filter-container {
-      display: flex;
-      justify-content: flex-end;
-      gap: 1rem;
-      margin-bottom: 1rem;
-      flex-wrap: wrap;
-    }
-    .filter-group {
-      display: flex;
-      align-items: center;
-    }
-    .filter-container label {
-      display: flex;
-      align-items: center;
-      margin-right: 8px;
-      font-weight: 500;
-    }
-    .filter-dropdown {
-      padding: 8px 12px;
-      border-radius: 4px;
-      border: 1px solid var(--border-color);
-      background-color: var(--info-bg);
-      color: var(--text-color);
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .filter-dropdown:focus {
-      outline: none;
-      border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
-    }
-    .reset-filters {
-      padding: 8px 12px;
-      border-radius: 4px;
-      border: 1px solid var(--accent-color);
-      background-color: var(--accent-color);
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-      transition: background-color 0.3s;
-    }
-    .reset-filters:hover {
-      background-color: #0056b3;
-    }
-    /* No results message */
-    .no-results {
-      padding: 2rem;
-      text-align: center;
-      background-color: var(--info-bg);
-      border-radius: 8px;
-      margin: 1rem 0;
-      display: none;
-    }
-    /* Search and filter styles */
-    .search-container {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto 1.5rem auto;
-    }
-    .search-box {
-      width: 100%;
-      max-width: 800px;
-      margin-bottom: 1rem;
-      display: flex;
-      justify-content: center;
-    }
-    .search-box input {
-      width: 100%;
-      padding: 12px 15px;
-      border-radius: 6px;
-      border: 1px solid var(--border-color);
-      font-size: 1rem;
-      background: white;
-      color: var(--text-color);
-      box-shadow: 0 1px 5px rgba(0,0,0,0.1);
-      transition: all 0.3s ease;
-    }
-    
-    .search-box input:focus {
-      outline: none;
-      border-color: var(--accent-color);
-      box-shadow: 0 1px 8px rgba(0,0,0,0.15);
-    }
-  </style>
 </head>
 <body>
   <!-- Main Content -->
   <main id="ilae-classification-content" class="ilae-container">
     <h2 class="page-title">ILAE Classification</h2>
-    <div class="search-and-test">
-      <!-- search.js will replace this with the unified search UI -->
-      <div class="search-container">
-        <div class="search-box">
-          <input type="text" id="searchBar" placeholder="Search ILAE Classification content..." />
-        </div>
+    <div class="search-container">
+      <div class="search-box">
+        <input type="text" id="searchBar" placeholder="Search ILAE Classification content..." />
+      </div>
 
-        <!-- Filter Controls -->
-        <div class="filter-container">
-          <div class="filter-group">
-            <label for="age-filter">Age of Onset:</label>
-            <select id="age-filter" class="filter-dropdown">
-              <option value="all">All Ages</option>
-              <option value="neonatal">Neonatal (0-28 days)</option>
-              <option value="infant">Infant (1-12 months)</option>
-              <option value="childhood">Childhood (1-10 years)</option>
-              <option value="adolescent">Adolescent (10-18 years)</option>
-              <option value="variable">Variable Age of Onset</option>
-            </select>
-          </div>
-          <div class="filter-group">
-            <label for="type-filter">Seizure Type:</label>
-            <select id="type-filter" class="filter-dropdown">
-              <option value="all">All Types</option>
-              <option value="focal">Focal Epilepsies</option>
-              <option value="generalized">Generalized Epilepsies</option>
-              <option value="combined">Combined/Mixed Epilepsies</option>
-            </select>
-          </div>
-          <button id="reset-filters" class="reset-filters">Reset Filters</button>
+      <!-- Filter Controls -->
+      <div class="filter-container">
+        <div class="filter-group">
+          <label for="age-filter">Age of Onset:</label>
+          <select id="age-filter" class="filter-dropdown">
+            <option value="all">All Ages</option>
+            <option value="neonatal">Neonatal (0-28 days)</option>
+            <option value="infant">Infant (1-12 months)</option>
+            <option value="childhood">Childhood (1-10 years)</option>
+            <option value="adolescent">Adolescent (10-18 years)</option>
+            <option value="variable">Variable Age of Onset</option>
+          </select>
         </div>
+        <div class="filter-group">
+          <label for="type-filter">Seizure Type:</label>
+          <select id="type-filter" class="filter-dropdown">
+            <option value="all">All Types</option>
+            <option value="focal">Focal Epilepsies</option>
+            <option value="generalized">Generalized Epilepsies</option>
+            <option value="combined">Combined/Mixed Epilepsies</option>
+          </select>
+        </div>
+        <button id="reset-filters" class="reset-filters">Reset Filters</button>
       </div>
     </div>
 
@@ -653,5 +514,7 @@
     }
   </script>
 
+  <!-- Global Search Functionality -->
+  <script src="assets/js/search.js"></script>
 </body>
 </html>

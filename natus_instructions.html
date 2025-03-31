@@ -1,41 +1,10 @@
 <style>
-    /* Inline styling for the tab buttons */
-    .tab-buttons {
-      display: flex;
-      justify-content: center;
-      gap: 15px;
-      margin-bottom: 1.5em;
-    }
+    /* Remove the tab button styles as they're now in the main CSS */
     
-    .tab-buttons button {
-      padding: 10px 20px;
-      margin: 0;
-      border: none;
-      border-radius: 4px;
-      background: #f8f9fa;
-      color: #333;
-      font-size: 1rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.12);
-      min-width: 140px;
-    }
-    
-    .tab-buttons button:hover {
-      background: #e9ecef;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.15);
-    }
-    
-    .tab-buttons button.active {
-      background: var(--accent-color);
-      color: white;
-      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-    }
     /* Optional styling for the explainer paragraphs */
     .explainer {
       font-style: italic;
-      color: #555;
+      color: var(--text-secondary);
       margin-top: 0.5em;
     }
     /* Styling for Step 1 content to place image to the right of text - only for Natus tab */
@@ -56,14 +25,14 @@
   </style>
 
   <h2 class="page-title">Natus & Persyst Instructions</h2>
-  <div class="instructions-container">
+  <div id="natus-persyst" class="instructions-container">
     <!-- Tab Buttons -->
-    <div class="tab-buttons" style="display: flex; justify-content: center; width: 100%; margin-bottom: 2em;">
-      <button id="natus-btn" class="btn active" onclick="showInstructionTab('natus')" style="background-color: #0d6efd; color: white; margin: 0 8px; min-width: 140px; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.2);">Natus</button>
-      <button id="persyst-btn" class="btn" onclick="showInstructionTab('persyst')" style="background-color: #f8f9fa; color: #212529; margin: 0 8px; min-width: 140px; border: none; padding: 8px 16px; border-radius: 4px; font-weight: 500; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">Persyst</button>
+    <div class="tab-buttons">
+      <button id="natus-btn" class="active" onclick="showInstructionTab('natus')">Natus</button>
+      <button id="persyst-btn" onclick="showInstructionTab('persyst')">Persyst</button>
     </div>
     
-    <!-- Natus Instructions Tab (Complete original content) -->
+    <!-- Natus Instructions Tab -->
     <div id="natus-tab">
       <div class="natus-container">
         <h3 class="tab-title">Natus Instructions</h3>
@@ -120,7 +89,7 @@
       </div>
     </div>
     
-    <!-- Persyst Instructions Tab with Explainers and Same Boxed Formatting -->
+    <!-- Persyst Instructions Tab -->
     <div id="persyst-tab" style="display: none;">
       <div class="natus-container">
         <h3 class="tab-title">Persyst Instructions</h3>
@@ -130,7 +99,6 @@
             <div class="natus-step-content">
               <h3>Launch Persyst</h3>
               <p>Once your EEG study is open go to Analysis and ensure Persyst (toolbar) is checked</p>
-              </p>
               <img src="assets/images/PersystStep1.png" alt="Launch and Log In" class="natus-image">
             </div>
           </div>
@@ -139,7 +107,6 @@
             <div class="natus-step-content">
               <h3>Persyst (toolbar)</h3>
               <p>Locate the Persyst toolbar as pictured below. If using two screens, grab the toolbar and drag it to the second screen.</p>
-              </p>
               <img src="assets/images/PersystStep2.png" alt="Open Patient Study" class="natus-image">
             </div>
           </div>
@@ -148,7 +115,6 @@
             <div class="natus-step-content">
               <h3>Configure Panel Size</h3>
               <p>Check that "Comprehensive" is selected. Adjust display size by grabbing the bottom right corner to expand the panel.</p>
-              </p>
               <img src="assets/images/PersystStep3.png" alt="Configure Display" class="natus-image">
             </div>
           </div>
@@ -157,8 +123,7 @@
             <div class="natus-step-content">
               <h3>Rhythmicity Spectrogram</h3>
               <p>The rhythmicity spectrogram in Persyst shows rhythmic bursts and variations across frequency bands, helping us quickly spot rhythmic activity linked to seizures.</p>
-              <img src="assets/images/PersystStep4.png" alt="Configure Display" class="natus-image"> 
-            </p>
+              <img src="assets/images/PersystStep4.png" alt="Configure Display" class="natus-image">
             </div>
           </div>
           <div class="natus-step">
@@ -166,7 +131,6 @@
             <div class="natus-step-content">
               <h3>FFT Spectrogram</h3>
               <p>The FFT spectrogram in Persyst breaks the EEG signal into its frequency components over time, revealing transient power shifts where warm colors like red and orange highlight high power bursts—often linked to epileptic activity—while cool blues and greens indicate lower power levels.</p>
-              </p>
               <img src="assets/images/PersystStep5.png" alt="Annotate Events" class="natus-image">
             </div>
           </div>
@@ -175,16 +139,14 @@
             <div class="natus-step-content">
               <h3>Asymmetry and aEEG</h3>
               <p>The Asymmetry panel in Persyst uses color contrasts (left blue and right red) to reveal lateral differences in EEG power between hemispheres sorted from delta to gamma frequency on the Y axis. The aEEG panel compresses long-term amplitude trends into a waveform, together providing a quick visual summary of focal imbalances and overall brain activity.</p>
-              <img src="assets/images/PersystStep6.png" alt="Annotate Events" class="natus-image">  
-            </p>
+              <img src="assets/images/PersystStep6.png" alt="Annotate Events" class="natus-image">
             </div>
           </div>
           <div class="natus-step">
             <div class="natus-step-number">7</div>
             <div class="natus-step-content">
               <h3>ADR</h3>
-              <p>The ADR panel quantifies the balance between alpha and  delta waves, offering a visual metric where higher ratios indicate normal cortical function and lower ratios suggest pathological slowing; in subarachnoid hemorrhage, it serves to detect early signs of delayed ischemia.</p>
-              </p>
+              <p>The ADR panel quantifies the balance between alpha and delta waves, offering a visual metric where higher ratios indicate normal cortical function and lower ratios suggest pathological slowing; in subarachnoid hemorrhage, it serves to detect early signs of delayed ischemia.</p>
               <img src="assets/images/PersystStep7.png" alt="Launch and Log In" class="natus-image">
             </div>
           </div>
@@ -196,49 +158,30 @@
   
   <script>
     function showInstructionTab(tab) {
+      // Get tab buttons
       const natusBtn = document.getElementById('natus-btn');
       const persystBtn = document.getElementById('persyst-btn');
-      const activeStyle = {
-        backgroundColor: '#0d6efd',
-        color: 'white',
-        boxShadow: '0 2px 5px rgba(0,0,0,0.2)'
-      };
-      const inactiveStyle = {
-        backgroundColor: '#f8f9fa',
-        color: '#212529',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-      };
-
+      
+      // Get tab containers
+      const natusTab = document.getElementById('natus-tab');
+      const persystTab = document.getElementById('persyst-tab');
+      
       if (tab === 'natus') {
-        document.getElementById('natus-tab').style.display = 'block';
-        document.getElementById('persyst-tab').style.display = 'none';
+        // Show natus tab, hide persyst tab
+        natusTab.style.display = 'block';
+        persystTab.style.display = 'none';
         
-        // Update button styles
-        Object.assign(natusBtn.style, {
-          backgroundColor: activeStyle.backgroundColor,
-          color: activeStyle.color,
-          boxShadow: activeStyle.boxShadow
-        });
-        Object.assign(persystBtn.style, {
-          backgroundColor: inactiveStyle.backgroundColor,
-          color: inactiveStyle.color,
-          boxShadow: inactiveStyle.boxShadow
-        });
+        // Update button classes
+        natusBtn.classList.add('active');
+        persystBtn.classList.remove('active');
       } else {
-        document.getElementById('natus-tab').style.display = 'none';
-        document.getElementById('persyst-tab').style.display = 'block';
+        // Show persyst tab, hide natus tab
+        natusTab.style.display = 'none';
+        persystTab.style.display = 'block';
         
-        // Update button styles
-        Object.assign(persystBtn.style, {
-          backgroundColor: activeStyle.backgroundColor,
-          color: activeStyle.color,
-          boxShadow: activeStyle.boxShadow
-        });
-        Object.assign(natusBtn.style, {
-          backgroundColor: inactiveStyle.backgroundColor,
-          color: inactiveStyle.color,
-          boxShadow: inactiveStyle.boxShadow
-        });
+        // Update button classes
+        persystBtn.classList.add('active');
+        natusBtn.classList.remove('active');
       }
     }
   </script>
