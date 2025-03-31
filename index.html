@@ -281,6 +281,13 @@
       max-height: 90vh;
       overflow-y: auto;
     }
+    
+    /* Special styling for signup modal to make it wider and shorter */
+    #signup-modal .modal-content {
+      max-width: 500px; /* Make it wider */
+      max-height: 80vh; /* Make it shorter */
+    }
+    
     #login-modal input, #signup-modal input, #google-setup-modal input {
       width: 100%;
       padding: 10px;
@@ -905,6 +912,28 @@
         }, 50);
       });
       
+      // Add "Switch to Login" link to signup modal
+      const signupModal = document.getElementById("signup-modal").querySelector(".modal-content");
+      const switchToLogin = document.createElement("p");
+      switchToLogin.innerHTML = "Already have an account? <a href='#' id='switch-to-login'>Log in</a>";
+      switchToLogin.style.marginTop = "10px";
+      signupModal.appendChild(switchToLogin);
+      
+      // Event listener for switching to login
+      document.getElementById("switch-to-login").addEventListener("click", (e) => {
+        e.preventDefault();
+        
+        // First completely hide the signup modal
+        const signupModal = document.getElementById('signup-modal');
+        signupModal.classList.remove('active');
+        signupModal.style.cssText = 'display: none !important';
+        
+        // Short delay before showing login modal
+        setTimeout(() => {
+          showLoginModal();
+        }, 50);
+      });
+      
       // Add forgot password link
       const forgotPassword = document.createElement("p");
       forgotPassword.innerHTML = "<a href='#' id='forgot-password'>Forgot password?</a>";
@@ -987,7 +1016,7 @@
             showLoginModal();
           } else {
             // First-time visitor - show signup
-            showSignupModal();
+            showLoginModal(); // Changed from showSignupModal() to always show login first
           }
           document.getElementById('user-profile').style.display = 'none';
         }
