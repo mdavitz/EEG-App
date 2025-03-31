@@ -3429,74 +3429,37 @@
         }
         
         #section-content.page-seizure_management table.custom-table td {
-          display: flex;
-          padding: 8px 12px;
+          /* display: flex; */ /* Original */
+          display: block; /* Changed to block */
+          /* padding: 8px 12px; */ /* Original */
+          padding: 20px 12px; /* Final Increased top/bottom padding */
           text-align: left;
           border-bottom: 1px solid var(--border-color, #ddd);
+          position: relative; /* Keep relative for potential absolute children if needed later */
+        }
+        
+        /* Remove bottom border for the last cell in a card */
+        #section-content.page-seizure_management table.custom-table tr td:last-child {
+          border-bottom: none;
         }
         
         #section-content.page-seizure_management table.custom-table td:before {
           content: attr(data-label);
           font-weight: bold;
-          min-width: 40%;
-          margin-right: 10px;
+          /* min-width: 40%; */ /* Removed */
+          /* margin-right: 10px; */ /* Removed */
+          display: block; /* Make it a block element */
+          margin-bottom: 15px; /* Final Increased space below the label */
+          width: auto; /* Let it take natural width */
+          color: var(--primary-color); /* Optional: Make label stand out */
         }
         
         /* Specific fixes for therapeutic range column */
         #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
           word-break: break-word;
           hyphens: auto;
-          white-space: normal;
-        }
-        
-        /* Keep µg/mL units together */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
-          font-variant-numeric: tabular-nums;
-        }
-        
-        /* Make sure numeric values don't break */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] span,
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] sup {
-          display: inline-block;
-        }
-        
-        /* Special handling for unit strings to prevent breaking */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
-          font-size: 13px;
-        }
-        
-        /* Prevent breaking between numbers and units */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"]:not(:empty) {
-          white-space: pre-wrap;
-        }
-        
-        /* Handle specific units formatting */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
-          position: relative;
-        }
-        
-        /* Target specific unit patterns and ensure they don't break */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"]::after {
-          content: "";
-          display: block;
-          clear: both;
-        }
-        
-        /* Custom formatting for N/A values */
-        #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"]:contains("N/A") {
-          opacity: 0.7;
-        }
-        
-        /* For very small screens make the label part smaller */
-        @media (max-width: 380px) {
-          #section-content.page-seizure_management table.custom-table td:before {
-            font-size: 12px;
-            min-width: 35%;
-          }
-          
-          #section-content.page-seizure_management table.custom-table td[data-label="Therapeutic Range"] {
-            font-size: 12px;
-          }
+          white-space: normal; /* Allow wrapping */
+          line-height: 1.4; /* Improve line spacing if needed */
         }
       }
     `;
