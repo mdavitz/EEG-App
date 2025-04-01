@@ -1,13 +1,190 @@
-<h2 class="page-title">ACNS Criteria</h2>
-<div id="acns-criteria" class="info-box">
-  <img src="assets/images/ACNS1.png" alt="ACNS Criteria 1" class="step-image" />
-  <img src="assets/images/ACNS2.png" alt="ACNS Criteria 2" class="step-image" />
-  <img src="assets/images/ACNS3.png" alt="ACNS Criteria 3" class="step-image" />
-  <img src="assets/images/ACNS4.png" alt="ACNS Criteria 4" class="step-image" />
-  <p style="text-align:center; margin-top:1em;">
-    <strong>ACNS Criteria.</strong> ACNS Nomenclature Reference Chart.
-    <a href="assets/documents/ACNSNomenclature2021_ReferenceChart_2020_0725ForPublicComment.pdf" target="_blank">
-      <i class="fa-solid fa-link"></i> Download PDF
-    </a>
-  </p>
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACNS Criteria - EEG Curriculum</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+</head>
+<body>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main content -->
+    <main class="page-acns_criteria">
+      <h2 class="page-title">ACNS Criteria</h2>
+      <div id="acns-criteria" class="info-box">
+        <h3>ACNS Nomenclature Reference Charts</h3>
+        <img src="assets/images/ACNS1.png" alt="ACNS Criteria 1" class="step-image" />
+        <img src="assets/images/ACNS2.png" alt="ACNS Criteria 2" class="step-image" />
+        <img src="assets/images/ACNS3.png" alt="ACNS Criteria 3" class="step-image" />
+        <img src="assets/images/ACNS4.png" alt="ACNS Criteria 4" class="step-image" />
+        <p>
+          <strong>ACNS Standardized Critical Care EEG Terminology</strong><br>
+          A standardized approach to describe EEG patterns in critical care patients.
+          <br><br>
+          <a href="assets/documents/ACNSNomenclature2021_ReferenceChart_2020_0725ForPublicComment.pdf" target="_blank">
+            <i class="fa-solid fa-file-pdf"></i> Download Full Reference PDF
+          </a>
+        </p>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+  </div>
+
+  <script>
+    // Load header and footer using fetch
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load header
+      fetch('includes/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-container').innerHTML = data;
+          
+          // Attach any event listeners for header elements if needed
+          const secretGameTrigger = document.getElementById('secret-game-trigger');
+          if (secretGameTrigger) {
+            secretGameTrigger.addEventListener('click', function() {
+              window.location.href = 'flappy_brain/games_menu.html';
+            });
+          }
+        });
+      
+      // Load footer
+      fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-container').innerHTML = data;
+          
+          // Initialize any footer functionality
+          const darkModeBtn = document.getElementById('dark-mode-btn');
+          const fontSizeBtn = document.getElementById('font-size-btn');
+          const copyrightTrigger = document.getElementById('copyright-trigger');
+          
+          if (darkModeBtn) {
+            darkModeBtn.addEventListener('click', function() {
+              document.body.classList.toggle('dark');
+              localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+            });
+          }
+          
+          if (fontSizeBtn) {
+            fontSizeBtn.addEventListener('click', function() {
+              document.body.classList.toggle('large-text');
+              localStorage.setItem('largeText', document.body.classList.contains('large-text'));
+            });
+          }
+          
+          if (copyrightTrigger) {
+            const copyrightModal = document.getElementById('copyright-modal');
+            const closeBtn = document.getElementById('copyright-close-btn');
+            
+            copyrightTrigger.addEventListener('click', function() {
+              copyrightModal.style.display = 'block';
+            });
+            
+            if (closeBtn) {
+              closeBtn.addEventListener('click', function() {
+                copyrightModal.style.display = 'none';
+              });
+            }
+            
+            window.addEventListener('click', function(event) {
+              if (event.target === copyrightModal) {
+                copyrightModal.style.display = 'none';
+              }
+            });
+          }
+        });
+    });
+  </script>
+
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from acns_criteria.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+</body>
+</html>

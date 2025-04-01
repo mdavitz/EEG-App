@@ -1,0 +1,207 @@
+<!-- Header Component -->
+<header id="header">
+  <div class="header-inner">
+    <!-- Secret game trigger - hidden except on hover -->
+    <div style="position:absolute; bottom:10px; left:10px; z-index:999; opacity:0.01; transition: opacity 0.3s ease;" onmouseover="this.style.opacity='0.6'" onmouseout="this.style.opacity='0.01'">
+      <button id="secret-game-trigger" style="width:40px; height:40px; background:transparent; border:none; border-radius:50%; cursor:pointer;">
+        <span style="font-size:20px;">🎮</span>
+      </button>
+    </div>
+    
+    <!-- Logo -->
+    <img src="assets/images/logo.png" alt="Home" class="logo" onclick="window.location.href='index.html'" />
+
+    <!-- Combined Search & Menu Component (Apple Style) -->
+    <div class="universal-search-menu">
+      <!-- Search Icon that triggers the combined dropdown -->
+      <div class="search-trigger" id="search-trigger">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      </div>
+      
+      <!-- Combined Dropdown Panel -->
+      <div class="search-menu-panel" id="search-menu-panel">
+        <!-- Search Bar Section -->
+        <div class="search-section">
+          <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="search-input" id="universal-search-input" placeholder="Search..." aria-label="Search the website" onclick="if(typeof UniversalSearch !== 'undefined') { UniversalSearch.handleSearchInput({target: this}); }">
+            <div class="search-clear" id="search-clear">&times;</div>
+          </div>
+          <div class="search-results" id="search-results"></div>
+        </div>
+        
+        <!-- Menu Navigation Links -->
+        <div class="menu-section">
+          <a href="epilepsy_rotation.html" class="protected-route">Epilepsy Rotation</a>
+          <a href="seizure_management.html">Seizure Management</a>
+          <a href="ilae_classification.html">ILAE Classification</a>
+          <a href="natus_instructions.html">Natus & Persyst</a>
+          <a href="acns_criteria.html">ACNS Criteria</a>
+          <a href="eeg_atlas.html">EEG Atlas</a>
+          <a href="eeg_videos.html">EEG Videos</a>
+          <a href="faq.html" class="protected-route">Discussion Forum</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- User profile section -->
+    <div id="user-profile" class="user-profile">
+      <span id="user-email"></span>
+      <button id="sign-out-button" class="btn-small">Sign Out</button>
+    </div>
+    
+    <!-- Login button placeholder - will be added by JavaScript -->
+    <div id="login-button-container"></div>
+  </div>
+</header>
+
+<!-- Fullscreen Search (activated when focusing on small-screen devices) -->
+<div class="search-fullscreen" id="search-fullscreen">
+  <button class="search-close-fullscreen" id="search-close-fullscreen">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+  <div class="search-fullscreen-input">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" class="search-input" id="fullscreen-search-input" placeholder="Search..." aria-label="Search the website">
+    <div class="search-clear" id="fullscreen-search-clear">&times;</div>
+  </div>
+  <div class="search-results search-fullscreen-results" id="fullscreen-search-results"></div>
+</div>
+
+<!-- Universal Search script is now loaded in index.html to prevent duplication -->
+
+<script>
+  // Initialize search and navigation when DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize search on any page that includes the header
+    window.addEventListener('load', function() {
+      // Wait for search elements to be loaded
+      setTimeout(function() {
+        if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+          console.log('Initializing search from header');
+          UniversalSearch.init();
+        }
+      }, 300);
+    });
+    
+    // Initialize combined search and menu
+    const searchTrigger = document.getElementById('search-trigger');
+    const searchMenuPanel = document.getElementById('search-menu-panel');
+    const searchInput = document.getElementById('universal-search-input');
+    
+    if (searchTrigger && searchMenuPanel) {
+      // Toggle dropdown when clicking search icon
+      searchTrigger.addEventListener('click', function(event) {
+        event.preventDefault();
+        event.stopPropagation();
+        searchMenuPanel.classList.toggle('active');
+        
+        // Focus search input when dropdown is opened
+        if (searchMenuPanel.classList.contains('active') && searchInput) {
+          setTimeout(() => {
+            searchInput.focus();
+            // Explicitly initialize search when focused
+            if (typeof UniversalSearch !== 'undefined') {
+              if (!UniversalSearch.initialized) {
+                UniversalSearch.init();
+              }
+              // Force handle the search input to show any existing results
+              if (searchInput.value && searchInput.value.trim().length > 0) {
+                UniversalSearch.handleSearchInput({target: searchInput});
+              }
+            }
+          }, 100);
+        }
+      });
+      
+      // Close dropdown when clicking outside
+      document.addEventListener('click', function(e) {
+        if (!searchMenuPanel.contains(e.target) && !searchTrigger.contains(e.target)) {
+          searchMenuPanel.classList.remove('active');
+        }
+      });
+      
+      // Add click handlers to all nav links to close dropdown
+      const navLinks = document.querySelectorAll('.menu-section a');
+      navLinks.forEach(link => {
+        link.addEventListener('click', function(event) {
+          searchMenuPanel.classList.remove('active');
+          
+          // Reinitialize search when navigating
+          if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.reinitialize === 'function') {
+            // Delay reinitialization to happen after navigation
+            localStorage.setItem('reinitSearch', 'true');
+          }
+          
+          // Check if it's a protected route
+          if (link.classList.contains('protected-route') && 
+              typeof isAuthenticated === 'function' && 
+              !isAuthenticated()) {
+            event.preventDefault();
+            
+            // Show login modal
+            const loginModal = document.getElementById('login-modal');
+            if (loginModal) {
+              loginModal.classList.add('active');
+              
+              // Store the intended destination for redirect after login
+              localStorage.setItem('redirectAfterLogin', link.getAttribute('href'));
+            }
+          }
+        });
+      });
+    }
+    
+    // Add lock icons to protected routes
+    function updateProtectedMenuRoutes() {
+      const protectedLinks = document.querySelectorAll('.menu-section .protected-route');
+      
+      if (typeof isAuthenticated === 'function') {
+        const isLoggedIn = isAuthenticated();
+        
+        protectedLinks.forEach(link => {
+          if (isLoggedIn) {
+            // Remove lock icon if it exists
+            const lockIcon = link.querySelector('.lock-icon');
+            if (lockIcon) {
+              lockIcon.remove();
+            }
+            link.classList.remove('disabled-link');
+            link.setAttribute('title', '');
+          } else {
+            // Add lock icon if it doesn't exist
+            if (!link.querySelector('.lock-icon')) {
+              const icon = document.createElement('i');
+              icon.className = 'fas fa-lock lock-icon';
+              icon.style.marginLeft = '5px';
+              icon.style.fontSize = '0.8em';
+              link.appendChild(icon);
+            }
+            link.classList.add('disabled-link');
+            link.setAttribute('title', 'Login required to access this content');
+          }
+        });
+      }
+    }
+    
+    // Update lock icons when auth state changes
+    if (typeof firebase !== 'undefined') {
+      document.addEventListener('firebase-ready', function() {
+        updateProtectedMenuRoutes();
+        if (typeof onAuthStateChanged === 'function') {
+          onAuthStateChanged(function() {
+            updateProtectedMenuRoutes();
+          });
+        }
+      });
+    } else {
+      // Wait for firebase to be available
+      const checkFirebase = setInterval(function() {
+        if (typeof isAuthenticated === 'function') {
+          clearInterval(checkFirebase);
+          updateProtectedMenuRoutes();
+        }
+      }, 500);
+    }
+  });
+</script> 

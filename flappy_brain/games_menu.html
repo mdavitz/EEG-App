@@ -4,13 +4,13 @@
   <meta charset="UTF-8">
   <!-- Force retro 320x480 layout -->
   <meta name="viewport" content="width=320, initial-scale=1.0">
-  <title>Game Menu</title>
+  <title>EEG Brain Games</title>
   <!-- Load San Francisco font equivalent -->
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
-      background: #000;
+      background: transparent;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -19,12 +19,11 @@
       font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     }
     .game-menu {
-      width: 320px;
-      height: 480px;
+      width: 100%;
+      height: 100%;
       background: linear-gradient(180deg, #1c1c1e 0%, #2c2c2e 100%);
       position: relative;
       overflow: hidden;
-      border-radius: 12px;
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
     }
     .game-title {
@@ -38,7 +37,7 @@
     }
     .game-button {
       display: block;
-      width: 250px;
+      width: 80%;
       height: 60px;
       margin: 15px auto;
       border-radius: 12px;
@@ -107,6 +106,39 @@
       pointer-events: none;
       opacity: 0.7;
     }
+    
+    /* Featured game styling */
+    .featured-game {
+      background: rgba(0, 255, 0, 0.1);
+      border: 1px solid rgba(0, 255, 0, 0.3);
+      box-shadow: 0 0 15px rgba(0, 255, 0, 0.2);
+    }
+    
+    .featured-game::after {
+      content: "♥";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(0, 255, 0, 0.7);
+      font-size: 24px;
+    }
+    
+    /* Coming soon labels */
+    .coming-soon {
+      opacity: 0.6;
+      pointer-events: none;
+    }
+    
+    .coming-soon::after {
+      content: "Coming Soon";
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255, 255, 255, 0.7);
+      font-size: 12px;
+    }
   </style>
 </head>
 <body>
@@ -114,19 +146,19 @@
     <div class="background-effect"></div>
     <div class="game-title">EEG Brain Games</div>
     
-    <a href="javascript:void(0)" class="game-button" data-game="flappy_brain.html">
+    <a href="javascript:void(0)" class="game-button featured-game" id="flappy-brain-btn" data-game="flappy_brain.html">
       <span class="game-icon">🧠</span> Flappy Brain
     </a>
     
-    <a href="javascript:void(0)" class="game-button" data-game="galactibrain.html">
+    <a href="javascript:void(0)" class="game-button" id="galactibrain-btn" data-game="galactibrain.html">
       <span class="game-icon">🚀</span> Galactibrain
     </a>
     
-    <a href="javascript:void(0)" class="game-button" data-game="astrobrain.html">
+    <a href="javascript:void(0)" class="game-button" id="astrobrain-btn" data-game="astrobrain.html">
       <span class="game-icon">👾</span> Astrobrain
     </a>
     
-    <a href="javascript:void(0)" class="game-button" data-game="pacbrain.html">
+    <a href="javascript:void(0)" class="game-button" id="pacbrain-btn" data-game="pacbrain.html">
       <span class="game-icon">🎮</span> PacBrain
     </a>
     
@@ -150,7 +182,7 @@
       }
     }
 
-    // Improved game button click handler
+    // Improved game button click handler for iframe usage
     document.querySelectorAll('.game-button').forEach(button => {
       button.addEventListener('click', function(e) {
         e.preventDefault();
@@ -189,15 +221,57 @@
         // Get game URL from data attribute
         const gameUrl = this.getAttribute('data-game');
         
-        // Navigate after animation completes
+        // For iframe usage - use parent postMessage to change iframe source
+        if (window.parent && window.parent !== window) {
+          try {
+            window.parent.postMessage({
+              type: 'loadGame',
+              gameUrl: gameUrl
+            }, '*');
+          } catch (err) {
+            console.error('Error sending message to parent:', err);
+          }
+        }
+        
+        // For direct navigation as fallback
         setTimeout(() => {
-          window.location.href = gameUrl;
+          if (window === window.top) {
+            // Only navigate if we're not in an iframe
+            window.location.href = gameUrl;
+          }
           ripple.remove();
         }, 300);
         
         return false;
       });
     });
+    
+    // Support for direct flappy brain launch via URL parameter
+    window.addEventListener('DOMContentLoaded', () => {
+      // Check if URL has autoplay=flappybrain parameter
+      const urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('autoplay') === 'flappybrain') {
+        // Trigger Flappy Brain click after a short delay
+        setTimeout(() => {
+          document.getElementById('flappy-brain-btn').click();
+        }, 500);
+      }
+    });
+    
+    // Listen for messages from parent window
+    window.addEventListener('message', (event) => {
+      try {
+        if (event.data && event.data.action === 'playGame') {
+          const gameId = event.data.gameId;
+          
+          if (gameId === 'flappybrain') {
+            document.getElementById('flappy-brain-btn').click();
+          }
+        }
+      } catch (err) {
+        console.error('Error processing message:', err);
+      }
+    });
   </script>
 </body>
-</html>
+</html> 

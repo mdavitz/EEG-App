@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flappy Brain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      font-family: 'Press Start 2P', monospace;
+    }
+    
+    #game-container {
+      position: relative;
+      width: 320px;
+      height: 480px;
+      background-color: #000;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
+      overflow: hidden;
+    }
+    
+    canvas {
+      display: block;
+      position: absolute;
+      top: 0;
+      left: 0;
+    }
+    
+    #restart-button {
+      position: absolute;
+      left: 50%;
+      top: 65%;
+      transform: translateX(-50%);
+      background-color: #0f0;
+      color: #000;
+      border: none;
+      border-radius: 5px;
+      padding: 10px 20px;
+      font-family: 'Press Start 2P', monospace;
+      font-size: 14px;
+      cursor: pointer;
+      display: none;
+      z-index: 20;
+      box-shadow: 0 0 10px rgba(0,255,0,0.5);
+    }
+    
+    #restart-button:hover {
+      background-color: #00ff00;
+      transform: translateX(-50%) scale(1.05);
+    }
+    
+    #mute-button {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: 'Press Start 2P', monospace;
+      background: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      box-shadow: 3px 3px 0 #0f0;
+      cursor: pointer;
+    }
+    
+    #mute-button:active {
+      box-shadow: none;
+      transform: translate(3px, 3px);
+    }
+  </style>
+</head>
+<body>
+  <div id="game-container">
+    <canvas id="gameCanvas" width="320" height="480"></canvas>
+    <button id="restart-button">RESTART</button>
+    <button id="mute-button">Mute</button>
+  </div>
+
+  <script>
+    // Get canvas and context
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+    const restartBtn = document.getElementById('restart-button');
+    const muteButton = document.getElementById('mute-button');
+    
+    // Asset loading
+    const bgImg = new Image();
+    bgImg.src = "background.png";
+    
+    const fgImg = new Image();
+    fgImg.src = "foreground.png";
+    
+    const birdImg = new Image();
+    birdImg.src = "bird.png";
+    
+    const pipeNorthImg = new Image();
+    pipeNorthImg.src = "pipeNorth.png";
+    
+    const pipeSouthImg = new Image();
+    pipeSouthImg.src = "pipeSouth.png";
+    
+    const neuronImg = new Image();
+    neuronImg.src = "neuron.png";
+    
+    // Audio
+    const flapSound = new Audio("flap.wav");
+    const scoreSound = new Audio("score.wav");
+    const hitSound = new Audio("hit.wav");
+    const bgMusic = new Audio("music.m4a");
+    bgMusic.loop = true;
+    bgMusic.volume = 0.2;
+    
+    // Game variables
+    let frames = 0;
+    let score = 0;
+    let gameState = "menu"; // "menu", "playing", "paused", "gameover"
+    const gravity = 0.3;
+    const jumpStrength = -5;
+    const pipeSpeed = 2.3;
+    const pipeWidth = 50;
+    const gapMin = 130;
+    const gapMax = 180;
+    let pipes = [];
+    let nextPipeFrame = 90;
+    let bestScore = Number(localStorage.getItem("flappyBestScore")) || 0;
+    const collisionMarginX = 5;
+    const collisionMarginY = 5;
+    let projectiles = [];
+    const projectileSpeed = 4;
+    const projectileWidth = 100;
+    const projectileHeight = 40;
+    let projectilePassCount = 0;
+    let isMuted = false;
+    
+    // Parallax layers
+    const bgLayer = { x: 0, speed: 0.5, image: bgImg };
+    const fgLayer = { x: 0, speed: 2, image: fgImg };
+    
+    // Bird object
+    const bird = {
+      x: 50,
+      y: canvas.height / 2,
+      width: 50,
+      height: 40,
+      velocity: 0,
+      draw: function() {
+        ctx.drawImage(birdImg, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+      },
+      update: function() {
+        this.velocity += gravity;
+        this.y += this.velocity;
+        
+        // Bottom boundary check
+        if (this.y + this.height / 2 > canvas.height) {
+          this.y = canvas.height - this.height / 2;
+          this.velocity = 0;
+          gameOver();
+        }
+        
+        // Top boundary check
+        if (this.y - this.height / 2 < 0) {
+          this.y = this.height / 2;
+          this.velocity = 0;
+        }
+      },
+      jump: function() {
+        this.velocity = jumpStrength;
+        playSound('flap');
+      },
+      reset: function() {
+        this.y = canvas.height / 2;
+        this.velocity = 0;
+      }
+    };
+    
+    // Particles array and functions
+    const particles = [];
+    
+    function createParticles(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x: x,
+          y: y,
+          velocity: {
+            x: (Math.random() - 0.5) * 2,
+            y: (Math.random() - 0.5) * 2
+          },
+          lifetime: 30,
+          size: Math.random() * 3 + 1
+        });
+      }
+    }
+    
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].x += particles[i].velocity.x;
+        particles[i].y += particles[i].velocity.y;
+        particles[i].lifetime--;
+        if (particles[i].lifetime <= 0) {
+          particles.splice(i, 1);
+        }
+      }
+    }
+    
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff0";
+        ctx.fill();
+      });
+    }
+    
+    // Play sound with mute check
+    function playSound(name) {
+      if (isMuted) return;
+      
+      switch(name) {
+        case 'flap':
+          flapSound.currentTime = 0;
+          flapSound.play().catch(err => console.log('Audio play failed:', err));
+          break;
+        case 'score':
+          scoreSound.currentTime = 0;
+          scoreSound.play().catch(err => console.log('Audio play failed:', err));
+          break;
+        case 'hit':
+          hitSound.currentTime = 0;
+          hitSound.play().catch(err => console.log('Audio play failed:', err));
+          break;
+      }
+    }
+    
+    // Create pipe
+    function createPipe() {
+      const gap = Math.floor(Math.random() * (gapMax - gapMin + 1)) + gapMin;
+      const maxPipeHeight = canvas.height - gap - 80;
+      const topPipeHeight = Math.floor(Math.random() * maxPipeHeight) + 40;
+      pipes.push({
+        x: canvas.width,
+        top: topPipeHeight,
+        bottom: canvas.height - (topPipeHeight + gap),
+        passed: false
+      });
+    }
+    
+    // Create projectile
+    function createProjectile() {
+      const projY = Math.floor(Math.random() * (canvas.height - 60)) + 30;
+      projectiles.push({
+        x: canvas.width,
+        y: projY,
+        width: projectileWidth,
+        height: projectileHeight,
+        velocity: projectileSpeed,
+        passed: false
+      });
+    }
+    
+    // Update projectiles
+    function updateProjectiles() {
+      projectiles.forEach(proj => {
+        proj.x -= proj.velocity;
+        if (
+          proj.x < bird.x + bird.width / 2 &&
+          proj.x + proj.width > bird.x - bird.width / 2 &&
+          proj.y < bird.y + bird.height / 2 &&
+          proj.y + proj.height > bird.y - bird.height / 2
+        ) {
+          gameOver();
+        }
+        if (!proj.passed && proj.x + proj.width < bird.x) {
+          proj.passed = true;
+          projectilePassCount++;
+        }
+      });
+      if (projectilePassCount >= 2) {
+        score += Math.floor(projectilePassCount / 2);
+        projectilePassCount %= 2;
+        playSound('score');
+      }
+      projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
+    }
+    
+    // Draw functions
+    function drawBackground() {
+      if (bgImg.complete && bgImg.naturalWidth !== 0) {
+        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
+      } else {
+        ctx.fillStyle = "black";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+    
+    function drawPipes() {
+      if (score < 50 || score >= 100) {
+        pipes.forEach(pipe => {
+          ctx.drawImage(pipeNorthImg, pipe.x, 0, pipeWidth, pipe.top);
+          ctx.drawImage(pipeSouthImg, pipe.x, canvas.height - pipe.bottom, pipeWidth, pipe.bottom);
+        });
+      }
+    }
+    
+    function drawForeground() {
+      const destHeight = 30;
+      let x = fgLayer.x;
+      while (x < canvas.width) {
+        ctx.drawImage(
+          fgLayer.image,
+          0, 0, fgLayer.image.width, fgLayer.image.height/2,
+          x, canvas.height - destHeight, fgLayer.image.width, destHeight
+        );
+        x += fgLayer.image.width;
+      }
+      if (fgLayer.x < 0) {
+        x = fgLayer.x + canvas.width;
+        while (x > 0) {
+          ctx.drawImage(
+            fgLayer.image,
+            0, 0, fgLayer.image.width, fgLayer.image.height/2,
+            x - fgLayer.image.width, canvas.height - destHeight, fgLayer.image.width, destHeight
+          );
+          x -= fgLayer.image.width;
+        }
+      }
+    }
+    
+    function drawProjectiles() {
+      projectiles.forEach(proj => {
+        ctx.drawImage(neuronImg, proj.x, proj.y, proj.width, proj.height);
+      });
+    }
+    
+    function drawHUD() {
+      const margin = 20;
+      ctx.fillStyle = "white";
+      ctx.font = "20px 'Press Start 2P'";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText("Score: " + score, margin, margin);
+      ctx.font = "12px 'Press Start 2P'";
+      ctx.textBaseline = "bottom";
+      ctx.fillText("Best: " + bestScore, margin, canvas.height - margin);
+    }
+    
+    function drawMenu() {
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "24px 'Press Start 2P'";
+      ctx.textAlign = "center";
+      ctx.fillText("Flappy Brain", canvas.width/2, canvas.height/2 - 50);
+      ctx.font = "14px 'Press Start 2P'";
+      ctx.fillText("Click to Start", canvas.width/2, canvas.height/2 + 10);
+      ctx.fillText("Press P to Pause", canvas.width/2, canvas.height/2 + 40);
+    }
+    
+    function drawGameOver() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Game over text
+      ctx.fillStyle = "#ff0";
+      ctx.font = "28px 'Press Start 2P'";
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 60);
+      
+      // Score display
+      ctx.font = "16px 'Press Start 2P'";
+      ctx.fillText("Score: " + score, canvas.width/2, canvas.height/2 - 20);
+      ctx.fillText("Best: " + bestScore, canvas.width/2, canvas.height/2 + 10);
+      
+      // Draw text for restart button too
+      ctx.fillStyle = "#fff";
+      ctx.font = "12px 'Press Start 2P'";
+      ctx.fillText("(or tap anywhere)", canvas.width/2, canvas.height/2 + 110);
+    }
+    
+    function drawPause() {
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "26px 'Press Start 2P'";
+      ctx.textAlign = "center";
+      ctx.fillText("PAUSED", canvas.width/2, canvas.height/2);
+    }
+    
+    // Update pipes
+    function updatePipes() {
+      if (score < 50 || score >= 100) {
+        pipes.forEach(pipe => {
+          pipe.x -= pipeSpeed;
+          if (
+            bird.x + bird.width/2 - collisionMarginX > pipe.x &&
+            bird.x - bird.width/2 + collisionMarginX < pipe.x + pipeWidth
+          ) {
+            if (
+              bird.y - bird.height/2 + collisionMarginY < pipe.top ||
+              bird.y + bird.height/2 - collisionMarginY > canvas.height - pipe.bottom
+            ) {
+              createParticles(bird.x, bird.y, 30);
+              gameOver();
+            }
+          }
+          if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
+            pipe.passed = true;
+            score++;
+            playSound('score');
+          }
+        });
+        if (pipes.length && pipes[0].x + pipeWidth < 0) {
+          pipes.shift();
+        }
+      }
+    }
+    
+    // Update background
+    function updateBackground() {
+      bgLayer.x -= bgLayer.speed;
+      if (bgLayer.x <= -canvas.width) bgLayer.x = 0;
+    }
+    
+    // Update foreground
+    function updateForeground() {
+      fgLayer.x -= fgLayer.speed;
+      if (fgLayer.x <= -fgLayer.image.width) fgLayer.x += fgLayer.image.width;
+    }
+    
+    // Update function
+    function updateGame() {
+      if (gameState === "playing") {
+        frames++;
+        if (score < 50) {
+          if (frames >= nextPipeFrame) {
+            createPipe();
+            nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100;
+          }
+          updatePipes();
+        } else if (score >= 50 && score < 100) {
+          pipes = [];
+          if (Math.random() < 0.02) createProjectile();
+          updateProjectiles();
+        } else {
+          if (frames >= nextPipeFrame) {
+            createPipe();
+            nextPipeFrame = frames + Math.floor(Math.random() * 101) + 100;
+          }
+          updatePipes();
+          if (Math.random() < 0.02) createProjectile();
+          updateProjectiles();
+        }
+        bird.update();
+        updateBackground();
+        updateForeground();
+      }
+    }
+    
+    // Game over function
+    function gameOver() {
+      gameState = "gameover";
+      playSound('hit');
+      
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem("flappyBestScore", bestScore);
+      }
+      
+      // Show the restart button
+      restartBtn.style.display = "block";
+      
+      createParticles(bird.x, bird.y, 30); // Add particle effect
+    }
+    
+    // Reset game
+    function resetGame() {
+      bird.reset();
+      pipes = [];
+      projectiles = [];
+      particles = [];
+      frames = 0;
+      score = 0;
+      nextPipeFrame = 100;
+      projectilePassCount = 0;
+      gameState = "playing";
+      
+      // Hide the restart button
+      restartBtn.style.display = "none";
+    }
+    
+    // Main game loop
+    function gameLoop() {
+      drawBackground();
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBackground();
+      
+      if (gameState === "menu") {
+        drawMenu();
+      } else if (gameState === "playing" || gameState === "paused") {
+        updateGame();
+        if (score < 50 || score >= 100) drawPipes();
+        drawProjectiles();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        if (gameState === "paused") drawPause();
+      } else if (gameState === "gameover") {
+        drawPipes();
+        drawProjectiles();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        drawGameOver();
+      }
+      
+      updateParticles();
+      drawParticles();
+      
+      requestAnimationFrame(gameLoop);
+    }
+    
+    // Event listeners
+    window.addEventListener("click", function(e) {
+      if (gameState === "menu") {
+        gameState = "playing";
+        bgMusic.play().catch(err => console.log('Background music failed to play:', err));
+      } else if (gameState === "playing") {
+        bird.jump();
+      } else if (gameState === "gameover") {
+        // Allow clicking anywhere to restart
+        resetGame();
+      }
+    });
+    
+    canvas.addEventListener("click", function(e) {
+      if (gameState === "menu") {
+        gameState = "playing";
+        bgMusic.play().catch(err => console.log('Background music failed to play:', err));
+      } else if (gameState === "playing") {
+        bird.jump();
+      } 
+    });
+    
+    document.addEventListener("keydown", function(e) {
+      if (e.code === "Space") {
+        if (gameState === "menu") {
+          gameState = "playing";
+          bgMusic.play().catch(err => console.log('Background music failed to play:', err));
+        } else if (gameState === "playing") {
+          bird.jump();
+        } else if (gameState === "gameover") {
+          resetGame();
+        }
+      }
+      
+      if (e.code === "KeyP") {
+        if (gameState === "playing") {
+          gameState = "paused";
+        } else if (gameState === "paused") {
+          gameState = "playing";
+        }
+      }
+      
+      if (e.code === "KeyR" && gameState === "gameover") {
+        resetGame();
+      }
+    });
+    
+    // Dedicated restart button click
+    restartBtn.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent event bubbling
+      resetGame();
+    });
+    
+    // Mute button
+    muteButton.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent event bubbling
+      isMuted = !isMuted;
+      
+      [flapSound, scoreSound, hitSound, bgMusic].forEach(sound => {
+        sound.muted = isMuted;
+      });
+      
+      muteButton.textContent = isMuted ? "Unmute" : "Mute";
+    });
+    
+    // Wait for images to load
+    let imagesLoaded = 0;
+    const totalImages = 6;
+    
+    function checkImagesLoaded() {
+      imagesLoaded++;
+      if (imagesLoaded === totalImages) {
+        // All images loaded, start game loop
+        gameLoop();
+      }
+    }
+    
+    // Add load event listeners to all images
+    bgImg.onload = checkImagesLoaded;
+    bgImg.onerror = checkImagesLoaded;
+    
+    fgImg.onload = checkImagesLoaded;
+    fgImg.onerror = checkImagesLoaded;
+    
+    birdImg.onload = checkImagesLoaded;
+    birdImg.onerror = checkImagesLoaded;
+    
+    pipeNorthImg.onload = checkImagesLoaded;
+    pipeNorthImg.onerror = checkImagesLoaded;
+    
+    pipeSouthImg.onload = checkImagesLoaded;
+    pipeSouthImg.onerror = checkImagesLoaded;
+    
+    neuronImg.onload = checkImagesLoaded;
+    neuronImg.onerror = checkImagesLoaded;
+    
+    // If images take too long, start anyway after a timeout
+    setTimeout(() => {
+      if (imagesLoaded < totalImages) {
+        console.log("Not all images loaded, starting game anyway");
+        gameLoop();
+      }
+    }, 2000);
+  </script>
+</body>
+</html> 

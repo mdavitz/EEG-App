@@ -1,7 +1,22 @@
-<title>EEG Videos - EEG Curriculum</title>
-
-  <!-- Link to your external stylesheet -->
-  <link rel="stylesheet" href="assets/css/styles.css">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEG Videos - EEG Curriculum</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css">
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
   
   <!-- Inline CSS for video-specific styling -->
   <style>
@@ -399,69 +414,79 @@
       }
     }
   </style>
+</head>
+<body>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
 
-  <h2 class="page-title">EEG Videos</h2>
-  
-  <div id="eeg-videos-container">
-    <div id="eeg-videos">
-      <!-- SIDEBAR (Video List) -->
-      <div class="video-list" id="videoList">
-        <h3 class="video-list-title">Video Library</h3>
-        <ul>
-          <li onclick="mobileShowVideo(0)" class="active">Introduction to EEG</li>
-          <li onclick="mobileShowVideo(1)">Polarity Rules</li>
-          <li onclick="mobileShowVideo(2)">Montages</li>
-          <li onclick="mobileShowVideo(3)">Eye Movements</li>
-          <li onclick="mobileShowVideo(4)">Technical Issues</li>
-          <li onclick="mobileShowVideo(5)">Normal Awake</li>
-          <li onclick="mobileShowVideo(6)">Normal Sleep</li>
-          <li onclick="mobileShowVideo(7)">Interictal Abnormalities</li>
-          <li onclick="mobileShowVideo(8)">Focal Slowing</li>
-          <li onclick="mobileShowVideo(9)">Diffuse Slow &amp; Periodic Discharges</li>
-        </ul>
-      </div>
-      
-      <!-- MAIN CONTENT (Video/Quiz) -->
-      <div class="main-content" id="videoContent">
-        <button class="back-to-videos" onclick="showMenu()">Back to Video List</button>
-        <div class="content-inner">
-          <!-- VIDEO SECTION -->
-          <div id="videoSection" class="video-section">
-            <!-- Wrap video and nav in a container to keep them together -->
-            <div class="video-wrapper">
-              <h3 id="currentVideoTitle">Introduction to EEG</h3>
-              <video id="videoPlayer" controls>
-                <source id="videoSource" src="assets/videos/EEG1.mp4" type="video/mp4">
-                Your browser does not support HTML5 video.
-              </video>
-              <div class="video-nav">
-                <button class="btn-prev" onclick="prevVideo()">Previous Video</button>
-                <button class="btn-skip" onclick="showQuiz()">Skip to Quiz</button>
-                <button class="btn-next" onclick="nextVideo()">Next Video</button>
-              </div>
-              <!-- Progress Display Container -->
-              <div id="progressDisplay">
-                No progress yet.
+    <!-- Main Content -->
+    <h2 class="page-title">EEG Videos</h2>
+    
+    <div id="eeg-videos-container">
+      <div id="eeg-videos">
+        <!-- SIDEBAR (Video List) -->
+        <div class="video-list" id="videoList">
+          <h3 class="video-list-title">Video Library</h3>
+          <ul>
+            <li onclick="mobileShowVideo(0)" class="active">Introduction to EEG</li>
+            <li onclick="mobileShowVideo(1)">Polarity Rules</li>
+            <li onclick="mobileShowVideo(2)">Montages</li>
+            <li onclick="mobileShowVideo(3)">Eye Movements</li>
+            <li onclick="mobileShowVideo(4)">Technical Issues</li>
+            <li onclick="mobileShowVideo(5)">Normal Awake</li>
+            <li onclick="mobileShowVideo(6)">Normal Sleep</li>
+            <li onclick="mobileShowVideo(7)">Interictal Abnormalities</li>
+            <li onclick="mobileShowVideo(8)">Focal Slowing</li>
+            <li onclick="mobileShowVideo(9)">Diffuse Slow &amp; Periodic Discharges</li>
+          </ul>
+        </div>
+        
+        <!-- MAIN CONTENT (Video/Quiz) -->
+        <div class="main-content" id="videoContent">
+          <button class="back-to-videos" onclick="showMenu()">Back to Video List</button>
+          <div class="content-inner">
+            <!-- VIDEO SECTION -->
+            <div id="videoSection" class="video-section">
+              <!-- Wrap video and nav in a container to keep them together -->
+              <div class="video-wrapper">
+                <h3 id="currentVideoTitle">Introduction to EEG</h3>
+                <video id="videoPlayer" controls>
+                  <source id="videoSource" src="assets/videos/EEG1.mp4" type="video/mp4">
+                  Your browser does not support HTML5 video.
+                </video>
+                <div class="video-nav">
+                  <button class="btn-prev" onclick="prevVideo()">Previous Video</button>
+                  <button class="btn-skip" onclick="showQuiz()">Skip to Quiz</button>
+                  <button class="btn-next" onclick="nextVideo()">Next Video</button>
+                </div>
+                <!-- Progress Display Container -->
+                <div id="progressDisplay">
+                  No progress yet.
+                </div>
               </div>
             </div>
-          </div>
-          
-          <!-- QUIZ SECTION -->
-          <div id="quizSection" class="quiz-section">
-            <div class="quiz-header">
-              <h3 id="quizTitle"></h3>
-              <div class="progress-indicator" id="quizProgress"></div>
-            </div>
-            <div id="questionContainer"></div>
-            <div id="feedbackMessage"></div>
-            <div class="quiz-nav">
-              <button class="btn-prev" id="prevQuestionBtn" onclick="prevQuestion()">Previous Question</button>
-              <button class="btn-next" id="nextQuestionBtn" onclick="nextQuestion()">Next Question</button>
+            
+            <!-- QUIZ SECTION -->
+            <div id="quizSection" class="quiz-section">
+              <div class="quiz-header">
+                <h3 id="quizTitle"></h3>
+                <div class="progress-indicator" id="quizProgress"></div>
+              </div>
+              <div id="questionContainer"></div>
+              <div id="feedbackMessage"></div>
+              <div class="quiz-nav">
+                <button class="btn-prev" id="prevQuestionBtn" onclick="prevQuestion()">Previous Question</button>
+                <button class="btn-next" id="nextQuestionBtn" onclick="nextQuestion()">Next Question</button>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
   </div>
 
   <!-- CAT OVERLAY SCRIPT -->
@@ -1412,8 +1437,70 @@
       document.getElementById('quizProgress').textContent = "";
     }
     
-    // Initialize everything on page load
+    // INITIALIZE HEADER AND FOOTER
     document.addEventListener('DOMContentLoaded', function() {
+      // Load header
+      fetch('includes/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-container').innerHTML = data;
+          
+          // Attach any event listeners for header elements if needed
+          const secretGameTrigger = document.getElementById('secret-game-trigger');
+          if (secretGameTrigger) {
+            secretGameTrigger.addEventListener('click', function() {
+              window.location.href = 'flappy_brain/games_menu.html';
+            });
+          }
+        });
+      
+      // Load footer
+      fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-container').innerHTML = data;
+          
+          // Initialize any footer functionality
+          const darkModeBtn = document.getElementById('dark-mode-btn');
+          const fontSizeBtn = document.getElementById('font-size-btn');
+          const copyrightTrigger = document.getElementById('copyright-trigger');
+          
+          if (darkModeBtn) {
+            darkModeBtn.addEventListener('click', function() {
+              document.body.classList.toggle('dark');
+              localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+            });
+          }
+          
+          if (fontSizeBtn) {
+            fontSizeBtn.addEventListener('click', function() {
+              document.body.classList.toggle('large-text');
+              localStorage.setItem('largeText', document.body.classList.contains('large-text'));
+            });
+          }
+          
+          if (copyrightTrigger) {
+            const copyrightModal = document.getElementById('copyright-modal');
+            const closeBtn = document.getElementById('copyright-close-btn');
+            
+            copyrightTrigger.addEventListener('click', function() {
+              copyrightModal.style.display = 'block';
+            });
+            
+            if (closeBtn) {
+              closeBtn.addEventListener('click', function() {
+                copyrightModal.style.display = 'none';
+              });
+            }
+            
+            window.addEventListener('click', function(event) {
+              if (event.target === copyrightModal) {
+                copyrightModal.style.display = 'none';
+              }
+            });
+          }
+        });
+        
       // Hide the quiz section initially
       document.getElementById('quizSection').style.display = 'none';
       
@@ -1439,80 +1526,79 @@
       </a>
     </p>
   </div>
-<script>
-  // --- Cookie Helper Functions ---
-  function setCookie(name, value, days) {
-    var expires = "";
-    if (days) {
-      var date = new Date();
-      date.setTime(date.getTime() + (days * 24 * 60 * 60 * 1000));
-      expires = "; expires=" + date.toUTCString();
-    }
-    document.cookie = name + "=" + (value || "") + expires + "; path=/";
-  }
-
-  function getCookie(name) {
-    var nameEQ = name + "=";
-    var ca = document.cookie.split(';');
-    for(var i = 0; i < ca.length; i++) {
-      var c = ca[i].trim();
-      if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
-    }
-    return null;
-  }
-
-  // --- Progress Cookie Functions ---
-  // progressCookie stores a JSON object: { videos: [indexes], quizzes: [indexes] }
-  function updateProgressCookie(videoIndex, quizCompleted) {
-    var progress = getCookie("progress");
-    var progressObj = progress ? JSON.parse(progress) : { videos: [], quizzes: [] };
-
-    // If a video has just ended (videoIndex provided), mark it as completed if not already
-    if (videoIndex !== null) {
-      if (!progressObj.videos.includes(videoIndex)) {
-        progressObj.videos.push(videoIndex);
+  
+  <!-- Global Search Functionality -->
+  <!-- <script src="assets/js/search.js"></script> -->
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from eeg_videos.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
       }
-    }
-
-    // If a quiz question was answered correctly, mark that quiz as completed
-    if (quizCompleted && videoIndex !== null) {
-      if (!progressObj.quizzes.includes(videoIndex)) {
-        progressObj.quizzes.push(videoIndex);
-      }
-    }
-
-    // Save cookie for 3 days
-    setCookie("progress", JSON.stringify(progressObj), 3);
-  }
-
-  function displayProgress() {
-    var progress = getCookie("progress");
-    var progressDisplay = document.getElementById("progressDisplay");
-    if (progress) {
-      var progressObj = JSON.parse(progress);
-      var message = "<strong>Completed Videos:</strong> " + (progressObj.videos.length ? progressObj.videos.join(", ") : "None") +
-                    "<br><strong>Completed Quizzes:</strong> " + (progressObj.quizzes.length ? progressObj.quizzes.join(", ") : "None");
-      progressDisplay.innerHTML = message;
-    } else {
-      progressDisplay.innerHTML = "No progress yet.";
-    }
-  }
-
-  // --- Video Completion Tracking ---
-  // Assuming "videoPlayer" is your video element and "currentVideoIndex" is set when a video is shown.
-  document.getElementById("videoPlayer").addEventListener("ended", function () {
-    // Mark current video as completed (do not mark quiz completion here)
-    updateProgressCookie(currentVideoIndex, false);
-    displayProgress();
-  });
-
-  // Display any stored progress on page load
-  document.addEventListener("DOMContentLoaded", function () {
-    displayProgress();
-  });
-</script>
-
-<!-- Global Search Functionality -->
-<script src="assets/js/search.js"></script>
+    });
+  </script>
 </body>
 </html>
