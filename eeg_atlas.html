@@ -758,6 +758,8 @@
             <button id="all-btn" class="active" onclick="filterCategory('all')">All Patterns</button>
             <button id="normal-btn" onclick="filterCategory('normal')">Normal Patterns</button>
             <button id="abnormal-btn" onclick="filterCategory('abnormal')">Abnormal Findings</button>
+            <button id="epileptiform-btn" onclick="filterCategory('epileptiform')">Epileptiform</button>
+            <button id="pediatric-btn" onclick="filterCategory('pediatric')">Pediatric</button>
             <button id="artifacts-btn" onclick="filterCategory('artifacts')">Artifacts</button>
           </div>
         </div>
@@ -774,47 +776,62 @@
                   <li class="eeg-item" onclick="showEEGDetail('posterior-dominant-rhythm')">Posterior Dominant Rhythm (PDR)</li>
                   <li class="eeg-item" onclick="showEEGDetail('mu-rhythm')">Mu Rhythm</li>
                   <li class="eeg-item" onclick="showEEGDetail('lambda-waves')">Lambda Waves</li>
-                  <li class="eeg-item" onclick="showEEGDetail('sleep-patterns')">Sleep Patterns & Architecture</li>
+                  <li class="eeg-item" onclick="showEEGDetail('sleep-patterns')">Sleep Architecture</li>
                   <li class="eeg-item" onclick="showEEGDetail('vertex-waves')">Vertex Waves</li>
                   <li class="eeg-item" onclick="showEEGDetail('k-complexes')">K-Complexes</li>
                   <li class="eeg-item" onclick="showEEGDetail('sleep-spindles')">Sleep Spindles</li>
-                  <li class="eeg-item" onclick="showEEGDetail('benign-epileptiform-variants')">Benign Epileptiform Variants</li>
+                  <li class="eeg-item" onclick="showEEGDetail('posts')">Positive Occipital Sharp Transients of Sleep (POSTS)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('beta-activity')">Beta Activity</li>
                 </ul>
               </li>
               
-              <!-- Abnormal Patterns -->
+              <!-- Background Abnormalities -->
               <li data-category="abnormal">
+                <div class="category-header">Background Abnormalities</div>
+                <ul class="category-items">
+                  <li class="eeg-item" onclick="showEEGDetail('diffuse-slowing')">Diffuse Slowing</li>
+                  <li class="eeg-item" onclick="showEEGDetail('focal-slowing')">Focal Slowing</li>
+                  <li class="eeg-item" onclick="showEEGDetail('breach-rhythm')">Breach Rhythm</li>
+                  <li class="eeg-item" onclick="showEEGDetail('asymmetric-pdr')">Asymmetric PDR</li>
+                  <li class="eeg-item" onclick="showEEGDetail('attenuated-activity')">Attenuated/Suppressed Activity</li>
+                  <li class="eeg-item" onclick="showEEGDetail('triphasic-waves')">Triphasic Waves</li>
+                  <li class="eeg-item" onclick="showEEGDetail('burst-suppression')">Burst-Suppression Pattern</li>
+                </ul>
+              </li>
+
+              <!-- Epileptiform Patterns -->
+              <li data-category="epileptiform">
                 <div class="category-header">Epileptiform Patterns</div>
                 <ul class="category-items">
-                  <li class="eeg-item" onclick="showEEGDetail('focal-spike')">Focal Spikes</li>
-                  <li class="eeg-item" onclick="showEEGDetail('sharp-waves')">Sharp Waves</li>
-                  <li class="eeg-item" onclick="showEEGDetail('spike-wave-discharges')">Spike-Wave Discharges</li>
+                  <li class="eeg-item" onclick="showEEGDetail('focal-spike')">Spikes and Sharp Waves</li>
+                  <li class="eeg-item" onclick="showEEGDetail('spike-wave-discharges')">Spike-Wave Complexes</li>
+                  <li class="eeg-item" onclick="showEEGDetail('periodic-lateralized-epileptiform-discharges')">Periodic Patterns (GPDs, LPDs, BIPDs)</li>
+                </ul>
+              </li>
+              
+              <!-- Epilepsy Syndromes -->
+              <li data-category="epileptiform">
+                <div class="category-header">Epilepsy Syndromes</div>
+                <ul class="category-items">
+                  <li class="eeg-item" onclick="showEEGDetail('temporal-lobe-epilepsy')">Temporal Lobe Epilepsy</li>
+                  <li class="eeg-item" onclick="showEEGDetail('absence-seizure')">Childhood/Juvenile Absence Epilepsy</li>
+                  <li class="eeg-item" onclick="showEEGDetail('juvenile-myoclonic-epilepsy')">Juvenile Myoclonic Epilepsy</li>
+                  <li class="eeg-item" onclick="showEEGDetail('lennox-gastaut-syndrome')">Lennox-Gastaut Syndrome</li>
+                  <li class="eeg-item" onclick="showEEGDetail('west-syndrome')">West Syndrome</li>
+                </ul>
+              </li>
+              
+              <!-- Pediatric Patterns -->
+              <li data-category="pediatric">
+                <div class="category-header">Pediatric Patterns</div>
+                <ul class="category-items">
                   <li class="eeg-item" onclick="showEEGDetail('hypsarrhythmia')">Hypsarrhythmia</li>
-                  <li class="eeg-item" onclick="showEEGDetail('triphasic-waves')">Triphasic Waves</li>
-                  <li class="eeg-item" onclick="showEEGDetail('pleds')">PLEDs (Periodic Lateralized Epileptiform Discharges)</li>
-                  <li class="eeg-item" onclick="showEEGDetail('gpeds')">GPEDs (Generalized Periodic Epileptiform Discharges)</li>
-                </ul>
-              </li>
-              
-              <li data-category="abnormal">
-                <div class="category-header">Seizure Patterns</div>
-                <ul class="category-items">
-                  <li class="eeg-item" onclick="showEEGDetail('focal-seizure')">Focal Seizure</li>
-                  <li class="eeg-item" onclick="showEEGDetail('generalized-seizure')">Generalized Seizure</li>
-                  <li class="eeg-item" onclick="showEEGDetail('absence-seizure')">Absence Seizure</li>
-                  <li class="eeg-item" onclick="showEEGDetail('tonic-clonic-seizure')">Tonic-Clonic Seizure</li>
-                  <li class="eeg-item" onclick="showEEGDetail('subclinical-seizure')">Subclinical Rhythmic Electrographic Discharge of Adults (SREDA)</li>
-                </ul>
-              </li>
-              
-              <li data-category="abnormal">
-                <div class="category-header">Slowing & Encephalopathy</div>
-                <ul class="category-items">
-                  <li class="eeg-item" onclick="showEEGDetail('focal-slowing')">Focal Slowing</li>
-                  <li class="eeg-item" onclick="showEEGDetail('generalized-slowing')">Generalized Slowing</li>
-                  <li class="eeg-item" onclick="showEEGDetail('frontal-intermittent-rhythmic-delta')">Frontal Intermittent Rhythmic Delta Activity (FIRDA)</li>
-                  <li class="eeg-item" onclick="showEEGDetail('temporal-intermittent-rhythmic-delta')">Temporal Intermittent Rhythmic Delta Activity (TIRDA)</li>
-                  <li class="eeg-item" onclick="showEEGDetail('occipital-intermittent-rhythmic-delta')">Occipital Intermittent Rhythmic Delta Activity (OIRDA)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('slow-posterior-rhythm')">Slow Posterior Rhythm of Youth</li>
+                  <li class="eeg-item" onclick="showEEGDetail('benign-epileptiform-transients')">Benign Epileptiform Transients of Sleep (BETS)</li>
+                  <li class="eeg-item" onclick="showEEGDetail('rolandic-spikes')">Centrotemporal (Rolandic) Spikes</li>
+                  <li class="eeg-item" onclick="showEEGDetail('occipital-spikes')">Occipital Spikes of Childhood</li>
+                  <li class="eeg-item" onclick="showEEGDetail('benign-childhood-epilepsy')">Benign Childhood Epilepsy with Centrotemporal Spikes</li>
+                  <li class="eeg-item" onclick="showEEGDetail('childhood-absence-epilepsy')">Childhood Absence Epilepsy</li>
                 </ul>
               </li>
               
@@ -828,7 +845,6 @@
                   <li class="eeg-item" onclick="showEEGDetail('electrode-artifact')">Electrode Artifact</li>
                   <li class="eeg-item" onclick="showEEGDetail('sweat-artifact')">Sweat Artifact</li>
                   <li class="eeg-item" onclick="showEEGDetail('sixty-hz')">60Hz Line Noise</li>
-                  <li class="eeg-item" onclick="showEEGDetail('chewing-artifact')">Chewing Artifact</li>
                 </ul>
               </li>
             </ul>
@@ -836,12 +852,13 @@
           
           <!-- Detail content section -->
           <div class="main-content" id="detail-content">
-            <h2><i class="fa-solid fa-brain"></i> Welcome to the EEG Atlas</h2>
+            <h2><i class="fa-solid fa-brain"></i> Competency-Based EEG Education</h2>
+            <p>Welcome to the EEG Atlas featuring "must-know" EEG findings for neurology residents as identified by the International League Against Epilepsy (ILAE) and epilepsy education experts.</p>
+            <p>This atlas contains the core EEG patterns that every neurologist should be able to recognize based on competency-based curriculum studies.</p>
+            <p><em>Reference: Nascimento FA, Jing J, Strowd R, et al. Competency-based EEG education: a list of "must-know" EEG findings for adult and child neurology residents. Epileptic Disord. 2022;24(5):979-982.</em></p>
             <p>Select a pattern from the sidebar to view detailed information, images, and descriptions.</p>
-            <p>This atlas is designed to help you identify and learn about various EEG patterns including normal variants, abnormal findings, and common artifacts.</p>
-            <p>Use the search bar to find specific patterns or filter by category using the buttons above.</p>
             <div class="image-container">
-              <img src="assets/images/eeg_sample.png" alt="Sample EEG" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22300%22 height=%22150%22><rect width=%22300%22 height=%22150%22 fill=%22%23f0f0f0%22/><text x=%22150%22 y=%2275%22 font-family=%22Arial%22 font-size=%2220%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>EEG Sample Image</text></svg>';">
+              <img src="assets/images/eeg_sample.png" alt="Sample EEG" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22120%22 font-family=%22Arial%22 font-size=%2222%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>EEG Curriculum</text><text x=%22300%22 y=%22160%22 font-family=%22Arial%22 font-size=%2216%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>Based on ILAE Competency Guidelines</text></svg>';">
               <div class="fullscreen-hint">
                 <i class="fa-solid fa-expand"></i> Click for fullscreen
               </div>
@@ -954,7 +971,6 @@
       initializeEegAtlas();
     });
     
-    // Initialize the EEG Atlas UI components
     function initializeEegAtlas() {
       // Add event listener to category headers for expanding/collapsing
       document.querySelectorAll('.category-header').forEach(header => {
@@ -980,112 +996,20 @@
       // Make image containers clickable for fullscreen view
       document.querySelectorAll('.image-container img').forEach(img => {
         img.addEventListener('click', function() {
-          // Open carousel with this image
           openCarouselBySrc(this.src);
         });
       });
     }
     
-    // Filter EEG items based on search term
-    function filterEEGItems(searchTerm) {
-      const items = document.querySelectorAll('.eeg-item');
-      let hasVisibleItems = false;
-      
-      items.forEach(item => {
-        const text = item.textContent.toLowerCase();
-        const matches = text.includes(searchTerm);
-        item.style.display = matches ? 'block' : 'none';
-        if (matches) hasVisibleItems = true;
-      });
-      
-      // Show/hide categories based on whether they have visible items
-      document.querySelectorAll('.category-header').forEach(header => {
-        const categoryItems = header.nextElementSibling;
-        const hasVisibleCategoryItems = Array.from(categoryItems.querySelectorAll('.eeg-item'))
-          .some(item => item.style.display !== 'none');
-        
-        header.parentElement.style.display = hasVisibleCategoryItems ? 'block' : 'none';
-      });
-      
-      // If search term is empty, show all categories
-      if (searchTerm === '') {
-        document.querySelectorAll('#atlas-list > li').forEach(item => {
-          item.style.display = 'block';
-        });
-      }
+    function isFavorite(patternId) {
+      return getFavorites().includes(patternId);
     }
     
-    // Filter by category
-    function filterCategory(category) {
-      // Update active button
-      document.querySelectorAll('#sidebar-buttons button').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      document.getElementById(category + '-btn').classList.add('active');
-      
-      // Show/hide categories based on selection
-      if (category === 'all') {
-        document.querySelectorAll('#atlas-list > li').forEach(item => {
-          item.style.display = 'block';
-        });
-      } else {
-        document.querySelectorAll('#atlas-list > li').forEach(item => {
-          if (item.dataset.category === category) {
-            item.style.display = 'block';
-          } else {
-            item.style.display = 'none';
-          }
-        });
-      }
-      
-      // Clear the search bar
-      document.getElementById('searchBar').value = '';
+    function getFavorites() {
+      const storedFavorites = localStorage.getItem("eegFavorites");
+      return storedFavorites ? JSON.parse(storedFavorites) : [];
     }
     
-    // Show EEG detail content
-    function showEEGDetail(patternId) {
-      // This would fetch and display the details for the selected pattern
-      const detailContent = document.getElementById('detail-content');
-      
-      // Replace this with actual content loading logic
-      detailContent.innerHTML = `
-        <h2>
-          <i class="fa-solid fa-brain"></i> 
-          ${patternId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
-          <span class="favorite-star" onclick="toggleFavorite('${patternId}', event)">☆</span>
-        </h2>
-        
-        <div class="image-container">
-          <img src="assets/atlas/${patternId}.png" alt="${patternId}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22150%22 font-family=%22Arial%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>Image coming soon</text></svg>';">
-          <div class="fullscreen-hint">
-            <i class="fa-solid fa-expand"></i> Click for fullscreen
-          </div>
-        </div>
-        
-        <p>Loading detailed information for ${patternId.replace(/-/g, ' ')}...</p>
-        <p>This section will contain detailed explanations about the EEG pattern, clinical significance, and interpretation guidelines.</p>
-      `;
-      
-      // Make newly added images clickable for fullscreen view
-      document.querySelectorAll('.image-container img').forEach(img => {
-        img.addEventListener('click', function() {
-          openCarouselBySrc(this.src);
-        });
-      });
-      
-      // Check if this item is a favorite and update the star
-      const starIcon = detailContent.querySelector('.favorite-star');
-      if (starIcon) {
-        starIcon.textContent = isFavorite(patternId) ? "★" : "☆";
-      }
-      
-      // If on mobile, scroll to the detail content
-      if (window.innerWidth < 992) {
-        detailContent.scrollIntoView({ behavior: 'smooth' });
-      }
-    }
-    
-    // Favorites management
     function toggleFavorite(patternId, event) {
       event.stopPropagation();
       
@@ -1105,15 +1029,6 @@
       star.textContent = isFavorite(patternId) ? "★" : "☆";
       star.classList.add("favorite-animate");
       setTimeout(() => star.classList.remove("favorite-animate"), 300);
-    }
-    
-    function getFavorites() {
-      const storedFavorites = localStorage.getItem("eegFavorites");
-      return storedFavorites ? JSON.parse(storedFavorites) : [];
-    }
-    
-    function isFavorite(patternId) {
-      return getFavorites().includes(patternId);
     }
     
     // Carousel functionality
@@ -1176,6 +1091,124 @@
         }
       }
     });
+    
+    // Show EEG detail content
+    function showEEGDetail(patternId) {
+      // This would fetch and display the details for the selected pattern
+      const detailContent = document.getElementById('detail-content');
+      
+      // Set content based on pattern ID
+      if (patternId === 'focal-spike') {
+        detailContent.innerHTML = `
+          <h2>
+            <i class="fa-solid fa-brain"></i> 
+            Spikes and Sharp Waves
+            <span class="favorite-star" onclick="toggleFavorite('${patternId}', event)">☆</span>
+          </h2>
+          
+          <div class="image-container">
+            <img src="assets/images/atlas/spike_wave.png" alt="Spike and sharp wave discharges" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22150%22 font-family=%22Arial%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>Spike and Sharp Wave Image</text></svg>';">
+            <div class="fullscreen-hint">
+              <i class="fa-solid fa-expand"></i> Click for fullscreen
+            </div>
+          </div>
+          
+          <h3>Description</h3>
+          <p>Epileptiform discharges that are transients clearly distinguishable from background activity with pointed peaks. Spikes have a duration of 20-70 ms, while sharp waves have a duration of 70-200 ms.</p>
+          
+          <h3>Key Features</h3>
+          <ul>
+            <li>Pointed peak (spikes narrower than sharp waves)</li>
+            <li>Usually followed by a slow wave</li>
+            <li>Asymmetric upslope and downslope</li>
+            <li>Stand out from the background</li>
+            <li>May be focal or generalized</li>
+          </ul>
+          
+          <h3>Clinical Significance</h3>
+          <p>Strongly associated with epilepsy, especially when frequent. Location can help identify the epileptogenic zone. Temporal spikes are often associated with temporal lobe epilepsy, central spikes with frontal lobe epilepsy, etc.</p>
+          
+          <p>From the ILAE Competency-Based EEG Education guidelines, this is considered a core "must-know" pattern for all neurology residents.</p>
+          
+          <div class="image-container">
+            <img src="assets/images/atlas/temporal_spike.png" alt="Temporal lobe spike" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22150%22 font-family=%22Arial%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>Temporal Spike Example</text></svg>';">
+            <div class="fullscreen-hint">
+              <i class="fa-solid fa-expand"></i> Click for fullscreen
+            </div>
+          </div>
+        `;
+      } else if (patternId === 'posterior-dominant-rhythm') {
+        detailContent.innerHTML = `
+          <h2>
+            <i class="fa-solid fa-brain"></i> 
+            Posterior Dominant Rhythm (PDR)
+            <span class="favorite-star" onclick="toggleFavorite('${patternId}', event)">☆</span>
+          </h2>
+          
+          <div class="image-container">
+            <img src="assets/images/atlas/pdr.png" alt="Posterior Dominant Rhythm" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22150%22 font-family=%22Arial%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>Posterior Dominant Rhythm Image</text></svg>';">
+            <div class="fullscreen-hint">
+              <i class="fa-solid fa-expand"></i> Click for fullscreen
+            </div>
+          </div>
+          
+          <h3>Description</h3>
+          <p>The posterior dominant rhythm (PDR), also known as the alpha rhythm, is a normal pattern characterized by 8-13 Hz activity that is maximal over the posterior regions of the head. It is present in the relaxed, awake state with eyes closed.</p>
+          
+          <h3>Key Features</h3>
+          <ul>
+            <li>Frequency of 8-13 Hz in adults</li>
+            <li>Maximum amplitude over the posterior regions</li>
+            <li>Attenuates with eye opening</li>
+            <li>Symmetrical between hemispheres</li>
+            <li>Develops between 3-4 months of age and reaches adult frequency by adolescence</li>
+          </ul>
+          
+          <h3>Clinical Significance</h3>
+          <p>The PDR is a key feature in assessing the normality of an EEG recording. Asymmetries, slowing, or absence of the PDR can indicate underlying neurological dysfunction. Assessment of the PDR is an essential component of every EEG interpretation.</p>
+          
+          <p>From the ILAE Competency-Based EEG Education guidelines, this is considered a fundamental "must-know" pattern for all neurology residents.</p>
+        `;
+      } else {
+        // For other patterns, replace this with actual content later
+        detailContent.innerHTML = `
+          <h2>
+            <i class="fa-solid fa-brain"></i> 
+            ${patternId.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())}
+            <span class="favorite-star" onclick="toggleFavorite('${patternId}', event)">☆</span>
+          </h2>
+          
+          <div class="image-container">
+            <img src="assets/images/atlas/${patternId}.png" alt="${patternId}" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22300%22><rect width=%22600%22 height=%22300%22 fill=%22%23f0f0f0%22/><text x=%22300%22 y=%22150%22 font-family=%22Arial%22 font-size=%2224%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22 fill=%22%23999%22>Image coming soon</text></svg>';">
+            <div class="fullscreen-hint">
+              <i class="fa-solid fa-expand"></i> Click for fullscreen
+            </div>
+          </div>
+          
+          <p>This EEG pattern is part of the ILAE "must-know" findings for neurology residents.</p>
+          <p>Detailed content for ${patternId.replace(/-/g, ' ')} is coming soon. This will include waveform characteristics, clinical significance, and example images.</p>
+          <p><em>Reference: Nascimento FA, Jing J, Strowd R, et al. Competency-based EEG education: a list of "must-know" EEG findings for adult and child neurology residents. Epileptic Disord. 2022;24(5):979-982.</em></p>
+        `;
+      }
+      
+      // Make newly added images clickable for fullscreen view
+      document.querySelectorAll('.image-container img').forEach(img => {
+        img.addEventListener('click', function() {
+          openCarouselBySrc(this.src);
+        });
+      });
+      
+      // Check if this item is a favorite and update the star
+      const starIcon = detailContent.querySelector('.favorite-star');
+      if (starIcon) {
+        starIcon.textContent = isFavorite(patternId) ? "★" : "☆";
+      }
+      
+      // If on mobile, scroll to the detail content
+      if (window.innerWidth < 992) {
+        detailContent.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
   </script>
 </body>
 </html>
