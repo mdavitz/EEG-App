@@ -1,0 +1,66 @@
+/**
+ * Search Debug Utility
+ * This script helps debug search issues by monitoring DOM elements and events
+ */
+
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('🔍 Search Debug: Starting diagnostics...');
+  
+  // Check if required elements exist
+  const searchInput = document.getElementById('universal-search-input');
+  const searchResults = document.getElementById('search-results');
+  const searchClear = document.getElementById('search-clear');
+  
+  console.log('🔍 Search Elements Found:', {
+    'searchInput': searchInput ? '✅' : '❌',
+    'searchResults': searchResults ? '✅' : '❌',
+    'searchClear': searchClear ? '✅' : '❌'
+  });
+  
+  // Check if UniversalSearch object exists
+  if (typeof UniversalSearch !== 'undefined') {
+    console.log('🔍 UniversalSearch object: ✅');
+    console.log('🔍 UniversalSearch methods:', Object.keys(UniversalSearch));
+    
+    // Check config
+    console.log('🔍 UniversalSearch config:', UniversalSearch.config);
+    
+    // Check default index
+    if (UniversalSearch.config && UniversalSearch.config.defaultIndex) {
+      console.log('🔍 Default index count:', UniversalSearch.config.defaultIndex.length);
+      console.log('🔍 First index entry:', UniversalSearch.config.defaultIndex[0]);
+    } else {
+      console.log('❌ Default index not found');
+    }
+  } else {
+    console.log('❌ UniversalSearch object not found - script not loaded correctly');
+  }
+  
+  // Add manual input event listener
+  if (searchInput) {
+    console.log('🔍 Adding debug input listener');
+    
+    searchInput.addEventListener('input', function(e) {
+      console.log('🔍 Direct Input Event:', {
+        value: e.target.value,
+        inputType: e.inputType,
+        timestamp: new Date().toISOString()
+      });
+    });
+    
+    // Test adding some text
+    setTimeout(function() {
+      console.log('🔍 Trying to focus input');
+      searchInput.focus();
+      
+      setTimeout(function() {
+        console.log('🔍 Simulating typing "test"');
+        const nativeInputValueSetter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value").set;
+        nativeInputValueSetter.call(searchInput, "test");
+        
+        const event = new Event('input', { bubbles: true });
+        searchInput.dispatchEvent(event);
+      }, 500);
+    }, 2000);
+  }
+});

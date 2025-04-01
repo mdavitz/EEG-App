@@ -1,0 +1,1746 @@
+/**
+ * EEG Curriculum - Unified Search Functionality
+ * This file provides search capabilities across all pages of the EEG curriculum
+ */
+
+// Main search configuration
+const EEGSearch = {
+    // Config options
+    config: {
+      debounceTime: 300,        // Milliseconds to wait after typing before searching
+      minQueryLength: 2,         // Minimum characters to start searching
+      maxResults: 20,            // Maximum results to show
+      highlightClass: 'search-highlight', // Class for highlighted text
+      fuzzyMatchThreshold: 2,    // Max Levenshtein distance for fuzzy matches
+      searchScope: 'current',    // 'current' or 'global'
+      showAllIfEmpty: true       // Show all content if search is empty
+    },
+  
+    // Stores indexed content from all pages
+    indexedContent: {
+      ilae: [], // Will store ILAE classification data
+      seizures: [], // Will store seizure management data
+      atlas: []  // Will store EEG atlas data
+    },
+  
+    // Current page identifier
+    currentPage: 'unknown',
+  
+    // Initialize search on a page
+    init: function(pageId) {
+      this.currentPage = pageId;
+      this.setupSearchField();
+      this.indexCurrentPage();
+      console.log(`EEGSearch initialized on ${pageId} page`);
+    },
+  
+    // Set up the search input and autocomplete
+    setupSearchField: function() {
+      const searchInput = document.getElementById('unified-search-input');
+      const autocompleteList = document.getElementById('unified-search-autocomplete');
+      
+      if (!searchInput || !autocompleteList) {
+        console.error('Search input or autocomplete list not found');
+        return;
+      }
+  
+      // Debounce for performance
+      let debounceTimeout;
+      searchInput.addEventListener('input', () => {
+        clearTimeout(debounceTimeout);
+        
+        if (searchInput.value.trim().length < this.config.minQueryLength) {
+          autocompleteList.style.display = 'none';
+          if (this.config.showAllIfEmpty) {
+            this.showAllContent();
+          }
+          return;
+        }
+        
+        debounceTimeout = setTimeout(() => {
+          this.performSearch(searchInput.value.trim());
+        }, this.config.debounceTime);
+      });
+  
+      // Hide autocomplete when clicking elsewhere
+      document.addEventListener('click', (event) => {
+        if (!searchInput.contains(event.target) && !autocompleteList.contains(event.target)) {
+          autocompleteList.style.display = 'none';
+        }
+      });
+  
+      // Search on Enter key
+      searchInput.addEventListener('keydown', (event) => {
+        if (event.key === 'Enter') {
+          this.performSearch(searchInput.value.trim(), true); // true = force search
+          autocompleteList.style.display = 'none';
+        }
+      });
+    },
+    
+    // Index content from the current page
+    indexCurrentPage: function() {
+      switch (this.currentPage) {
+        case 'ilae':
+          this.indexILAEContent();
+          break;
+        case 'seizures':
+          this.indexSeizureContent();
+          break;
+        case 'atlas':
+          this.indexAtlasContent();
+          break;
+        default:
+          console.warn('Unknown page type for indexing');
+      }
+    },
+    
+    // Index ILAE classification content
+    indexILAEContent: function() {
+      const cards = document.querySelectorAll('#ilae-classification-content .ilae-card');
+      cards.forEach(card => {
+        this.indexedContent.ilae.push({
+          title: card.getAttribute('data-title'),
+          summary: card.getAttribute('data-summary'),
+          eeg: card.getAttribute('data-eeg'),
+          element: card,
+          type: 'card'
+        });
+      });
+    },
+    
+    // Index seizure management content
+    indexSeizureContent: function() {
+      // Index details sections
+      const detailsElements = document.querySelectorAll('#contentContainer details');
+      detailsElements.forEach(detail => {
+        // Save original HTML for restoration
+        if (!detail.getAttribute('data-original')) {
+          detail.setAttribute('data-original', detail.innerHTML);
+        }
+        
+        // Check if it contains a medications table
+        const medsTable = detail.querySelector('#medicationsTableBody');
+        if (medsTable) {
+          // Index each medication row
+          const rows = medsTable.querySelectorAll('tr');
+          rows.forEach(row => {
+            const cells = row.querySelectorAll('td');
+            if (cells.length > 0) {
+              this.indexedContent.seizures.push({
+                title: cells[0].textContent,
+                content: row.textContent,
+                element: row,
+                parent: detail,
+                type: 'medication'
+              });
+            }
+          });
+        } else {
+          // Index other details content
+          const summary = detail.querySelector('summary').textContent;
+          const content = detail.textContent;
+          this.indexedContent.seizures.push({
+            title: summary,
+            content: content,
+            element: detail,
+            type: 'detail'
+          });
+        }
+      });
+    },
+    
+    // Index EEG atlas content
+    indexAtlasContent: function() {
+      // If using the eegData array
+      if (window.eegData) {
+        window.eegData.forEach(entry => {
+          this.indexedContent.atlas.push({
+            title: entry.title,
+            category: entry.category,
+            description: entry.back,
+            data: entry,
+            type: 'atlas'
+          });
+        });
+      }
+    },
+    
+    // Calculate Levenshtein distance for fuzzy matching
+    levenshtein: function(a, b) {
+      if (a.length === 0) return b.length;
+      if (b.length === 0) return a.length;
+      
+      const matrix = [];
+      
+      // Initialize matrix
+      for (let i = 0; i <= b.length; i++) {
+        matrix[i] = [i];
+      }
+      for (let i = 0; i <= a.length; i++) {
+        matrix[0][i] = i;
+      }
+      
+      // Fill matrix
+      for (let i = 1; i <= b.length; i++) {
+        for (let j = 1; j <= a.length; j++) {
+          const cost = a[j-1] === b[i-1] ? 0 : 1;
+          matrix[i][j] = Math.min(
+            matrix[i-1][j] + 1, // deletion
+            matrix[i][j-1] + 1, // insertion
+            matrix[i-1][j-1] + cost // substitution
+          );
+        }
+      }
+      
+      return matrix[b.length][a.length];
+    },
+    
+    // Check if text fuzzy matches the query
+    fuzzyMatch: function(text, query) {
+      if (!text || !query) return false;
+      text = text.toLowerCase();
+      query = query.toLowerCase();
+      
+      // First check for direct substring match (faster)
+      if (text.includes(query)) return true;
+      
+      // For short queries, only do exact matching
+      if (query.length <= 3) return false;
+      
+      // For longer text, check for fuzzy matching based on Levenshtein distance
+      // Try to match against words in the text
+      const words = text.split(/\s+/);
+      for (const word of words) {
+        if (word.length > 3) { // Only check words longer than 3 characters
+          const distance = this.levenshtein(word, query);
+          if (distance <= this.config.fuzzyMatchThreshold) {
+            return true;
+          }
+        }
+      }
+      
+      return false;
+    },
+    
+    // Perform the search
+    performSearch: function(query, forceSearch = false) {
+      const autocompleteList = document.getElementById('unified-search-autocomplete');
+      
+      // If query is too short and not forcing search
+      if (query.length < this.config.minQueryLength && !forceSearch) {
+        autocompleteList.style.display = 'none';
+        if (this.config.showAllIfEmpty) {
+          this.showAllContent();
+        }
+        return;
+      }
+      
+      query = query.toLowerCase();
+      let results = [];
+      
+      // Search in appropriate content based on current page and search scope
+      switch (this.currentPage) {
+        case 'ilae':
+          results = this.searchILAEContent(query);
+          break;
+        case 'seizures':
+          results = this.searchSeizureContent(query);
+          break;
+        case 'atlas':
+          results = this.searchAtlasContent(query);
+          break;
+      }
+      
+      // Add cross-page results if global search is enabled
+      if (this.config.searchScope === 'global') {
+        // TODO: Add cross-page results in future enhancement
+      }
+      
+      // Display results
+      if (forceSearch) {
+        this.displaySearchResults(results, query);
+      } else {
+        this.displayAutocomplete(results, query);
+      }
+    },
+    
+    // Search ILAE content
+    searchILAEContent: function(query) {
+      const results = [];
+      
+      this.indexedContent.ilae.forEach(item => {
+        const titleMatch = item.title.toLowerCase().includes(query) || 
+                           this.fuzzyMatch(item.title, query);
+        
+        const summaryMatch = item.summary.toLowerCase().includes(query) || 
+                             this.fuzzyMatch(item.summary, query);
+        
+        const eegMatch = item.eeg && (item.eeg.toLowerCase().includes(query) || 
+                         this.fuzzyMatch(item.eeg, query));
+        
+        if (titleMatch || summaryMatch || eegMatch) {
+          results.push({
+            item: item,
+            matchType: titleMatch ? 'title' : (summaryMatch ? 'summary' : 'eeg'),
+            score: titleMatch ? 3 : (summaryMatch ? 2 : 1) // Prioritize title matches
+          });
+        }
+      });
+      
+      // Sort by score
+      results.sort((a, b) => b.score - a.score);
+      
+      return results.slice(0, this.config.maxResults);
+    },
+    
+    // Search seizure management content
+    searchSeizureContent: function(query) {
+      const results = [];
+      
+      this.indexedContent.seizures.forEach(item => {
+        const titleMatch = item.title.toLowerCase().includes(query) || 
+                           this.fuzzyMatch(item.title, query);
+        
+        const contentMatch = item.content.toLowerCase().includes(query) || 
+                             this.fuzzyMatch(item.content, query);
+        
+        if (titleMatch || contentMatch) {
+          results.push({
+            item: item,
+            matchType: titleMatch ? 'title' : 'content',
+            score: titleMatch ? 3 : 1
+          });
+        }
+      });
+      
+      // Sort by score
+      results.sort((a, b) => b.score - a.score);
+      
+      return results.slice(0, this.config.maxResults);
+    },
+    
+    // Search EEG atlas content
+    searchAtlasContent: function(query) {
+      const results = [];
+      
+      this.indexedContent.atlas.forEach(item => {
+        const titleMatch = item.title.toLowerCase().includes(query) || 
+                           this.fuzzyMatch(item.title, query);
+        
+        const categoryMatch = item.category.toLowerCase().includes(query) || 
+                             this.fuzzyMatch(item.category, query);
+        
+        const descMatch = item.description.toLowerCase().includes(query) || 
+                          this.fuzzyMatch(item.description, query);
+        
+        if (titleMatch || categoryMatch || descMatch) {
+          results.push({
+            item: item,
+            matchType: titleMatch ? 'title' : (categoryMatch ? 'category' : 'description'),
+            score: titleMatch ? 3 : (categoryMatch ? 2 : 1)
+          });
+        }
+      });
+      
+      // Sort by score
+      results.sort((a, b) => b.score - a.score);
+      
+      return results.slice(0, this.config.maxResults);
+    },
+    
+    // Display autocomplete suggestions
+    displayAutocomplete: function(results, query) {
+      const autocompleteList = document.getElementById('unified-search-autocomplete');
+      
+      if (results.length === 0) {
+        autocompleteList.style.display = 'none';
+        return;
+      }
+      
+      autocompleteList.innerHTML = '';
+      
+      results.forEach(result => {
+        const item = document.createElement('li');
+        item.className = 'autocomplete-item';
+        
+        let titleText = result.item.title;
+        // Highlight the matching part
+        if (titleText.toLowerCase().includes(query)) {
+          const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+          titleText = titleText.replace(regex, '<strong>$1</strong>');
+        }
+        
+        item.innerHTML = titleText;
+        
+        // Add category/type if available
+        if (result.item.type === 'atlas' && result.item.category) {
+          const categorySpan = document.createElement('span');
+          categorySpan.className = 'autocomplete-category';
+          categorySpan.textContent = result.item.category;
+          item.appendChild(categorySpan);
+        }
+        
+        item.addEventListener('click', () => {
+          this.selectSearchResult(result);
+          autocompleteList.style.display = 'none';
+        });
+        
+        autocompleteList.appendChild(item);
+      });
+      
+      autocompleteList.style.display = 'block';
+    },
+    
+    // Display search results on the page
+    displaySearchResults: function(results, query) {
+      if (results.length === 0) {
+        // Show "no results" message
+        this.showNoResults();
+        return;
+      }
+      
+      switch (this.currentPage) {
+        case 'ilae':
+          this.displayILAEResults(results, query);
+          break;
+        case 'seizures':
+          this.displaySeizureResults(results, query);
+          break;
+        case 'atlas':
+          this.displayAtlasResults(results, query);
+          break;
+      }
+    },
+    
+    // Display ILAE search results
+    displayILAEResults: function(results, query) {
+      const cards = document.querySelectorAll('#ilae-classification-content .ilae-card');
+      
+      // First hide all cards
+      cards.forEach(card => {
+        card.style.display = 'none';
+      });
+      
+      // Then show only matching cards
+      results.forEach(result => {
+        result.item.element.style.display = 'block';
+        
+        // Find the parent details element and make sure it's open
+        let parent = result.item.element.closest('details');
+        if (parent) {
+          parent.open = true;
+        }
+      });
+    },
+    
+    // Display seizure management search results
+    displaySeizureResults: function(results, query) {
+      // Get all the details elements
+      const detailsElements = document.querySelectorAll('#contentContainer details');
+      
+      // First reset all details to original state and hide
+      detailsElements.forEach(detail => {
+        const originalHTML = detail.getAttribute('data-original');
+        if (originalHTML) {
+          detail.innerHTML = originalHTML;
+        }
+        detail.style.display = 'none';
+        detail.open = false;
+      });
+      
+      // Set of details elements to show
+      const detailsToShow = new Set();
+      
+      // Process results
+      results.forEach(result => {
+        if (result.item.type === 'medication') {
+          // For medication rows
+          result.item.element.style.display = '';
+          detailsToShow.add(result.item.parent);
+          
+          // Highlight the matching text
+          const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+          const cells = result.item.element.querySelectorAll('td');
+          cells.forEach(cell => {
+            cell.innerHTML = cell.textContent.replace(regex, `<mark class="${this.config.highlightClass}">$1</mark>`);
+          });
+          
+        } else if (result.item.type === 'detail') {
+          // For regular details content
+          const detail = result.item.element;
+          detailsToShow.add(detail);
+          
+          // Highlight the matching text
+          const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+          const contentNodes = detail.querySelectorAll('p, li, td, th, h3, h4, h5, h6');
+          
+          contentNodes.forEach(node => {
+            if (!node.querySelector('mark')) { // Avoid re-marking
+              node.innerHTML = node.innerHTML.replace(regex, `<mark class="${this.config.highlightClass}">$1</mark>`);
+            }
+          });
+        }
+      });
+      
+      // Show the relevant details elements
+      detailsToShow.forEach(detail => {
+        detail.style.display = '';
+        detail.open = true;
+      });
+    },
+    
+    // Display EEG atlas search results
+    displayAtlasResults: function(results, query) {
+      if (typeof renderList === 'function') {
+        // Use the existing renderList function if available
+        const filteredData = results.map(r => r.item.data);
+        renderList(filteredData, true);
+      }
+    },
+    
+    // Show "no results" message
+    showNoResults: function() {
+      switch (this.currentPage) {
+        case 'ilae':
+          // Hide all cards
+          document.querySelectorAll('#ilae-classification-content .ilae-card').forEach(card => {
+            card.style.display = 'none';
+          });
+          break;
+        case 'seizures':
+          // Hide all details
+          document.querySelectorAll('#contentContainer details').forEach(detail => {
+            detail.style.display = 'none';
+          });
+          break;
+        case 'atlas':
+          // Use existing renderList function with empty array
+          if (typeof renderList === 'function') {
+            renderList([], false);
+          }
+          break;
+      }
+      
+      // Create and display a no results message if not exists
+      let noResultsMsg = document.getElementById('no-search-results');
+      if (!noResultsMsg) {
+        noResultsMsg = document.createElement('div');
+        noResultsMsg.id = 'no-search-results';
+        noResultsMsg.className = 'info-box';
+        noResultsMsg.innerHTML = '<p>No matching results found. Please try a different search term.</p>';
+        
+        // Insert after the search box
+        const searchBox = document.querySelector('.search-box, .search-and-test');
+        if (searchBox && searchBox.parentNode) {
+          searchBox.parentNode.insertBefore(noResultsMsg, searchBox.nextSibling);
+        }
+      } else {
+        noResultsMsg.style.display = 'block';
+      }
+    },
+    
+    // Show all content (reset search)
+    showAllContent: function() {
+      // Hide no results message if it exists
+      const noResultsMsg = document.getElementById('no-search-results');
+      if (noResultsMsg) {
+        noResultsMsg.style.display = 'none';
+      }
+      
+      switch (this.currentPage) {
+        case 'ilae':
+          // Show all cards
+          document.querySelectorAll('#ilae-classification-content .ilae-card').forEach(card => {
+            card.style.display = 'block';
+          });
+          break;
+        case 'seizures':
+          // Reset all details to original state and show
+          document.querySelectorAll('#contentContainer details').forEach(detail => {
+            const originalHTML = detail.getAttribute('data-original');
+            if (originalHTML) {
+              detail.innerHTML = originalHTML;
+            }
+            detail.style.display = '';
+            detail.open = true; // Keep open for better visibility
+          });
+          break;
+        case 'atlas':
+          // Use existing showAllEEG function if available
+          if (typeof showAllEEG === 'function') {
+            showAllEEG();
+          }
+          break;
+      }
+    },
+    
+    // Select a search result (used by autocomplete)
+    selectSearchResult: function(result) {
+      // Update search input with selected title
+      const searchInput = document.getElementById('unified-search-input');
+      searchInput.value = result.item.title;
+      
+      // Show just this result
+      this.displaySearchResults([result], result.item.title.toLowerCase());
+      
+      // For atlas, also show the detail view
+      if (this.currentPage === 'atlas' && typeof renderDetail === 'function') {
+        renderDetail(result.item.data);
+      }
+    }
+  };
+  
+  /**
+   * CSS styles for the unified search
+   * These will be injected into the page
+   */
+  function injectSearchStyles() {
+    const style = document.createElement('style');
+    style.textContent = `
+      /* Unified Search Styles */
+      .unified-search-container {
+        position: relative;
+        max-width: 600px;
+        margin: 0 auto 1rem;
+      }
+      .unified-search-input {
+        width: 100%;
+        padding: 12px 16px;
+        font-size: 16px;
+        border: 2px solid var(--accent-color);
+        border-radius: 8px;
+        background: var(--info-bg);
+        color: var(--text-color);
+        transition: box-shadow 0.3s ease;
+      }
+      .unified-search-input:focus {
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+      }
+      .unified-search-input::placeholder {
+        color: var(--border-color);
+        opacity: 0.8;
+      }
+      #unified-search-autocomplete {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: var(--info-bg);
+        border: 1px solid var(--border-color);
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+        max-height: 300px;
+        overflow-y: auto;
+        display: none;
+      }
+      .autocomplete-item {
+        padding: 10px 16px;
+        cursor: pointer;
+        border-bottom: 1px solid var(--border-color);
+        transition: background-color 0.2s;
+      }
+      .autocomplete-item:last-child {
+        border-bottom: none;
+      }
+      .autocomplete-item:hover {
+        background-color: var(--hover-bg);
+      }
+      .autocomplete-category {
+        display: inline-block;
+        margin-left: 8px;
+        padding: 2px 6px;
+        font-size: 12px;
+        background: var(--accent-color);
+        color: white;
+        border-radius: 4px;
+      }
+      .search-highlight {
+        background-color: rgba(255, 255, 0, 0.4);
+        font-weight: bold;
+        padding: 0 2px;
+        border-radius: 2px;
+      }
+      #no-search-results {
+        text-align: center;
+        padding: 20px;
+        margin-top: 20px;
+        background-color: var(--info-bg);
+        border-radius: 8px;
+        box-shadow: 0 2px 8px var(--shadow-color);
+      }
+    `;
+    document.head.appendChild(style);
+  }
+  
+  /**
+   * Create and add the unified search HTML
+   */
+  function createSearchUI(placeholder = 'Search...') {
+    // Create the search container
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'unified-search-container';
+    
+    // Create the search input
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.id = 'unified-search-input';
+    searchInput.className = 'unified-search-input';
+    searchInput.placeholder = placeholder;
+    searchInput.autocomplete = 'off';
+    
+    // Create the autocomplete list
+    const autocompleteList = document.createElement('ul');
+    autocompleteList.id = 'unified-search-autocomplete';
+    
+    // Add elements to container
+    searchContainer.appendChild(searchInput);
+    searchContainer.appendChild(autocompleteList);
+    
+    return searchContainer;
+  }
+  
+  // Initialize when the DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Inject styles
+    injectSearchStyles();
+    
+    // Determine current page
+    let currentPage = 'unknown';
+    if (document.getElementById('ilae-classification-content')) {
+      currentPage = 'ilae';
+    } else if (document.getElementById('contentContainer') && document.querySelector('.page-title')?.textContent.includes('Seizure')) {
+      currentPage = 'seizures';
+    } else if (document.getElementById('eeg-videos')) {
+      currentPage = 'atlas';
+    }
+    
+    // Find where to insert the search UI
+    let searchTarget = null;
+    if (currentPage === 'ilae') {
+      searchTarget = document.querySelector('.search-and-test');
+      if (searchTarget) {
+        // Replace the existing search box
+        const existingSearchBox = searchTarget.querySelector('.search-box');
+        if (existingSearchBox) {
+          const searchUI = createSearchUI('Search ILAE Classification content...');
+          searchTarget.replaceChild(searchUI, existingSearchBox);
+        }
+      }
+    } else if (currentPage === 'seizures') {
+      searchTarget = document.querySelector('.search-box');
+      if (searchTarget) {
+        const searchUI = createSearchUI('Search Seizure Management content...');
+        searchTarget.parentNode.replaceChild(searchUI, searchTarget);
+      }
+    } else if (currentPage === 'atlas') {
+      searchTarget = document.querySelector('.video-list .search-box');
+      if (searchTarget) {
+        const searchUI = createSearchUI('Search EEG patterns...');
+        searchTarget.parentNode.replaceChild(searchUI, searchTarget);
+      }
+    }
+    
+    // Initialize the search
+    if (currentPage !== 'unknown') {
+      EEGSearch.init(currentPage);
+    }
+  });
+
+/**
+ * Global Apple-style Search
+ * Implements a global search bar similar to Apple.com with fuzzy search capability
+ */
+const GlobalSearch = {
+  // Configuration
+  config: {
+    debounceTime: 300,
+    minQueryLength: 2,
+    maxResults: 8,
+    fuzzyMatchThreshold: 2,
+    showAllPages: false,
+    maxRecentSearches: 5
+  },
+
+  // Store all pages and their content
+  indexedPages: [],
+  
+  // Recent searches
+  recentSearches: [],
+  
+  // Initialize global search
+  init: function() {
+    this.createSearchUI();
+    this.indexAllPages();
+    this.loadRecentSearches();
+    console.log('Global search initialized');
+  },
+  
+  // Load recent searches from localStorage
+  loadRecentSearches: function() {
+    try {
+      const saved = localStorage.getItem('eeg-recent-searches');
+      if (saved) {
+        this.recentSearches = JSON.parse(saved);
+      }
+    } catch (e) {
+      console.error('Failed to load recent searches:', e);
+      this.recentSearches = [];
+    }
+  },
+  
+  // Save recent searches to localStorage
+  saveRecentSearches: function() {
+    try {
+      localStorage.setItem('eeg-recent-searches', JSON.stringify(this.recentSearches));
+    } catch (e) {
+      console.error('Failed to save recent searches:', e);
+    }
+  },
+  
+  // Add a search to recent searches
+  addRecentSearch: function(query) {
+    if (!query || query.length < this.config.minQueryLength) return;
+    
+    // Remove if already exists to avoid duplicates
+    this.recentSearches = this.recentSearches.filter(item => item.toLowerCase() !== query.toLowerCase());
+    
+    // Add to the beginning of the array
+    this.recentSearches.unshift(query);
+    
+    // Limit the number of recent searches
+    if (this.recentSearches.length > this.config.maxRecentSearches) {
+      this.recentSearches = this.recentSearches.slice(0, this.config.maxRecentSearches);
+    }
+    
+    // Save to localStorage
+    this.saveRecentSearches();
+  },
+  
+  // Create and inject the search UI
+  createSearchUI: function() {
+    // Create search container
+    const searchContainer = document.createElement('div');
+    searchContainer.className = 'global-search-container';
+    
+    // Create search input container
+    const searchInputContainer = document.createElement('div');
+    searchInputContainer.className = 'global-search-input-container';
+    
+    // Create search icon
+    const searchIcon = document.createElement('i');
+    searchIcon.className = 'fa-solid fa-magnifying-glass';
+    
+    // Create search input
+    const searchInput = document.createElement('input');
+    searchInput.className = 'global-search-input';
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search Website...';
+    searchInput.id = 'global-search-input';
+    
+    // Create clear button
+    const clearButton = document.createElement('button');
+    clearButton.className = 'global-search-clear';
+    clearButton.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+    clearButton.setAttribute('aria-label', 'Clear search');
+    clearButton.style.display = 'none';
+    
+    // Create results dropdown
+    const resultsDropdown = document.createElement('div');
+    resultsDropdown.className = 'global-search-results';
+    resultsDropdown.id = 'global-search-results';
+    resultsDropdown.style.display = 'none';
+    
+    // Assemble the components
+    searchInputContainer.appendChild(searchIcon);
+    searchInputContainer.appendChild(searchInput);
+    searchInputContainer.appendChild(clearButton);
+    
+    searchContainer.appendChild(searchInputContainer);
+    searchContainer.appendChild(resultsDropdown);
+    
+    // Add event listeners
+    searchInput.addEventListener('input', () => {
+      const hasValue = searchInput.value.trim() !== '';
+      clearButton.style.display = hasValue ? 'block' : 'none';
+      
+      if (hasValue && searchInput.value.trim().length >= this.config.minQueryLength) {
+        this.performSearch(searchInput.value.trim());
+        resultsDropdown.style.display = 'block';
+      } else if (hasValue) {
+        // If there's text but not enough to search
+        resultsDropdown.style.display = 'block';
+        resultsDropdown.innerHTML = '<div class="search-tip">Keep typing to search...</div>';
+      } else {
+        resultsDropdown.style.display = 'block';
+        this.showRecentSearches(resultsDropdown);
+      }
+    });
+    
+    searchInput.addEventListener('focus', () => {
+      if (searchInput.value.trim().length >= this.config.minQueryLength) {
+        resultsDropdown.style.display = 'block';
+      } else if (searchInput.value.trim().length > 0) {
+        resultsDropdown.style.display = 'block';
+        resultsDropdown.innerHTML = '<div class="search-tip">Keep typing to search...</div>';
+      } else {
+        resultsDropdown.style.display = 'block';
+        this.showRecentSearches(resultsDropdown);
+      }
+    });
+    
+    clearButton.addEventListener('click', () => {
+      searchInput.value = '';
+      clearButton.style.display = 'none';
+      resultsDropdown.style.display = 'block';
+      this.showRecentSearches(resultsDropdown);
+      searchInput.focus();
+    });
+    
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+      if (!searchContainer.contains(e.target)) {
+        resultsDropdown.style.display = 'none';
+      }
+    });
+    
+    // Handle search submission
+    searchInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && searchInput.value.trim().length >= this.config.minQueryLength) {
+        this.addRecentSearch(searchInput.value.trim());
+        // Allow the normal search behavior to continue
+      }
+    });
+    
+    // Add to header
+    const header = document.querySelector('.header-inner');
+    if (header) {
+      // Position at the end of the header (on the right)
+      const userProfile = header.querySelector('#user-profile');
+      if (userProfile) {
+        // Insert before user profile if it exists
+        header.insertBefore(searchContainer, userProfile);
+      } else {
+        // Otherwise append at the end of header
+        header.appendChild(searchContainer);
+      }
+    }
+    
+    // Add keyboard shortcut (CMD+K or CTRL+K)
+    document.addEventListener('keydown', (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        searchInput.focus();
+      } else if (e.key === 'Escape' && resultsDropdown.style.display === 'block') {
+        resultsDropdown.style.display = 'none';
+        searchInput.blur();
+      }
+    });
+  },
+  
+  // Show recent searches in the dropdown
+  showRecentSearches: function(container) {
+    container.innerHTML = '';
+    
+    if (this.recentSearches.length === 0) {
+      const noRecentSearches = document.createElement('div');
+      noRecentSearches.className = 'search-tip';
+      noRecentSearches.textContent = 'No recent searches';
+      container.appendChild(noRecentSearches);
+      return;
+    }
+    
+    const recentTitle = document.createElement('div');
+    recentTitle.className = 'search-section-title';
+    recentTitle.textContent = 'Recent Searches';
+    container.appendChild(recentTitle);
+    
+    const recentList = document.createElement('div');
+    recentList.className = 'recent-searches-list';
+    
+    this.recentSearches.forEach(query => {
+      const itemElement = document.createElement('div');
+      itemElement.className = 'recent-search-item';
+      
+      // Create icon
+      const iconElement = document.createElement('i');
+      iconElement.className = 'fa-solid fa-clock-rotate-left';
+      
+      // Create text element
+      const textElement = document.createElement('span');
+      textElement.textContent = query;
+      
+      // Create remove button
+      const removeButton = document.createElement('button');
+      removeButton.className = 'recent-search-remove';
+      removeButton.innerHTML = '<i class="fa-solid fa-times"></i>';
+      removeButton.setAttribute('aria-label', 'Remove search');
+      
+      // Assemble the item
+      itemElement.appendChild(iconElement);
+      itemElement.appendChild(textElement);
+      itemElement.appendChild(removeButton);
+      
+      // Add event listeners
+      itemElement.addEventListener('click', (e) => {
+        if (!e.target.closest('.recent-search-remove')) {
+          const searchInput = document.getElementById('global-search-input');
+          searchInput.value = query;
+          searchInput.dispatchEvent(new Event('input'));
+        }
+      });
+      
+      removeButton.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.recentSearches = this.recentSearches.filter(item => item !== query);
+        this.saveRecentSearches();
+        this.showRecentSearches(container);
+      });
+      
+      recentList.appendChild(itemElement);
+    });
+    
+    container.appendChild(recentList);
+  },
+  
+  // Index all pages for search
+  indexAllPages: function() {
+    const pagesToIndex = [
+      { url: 'index.html', title: 'Home' },
+      { url: 'epilepsy_rotation.html', title: 'Epilepsy Rotation' },
+      { url: 'seizure_management.html', title: 'Seizure Management' },
+      { url: 'ilae_classification.html', title: 'ILAE Classification' },
+      { url: 'natus_instructions.html', title: 'Natus & Persyst' },
+      { url: 'acns_criteria.html', title: 'ACNS Criteria' },
+      { url: 'eeg_atlas.html', title: 'EEG Atlas' },
+      { url: 'eeg_videos.html', title: 'EEG Videos' },
+      { url: 'faq.html', title: 'Discussion Forum' }
+    ];
+    
+    // For each page, fetch and index content
+    pagesToIndex.forEach(page => {
+      fetch(page.url)
+        .then(response => response.text())
+        .then(html => {
+          const parser = new DOMParser();
+          const doc = parser.parseFromString(html, 'text/html');
+          
+          // Remove script tags and any other irrelevant content
+          doc.querySelectorAll('script, style, header, footer').forEach(el => el.remove());
+          
+          // Get main content text
+          const content = doc.body.textContent.replace(/\s+/g, ' ').trim();
+          
+          // Get headings for better context
+          const headings = Array.from(doc.querySelectorAll('h1, h2, h3, h4, h5, h6'))
+            .map(h => h.textContent.trim());
+          
+          // Add to indexed pages
+          this.indexedPages.push({
+            url: page.url,
+            title: page.title,
+            content: content,
+            headings: headings
+          });
+          
+          console.log(`Indexed: ${page.title}`);
+        })
+        .catch(error => console.error(`Failed to index ${page.url}:`, error));
+    });
+  },
+  
+  // Perform search across all indexed pages
+  performSearch: function(query) {
+    const resultsDropdown = document.getElementById('global-search-results');
+    resultsDropdown.innerHTML = '';
+    
+    if (query.length < this.config.minQueryLength) {
+      this.showRecentSearches(resultsDropdown);
+      return;
+    }
+    
+    const results = [];
+    
+    // Search through indexed pages
+    this.indexedPages.forEach(page => {
+      // Check title
+      const titleMatch = this.fuzzyMatch(page.title, query);
+      
+      // Check headings
+      const headingMatches = page.headings.filter(heading => 
+        this.fuzzyMatch(heading, query)
+      );
+      
+      // Check content with context
+      const contextMatch = this.getContextMatch(page.content, query);
+      
+      if (titleMatch || headingMatches.length > 0 || contextMatch) {
+        results.push({
+          url: page.url,
+          title: page.title,
+          headings: headingMatches,
+          context: contextMatch,
+          matchText: contextMatch ? contextMatch : headingMatches.length > 0 ? headingMatches[0] : page.title,
+          score: (titleMatch ? 3 : 0) + (headingMatches.length * 2) + (contextMatch ? 1 : 0)
+        });
+      }
+    });
+    
+    // Sort by score
+    results.sort((a, b) => b.score - a.score);
+    
+    // Limit results
+    const limitedResults = results.slice(0, this.config.maxResults);
+    
+    // Display results
+    if (limitedResults.length > 0) {
+      const resultsTitle = document.createElement('div');
+      resultsTitle.className = 'search-section-title';
+      resultsTitle.textContent = 'Search Results';
+      resultsDropdown.appendChild(resultsTitle);
+      
+      limitedResults.forEach(result => {
+        const resultElement = document.createElement('a');
+        resultElement.className = 'search-result-item';
+        resultElement.href = result.url;
+        resultElement.setAttribute('data-match-text', result.matchText);
+        
+        // Use the site's navigation system instead of direct links
+        resultElement.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Save the matched text to find later
+          const matchedText = this.getAttribute('data-match-text');
+          
+          // Add to recent searches
+          GlobalSearch.addRecentSearch(query);
+          
+          // Close the search dropdown
+          document.getElementById('global-search-results').style.display = 'none';
+          
+          // Use loadSection if it exists with the additional parameter for matched text
+          if (typeof loadSection === 'function') {
+            loadSection(e, result.url, function() {
+              // This callback runs after the page is loaded
+              setTimeout(() => {
+                // Find and scroll to the matched text
+                GlobalSearch.scrollToMatchedText(matchedText, query);
+              }, 500); // Give the page a moment to render
+            });
+          } else {
+            // Fallback navigation with hashtag
+            window.location.href = result.url;
+            
+            // Wait for page to load before scrolling to matched text
+            window.onload = function() {
+              setTimeout(() => {
+                GlobalSearch.scrollToMatchedText(matchedText, query);
+              }, 500);
+            };
+          }
+        });
+        
+        const titleElement = document.createElement('div');
+        titleElement.className = 'search-result-title';
+        
+        // Highlight matching parts in title
+        if (this.fuzzyMatch(result.title, query)) {
+          const titleText = this.highlightMatch(result.title, query);
+          titleElement.innerHTML = titleText;
+        } else {
+          titleElement.textContent = result.title;
+        }
+        
+        const detailsElement = document.createElement('div');
+        detailsElement.className = 'search-result-details';
+        
+        if (result.headings.length > 0) {
+          // Highlight in headings
+          const heading = result.headings[0];
+          const highlightedHeading = this.highlightMatch(heading, query);
+          detailsElement.innerHTML = highlightedHeading;
+        } else if (result.context) {
+          // Highlight in context
+          const highlightedContext = this.highlightMatch(result.context, query);
+          detailsElement.innerHTML = highlightedContext;
+        }
+        
+        resultElement.appendChild(titleElement);
+        resultElement.appendChild(detailsElement);
+        resultsDropdown.appendChild(resultElement);
+      });
+    } else {
+      const noResults = document.createElement('div');
+      noResults.className = 'search-no-results';
+      noResults.textContent = `No results found for "${query}"`;
+      resultsDropdown.appendChild(noResults);
+    }
+  },
+  
+  // Get context around a match
+  getContextMatch: function(content, query) {
+    const lowerContent = content.toLowerCase();
+    const lowerQuery = query.toLowerCase();
+    
+    // Direct substring match
+    const directIndex = lowerContent.indexOf(lowerQuery);
+    if (directIndex !== -1) {
+      const start = Math.max(0, directIndex - 30);
+      const end = Math.min(content.length, directIndex + query.length + 30);
+      let contextText = content.substring(start, end);
+      
+      // Add ellipsis if needed
+      if (start > 0) contextText = '...' + contextText;
+      if (end < content.length) contextText = contextText + '...';
+      
+      return contextText;
+    }
+    
+    // If no direct match, try fuzzy matching by words
+    const words = content.split(/\s+/);
+    for (let i = 0; i < words.length; i++) {
+      if (this.levenshtein(words[i].toLowerCase(), lowerQuery) <= this.config.fuzzyMatchThreshold) {
+        const startIdx = Math.max(0, i - 5);
+        const endIdx = Math.min(words.length, i + 6);
+        const contextWords = words.slice(startIdx, endIdx);
+        let contextText = contextWords.join(' ');
+        
+        if (startIdx > 0) contextText = '...' + contextText;
+        if (endIdx < words.length) contextText = contextText + '...';
+        
+        return contextText;
+      }
+    }
+    
+    return null;
+  },
+  
+  // Highlight matching text
+  highlightMatch: function(text, query) {
+    if (!text || !query) return text;
+    
+    // For direct substring matches
+    if (text.toLowerCase().includes(query.toLowerCase())) {
+      const regex = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+      return text.replace(regex, '<span class="search-highlight">$1</span>');
+    }
+    
+    // For fuzzy matches, try to find close words
+    const words = text.split(/\s+/);
+    const result = words.map(word => {
+      if (this.levenshtein(word.toLowerCase(), query.toLowerCase()) <= this.config.fuzzyMatchThreshold) {
+        return '<span class="search-highlight">' + word + '</span>';
+      }
+      return word;
+    }).join(' ');
+    
+    return result;
+  },
+  
+  // Show all pages when no search query
+  showAllPages: function(container) {
+    const pages = [
+      { url: 'index.html', title: 'Home', icon: 'fa-solid fa-house' },
+      { url: 'epilepsy_rotation.html', title: 'Epilepsy Rotation', icon: 'fa-solid fa-brain' },
+      { url: 'seizure_management.html', title: 'Seizure Management', icon: 'fa-solid fa-file-medical' },
+      { url: 'ilae_classification.html', title: 'ILAE Classification', icon: 'fa-solid fa-file-alt' },
+      { url: 'natus_instructions.html', title: 'Natus & Persyst', icon: 'fa-solid fa-desktop' },
+      { url: 'acns_criteria.html', title: 'ACNS Criteria', icon: 'fa-solid fa-file-pdf' },
+      { url: 'eeg_atlas.html', title: 'EEG Atlas', icon: 'fa-solid fa-wave-square' },
+      { url: 'eeg_videos.html', title: 'EEG Videos', icon: 'fa-solid fa-video' },
+      { url: 'faq.html', title: 'Discussion Forum', icon: 'fa-solid fa-circle-question' }
+    ];
+    
+    const quickLinks = document.createElement('div');
+    quickLinks.className = 'search-quick-links';
+    
+    pages.forEach(page => {
+      const linkElement = document.createElement('a');
+      linkElement.className = 'search-quick-link';
+      linkElement.href = page.url;
+      
+      // Use the site's navigation system
+      linkElement.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        // Close the search dropdown
+        document.getElementById('global-search-results').style.display = 'none';
+        
+        // Use loadSection if it exists, otherwise fall back to direct navigation
+        if (typeof loadSection === 'function') {
+          loadSection(e, page.url);
+        } else if (page.url === 'index.html') {
+          // For home page
+          if (typeof renderHomePage === 'function') {
+            renderHomePage();
+          } else {
+            window.location.href = page.url;
+          }
+        } else {
+          window.location.href = page.url;
+        }
+      });
+      
+      const iconElement = document.createElement('i');
+      iconElement.className = page.icon;
+      
+      const titleElement = document.createElement('span');
+      titleElement.textContent = page.title;
+      
+      linkElement.appendChild(iconElement);
+      linkElement.appendChild(titleElement);
+      quickLinks.appendChild(linkElement);
+    });
+    
+    container.appendChild(quickLinks);
+  },
+  
+  // Levenshtein distance for fuzzy matching
+  levenshtein: function(a, b) {
+    if (a.length === 0) return b.length;
+    if (b.length === 0) return a.length;
+    
+    const matrix = [];
+    
+    // Initialize matrix
+    for (let i = 0; i <= b.length; i++) {
+      matrix[i] = [i];
+    }
+    for (let i = 0; i <= a.length; i++) {
+      matrix[0][i] = i;
+    }
+    
+    // Fill matrix
+    for (let i = 1; i <= b.length; i++) {
+      for (let j = 1; j <= a.length; j++) {
+        const cost = a[j-1] === b[i-1] ? 0 : 1;
+        matrix[i][j] = Math.min(
+          matrix[i-1][j] + 1, // deletion
+          matrix[i][j-1] + 1, // insertion
+          matrix[i-1][j-1] + cost // substitution
+        );
+      }
+    }
+    
+    return matrix[b.length][a.length];
+  },
+  
+  // Fuzzy matching check
+  fuzzyMatch: function(text, query) {
+    if (!text || !query) return false;
+    text = text.toLowerCase();
+    query = query.toLowerCase();
+    
+    // Direct substring match
+    if (text.includes(query)) return true;
+    
+    // For short queries or short text, be more strict
+    if (query.length <= 3 || text.length <= 5) {
+      return text.includes(query);
+    }
+    
+    // For longer queries, check Levenshtein distance on the whole string
+    // if it's not too long
+    if (text.length <= 20) {
+      const distance = this.levenshtein(text, query);
+      if (distance <= this.config.fuzzyMatchThreshold) {
+        return true;
+      }
+    }
+    
+    // For longer text, check individual words
+    const words = text.split(/\s+/);
+    for (const word of words) {
+      if (word.length >= 4) { // Only check meaningful words
+        // First check if word contains query as substring
+        if (word.includes(query)) return true;
+        
+        // Then check Levenshtein distance
+        const distance = this.levenshtein(word, query);
+        if (distance <= this.config.fuzzyMatchThreshold) {
+          return true;
+        }
+      }
+    }
+    
+    return false;
+  },
+
+  // Scroll to matched text when search result is clicked
+  scrollToMatchedText: function(matchedText, query) {
+    if (!matchedText && !query) return;
+    
+    // Remove any previous search highlights
+    const previousHighlights = document.querySelectorAll('.search-match-highlight');
+    previousHighlights.forEach(el => {
+      // Save the inner content before removing highlight
+      const content = el.textContent;
+      const parent = el.parentNode;
+      if (parent) {
+        const textNode = document.createTextNode(content);
+        parent.replaceChild(textNode, el);
+      }
+    });
+    
+    // Function to generate a unique ID for the matched element
+    const generateUniqueId = (prefix) => {
+      return `${prefix}-${Math.random().toString(36).substring(2, 9)}`;
+    };
+    
+    // Function to create highlighted element
+    const createHighlightElement = (text, query) => {
+      const span = document.createElement('span');
+      span.className = 'search-match-highlight';
+      span.style.backgroundColor = 'rgba(255, 215, 0, 0.5)'; // Gold background
+      span.style.color = 'inherit';
+      span.style.padding = '2px 4px';
+      span.style.borderRadius = '3px';
+      span.style.boxShadow = '0 0 3px rgba(0, 0, 0, 0.3)';
+      span.style.fontWeight = 'bold';
+      span.style.transition = 'background-color 0.3s ease';
+      span.id = generateUniqueId('search-match');
+      span.textContent = text;
+      
+      // Create a hover effect
+      span.addEventListener('mouseenter', () => {
+        span.style.backgroundColor = 'rgba(255, 165, 0, 0.8)'; // Darker on hover
+      });
+      
+      span.addEventListener('mouseleave', () => {
+        span.style.backgroundColor = 'rgba(255, 215, 0, 0.5)';
+      });
+      
+      return span;
+    };
+    
+    // Find best match strategy
+    let bestMatchElement = null;
+    let bestMatchText = null;
+    let bestMatchScore = 0;
+    
+    // Strategy 1: Find exact match for matchedText in text nodes
+    if (matchedText) {
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        { acceptNode: node => node.nodeValue.trim() ? NodeFilter.FILTER_ACCEPT : NodeFilter.FILTER_REJECT }
+      );
+      
+      let node;
+      while (node = walker.nextNode()) {
+        const text = node.nodeValue;
+        
+        // Check if this node contains the match text (first ~40 chars)
+        const matchSubstring = matchedText.substring(0, 40);
+        if (text.includes(matchSubstring)) {
+          bestMatchElement = node.parentElement;
+          bestMatchText = matchSubstring;
+          bestMatchScore = 100; // Perfect match
+          break;
+        }
+      }
+    }
+    
+    // Strategy 2: Find the search query in paragraphs and other elements
+    if (!bestMatchElement && query) {
+      // Focus on elements most likely to contain meaningful content
+      const contentElements = document.querySelectorAll('p, li, td, dd, figcaption, .card, .info-box, h1, h2, h3, h4, h5, h6');
+      
+      const lowerQuery = query.toLowerCase();
+      for (const element of contentElements) {
+        const text = element.textContent;
+        const lowerText = text.toLowerCase();
+        
+        if (lowerText.includes(lowerQuery)) {
+          // Calculate match score based on element type and length
+          let score = 80;
+          
+          // Prefer shorter, more specific elements
+          score -= Math.min(50, Math.floor(text.length / 20));
+          
+          // Prefer headings and list items for better visibility
+          if (element.tagName.match(/^H[1-6]$/)) score += 10;
+          if (element.tagName === 'LI') score += 5;
+          
+          // Check if this is a better match than what we already found
+          if (score > bestMatchScore) {
+            bestMatchElement = element;
+            bestMatchText = query;
+            bestMatchScore = score;
+          }
+        }
+      }
+    }
+    
+    // Strategy 3: As a fallback, search any element that might contain the query
+    if (!bestMatchElement && query) {
+      // Broaden search to any element that might contain text
+      const allElements = document.querySelectorAll('*');
+      const lowerQuery = query.toLowerCase();
+      
+      for (const element of allElements) {
+        // Skip script, style, and other non-content elements
+        if (['SCRIPT', 'STYLE', 'META', 'LINK', 'BR', 'HR'].includes(element.tagName)) continue;
+        
+        const text = element.innerText; // Use innerText to get only visible text
+        if (!text) continue;
+        
+        if (text.toLowerCase().includes(lowerQuery)) {
+          bestMatchElement = element;
+          bestMatchText = query;
+          bestMatchScore = 50; // Lower score for fallback matches
+          break;
+        }
+      }
+    }
+    
+    if (bestMatchElement && bestMatchText) {
+      // Find the specific text node containing the match
+      const textNodes = [];
+      const walker = document.createTreeWalker(
+        bestMatchElement,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+      
+      let node;
+      while (node = walker.nextNode()) {
+        textNodes.push(node);
+      }
+      
+      const lowerSearchText = bestMatchText.toLowerCase();
+      let found = false;
+      
+      // Try to highlight the specific instance of the search text within the element
+      for (const textNode of textNodes) {
+        const text = textNode.nodeValue;
+        const lowerText = text.toLowerCase();
+        const index = lowerText.indexOf(lowerSearchText);
+        
+        if (index !== -1) {
+          // Split the text node around the matched text
+          const beforeMatch = text.substring(0, index);
+          const matchedPart = text.substring(index, index + bestMatchText.length);
+          const afterMatch = text.substring(index + bestMatchText.length);
+          
+          // Create text nodes for before and after
+          const beforeTextNode = document.createTextNode(beforeMatch);
+          const afterTextNode = document.createTextNode(afterMatch);
+          
+          // Create highlight element for the matched text
+          const highlightElement = createHighlightElement(matchedPart, query);
+          
+          // Replace the original text node with these three new nodes
+          const parentNode = textNode.parentNode;
+          if (parentNode) {
+            if (beforeMatch) parentNode.insertBefore(beforeTextNode, textNode);
+            parentNode.insertBefore(highlightElement, textNode);
+            if (afterMatch) parentNode.insertBefore(afterTextNode, textNode);
+            parentNode.removeChild(textNode);
+            
+            // Set the new match element for scrolling
+            bestMatchElement = highlightElement;
+          }
+          
+          found = true;
+          break;
+        }
+      }
+      
+      // If we couldn't highlight the specific text, highlight the whole element
+      if (!found && bestMatchElement) {
+        bestMatchElement.style.backgroundColor = 'rgba(255, 215, 0, 0.3)';
+        bestMatchElement.style.outline = '2px solid rgba(255, 165, 0, 0.5)';
+        bestMatchElement.style.padding = '2px';
+        bestMatchElement.style.borderRadius = '3px';
+        
+        // Add a unique ID to the element
+        const uniqueId = generateUniqueId('search-match');
+        bestMatchElement.id = uniqueId;
+        
+        // Reset highlighting after a delay
+        setTimeout(() => {
+          bestMatchElement.style.backgroundColor = '';
+          bestMatchElement.style.outline = '';
+          bestMatchElement.style.padding = '';
+          bestMatchElement.style.borderRadius = '';
+        }, 5000);
+      }
+      
+      // Add scroll margin to ensure the element isn't hidden under the header
+      bestMatchElement.style.scrollMarginTop = '120px';
+      
+      // Update URL with the match ID without refreshing the page
+      if (bestMatchElement.id && history.pushState) {
+        const newUrl = window.location.pathname + window.location.search + '#' + bestMatchElement.id;
+        history.pushState(null, null, newUrl);
+      }
+      
+      // Scroll to the element
+      bestMatchElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center'
+      });
+      
+      // Apply pulsing animation to draw attention
+      bestMatchElement.animate([
+        { transform: 'scale(1)', boxShadow: '0 0 0 rgba(255, 165, 0, 0)' },
+        { transform: 'scale(1.05)', boxShadow: '0 0 10px rgba(255, 165, 0, 0.7)' },
+        { transform: 'scale(1)', boxShadow: '0 0 0 rgba(255, 165, 0, 0)' }
+      ], {
+        duration: 800,
+        iterations: 3
+      });
+      
+      return true;
+    }
+    
+    return false;
+  }
+};
+
+// Initialize global search on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+  GlobalSearch.init();
+  
+  // Remove any existing overlay if present
+  const oldOverlay = document.getElementById('global-search-overlay');
+  if (oldOverlay) {
+    oldOverlay.remove();
+  }
+  
+  // Add event listener for search result clicks
+  document.addEventListener('click', function(e) {
+    // Check if clicked element is a search result
+    if (e.target && (e.target.classList.contains('search-result-item') || e.target.closest('.search-result-item'))) {
+      e.preventDefault();
+      
+      // Get the search result item
+      const resultElement = e.target.classList.contains('search-result-item') ? 
+                          e.target : e.target.closest('.search-result-item');
+      
+      // Get the URL and matched text from the data attributes
+      const url = resultElement.getAttribute('href');
+      const matchedText = resultElement.getAttribute('data-match-text');
+      const query = document.getElementById('global-search-input')?.value || '';
+      
+      // Close the search dropdown
+      const searchDropdown = document.getElementById('global-search-results');
+      if (searchDropdown) {
+        searchDropdown.style.display = 'none';
+      }
+      
+      // Use loadSection if it exists, otherwise fall back to direct navigation
+      if (typeof loadSection === 'function') {
+        const event = { preventDefault: function() {} };
+        loadSection(event, url, function() {
+          // This callback will run after the page is loaded
+          setTimeout(() => {
+            GlobalSearch.scrollToMatchedText(matchedText, query);
+          }, 500); // Give the page a moment to render
+        });
+      } else {
+        // Fallback navigation
+        window.location.href = url;
+        
+        // Wait for page to load before scrolling
+        window.onload = function() {
+          setTimeout(() => {
+            GlobalSearch.scrollToMatchedText(matchedText, query);
+          }, 500);
+        };
+      }
+    }
+  });
+  
+  // Check for URL hash navigation for direct links to search results
+  checkUrlHashNavigation();
+});
+
+// Function to check if URL contains a search match hash and navigate to it
+function checkUrlHashNavigation() {
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#search-match-')) {
+    // Wait a moment for the page to fully render
+    setTimeout(() => {
+      const targetElement = document.getElementById(hash.substring(1));
+      if (targetElement) {
+        // If element exists, scroll to it
+        targetElement.scrollIntoView({
+          behavior: 'smooth',
+          block: 'center'
+        });
+        
+        // Highlight the element
+        targetElement.style.backgroundColor = 'rgba(255, 215, 0, 0.5)';
+        targetElement.style.padding = '2px 4px';
+        targetElement.style.borderRadius = '3px';
+        targetElement.style.boxShadow = '0 0 5px rgba(0, 0, 0, 0.3)';
+        
+        // Apply pulsing animation to draw attention
+        targetElement.animate([
+          { transform: 'scale(1)', boxShadow: '0 0 0 rgba(255, 165, 0, 0)' },
+          { transform: 'scale(1.05)', boxShadow: '0 0 10px rgba(255, 165, 0, 0.7)' },
+          { transform: 'scale(1)', boxShadow: '0 0 0 rgba(255, 165, 0, 0)' }
+        ], {
+          duration: 800,
+          iterations: 3
+        });
+      }
+    }, 600);
+  }
+}
+
+// Add CSS styles for search match highlighting
+function injectSearchMatchStyles() {
+  const styleId = 'search-match-styles';
+  if (!document.getElementById(styleId)) {
+    const style = document.createElement('style');
+    style.id = styleId;
+    style.textContent = `
+      .search-match-highlight {
+        background-color: rgba(255, 215, 0, 0.5);
+        color: inherit;
+        padding: 2px 4px;
+        border-radius: 3px;
+        box-shadow: 0 0 3px rgba(0, 0, 0, 0.3);
+        font-weight: bold;
+        transition: background-color 0.3s ease;
+      }
+      
+      .search-match-highlight:hover {
+        background-color: rgba(255, 165, 0, 0.8);
+        cursor: pointer;
+      }
+      
+      /* Dark mode compatibility */
+      body.dark .search-match-highlight {
+        background-color: rgba(255, 215, 0, 0.6);
+        box-shadow: 0 0 4px rgba(0, 0, 0, 0.5);
+      }
+      
+      body.dark .search-match-highlight:hover {
+        background-color: rgba(255, 165, 0, 0.9);
+      }
+      
+      /* Make search matches stand out in mobile */
+      @media (max-width: 768px) {
+        .search-match-highlight {
+          padding: 3px 5px;
+          border: 1px solid rgba(255, 165, 0, 0.5);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+  }
+}
+
+// Main initialization function
+document.addEventListener('DOMContentLoaded', function() {
+  // Initialize search styles and check for hash navigation
+  injectSearchMatchStyles();
+  
+  // GlobalSearch is initialized in its own listener above
+});
