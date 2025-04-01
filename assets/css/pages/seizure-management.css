@@ -408,4 +408,101 @@ body.dark #seizure-management .quick-links a.active {
     padding: 8px 10px;
     font-size: 0.9rem;
   }
+}
+
+/* Responsive med-cards for the medications table on mobile */
+@media (max-width: 768px) {
+  #medicationsTableBody {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  #medicationsTableBody tr {
+    display: block;
+    background-color: var(--card-bg, #fff);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+  }
+  
+  #medicationsTableBody td {
+    display: block;
+    padding: 8px 0;
+    border: none;
+    text-align: left;
+  }
+  
+  #medicationsTableBody td:not(:last-child) {
+    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+  }
+  
+  #medicationsTableBody td:first-child {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--primary-color, #333);
+    border-bottom: 1px solid var(--accent-color, #007bff);
+    padding-bottom: 12px;
+  }
+  
+  /* Add labels before each cell */
+  #medicationsTableBody td:nth-child(2)::before {
+    content: "Typical Dose: ";
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-color, #555);
+    font-size: 0.9em;
+  }
+  
+  #medicationsTableBody td:nth-child(3)::before {
+    content: "Side Effects: ";
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-color, #555);
+    font-size: 0.9em;
+  }
+  
+  #medicationsTableBody td:nth-child(4)::before {
+    content: "Therapeutic Range: ";
+    font-weight: 600;
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-color, #555);
+    font-size: 0.9em;
+  }
+  
+  /* Hide table header on mobile */
+  #anti-seizure-medications thead {
+    display: none;
+  }
+  
+  /* Improve layout for links within the medication name */
+  #medicationsTableBody td:first-child a {
+    color: var(--accent-color, #007bff);
+    text-decoration: none;
+  }
+  
+  /* Style for medication notes (italic text) */
+  #medicationsTableBody td:first-child em {
+    display: block;
+    font-size: 0.85em;
+    margin-top: 4px;
+    color: var(--text-muted, #666);
+  }
+  
+  /* Dark mode support */
+  body.dark #medicationsTableBody tr {
+    background-color: var(--card-bg, #222);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  }
+  
+  body.dark #medicationsTableBody td:first-child {
+    color: var(--primary-color, #f0f0f0);
+  }
 } 
