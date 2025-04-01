@@ -1209,6 +1209,62 @@
         detailContent.scrollIntoView({ behavior: 'smooth' });
       }
     }
+    
+    // Filter EEG items based on search term
+    function filterEEGItems(searchTerm) {
+      const items = document.querySelectorAll('.eeg-item');
+      let hasVisibleItems = false;
+      
+      items.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        const matches = text.includes(searchTerm);
+        item.style.display = matches ? 'block' : 'none';
+        if (matches) hasVisibleItems = true;
+      });
+      
+      // Show/hide categories based on whether they have visible items
+      document.querySelectorAll('.category-header').forEach(header => {
+        const categoryItems = header.nextElementSibling;
+        const hasVisibleCategoryItems = Array.from(categoryItems.querySelectorAll('.eeg-item'))
+          .some(item => item.style.display !== 'none');
+        
+        header.parentElement.style.display = hasVisibleCategoryItems ? 'block' : 'none';
+      });
+      
+      // If search term is empty, show all categories
+      if (searchTerm === '') {
+        document.querySelectorAll('#atlas-list > li').forEach(item => {
+          item.style.display = 'block';
+        });
+      }
+    }
+    
+    // Filter by category
+    function filterCategory(category) {
+      // Update active button
+      document.querySelectorAll('#sidebar-buttons button').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      document.getElementById(category + '-btn').classList.add('active');
+      
+      // Show/hide categories based on selection
+      if (category === 'all') {
+        document.querySelectorAll('#atlas-list > li').forEach(item => {
+          item.style.display = 'block';
+        });
+      } else {
+        document.querySelectorAll('#atlas-list > li').forEach(item => {
+          if (item.dataset.category === category) {
+            item.style.display = 'block';
+          } else {
+            item.style.display = 'none';
+          }
+        });
+      }
+      
+      // Clear the search bar
+      document.getElementById('searchBar').value = '';
+    }
   </script>
 </body>
 </html>
