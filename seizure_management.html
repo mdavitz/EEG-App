@@ -390,6 +390,58 @@
     .no-results p {
       color: var(--text-secondary);
     }
+    
+    /* Animations for medication cards */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(20px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    
+    #medicationsTableBody tr {
+      opacity: 0;
+    }
+    
+    #medicationsTableBody tr.card-visible {
+      animation: fadeInUp 0.5s ease forwards;
+    }
+    
+    /* Medication search box styling */
+    .medications-search {
+      position: relative;
+      margin-bottom: 20px;
+      max-width: 100%;
+    }
+    
+    .medications-search input {
+      width: 100%;
+      padding: 12px 40px 12px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color, rgba(0,0,0,0.1));
+      font-size: 16px;
+      background-color: var(--bg-color, #fff);
+      color: var(--text-color, #333);
+    }
+    
+    .medications-search .search-icon {
+      position: absolute;
+      right: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted, #666);
+    }
+    
+    /* Dark mode support */
+    body.dark .medications-search input {
+      background-color: rgba(255, 255, 255, 0.05);
+      border-color: rgba(255, 255, 255, 0.1);
+      color: var(--header-text, #f0f0f0);
+    }
   </style>
 </head>
 <body>
@@ -919,7 +971,111 @@
           });
         }
       }
+      
+      // Initialize mobile medication cards interaction
+      initMedicationCards();
     });
+    
+    // Function to filter content based on category
+    function filterCategory(category) {
+      // Remove active class from all buttons
+      document.querySelectorAll('.quick-links a').forEach(btn => {
+        btn.classList.remove('active');
+      });
+      
+      // Add active class to selected button
+      if (category === 'all') {
+        document.getElementById('all-btn').classList.add('active');
+      } else {
+        const selectedBtn = document.querySelector(`a[onclick="filterCategory('${category}'); return false;"]`);
+        if (selectedBtn) selectedBtn.classList.add('active');
+      }
+      
+      // Show/hide sections based on category
+      const sections = document.querySelectorAll('.section-detail');
+      sections.forEach(section => {
+        if (category === 'all') {
+          section.style.display = 'block';
+        } else {
+          const sectionId = section.querySelector('.info-box')?.id || '';
+          if (sectionId.includes(category)) {
+            section.style.display = 'block';
+          } else {
+            section.style.display = 'none';
+          }
+        }
+      });
+    }
+    
+    // Initialize the medication cards functionality for mobile
+    function initMedicationCards() {
+      // Check if we're on a mobile device
+      const isMobile = window.innerWidth <= 768;
+      
+      if (isMobile) {
+        // Get the medications table
+        const medicationsTable = document.getElementById('medicationsTableBody');
+        if (!medicationsTable) return;
+        
+        // Add a search box above the medications table
+        const searchBox = document.createElement('div');
+        searchBox.className = 'medications-search';
+        searchBox.innerHTML = `
+          <input type="text" id="med-search" placeholder="Search medications..." class="form-control">
+          <div class="search-icon"><i class="fa-solid fa-magnifying-glass"></i></div>
+        `;
+        
+        // Insert the search box before the medications table
+        const medTable = document.querySelector('#anti-seizure-medications table');
+        if (medTable && medTable.parentNode) {
+          medTable.parentNode.insertBefore(searchBox, medTable);
+          
+          // Add search functionality
+          const medSearch = document.getElementById('med-search');
+          if (medSearch) {
+            medSearch.addEventListener('input', function() {
+              const searchTerm = this.value.toLowerCase();
+              
+              // Get all medication rows
+              const medRows = document.querySelectorAll('#medicationsTableBody tr');
+              
+              // Filter the rows based on search term
+              medRows.forEach(row => {
+                const medName = row.querySelector('td:first-child').textContent.toLowerCase();
+                const sideEffects = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+                
+                if (medName.includes(searchTerm) || sideEffects.includes(searchTerm)) {
+                  row.style.display = 'block';
+                  // Add animation for appearing items
+                  row.style.animation = 'fadeInUp 0.3s ease forwards';
+                } else {
+                  row.style.display = 'none';
+                }
+              });
+            });
+          }
+        }
+        
+        // Add animation to medication cards when they come into view
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('card-visible');
+              // Stop observing once animation is applied
+              observer.unobserve(entry.target);
+            }
+          });
+        }, { threshold: 0.1 });
+        
+        // Observe all medication rows
+        const medRows = document.querySelectorAll('#medicationsTableBody tr');
+        medRows.forEach((row, index) => {
+          // Add animation delay based on index
+          row.style.animationDelay = `${index * 0.05}s`;
+          observer.observe(row);
+        });
+      }
+    }
   </script>
 </body>
 </html>
