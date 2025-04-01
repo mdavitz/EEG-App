@@ -1,0 +1,24 @@
+/* Main CSS entry point - imports all modular CSS files */
+
+/* Base Styles */
+@import 'base.css';
+
+/* Components */
+@import 'components/buttons.css';
+@import 'components/cards.css';
+@import 'components/footer.css';
+@import 'components/header.css';
+@import 'components/modals.css';
+@import 'components/tables.css';
+@import 'components/search.css';
+
+/* Pages */
+@import 'pages/acns-criteria.css';
+@import 'pages/eeg-atlas.css';
+@import 'pages/eeg-videos.css';
+@import 'pages/epilepsy-rotation.css';
+@import 'pages/faq.css';
+@import 'pages/home.css';
+@import 'pages/ilae-classification.css';
+@import 'pages/natus-instructions.css';
+@import 'pages/seizure-management.css'; 
