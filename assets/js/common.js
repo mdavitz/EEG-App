@@ -92,6 +92,9 @@ function setupFooterControls() {
   } else {
     console.log('Dark mode button not found');
   }
+  
+  // Setup disclaimer modal
+  setupDisclaimerModal();
 }
 
 // Set up copyright modal
@@ -369,5 +372,50 @@ function setupHeader() {
     } else {
       console.log('Navigation menu already configured in HTML or elements not found');
     }
+  }
+}
+
+// Set up disclaimer modal
+function setupDisclaimerModal() {
+  console.log('Setting up disclaimer modal...');
+  const disclaimerTrigger = document.getElementById('disclaimer-trigger');
+  const disclaimerModal = document.getElementById('disclaimer-modal');
+  
+  if (disclaimerTrigger && disclaimerModal) {
+    console.log('Disclaimer elements found, attaching event listeners');
+    
+    // Open disclaimer modal when clicking the trigger
+    disclaimerTrigger.addEventListener('click', function() {
+      console.log('Disclaimer button clicked');
+      disclaimerModal.classList.add('active');
+    });
+    
+    // Close disclaimer modal when clicking the close button
+    const disclaimerClose = document.getElementById('disclaimer-close');
+    if (disclaimerClose) {
+      disclaimerClose.addEventListener('click', function() {
+        disclaimerModal.classList.remove('active');
+      });
+    }
+    
+    // Close disclaimer modal when clicking the acknowledge button
+    const disclaimerAcknowledge = document.getElementById('disclaimer-acknowledge');
+    if (disclaimerAcknowledge) {
+      disclaimerAcknowledge.addEventListener('click', function() {
+        disclaimerModal.classList.remove('active');
+      });
+    }
+    
+    // Close modal when clicking outside
+    disclaimerModal.addEventListener('click', function(e) {
+      if (e.target === disclaimerModal) {
+        disclaimerModal.classList.remove('active');
+      }
+    });
+  } else {
+    console.log('Disclaimer elements not found:', {
+      trigger: disclaimerTrigger, 
+      modal: disclaimerModal
+    });
   }
 } 
