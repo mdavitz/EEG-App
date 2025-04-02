@@ -28,3 +28,21 @@
     © 2025 Matthew S. Davitz, MD.
   </div>
 </footer> 
+
+<!-- One-time refresh script for the footer fix -->
+<script>
+  // Check if this is the first load after the footer fix
+  if (!localStorage.getItem('footerFixApplied')) {
+    // Set flag to prevent future refreshes
+    localStorage.setItem('footerFixApplied', 'true');
+    
+    // Only reload if we're not on the index page (index already works)
+    if (window.location.pathname !== '/' && 
+        window.location.pathname !== '/index.html' && 
+        !window.location.pathname.endsWith('/index.html')) {
+      console.log('Applying footer fix - one time refresh');
+      // Use a slight delay to ensure everything is loaded first
+      setTimeout(() => window.location.reload(), 500);
+    }
+  }
+</script> 
