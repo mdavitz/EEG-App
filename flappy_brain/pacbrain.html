@@ -4,7 +4,8 @@
   <meta charset="UTF-8">
   <!-- Fixed viewport so canvas stays 320px wide -->
   <meta name="viewport" content="width=320, initial-scale=1.0, user-scalable=no">
-  <title>Pacbrain Forced Start</title>
+  <title>Pac Brain</title>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
     body {
       margin: 0;
@@ -30,394 +31,686 @@
       font-family: sans-serif;
       z-index: 1000;
     }
+    #muteButton {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      padding: 8px 16px;
+      font-size: 12px;
+      font-family: 'Press Start 2P', monospace;
+      background: #000;
+      color: #0f0;
+      border: 2px solid #0f0;
+      box-shadow: 3px 3px 0 #0f0;
+      cursor: pointer;
+    }
+    #muteButton:active {
+      box-shadow: none;
+      transform: translate(3px, 3px);
+    }
   </style>
 </head>
 <body>
   <canvas id="gameCanvas" width="320" height="480"></canvas>
   <div id="scoreBoard">Score: 0 | Level: 1</div>
+  <button id="muteButton">Mute</button>
+  <script src="mazes.js"></script>
   <script>
-    // --- SETUP ---
+    // Game constants
+    const MAZE_WIDTH = 15;
+    const MAZE_HEIGHT = 11;
+    const CELL_SIZE = 30;
+    const PAC_SPEED = 2;
+    const GHOST_SPEED = 1.5;
+    const DOT_SIZE = 4;
+    const POWER_DOT_SIZE = 8;
+    const GHOST_SIZE = 24;
+    const PAC_SIZE = 24;
+    const VULNERABLE_DURATION = 300; // frames
+
+    // Asset loading
+    const assets = {
+      images: {},
+      sounds: {}
+    };
+
+    // Load images
+    const imageFiles = {
+      background: './background.png',
+      pacman: './pacman.png',
+      ghost: './bird.png',
+      dot: './dot.png',
+      powerDot: './power_dot.png'
+    };
+
+    // Load sounds
+    const soundFiles = {
+      chomp: "./flap.wav",
+      power: "./score.wav",
+      death: "./hit.wav",
+      music: "./music.m4a"
+    };
+
+    // Game state
+    const gameState = {
+      score: 0,
+      bestScore: Number(localStorage.getItem("pacBrainBestScore")) || 0,
+      state: "menu", // "menu", "playing", "paused", "gameover"
+      isMuted: false,
+      powerMode: false,
+      powerModeTimer: 0,
+      lives: 3,
+      level: 1,
+      maxLevels: 3,
+      maze: null,
+      currentLevel: 0,
+      mazeWidth: MAZE_WIDTH,
+      mazeHeight: MAZE_HEIGHT
+    };
+
+    // Canvas setup
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
     const scoreBoard = document.getElementById("scoreBoard");
 
-    // Log that the script is running.
-    console.log("Script started.");
+    // Update canvas size
+    canvas.width = MAZE_WIDTH * CELL_SIZE;
+    canvas.height = MAZE_HEIGHT * CELL_SIZE;
 
-    // --- ASSETS ---
-    const pacbrainImg = new Image();
-    pacbrainImg.src = "bird.png";
-    pacbrainImg.onerror = () => console.error("Error loading bird.png");
-
-    const ghostImg = new Image();
-    ghostImg.src = "neuron.png";
-    ghostImg.onerror = () => console.error("Error loading neuron.png");
-
-    // --- GAME CONFIG ---
-    // Force game state to "playing" immediately.
-    let gameState = "playing";
-    let score = 0;
-    let level = 1;
-    const maxLevels = 10;
-
-    // --- MAZE CONFIGURATION ---
-    // We'll use a 40×50 maze (each tile is 16×16) to create a larger world.
-    const tileSize = 16;
-    const mazeCols = 40;
-    const mazeRows = 50;
-    let maze = [];
-    let pelletsLeft = 0;
-    // Maze codes: 0 = empty, 1 = wall, 2 = pellet, 3 = power pellet
-
-    // --- GAME OBJECTS ---
-    // We store Pacbrain's position in pixel coordinates.
+    // Game objects
     const pacman = {
-      x: 10 * tileSize,  // start at column 10
-      y: 22 * tileSize,  // start at row 22
-      size: 48,          // draw bird.png at 48×48 (larger)
-      speed: 2           // pixels per frame
+      x: CELL_SIZE * 1.5,
+      y: CELL_SIZE * 1.5,
+      direction: 0,
+      nextDirection: 0,
+      speed: PAC_SPEED,
+      size: PAC_SIZE,
+      mouthOpen: true,
+      mouthAngle: 0,
+      angle: 0,
+      update() {
+        // Update mouth animation
+        this.mouthAngle += 0.2;
+        this.mouthOpen = Math.sin(this.mouthAngle) > 0;
+
+        // Try to change direction
+        if (this.nextDirection !== this.direction) {
+          const nextX = this.x + Math.cos(this.nextDirection) * this.speed;
+          const nextY = this.y + Math.sin(this.nextDirection) * this.speed;
+          const nextCellX = Math.floor(nextX / CELL_SIZE);
+          const nextCellY = Math.floor(nextY / CELL_SIZE);
+          
+          if (gameState.maze[nextCellY] && gameState.maze[nextCellY][nextCellX] !== 1) {
+            this.direction = this.nextDirection;
+          }
+        }
+
+        // Move in current direction
+        const nextX = this.x + Math.cos(this.direction) * this.speed;
+        const nextY = this.y + Math.sin(this.direction) * this.speed;
+        const nextCellX = Math.floor(nextX / CELL_SIZE);
+        const nextCellY = Math.floor(nextY / CELL_SIZE);
+
+        if (gameState.maze[nextCellY] && gameState.maze[nextCellY][nextCellX] !== 1) {
+          this.x = nextX;
+          this.y = nextY;
+
+          // Check for dots
+          const currentCellX = Math.floor(this.x / CELL_SIZE);
+          const currentCellY = Math.floor(this.y / CELL_SIZE);
+          if (gameState.maze[currentCellY][currentCellX] === 2) {
+            gameState.maze[currentCellY][currentCellX] = 0;
+            gameState.score += 10;
+            playSound('chomp');
+          } else if (gameState.maze[currentCellY][currentCellX] === 3) {
+            gameState.maze[currentCellY][currentCellX] = 0;
+            gameState.powerMode = true;
+            gameState.powerModeTimer = VULNERABLE_DURATION;
+            playSound('power');
+          }
+        }
+      },
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.direction);
+        
+        // Always draw a visible Pac-Man
+        ctx.beginPath();
+        ctx.arc(0, 0, this.size/2, this.mouthOpen ? 0.2 : 0, this.mouthOpen ? 5.8 : 6.2);
+        ctx.lineTo(0, 0);
+        ctx.fillStyle = '#FFFF00';
+        ctx.fill();
+        ctx.closePath();
+        
+        ctx.restore();
+      }
     };
 
-    // Ghosts use pixel coordinates as well.
-    let ghosts = [];
-    const VULNERABLE_DURATION = 300; // frames
+    const ghosts = [
+      { x: CELL_SIZE * 10, y: CELL_SIZE * 10, color: "#f00", direction: 0, size: GHOST_SIZE },
+      { x: CELL_SIZE * 9, y: CELL_SIZE * 10, color: "#0ff", direction: Math.PI/2, size: GHOST_SIZE },
+      { x: CELL_SIZE * 11, y: CELL_SIZE * 10, color: "#f0f", direction: Math.PI, size: GHOST_SIZE },
+      { x: CELL_SIZE * 10, y: CELL_SIZE * 9, color: "#ffa500", direction: -Math.PI/2, size: GHOST_SIZE }
+    ];
 
-    // Camera to keep Pacman centered.
-    const camera = { x: 0, y: 0 };
+    function updateGhosts() {
+      ghosts.forEach(ghost => {
+        // More deterministic ghost movement
+        const nextX = ghost.x + Math.cos(ghost.direction) * GHOST_SPEED;
+        const nextY = ghost.y + Math.sin(ghost.direction) * GHOST_SPEED;
+        const nextCellX = Math.floor(nextX / CELL_SIZE);
+        const nextCellY = Math.floor(nextY / CELL_SIZE);
 
-    // --- INPUT STATE ---
-    const keys = { up: false, down: false, left: false, right: false };
+        // Check if next position hits a wall
+        if (gameState.maze[nextCellY] && gameState.maze[nextCellY][nextCellX] !== 1) {
+          ghost.x = nextX;
+          ghost.y = nextY;
+        } else {
+          // If hitting a wall, try different directions
+          const possibleDirections = [0, Math.PI/2, Math.PI, -Math.PI/2];
+          const validDirections = possibleDirections.filter(dir => {
+            const testX = ghost.x + Math.cos(dir) * GHOST_SPEED;
+            const testY = ghost.y + Math.sin(dir) * GHOST_SPEED;
+            const testCellX = Math.floor(testX / CELL_SIZE);
+            const testCellY = Math.floor(testY / CELL_SIZE);
+            return gameState.maze[testCellY] && gameState.maze[testCellY][testCellX] !== 1;
+          });
+          
+          if (validDirections.length > 0) {
+            ghost.direction = validDirections[Math.floor(Math.random() * validDirections.length)];
+          }
+        }
 
-    // --- MAZE CREATION FUNCTION ---
-    function createMaze() {
-      maze = [];
-      pelletsLeft = 0;
-      for (let r = 0; r < mazeRows; r++) {
-        let row = [];
-        for (let c = 0; c < mazeCols; c++) {
-          // Create border walls.
-          if (r === 0 || r === mazeRows - 1 || c === 0 || c === mazeCols - 1) {
-            row.push(1);
+        // Check collision with Pac-Man
+        const dx = ghost.x - pacman.x;
+        const dy = ghost.y - pacman.y;
+        const distance = Math.sqrt(dx * dx + dy * dy);
+
+        if (distance < (ghost.size + pacman.size) / 2) {
+          if (gameState.powerMode) {
+            // Ghost eaten
+            ghost.x = CELL_SIZE * 10;
+            ghost.y = CELL_SIZE * 10;
+            ghost.direction = Math.random() * Math.PI * 2;
+            gameState.score += 200;
           } else {
-            let rand = Math.random();
-            if (rand < 0.2) {
-              row.push(1);
-            } else if (rand < 0.95) {
-              row.push(2);
-              pelletsLeft++;
+            // Pac-Man eaten
+            gameState.lives--;
+            if (gameState.lives <= 0) {
+              gameOver();
             } else {
-              row.push(3);
-              pelletsLeft++;
+              resetPositions();
             }
           }
         }
-        maze.push(row);
-      }
-      // Clear a safe area around pacman's starting tile.
-      let startRow = Math.floor(pacman.y / tileSize);
-      let startCol = Math.floor(pacman.x / tileSize);
-      for (let r = startRow - 2; r <= startRow + 2; r++) {
-        for (let c = startCol - 2; c <= startCol + 2; c++) {
-          if (maze[r][c] === 2 || maze[r][c] === 3) pelletsLeft--;
-          maze[r][c] = 0;
-        }
-      }
-      console.log("Maze created. Pellets left:", pelletsLeft);
-    }
-
-    // --- RESET GAME FUNCTION ---
-    function resetGame() {
-      createMaze();
-      // Reset Pacman's position.
-      pacman.x = 10 * tileSize;
-      pacman.y = 22 * tileSize;
-      ghosts = [];
-      // Spawn ghosts (increase with level, max 4).
-      const numGhosts = Math.min(4, level);
-      for (let i = 0; i < numGhosts; i++) {
-        ghosts.push({
-          x: 10 * tileSize,
-          y: (5 + i * 2) * tileSize,
-          speed: 1 + level * 0.2,
-          vulnerable: false,
-          vulnerableTimer: 0
-        });
-      }
-      updateScoreBoard();
-      console.log("Game reset. Level:", level);
-    }
-
-    function updateScoreBoard() {
-      scoreBoard.textContent = `Score: ${score} | Level: ${level}`;
-    }
-
-    // --- CAMERA UPDATE FUNCTION ---
-    function updateCamera() {
-      // Center the camera on pacman.
-      let targetX = pacman.x - canvas.width / 2 + pacman.size / 2;
-      let targetY = pacman.y - canvas.height / 2 + pacman.size / 2;
-      // Clamp so camera doesn't go off the maze.
-      camera.x = Math.max(0, Math.min(targetX, mazeCols * tileSize - canvas.width));
-      camera.y = Math.max(0, Math.min(targetY, mazeRows * tileSize - canvas.height));
-    }
-
-    // --- DRAWING FUNCTIONS ---
-    function drawMaze() {
-      for (let r = 0; r < mazeRows; r++) {
-        for (let c = 0; c < mazeCols; c++) {
-          let cell = maze[r][c];
-          let screenX = c * tileSize - camera.x;
-          let screenY = r * tileSize - camera.y;
-          // Only draw if on screen.
-          if (screenX + tileSize < 0 || screenY + tileSize < 0 ||
-              screenX > canvas.width || screenY > canvas.height)
-            continue;
-          if (cell === 1) {
-            ctx.fillStyle = "#0000ff";
-            ctx.fillRect(screenX, screenY, tileSize, tileSize);
-          } else if (cell === 2) {
-            ctx.fillStyle = "#fff";
-            ctx.beginPath();
-            ctx.arc(screenX + tileSize/2, screenY + tileSize/2, 2, 0, Math.PI*2);
-            ctx.fill();
-          } else if (cell === 3) {
-            ctx.fillStyle = "#ff0";
-            ctx.beginPath();
-            ctx.arc(screenX + tileSize/2, screenY + tileSize/2, 4, 0, Math.PI*2);
-            ctx.fill();
-          }
-        }
-      }
-    }
-
-    function drawPacman() {
-      let screenX = pacman.x - camera.x;
-      let screenY = pacman.y - camera.y;
-      if (!pacbrainImg.complete) {
-        ctx.fillStyle = "#ff0";
-        ctx.fillRect(screenX, screenY, pacman.size, pacman.size);
-      } else {
-        // Draw bird.png at 48x48.
-        ctx.drawImage(pacbrainImg, screenX, screenY, pacman.size, pacman.size);
-      }
+      });
     }
 
     function drawGhosts() {
       ghosts.forEach(ghost => {
-        let screenX = ghost.x - camera.x;
-        let screenY = ghost.y - camera.y;
-        if (!ghostImg.complete) {
-          ctx.fillStyle = ghost.vulnerable ? "#00f" : "#f0f";
-          ctx.fillRect(screenX, screenY, tileSize, tileSize);
+        drawGhost(ghost);
+      });
+    }
+
+    function drawGhost(ghost) {
+      ctx.save();
+      ctx.translate(ghost.x, ghost.y);
+      
+      if (assets.images.ghost) {
+        // Use bird.png for ghosts with power mode effect
+        if (gameState.powerMode) {
+          // Add blue tint in power mode
+          ctx.globalAlpha = 0.7;
+          ctx.drawImage(assets.images.ghost, -ghost.size/2, -ghost.size/2, ghost.size, ghost.size);
+          ctx.globalAlpha = 1;
+          ctx.fillStyle = "rgba(0, 0, 255, 0.3)";
+          ctx.fillRect(-ghost.size/2, -ghost.size/2, ghost.size, ghost.size);
         } else {
-          if (ghost.vulnerable) {
-            ctx.globalAlpha = 0.5;
-            ctx.fillStyle = "#00f";
-            ctx.fillRect(screenX, screenY, tileSize, tileSize);
-            ctx.globalAlpha = 1.0;
-          }
-          ctx.drawImage(ghostImg, screenX, screenY, tileSize, tileSize);
+          ctx.drawImage(assets.images.ghost, -ghost.size/2, -ghost.size/2, ghost.size, ghost.size);
         }
-      });
-    }
-
-    // --- UTILITY: Check if a pixel position is inside a wall.
-    function isWallPixel(x, y) {
-      let col = Math.floor(x / tileSize);
-      let row = Math.floor(y / tileSize);
-      if (row < 0 || row >= mazeRows || col < 0 || col >= mazeCols) return true;
-      return maze[row][col] === 1;
-    }
-
-    // --- UPDATE PACMAN MOVEMENT ---
-    function updatePacman() {
-      let vx = 0, vy = 0;
-      if (keys.up) vy = -pacman.speed;
-      if (keys.down) vy = pacman.speed;
-      if (keys.left) vx = -pacman.speed;
-      if (keys.right) vx = pacman.speed;
-      let newX = pacman.x + vx;
-      let newY = pacman.y + vy;
-      // Check the center of Pacman for wall collision.
-      if (!isWallPixel(newX + pacman.size/2, newY + pacman.size/2)) {
-        pacman.x = newX;
-        pacman.y = newY;
+      } else {
+        // Fallback to circle with power mode colors
+        ctx.beginPath();
+        ctx.arc(0, 0, ghost.size/2, 0, Math.PI * 2);
+        if (gameState.powerMode) {
+          // Make ghosts flash between blue and white when vulnerable
+          const flash = Math.sin(Date.now() / 200) > 0;
+          ctx.fillStyle = flash ? '#00f' : '#fff';
+        } else {
+          ctx.fillStyle = ghost.color;
+        }
+        ctx.fill();
       }
-      // Determine which maze cell Pacman's center is in.
-      let centerX = pacman.x + pacman.size/2;
-      let centerY = pacman.y + pacman.size/2;
-      let col = Math.floor(centerX / tileSize);
-      let row = Math.floor(centerY / tileSize);
-      if (maze[row] && maze[row][col] !== undefined) {
-        let cell = maze[row][col];
-        if (cell === 2) {
-          maze[row][col] = 0;
-          pelletsLeft--;
-          score += 10;
-          updateScoreBoard();
-        } else if (cell === 3) {
-          maze[row][col] = 0;
-          pelletsLeft--;
-          score += 50;
-          // Activate power-up: make all ghosts vulnerable.
-          ghosts.forEach(g => {
-            g.vulnerable = true;
-            g.vulnerableTimer = VULNERABLE_DURATION;
-          });
-          updateScoreBoard();
+      
+      ctx.restore();
+    }
+
+    function drawMaze() {
+      // Add power mode background effect
+      if (gameState.powerMode) {
+        ctx.fillStyle = "rgba(0, 0, 255, 0.2)";  // Blue tint when in power mode
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+      }
+
+      for (let y = 0; y < gameState.maze.length; y++) {
+        for (let x = 0; x < gameState.maze[y].length; x++) {
+          if (gameState.maze[y][x] === 1) {
+            ctx.fillStyle = gameState.powerMode ? "#000080" : "#00f";  // Darker blue walls in power mode
+            ctx.fillRect(x * CELL_SIZE, y * CELL_SIZE, CELL_SIZE, CELL_SIZE);
+          } else if (gameState.maze[y][x] === 2) {
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(x * CELL_SIZE + CELL_SIZE/2, y * CELL_SIZE + CELL_SIZE/2, DOT_SIZE, 0, Math.PI * 2);
+            ctx.fill();
+          } else if (gameState.maze[y][x] === 3) {
+            // Make power dots pulse
+            const pulseSize = POWER_DOT_SIZE + Math.sin(Date.now() / 200) * 2;
+            ctx.fillStyle = "#fff";
+            ctx.beginPath();
+            ctx.arc(x * CELL_SIZE + CELL_SIZE/2, y * CELL_SIZE + CELL_SIZE/2, pulseSize, 0, Math.PI * 2);
+            ctx.fill();
+          }
         }
       }
     }
 
-    // --- UPDATE GHOSTS MOVEMENT ---
-    function updateGhosts() {
-      ghosts.forEach(ghost => {
-        if (ghost.vulnerable) {
-          ghost.vulnerableTimer--;
-          if (ghost.vulnerableTimer <= 0) ghost.vulnerable = false;
-        }
-        // Simple chasing: move a fraction toward Pacman.
-        let dx = pacman.x - ghost.x;
-        let dy = pacman.y - ghost.y;
-        let dist = Math.sqrt(dx*dx + dy*dy) || 1;
-        ghost.x += (dx / dist) * ghost.speed;
-        ghost.y += (dy / dist) * ghost.speed;
-      });
+    function drawHUD() {
+      ctx.fillStyle = "white";
+      ctx.font = "20px Arial";
+      ctx.textAlign = "left";
+      ctx.textBaseline = "top";
+      ctx.fillText(`Score: ${gameState.score}`, 20, 20);
+      ctx.fillText(`Lives: ${gameState.lives}`, 20, 40);
+      ctx.fillText(`Level: ${gameState.level}`, 20, 60);
+      ctx.font = "12px Arial";
+      ctx.textBaseline = "bottom";
+      ctx.fillText(`Best: ${gameState.bestScore}`, 20, canvas.height - 20);
     }
 
-    // --- CHECK COLLISIONS BETWEEN PACMAN AND GHOSTS ---
-    function checkCollisions() {
-      ghosts.forEach((ghost, index) => {
-        let dx = (pacman.x + pacman.size/2) - (ghost.x + tileSize/2);
-        let dy = (pacman.y + pacman.size/2) - (ghost.y + tileSize/2);
-        if (Math.sqrt(dx*dx + dy*dy) < 16) {
-          if (ghost.vulnerable) {
-            score += 200;
-            ghosts.splice(index, 1);
-            updateScoreBoard();
-          } else {
-            gameState = "gameover";
-            gameOverScreen.style.display = "block";
-          }
-        }
-      });
+    function drawMenu() {
+      ctx.fillStyle = "rgba(0,0,0,0.5)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Pac Brain", canvas.width/2, canvas.height/2 - 40);
+      ctx.font = "20px Arial";
+      ctx.fillText("Click or tap to start", canvas.width/2, canvas.height/2);
+      ctx.fillText("Press P to Pause", canvas.width/2, canvas.height/2 + 30);
     }
 
-    // --- CHECK LEVEL COMPLETE ---
+    function drawGameOver() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      ctx.fillStyle = "#ff0";
+      ctx.font = "28px 'Press Start 2P', monospace";
+      ctx.textAlign = "center";
+      ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 60);
+      
+      ctx.font = "16px 'Press Start 2P', monospace";
+      ctx.fillText(`Score: ${gameState.score}`, canvas.width/2, canvas.height/2 - 20);
+      ctx.fillText(`Best: ${gameState.bestScore}`, canvas.width/2, canvas.height/2 + 10);
+      
+      const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
+      const buttonX = canvas.width/2 - 100;
+      const buttonY = canvas.height/2 + 50;
+      
+      ctx.fillStyle = `rgba(0, 200, 0, ${pulse * 0.7})`;
+      ctx.fillRect(buttonX, buttonY, 200, 50);
+      
+      ctx.strokeStyle = "#fff";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(buttonX, buttonY, 200, 50);
+      
+      ctx.fillStyle = "#fff";
+      ctx.font = "18px 'Press Start 2P', monospace";
+      ctx.fillText("TAP TO RESTART", canvas.width/2, canvas.height/2 + 80);
+    }
+
+    function drawPause() {
+      ctx.fillStyle = "rgba(0,0,0,0.3)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "white";
+      ctx.font = "28px Arial";
+      ctx.textAlign = "center";
+      ctx.fillText("Paused", canvas.width/2, canvas.height/2);
+    }
+
+     function gameOver() {
+      gameState.state = "gameover";
+      playSound('death');
+      if (gameState.score > gameState.bestScore) {
+        gameState.bestScore = gameState.score;
+        localStorage.setItem("pacBrainBestScore", gameState.bestScore);
+      }
+    }
+
     function checkLevelComplete() {
-      if (pelletsLeft <= 0) {
-        level++;
-        if (level > maxLevels) {
-          alert("You win the game!");
-          level = 1;
-          score = 0;
+      // Check if all dots are collected
+      let dotsLeft = 0;
+      for (let y = 0; y < gameState.maze.length; y++) {
+        for (let x = 0; x < gameState.maze[y].length; x++) {
+          if (gameState.maze[y][x] === 2 || gameState.maze[y][x] === 3) {
+            dotsLeft++;
+          }
         }
-        resetGame();
+      }
+
+      if (dotsLeft === 0) {
+        if (gameState.level < gameState.maxLevels) {
+          // Next level
+          gameState.level++;
+          gameState.maze = window.levels[gameState.level - 1];
+          resetPositions();
+          playSound('power');
+        } else {
+          // Game complete
+          gameState.state = "gameover";
+          if (gameState.score > gameState.bestScore) {
+            gameState.bestScore = gameState.score;
+            localStorage.setItem("pacBrainBestScore", gameState.bestScore);
+          }
+        }
       }
     }
 
-    // --- GAME LOOP ---
-    function gameLoop() {
-      if (gameState === "playing") {
-        updatePacman();
-        updateGhosts();
-        checkCollisions();
-        checkLevelComplete();
-        updateCamera();
+    function resetPositions() {
+      // Reset Pac-Man position
+      pacman.x = CELL_SIZE * 1.5;
+      pacman.y = CELL_SIZE * 1.5;
+      pacman.direction = 0;
+      pacman.nextDirection = 0;
+
+      // Reset ghost positions
+      ghosts.forEach((ghost, i) => {
+        ghost.x = CELL_SIZE * (10 + i);
+        ghost.y = CELL_SIZE * 10;
+        ghost.direction = Math.random() * Math.PI * 2;
+      });
+    }
+
+    function resetGame() {
+      // Reset game state
+      gameState.score = 0;
+      gameState.lives = 3;
+      gameState.powerMode = false;
+      gameState.powerModeTimer = 0;
+      gameState.level = 1;
+      gameState.maze = window.levels[0];
+      gameState.state = "playing";
+
+      // Reset positions
+      resetPositions();
+    }
+
+    function isInRestartButton(x, y) {
+      const buttonX = canvas.width/2 - 100;
+      const buttonY = canvas.height/2 + 50;
+      return (
+        x >= buttonX &&
+        x <= buttonX + 200 &&
+        y >= buttonY &&
+        y <= buttonY + 50
+      );
+    }
+
+    function playSound(name) {
+      if (gameState.isMuted) return;
+      const sound = assets.sounds[name];
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(err => console.log('Audio play failed:', err));
       }
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawMaze();
-      drawPacman();
-      drawGhosts();
-      updateScoreBoard();
+    }
+
+    function handleInteraction(e) {
+      if (e) {
+        e.preventDefault();
+        e.stopPropagation();
+      }
+      
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+      
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const canvasX = x * scaleX;
+      const canvasY = y * scaleY;
+      
+      switch (gameState.state) {
+        case "menu":
+          gameState.state = "playing";
+          playSound('music');
+          break;
+        case "gameover":
+          if (isInRestartButton(canvasX, canvasY)) {
+            resetGame();
+          }
+          break;
+      }
+    }
+
+    let touchStartX = null;
+    let touchStartY = null;
+    const SWIPE_THRESHOLD = 30; // minimum distance for a swipe
+
+    function handleTouchStart(e) {
+      e.preventDefault();
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+    }
+
+    function handleTouchMove(e) {
+      e.preventDefault();
+      if (!touchStartX || !touchStartY || gameState.state !== "playing") {
+        return;
+      }
+
+      const touch = e.touches[0];
+      const deltaX = touch.clientX - touchStartX;
+      const deltaY = touch.clientY - touchStartY;
+      
+      // Only handle the swipe if it's long enough
+      if (Math.abs(deltaX) < SWIPE_THRESHOLD && Math.abs(deltaY) < SWIPE_THRESHOLD) {
+        return;
+      }
+
+      // Determine swipe direction
+      if (Math.abs(deltaX) > Math.abs(deltaY)) {
+        // Horizontal swipe
+        if (deltaX > 0) {
+          pacman.nextDirection = 0; // Right
+        } else {
+          pacman.nextDirection = Math.PI; // Left
+        }
+      } else {
+        // Vertical swipe
+        if (deltaY > 0) {
+          pacman.nextDirection = Math.PI/2; // Down
+        } else {
+          pacman.nextDirection = -Math.PI/2; // Up
+        }
+      }
+
+      // Reset touch start coordinates after handling the swipe
+      touchStartX = null;
+      touchStartY = null;
+    }
+
+    function handleTouchEnd(e) {
+      e.preventDefault();
+      touchStartX = null;
+      touchStartY = null;
+    }
+
+    function gameLoop() {
+      ctx.fillStyle = "#000";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      if (gameState.state === "menu") {
+        drawMenu();
+      } else if (gameState.state === "playing" || gameState.state === "paused") {
+        if (gameState.state === "playing") {
+          pacman.update();
+          updateGhosts();
+          if (gameState.powerMode) {
+            gameState.powerModeTimer--;
+            if (gameState.powerModeTimer <= 0) {
+              gameState.powerMode = false;
+            }
+          }
+          checkLevelComplete();
+        }
+        drawMaze();
+        drawGhosts();
+        pacman.draw();
+        drawHUD();
+        if (gameState.state === "paused") drawPause();
+      } else if (gameState.state === "gameover") {
+        drawMaze();
+        drawGhosts();
+        pacman.draw();
+        drawHUD();
+        drawGameOver();
+      }
+      
       requestAnimationFrame(gameLoop);
     }
 
-    // --- INPUT HANDLERS ---
-    document.addEventListener("keydown", (e) => {
-      if (gameState === "menu") {
-        if (e.code === "Space") {
-          resetGame();
-          gameState = "playing";
-          startScreen.style.display = "none";
-        }
-        return;
-      }
-      if (gameState === "gameover") {
-        if (e.code === "Space") {
-          resetGame();
-          gameState = "playing";
-          gameOverScreen.style.display = "none";
-        }
-        return;
-      }
-      switch (e.key) {
-        case "ArrowUp":    keys.up = true; break;
-        case "ArrowDown":  keys.down = true; break;
-        case "ArrowLeft":  keys.left = true; break;
-        case "ArrowRight": keys.right = true; break;
-      }
-    });
-    document.addEventListener("keyup", (e) => {
-      switch (e.key) {
-        case "ArrowUp":    keys.up = false; break;
-        case "ArrowDown":  keys.down = false; break;
-        case "ArrowLeft":  keys.left = false; break;
-        case "ArrowRight": keys.right = false; break;
-      }
-    });
-    // Allow canvas click/tap to restart if game over.
-    canvas.addEventListener("click", () => {
-      if (gameState === "menu" || gameState === "gameover") {
-        resetGame();
-        gameState = "playing";
-        startScreen.style.display = "none";
-        gameOverScreen.style.display = "none";
-      }
-    });
-    canvas.addEventListener("touchstart", () => {
-      if (gameState === "menu" || gameState === "gameover") {
-        resetGame();
-        gameState = "playing";
-        startScreen.style.display = "none";
-        gameOverScreen.style.display = "none";
-      }
-    });
+    function loadAssets() {
+      let loadedAssets = 0;
+      const totalAssets = Object.keys(imageFiles).length + Object.keys(soundFiles).length;
 
-    // --- MENU / START SCREEN ---
-    function showMenu() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0f0";
-      ctx.font = "16px 'Press Start 2P'";
-      ctx.textAlign = "center";
-      ctx.fillText("Press Space or tap to Start", canvas.width/2, canvas.height/2);
-      // Also display the start screen overlay.
-      // (You can style this div via CSS.)
-      document.getElementById("startScreen").style.display = "block";
+      function assetLoaded() {
+        loadedAssets++;
+        console.log(`Loaded asset ${loadedAssets}/${totalAssets}`);
+        if (loadedAssets === totalAssets) {
+          console.log('All assets loaded, starting game...');
+          startGame();
+        }
+      }
+
+      // Load images
+      Object.entries(imageFiles).forEach(([key, file]) => {
+        const img = new Image();
+        img.onload = () => {
+          console.log(`Loaded image: ${file}`);
+          assetLoaded();
+        };
+        img.onerror = () => {
+          console.error(`Failed to load image: ${file}`);
+          assetLoaded();
+        };
+        img.src = file;
+        assets.images[key] = img;
+      });
+
+      // Load sounds
+      Object.entries(soundFiles).forEach(([key, file]) => {
+        const audio = new Audio();
+        audio.oncanplaythrough = () => {
+          console.log(`Loaded sound: ${file}`);
+          assetLoaded();
+        };
+        audio.onerror = () => {
+          console.error(`Failed to load sound: ${file}`);
+          assetLoaded();
+        };
+        audio.src = file;
+        assets.sounds[key] = audio;
+      });
     }
 
-    // --- STARTUP ---
-    // Wait for images to load, but force start after 3 seconds if needed.
-    let imagesLoaded = 0;
-    function checkImagesLoaded() {
-      imagesLoaded++;
-      if (imagesLoaded >= 2) {
-        if (gameState === "menu") showMenu();
-        gameLoop();
+    function startGame() {
+      // Wait for levels to be available
+      if (!window.levels) {
+        console.log('Waiting for levels to load...');
+        setTimeout(startGame, 100);
+        return;
       }
-    }
-    pacbrainImg.onload = checkImagesLoaded;
-    ghostImg.onload = checkImagesLoaded;
-    setTimeout(() => {
-      if (imagesLoaded < 2) {
-        console.warn("Forcing game start without images");
-        if (gameState === "menu") showMenu();
-        gameLoop();
-      }
-    }, 3000);
 
-    // Start in menu state.
-    showMenu();
+      console.log('Levels loaded, initializing game...');
+      
+      // Initialize maze from levels
+      gameState.maze = window.levels[0];
+      gameState.maxLevels = window.levels.length;
+      
+      // Reset positions
+      resetPositions();
+      
+      // Set initial game state
+      gameState.state = "menu";
+      gameState.score = 0;
+      gameState.lives = 3;
+      gameState.level = 1;
+      
+      console.log('Game initialized, setting up event listeners...');
+
+      // Event listeners
+      canvas.addEventListener("click", handleInteraction);
+      
+      // Touch controls
+      canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+      canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
+      canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
+
+      document.addEventListener("keydown", e => {
+        if (e.code === "Space") {
+          switch (gameState.state) {
+            case "menu":
+              gameState.state = "playing";
+              playSound('music');
+              break;
+            case "gameover":
+              resetGame();
+              break;
+          }
+        } else if (e.code === "KeyP") {
+          if (gameState.state === "playing") {
+            gameState.state = "paused";
+          } else if (gameState.state === "paused") {
+            gameState.state = "playing";
+          }
+        } else if (gameState.state === "playing") {
+          switch (e.code) {
+            case "ArrowLeft":
+              pacman.nextDirection = Math.PI;
+              break;
+            case "ArrowRight":
+              pacman.nextDirection = 0;
+              break;
+            case "ArrowUp":
+              pacman.nextDirection = -Math.PI/2;
+              break;
+            case "ArrowDown":
+              pacman.nextDirection = Math.PI/2;
+              break;
+          }
+        }
+      });
+
+      document.getElementById("muteButton").addEventListener("click", e => {
+        e.stopPropagation();
+        gameState.isMuted = !gameState.isMuted;
+        Object.values(assets.sounds).forEach(sound => sound.muted = gameState.isMuted);
+        e.target.textContent = gameState.isMuted ? "Unmute" : "Mute";
+      });
+
+      console.log('Starting game loop...');
+      // Start the game loop
+      gameLoop();
+    }
+
+    // Start loading assets
+    window.addEventListener('load', () => {
+      console.log('Window loaded, starting asset loading...');
+      loadAssets();
+    });
   </script>
 </body>
 </html>
