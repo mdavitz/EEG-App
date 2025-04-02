@@ -418,27 +418,46 @@ body.dark .menu-section a:hover {
 @media (max-width: 600px) {
   .search-menu-panel {
     position: fixed;
-    top: auto;
-    bottom: 0;
+    top: 60px; /* Position from top of screen, below header */
+    bottom: auto;
     left: 0;
     right: 0;
     width: 100%;
-    border-radius: 12px 12px 0 0;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    border-radius: 0 0 12px 12px; /* Rounded corners only at bottom */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
     max-height: 75vh;
     overflow-y: auto;
+    transform: translateY(-100%); /* Start off-screen above */
   }
   
   .search-menu-panel.active {
-    animation: slideUp 0.3s ease forwards;
+    animation: slideDown 0.3s ease forwards;
   }
   
-  @keyframes slideUp {
+  @keyframes slideDown {
     from {
-      transform: translateY(100%);
+      transform: translateY(-100%);
     }
     to {
       transform: translateY(0);
     }
+  }
+  
+  /* Ensure search results appear below search input */
+  .search-results {
+    position: relative;
+    top: 0;
+    width: 100%;
+    max-height: 50vh;
+  }
+  
+  /* Make search input full width on mobile */
+  .search-wrapper {
+    width: 100%;
+  }
+  
+  .search-input {
+    width: 100%;
+    box-sizing: border-box;
   }
 } 

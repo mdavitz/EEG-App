@@ -260,6 +260,7 @@ body.dark #seizure-management .quick-links a.active {
   }
 }
 
+/* Table styling - updated for card format on mobile */
 #seizure-management .custom-table {
   width: 100%;
   border-collapse: collapse;
@@ -295,12 +296,14 @@ body.dark #seizure-management .quick-links a.active {
   background-color: var(--hover-bg);
 }
 
+/* List styles inside tables */
 #seizure-management .no-bullets {
   list-style: none;
   margin: 0;
   padding-left: 0;
 }
 
+/* Link styles */
 #seizure-management .reference {
   color: var(--accent-color);
   text-decoration: none;
@@ -311,6 +314,213 @@ body.dark #seizure-management .quick-links a.active {
 #seizure-management .reference:hover {
   color: var(--accent-hover);
   text-decoration: underline;
+}
+
+/* Mobile responsive card-style tables */
+@media (max-width: 768px) {
+  #seizure-management .custom-table,
+  #seizure-management .custom-table thead,
+  #seizure-management .custom-table tbody,
+  #seizure-management .custom-table th,
+  #seizure-management .custom-table tr {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+  }
+  
+  #seizure-management .custom-table {
+    border-collapse: separate;
+    border-spacing: 0;
+    max-width: 100%;
+    overflow: visible;
+    margin-bottom: 1rem;
+  }
+  
+  #seizure-management .custom-table thead tr {
+    position: absolute;
+    top: -9999px;
+    left: -9999px;
+  }
+  
+  #seizure-management .custom-table tbody tr {
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    background-color: var(--info-bg);
+    overflow: hidden;
+  }
+  
+  #seizure-management .custom-table tbody td {
+    display: block;
+    padding: 15px 12px;
+    border: none;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+    position: relative;
+    padding-left: 45%;
+    min-height: 30px;
+  }
+  
+  #seizure-management .custom-table tbody td:last-child {
+    border-bottom: none;
+  }
+  
+  #seizure-management .custom-table tbody td:before {
+    position: absolute;
+    top: 15px;
+    left: 15px;
+    width: 40%;
+    padding-right: 10px;
+    white-space: nowrap;
+    font-weight: 600;
+    content: attr(data-label);
+    color: var(--primary-color);
+  }
+  
+  /* Special handling for no-bullets lists */
+  #seizure-management .custom-table td .no-bullets {
+    margin-left: -40%;
+    padding-top: 10px;
+  }
+  
+  /* Status Epilepticus table */
+  #status-epilepticus .custom-table tr td:nth-of-type(1):before { content: "Phase"; }
+  #status-epilepticus .custom-table tr td:nth-of-type(2):before { content: "Time Range"; }
+  #status-epilepticus .custom-table tr td:nth-of-type(3):before { content: "Intervention & Dosing"; }
+  
+  /* Status Epilepticus specific card styling */
+  @media (max-width: 768px) {
+    #status-epilepticus .custom-table tbody tr {
+      padding-bottom: 5px;
+    }
+    
+    #status-epilepticus .custom-table td[data-label="Phase"] {
+      font-weight: 600;
+      font-size: 1.1em;
+      background-color: var(--accent-color);
+      color: white;
+      padding: 12px 15px;
+      border-radius: 8px 8px 0 0;
+    }
+    
+    #status-epilepticus .custom-table td[data-label="Phase"]:before {
+      color: white;
+    }
+    
+    #status-epilepticus .custom-table td[data-label="Time Range"] {
+      font-weight: 500;
+      background-color: rgba(0, 102, 204, 0.1);
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+    
+    #status-epilepticus .custom-table td[data-label="Intervention & Dosing"] {
+      padding-top: 15px;
+      padding-left: 15px;
+      padding-right: 15px;
+      padding-bottom: 15px;
+    }
+    
+    #status-epilepticus .custom-table td[data-label="Intervention & Dosing"] .no-bullets {
+      margin-left: 0;
+      padding-left: 0;
+    }
+    
+    #status-epilepticus .custom-table td[data-label="Intervention & Dosing"] .no-bullets li {
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    
+    #status-epilepticus .custom-table td[data-label="Intervention & Dosing"] .no-bullets li:last-child {
+      margin-bottom: 0;
+    }
+    
+    #status-epilepticus .custom-table td[data-label="Intervention & Dosing"]:before {
+      position: static;
+      display: block;
+      width: 100%;
+      margin-bottom: 10px;
+      padding: 0;
+      color: var(--primary-color);
+      font-size: 1em;
+    }
+  }
+  
+  /* Refractory Epilepsy table */
+  #refractory-epilepsy .custom-table tr td:nth-of-type(1):before { content: "Therapy Category"; }
+  #refractory-epilepsy .custom-table tr td:nth-of-type(2):before { content: "Description/Details"; }
+  
+  /* Anti-seizure medications table */
+  #anti-seizure-medications .custom-table tr td:nth-of-type(1):before { content: "Medication"; }
+  #anti-seizure-medications .custom-table tr td:nth-of-type(2):before { content: "Typical Dose"; }
+  #anti-seizure-medications .custom-table tr td:nth-of-type(3):before { content: "Side Effects"; }
+  #anti-seizure-medications .custom-table tr td:nth-of-type(4):before { content: "Notes"; }
+}
+
+/* Alternative card display for medication tables */
+@media (max-width: 768px) {
+  #medicationsTableBody {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  #medicationsTableBody tr {
+    display: block;
+    background-color: var(--info-bg);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px var(--shadow-color);
+    padding: 16px;
+    margin-bottom: 16px;
+    border: 1px solid var(--border-color);
+  }
+  
+  #medicationsTableBody td {
+    display: block;
+    padding: 8px 0;
+    border: none;
+    text-align: left;
+  }
+  
+  #medicationsTableBody td:not(:last-child) {
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+    margin-bottom: 8px;
+  }
+  
+  #medicationsTableBody td:first-child {
+    font-size: 1.1em;
+    font-weight: 600;
+    color: var(--primary-color);
+    border-bottom: 1px solid var(--accent-color);
+    padding-bottom: 12px;
+  }
+  
+  #anti-seizure-medications thead {
+    display: none;
+  }
+  
+  #medicationsTableBody td:first-child a {
+    color: var(--primary-color);
+    text-decoration: none;
+  }
+  
+  #medicationsTableBody td:first-child em {
+    display: block;
+    font-size: 0.85em;
+    font-weight: normal;
+    color: var(--text-color);
+    margin-top: 4px;
+  }
+  
+  body.dark #medicationsTableBody tr {
+    background-color: var(--info-bg);
+  }
+  
+  body.dark #medicationsTableBody td:first-child {
+    color: var(--text-color);
+  }
 }
 
 /* Modal Styling */
@@ -410,99 +620,24 @@ body.dark #seizure-management .quick-links a.active {
   }
 }
 
-/* Responsive med-cards for the medications table on mobile */
-@media (max-width: 768px) {
-  #medicationsTableBody {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
+/* Animations for medication cards */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
   }
-  
-  #medicationsTableBody tr {
-    display: block;
-    background-color: var(--card-bg, #fff);
-    border-radius: 12px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-    padding: 16px;
-    margin-bottom: 16px;
-    border: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
-  
-  #medicationsTableBody td {
-    display: block;
-    padding: 8px 0;
-    border: none;
-    text-align: left;
-  }
-  
-  #medicationsTableBody td:not(:last-child) {
-    border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.05));
-    padding-bottom: 12px;
-    margin-bottom: 8px;
-  }
-  
-  #medicationsTableBody td:first-child {
-    font-size: 1.1em;
-    font-weight: 600;
-    color: var(--primary-color, #333);
-    border-bottom: 1px solid var(--accent-color, #007bff);
-    padding-bottom: 12px;
-  }
-  
-  /* Add labels before each cell */
-  #medicationsTableBody td:nth-child(2)::before {
-    content: "Typical Dose: ";
-    font-weight: 600;
-    display: block;
-    margin-bottom: 4px;
-    color: var(--text-color, #555);
-    font-size: 0.9em;
-  }
-  
-  #medicationsTableBody td:nth-child(3)::before {
-    content: "Side Effects: ";
-    font-weight: 600;
-    display: block;
-    margin-bottom: 4px;
-    color: var(--text-color, #555);
-    font-size: 0.9em;
-  }
-  
-  #medicationsTableBody td:nth-child(4)::before {
-    content: "Therapeutic Range: ";
-    font-weight: 600;
-    display: block;
-    margin-bottom: 4px;
-    color: var(--text-color, #555);
-    font-size: 0.9em;
-  }
-  
-  /* Hide table header on mobile */
-  #anti-seizure-medications thead {
-    display: none;
-  }
-  
-  /* Improve layout for links within the medication name */
-  #medicationsTableBody td:first-child a {
-    color: var(--accent-color, #007bff);
-    text-decoration: none;
-  }
-  
-  /* Style for medication notes (italic text) */
-  #medicationsTableBody td:first-child em {
-    display: block;
-    font-size: 0.85em;
-    margin-top: 4px;
-    color: var(--text-muted, #666);
-  }
-  
-  /* Dark mode support */
-  body.dark #medicationsTableBody tr {
-    background-color: var(--card-bg, #222);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-  }
-  
-  body.dark #medicationsTableBody td:first-child {
-    color: var(--primary-color, #f0f0f0);
-  }
+}
+
+/* Make rows visible by default if no JS, but keep animation support */
+#medicationsTableBody tr {
+  opacity: 1; /* Default to visible */
+  transition: opacity 0.3s ease;
+}
+
+#medicationsTableBody tr.card-visible {
+  animation: fadeInUp 0.5s ease forwards;
 } 
