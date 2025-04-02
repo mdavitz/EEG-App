@@ -14,166 +14,152 @@
   <link rel="stylesheet" href="assets/css/main.css" />
   
   <!-- Core Scripts -->
-  <script src="firebase-auth.js" defer></script>
   <script src="assets/js/common.js" defer></script>
   <script src="assets/js/includes-loader.js" defer></script>
   <script src="assets/js/universal-search.js" defer></script>
-  <!-- Universal Search replaced the old search script -->
   
   <!-- Search initialization script -->
   <script>
-    // Initialize search functionality when page loads
     document.addEventListener('DOMContentLoaded', function() {
+      // Initialize search functionality
       const initSearch = function() {
         if (typeof UniversalSearch !== 'undefined') {
-          console.log('Explicitly initializing search from index.html');
-          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
-            try {
-              // Try to reinitialize first
-              if (typeof UniversalSearch.reinitialize === 'function') {
-                UniversalSearch.reinitialize();
-              } else {
-                UniversalSearch.init();
-              }
-              console.log('Search initialized successfully');
-            } catch(e) {
-              console.error('Error initializing search:', e);
-            }
-          }
-        } else {
-          console.warn('UniversalSearch not available yet, will try again in 300ms');
-          setTimeout(initSearch, 300);
-        }
-      };
-      
-      // Start initialization when document is loaded
-      initSearch();
-      
-      // Also initialize after the header is loaded
-      setTimeout(function() {
-        if (document.getElementById('universal-search-input')) {
-          console.log('Search input found, ensuring search is initialized');
-          initSearch();
+          console.log('Initializing search from index.html');
+          UniversalSearch.init();
           
-          // Fix for search dropdown functionality
+          // Initialize search trigger and menu panel
           const searchTrigger = document.getElementById('search-trigger');
           const searchMenuPanel = document.getElementById('search-menu-panel');
           const searchInput = document.getElementById('universal-search-input');
           
           if (searchTrigger && searchMenuPanel) {
+            // Toggle dropdown when clicking search icon
             searchTrigger.addEventListener('click', function(event) {
               event.preventDefault();
               event.stopPropagation();
               searchMenuPanel.classList.toggle('active');
               
-              // Focus search when dropdown is opened
               if (searchMenuPanel.classList.contains('active') && searchInput) {
                 setTimeout(() => {
                   searchInput.focus();
-                  // Ensure search is working when clicked
-                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
-                    UniversalSearch.handleSearchInput({target: searchInput});
-                  }
                 }, 100);
               }
             });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+              if (!searchMenuPanel.contains(e.target) && !searchTrigger.contains(e.target)) {
+                searchMenuPanel.classList.remove('active');
+              }
+            });
+            
+            // Handle search input
+            if (searchInput) {
+              searchInput.addEventListener('input', function(event) {
+                if (typeof UniversalSearch !== 'undefined') {
+                  UniversalSearch.handleSearchInput(event);
+                }
+              });
+            }
           }
+        } else {
+          console.log('UniversalSearch not available yet, retrying in 300ms');
+          setTimeout(initSearch, 300);
         }
-      }, 500);
-    });
-    
-    // Also initialize search when window fully loads
-    window.addEventListener('load', function() {
-      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
-        console.log('Window loaded, initializing search');
-        UniversalSearch.init();
-      }
+      };
+      
+      // Start initialization
+      initSearch();
     });
   </script>
+  
+  <!-- Access Code Modal Styles -->
+  <style>
+    .access-code-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      z-index: 9999;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .access-code-modal.active {
+      display: flex;
+    }
+    
+    .access-code-content {
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      max-width: 400px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+    
+    .access-code-content h2 {
+      margin-bottom: 1.5rem;
+      color: #333;
+    }
+    
+    .access-code-input {
+      width: 100%;
+      padding: 0.75rem;
+      margin-bottom: 1rem;
+      border: 2px solid #ddd;
+      border-radius: 4px;
+      font-size: 1rem;
+      text-align: center;
+    }
+    
+    .access-code-input:focus {
+      outline: none;
+      border-color: #007bff;
+    }
+    
+    .access-code-submit {
+      background-color: #007bff;
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .access-code-submit:hover {
+      background-color: #0056b3;
+    }
+    
+    .access-code-error {
+      color: #dc3545;
+      margin-top: 0.5rem;
+      display: none;
+    }
+  </style>
 </head>
 <body>
-  <!-- Login Modal -->
-  <div id="login-modal" class="modal-overlay">
-    <div class="modal-content">
-      <button class="modal-close" id="login-close">&times;</button>
-      <div class="modal-header">
-        <h2>Login</h2>
-      </div>
-      <div class="modal-body">
-        <input type="email" id="login-email" placeholder="Email" class="form-control">
-        <input type="password" id="login-password" placeholder="Password" class="form-control">
-        <button id="login-button" class="btn btn-primary">Login</button>
-        <button id="google-login-button" class="btn google-btn"><i class="fab fa-google"></i> Login with Google</button>
-        <div class="error" id="login-error"></div>
-        <p class="mt-3">Don't have an account? <a href="#" id="switch-to-signup">Sign up</a></p>
-        <p><a href="#" id="forgot-password">Forgot password?</a></p>
-      </div>
+  <!-- Access Code Modal -->
+  <div class="access-code-modal" id="access-code-modal">
+    <div class="access-code-content">
+      <h2>Enter Access Code</h2>
+      <input type="text" class="access-code-input" id="access-code-input" placeholder="Enter access code" autocomplete="off">
+      <div class="access-code-error" id="access-code-error">Invalid access code. Please try again.</div>
+      <button class="access-code-submit" id="access-code-submit">Submit</button>
     </div>
   </div>
 
-  <!-- Signup Modal -->
-  <div id="signup-modal" class="modal-overlay">
-    <div class="modal-content">
-      <button class="modal-close" id="signup-close">&times;</button>
-      <div class="modal-header">
-        <h2>Sign Up</h2>
-      </div>
-      <div class="modal-body">
-        <input type="email" id="signup-email" placeholder="Email" class="form-control">
-        <input type="password" id="signup-password" placeholder="Password" class="form-control">
-        <input type="text" id="signup-name" placeholder="Full Name" class="form-control">
-        <select id="signup-training-level" class="form-control">
-          <option value="" disabled selected>Select Training Level</option>
-          <option value="Medical Student">Medical Student</option>
-          <option value="Resident">Resident</option>
-          <option value="Fellow">Fellow</option>
-          <option value="Attending">Attending</option>
-        </select>
-        <input type="text" id="signup-access-code" placeholder="Access Code" class="form-control">
-        <div class="checkbox-container">
-          <input type="checkbox" id="agree-disclaimer" required>
-          <label for="agree-disclaimer">I have read and agree to the disclaimer</label>
-        </div>
-        <button id="signup-button" class="btn btn-primary">Sign Up</button>
-        <button id="google-signup-button" class="btn google-btn"><i class="fab fa-google"></i> Sign Up with Google</button>
-        <div class="error" id="signup-error"></div>
-        <p class="mt-3">Already have an account? <a href="#" id="switch-to-login">Log in</a></p>
-      </div>
-    </div>
-  </div>
+  <!-- Include Header -->
+  <div id="header-container"></div>
 
-  <!-- Google Account Setup Modal -->
-  <div id="google-setup-modal" class="modal-overlay">
-    <div class="modal-content">
-      <button class="modal-close" id="google-setup-close">&times;</button>
-      <div class="modal-header">
-        <h2>Complete Your Profile</h2>
-      </div>
-      <div class="modal-body">
-        <p>Please provide the following additional information to complete your registration.</p>
-        <input type="text" id="google-setup-name" placeholder="Full Name" class="form-control">
-        <select id="google-setup-training-level" class="form-control">
-          <option value="" disabled selected>Select Training Level</option>
-          <option value="Medical Student">Medical Student</option>
-          <option value="Resident">Resident</option>
-          <option value="Fellow">Fellow</option>
-          <option value="Attending">Attending</option>
-        </select>
-        <input type="text" id="google-setup-access-code" placeholder="Access Code" class="form-control">
-        <div class="checkbox-container">
-          <input type="checkbox" id="google-agree-disclaimer" required>
-          <label for="google-agree-disclaimer">I have read and agree to the disclaimer</label>
-        </div>
-        <button id="google-setup-submit" class="btn btn-primary">Complete Registration</button>
-        <div class="error" id="google-setup-error"></div>
-      </div>
-    </div>
-  </div>
-
-  <div id="page-content">
-    <!-- Header -->
-    <div id="header-container"></div>
-
+  <!-- Main Content -->
+  <main>
     <!-- Homepage Cards -->
     <div id="home-content" class="cards-container">
       <h2 class="page-title">Explore the Epilepsy Navigator</h2>
@@ -236,13 +222,65 @@
         </div>
       </div>
     </div>
-    
-    <!-- Footer -->
-    <div id="footer-container"></div>
-  </div>
+  </main>
+
+  <!-- Include Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Include Disclaimer -->
+  <div id="disclaimer-container"></div>
+
+  <!-- Include Copyright -->
+  <div id="copyright-container"></div>
 
   <script>
+    // Access Code Modal Functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const modal = document.getElementById('access-code-modal');
+      const input = document.getElementById('access-code-input');
+      const submitBtn = document.getElementById('access-code-submit');
+      const errorMsg = document.getElementById('access-code-error');
       
+      // Check if access code is stored and valid
+      const storedAccessCode = localStorage.getItem('accessCode');
+      const storedTimestamp = localStorage.getItem('accessCodeTimestamp');
+      const currentTime = new Date().getTime();
+      const thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+      
+      // Show modal if no access code or if expired
+      if (!storedAccessCode || !storedTimestamp || (currentTime - parseInt(storedTimestamp)) > thirtyDaysInMs) {
+        modal.classList.add('active');
+        input.focus();
+      }
+      
+      // Handle access code submission
+      submitBtn.addEventListener('click', function() {
+        const accessCode = input.value.trim().toLowerCase();
+        
+        if (accessCode === 'mountsinai') {
+          // Store access code and timestamp
+          localStorage.setItem('accessCode', accessCode);
+          localStorage.setItem('accessCodeTimestamp', currentTime.toString());
+          
+          // Hide modal
+          modal.classList.remove('active');
+          errorMsg.style.display = 'none';
+        } else {
+          // Show error message
+          errorMsg.style.display = 'block';
+          input.value = '';
+          input.focus();
+        }
+      });
+      
+      // Handle Enter key
+      input.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') {
+          submitBtn.click();
+        }
+      });
+    });
+    
     // PWA installation
     let deferredPrompt;
     
@@ -276,4 +314,6 @@
       deferredPrompt = null;
     });
   </script>
+</body>
+</html>
 

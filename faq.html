@@ -16,156 +16,42 @@
   <link rel="stylesheet" href="assets/css/main.css" />
   
   <!-- Core Scripts -->
-  <script src="firebase-auth.js" defer></script>
   <script src="assets/js/common.js" defer></script>
   <script src="assets/js/includes-loader.js" defer></script>
   <script src="assets/js/universal-search.js" defer></script>
-  
-  <!-- Protected page script - redirect if not logged in -->
-  <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      // Hide content initially
-      document.body.style.opacity = '0';
-      document.body.style.transition = 'opacity 0.5s ease';
-      
-      // Create a loading indicator
-      const loadingIndicator = document.createElement('div');
-      loadingIndicator.style.position = 'fixed';
-      loadingIndicator.style.top = '50%';
-      loadingIndicator.style.left = '50%';
-      loadingIndicator.style.transform = 'translate(-50%, -50%)';
-      loadingIndicator.style.zIndex = '9999';
-      loadingIndicator.innerHTML = `
-        <div style="text-align: center;">
-          <div style="border: 5px solid #f3f3f3; border-top: 5px solid var(--accent-color, #007bff); 
-                      border-radius: 50%; width: 50px; height: 50px; margin: 0 auto 20px; 
-                      animation: spin 1s linear infinite;"></div>
-          <p style="font-size: 18px; color: var(--text-color, #333);">Loading...</p>
-        </div>
-      `;
-      
-      // Add animation
-      const style = document.createElement('style');
-      style.textContent = `
-        @keyframes spin {
-          0% { transform: rotate(0deg); }
-          100% { transform: rotate(360deg); }
-        }
-      `;
-      document.head.appendChild(style);
-      document.body.appendChild(loadingIndicator);
-      
-      // Use a timeout to ensure we don't wait forever
-      let authTimeout = setTimeout(function() {
-        console.log("Auth timeout reached, redirecting to index");
-        window.location.href = 'index.html';
-      }, 5000);
-      
-      // Wait for Firebase to load
-      const checkFirebase = function() {
-        if (typeof firebase !== 'undefined' && typeof firebase.auth === 'function') {
-          // Use the onAuthStateChanged listener instead of checking currentUser directly
-          const unsubscribe = firebase.auth().onAuthStateChanged(function(user) {
-            // Clear the timeout as we got a response
-            clearTimeout(authTimeout);
-            
-            if (user) {
-              console.log("User is authenticated:", user.email);
-              // User is logged in, show content
-              document.body.style.opacity = '1';
-              loadingIndicator.remove();
-              
-              // Only load Disqus comments when user is authenticated
-              loadDisqusComments();
-            } else {
-              console.log("User is not authenticated, redirecting");
-              // Not logged in, redirect to index
-              window.location.href = 'index.html';
-            }
-            
-            // Unsubscribe from the auth state listener
-            unsubscribe();
-          });
-          
-          return true;
-        }
-        return false;
-      };
-      
-      // First attempt
-      if (!checkFirebase()) {
-        // Wait for Firebase to initialize
-        const firebaseCheckInterval = setInterval(function() {
-          if (checkFirebase()) {
-            clearInterval(firebaseCheckInterval);
-          }
-        }, 100);
-      }
-      
-      // Function to load Disqus comments
-      function loadDisqusComments() {
-        var d = document, s = d.createElement('script');
-        s.src = 'https://eeg-training.disqus.com/embed.js';
-        s.setAttribute('data-timestamp', +new Date());
-        (d.head || d.body).appendChild(s);
-      }
-    });
-  </script>
-  
-  <style>
-    .disclaimer {
-      background: #ffecec; 
-      border: 1px solid #ff5c5c; 
-      color: #a94442; 
-      font-weight: bold; 
-      padding: 1rem; 
-      margin: 1rem 0; 
-      text-align: center; 
-      border-radius: 8px;
-    }
-    
-    .info-box {
-      max-width: 1000px;
-      margin: 0 auto;
-      padding: 24px;
-      background: var(--card-bg);
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
-    }
-    
-    #disqus_thread {
-      margin-top: 1.5rem;
-    }
-  </style>
 </head>
 <body>
-  <div id="page-content">
-    <!-- Header -->
-    <div id="header-container"></div>
+  <!-- Include Header -->
+  <div id="header-container"></div>
 
-    <!-- Main content -->
-    <main class="page-faq">
-      <h2 class="page-title">Discussion Forum</h2>
-      <div class="info-box">
-        <p class="description">
-          Join the conversation below and share your insights on EEG findings!
-          Please review our <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.
-        </p>
-        <!-- Disclaimer Box -->
-        <div class="disclaimer">
-          <p><strong>Disclaimer:</strong> Do not upload any Protected Health Information (PHI) or HIPAA-sensitive material. All posts are for educational purposes only.</p>
-        </div>
-        <!-- Disqus Comment Thread Container -->
-        <div id="disqus_thread"></div>
-        <noscript>
-          Please enable JavaScript to view the comments powered by Disqus.
-        </noscript>
+  <!-- Main Content -->
+  <main>
+    <h2 class="page-title">Discussion Forum</h2>
+    <div class="info-box">
+      <p class="description">
+        Join the conversation below and share your insights on EEG findings!
+        Please review our <a href="https://www.eeg-training.com/comment-policy.html" target="_blank">Comment Policy</a> before posting.
+      </p>
+      <!-- Disclaimer Box -->
+      <div class="disclaimer">
+        <p><strong>Disclaimer:</strong> Do not upload any Protected Health Information (PHI) or HIPAA-sensitive material. All posts are for educational purposes only.</p>
       </div>
-    </main>
+      <!-- Disqus Comment Thread Container -->
+      <div id="disqus_thread"></div>
+      <noscript>
+        Please enable JavaScript to view the comments powered by Disqus.
+      </noscript>
+    </div>
+  </main>
 
-    <!-- Footer -->
-    <div id="footer-container"></div>
-  </div>
+  <!-- Include Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Include Disclaimer -->
+  <div id="disclaimer-container"></div>
+
+  <!-- Include Copyright -->
+  <div id="copyright-container"></div>
 
   <script>
     // Disqus Universal Configuration
