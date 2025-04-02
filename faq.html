@@ -18,7 +18,8 @@
   <!-- Core Scripts -->
   <script src="firebase-auth.js" defer></script>
   <script src="assets/js/common.js" defer></script>
-  <script src="assets/js/search.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
   
   <!-- Protected page script - redirect if not logged in -->
   <script>
@@ -167,78 +168,7 @@
   </div>
 
   <script>
-    // Load header and footer using fetch
-    document.addEventListener('DOMContentLoaded', function() {
-      // Load header
-      fetch('includes/header.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('header-container').innerHTML = data;
-          
-          // Attach any event listeners for header elements if needed
-          const secretGameTrigger = document.getElementById('secret-game-trigger');
-          if (secretGameTrigger) {
-            secretGameTrigger.addEventListener('click', function() {
-              window.location.href = 'flappy_brain/games_menu.html';
-            });
-          }
-        });
-      
-      // Load footer
-      fetch('includes/footer.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('footer-container').innerHTML = data;
-          
-          // Initialize any footer functionality
-          const darkModeBtn = document.getElementById('dark-mode-btn');
-          const fontSizeBtn = document.getElementById('font-size-btn');
-          const copyrightTrigger = document.getElementById('copyright-trigger');
-          
-          if (darkModeBtn) {
-            darkModeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('dark');
-              localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-            });
-          }
-          
-          if (fontSizeBtn) {
-            fontSizeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('large-text');
-              localStorage.setItem('largeText', document.body.classList.contains('large-text'));
-            });
-          }
-          
-          if (copyrightTrigger) {
-            const copyrightModal = document.getElementById('copyright-modal');
-            const closeBtn = document.getElementById('copyright-close-btn');
-            
-            copyrightTrigger.addEventListener('click', function() {
-              copyrightModal.style.display = 'block';
-            });
-            
-            if (closeBtn) {
-              closeBtn.addEventListener('click', function() {
-                copyrightModal.style.display = 'none';
-              });
-            }
-            
-            window.addEventListener('click', function(event) {
-              if (event.target === copyrightModal) {
-                copyrightModal.style.display = 'none';
-              }
-            });
-          }
-        });
-    });
-  </script>
-
-  <!-- Disqus Universal Configuration -->
-  <script>
-    /**
-    * RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES
-    * FROM YOUR PLATFORM OR CMS.
-    */
+    // Disqus Universal Configuration
     var disqus_config = function () {
       this.page.url = window.location.href;  
       this.page.identifier = "discussion_forum"; 

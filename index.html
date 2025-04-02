@@ -17,7 +17,79 @@
   <script src="firebase-auth.js" defer></script>
   <script src="assets/js/common.js" defer></script>
   <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
   <!-- Universal Search replaced the old search script -->
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from index.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
 </head>
 <body>
   <!-- Login Modal -->
@@ -171,28 +243,6 @@
 
   <script>
       
-      // Load footer
-      fetch('includes/footer.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('footer-container').innerHTML = data;
-        });
-        
-      // Load disclaimer modal
-      fetch('includes/disclaimer.html')
-        .then(response => response.text())
-        .then(data => {
-          // Create a container if it doesn't exist
-          let disclaimerContainer = document.getElementById('disclaimer-container');
-          if (!disclaimerContainer) {
-            disclaimerContainer = document.createElement('div');
-            disclaimerContainer.id = 'disclaimer-container';
-            document.body.appendChild(disclaimerContainer);
-          }
-          disclaimerContainer.innerHTML = data;
-        });
-    });
-    
     // PWA installation
     let deferredPrompt;
     

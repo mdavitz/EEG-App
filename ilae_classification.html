@@ -476,25 +476,17 @@
       left: 0;
       width: 100%;
       height: 100%;
-      background: rgba(0,0,0,0.75);
+      background: rgba(0, 0, 0, 0.75);
       backdrop-filter: blur(5px);
-      display: flex;
+      display: none;
       align-items: center;
       justify-content: center;
       z-index: 9999;
-      opacity: 0;
-      visibility: hidden;
-      transition: all 0.3s ease;
-    }
-    
-    .modal.active {
-      opacity: 1;
-      visibility: visible;
     }
     
     .modal-content {
-      background: #ffffff;
-      color: #333333;
+      background: var(--card-bg, #ffffff);
+      color: var(--text-color, #333333);
       width: 90%;
       max-width: 800px;
       max-height: 90vh;
@@ -502,44 +494,38 @@
       border-radius: 12px;
       padding: 2rem;
       position: relative;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.4);
-      transform: scale(0.95);
-      transition: all 0.3s ease;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
       z-index: 10000;
-      border: 1px solid rgba(0,0,0,0.1);
+      border: 1px solid rgba(0, 0, 0, 0.1);
       margin: 0 auto;
     }
     
     /* Dark mode styles for modal */
     body.dark .modal-content {
-      background: #2a2a2a;
-      color: #f5f5f5;
-      border: 1px solid rgba(255,255,255,0.1);
+      background: var(--card-bg, #2a2a2a);
+      color: var(--text-color, #f5f5f5);
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
     
     body.dark .modal-title {
-      color: #ffffff;
+      color: var(--accent-color, #4db8ff);
     }
     
     body.dark .modal-section h3 {
-      color: #4db8ff;
+      color: var(--accent-color, #4db8ff);
     }
     
     body.dark .modal-section p {
-      color: #e6e6e6;
+      color: var(--text-color, #e6e6e6);
     }
     
-    .modal.active .modal-content {
-      transform: scale(1);
-    }
-    
-    .close-btn {
+    .modal-close {
       position: absolute;
       top: 15px;
       right: 20px;
       font-size: 2rem;
       font-weight: bold;
-      color: #666666;
+      color: var(--text-color, #666666);
       cursor: pointer;
       transition: all 0.2s ease;
       background: none;
@@ -549,17 +535,17 @@
       z-index: 10001;
     }
     
-    .close-btn:hover {
-      color: var(--accent-color);
+    .modal-close:hover {
+      color: var(--accent-color, #0077b6);
       transform: scale(1.1);
     }
     
     .modal-title {
       font-size: 1.8rem;
-      color: #0077b6;
+      color: var(--accent-color, #0077b6);
       margin-bottom: 1.5rem;
       padding-bottom: 10px;
-      border-bottom: 2px solid #0077b6;
+      border-bottom: 2px solid var(--accent-color, #0077b6);
       font-weight: bold;
     }
     
@@ -569,7 +555,7 @@
     }
     
     .modal-section h3 {
-      color: #0077b6;
+      color: var(--accent-color, #0077b6);
       font-size: 1.3rem;
       margin-bottom: 0.8rem;
       font-weight: 600;
@@ -577,7 +563,7 @@
     
     .modal-section p {
       line-height: 1.6;
-      color: #333333;
+      color: var(--text-color, #333333);
       font-size: 1rem;
       margin-bottom: 1rem;
     }
@@ -592,19 +578,19 @@
       align-items: center;
       gap: 10px;
       padding: 12px 24px;
-      background: #0077b6;
+      background: var(--accent-color, #0077b6);
       color: white;
       text-decoration: none;
       border-radius: 30px;
       font-weight: 500;
       transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0,102,204,0.25);
+      box-shadow: 0 4px 10px rgba(0, 102, 204, 0.25);
     }
     
     #pdfLink:hover {
       background: var(--accent-hover, #005fa3);
       transform: translateY(-2px);
-      box-shadow: 0 6px 15px rgba(0,102,204,0.3);
+      box-shadow: 0 6px 15px rgba(0, 102, 204, 0.3);
     }
     
     /* Additional resources section */
@@ -1249,53 +1235,28 @@
     <div id="footer-container"></div>
   </div>
 
+  <!-- ILAE Modal -->
+  <div id="ilae-modal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <button class="modal-close">&times;</button>
+      <h2 id="modal-title"></h2>
+      <div class="modal-section">
+        <h3>Overview</h3>
+        <p id="modal-overview"></p>
+      </div>
+      <div class="modal-section">
+        <h3>EEG Findings</h3>
+        <p id="modal-eeg"></p>
+      </div>
+      <div id="pdfLinkContainer">
+        <a id="pdfLink" href="#" target="_blank">
+          <i class="fas fa-file-pdf"></i> View Full Details (PDF)
+        </a>
+      </div>
+    </div>
+  </div>
+
   <script>
-          
-          // Initialize any footer functionality
-          const darkModeBtn = document.getElementById('dark-mode-btn');
-          const fontSizeBtn = document.getElementById('font-size-btn');
-          const copyrightTrigger = document.getElementById('copyright-trigger');
-          
-          if (darkModeBtn) {
-            darkModeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('dark');
-              localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-            });
-          }
-          
-          if (fontSizeBtn) {
-            fontSizeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('large-text');
-              localStorage.setItem('largeText', document.body.classList.contains('large-text'));
-            });
-          }
-          
-          if (copyrightTrigger) {
-            const copyrightModal = document.getElementById('copyright-modal');
-            const closeBtn = document.getElementById('copyright-close-btn');
-            
-            copyrightTrigger.addEventListener('click', function() {
-              copyrightModal.style.display = 'block';
-            });
-            
-            if (closeBtn) {
-              closeBtn.addEventListener('click', function() {
-                copyrightModal.style.display = 'none';
-              });
-            }
-            
-            window.addEventListener('click', function(event) {
-              if (event.target === copyrightModal) {
-                copyrightModal.style.display = 'none';
-              }
-            });
-          }
-        });
-      
-      // Initialize ILAE specific functionality
-      initializeILAEClassification();
-    });
-    
     // Initialize ILAE Classification Page
     function initializeILAEClassification() {
       // Initialize filter and search functionality
@@ -1396,86 +1357,73 @@
     // Function to initialize ILAE cards
     function initializeIlaeCards() {
       const cards = document.querySelectorAll('.ilae-card');
+      const modal = document.getElementById('ilae-modal');
+      const modalContent = modal.querySelector('.modal-content');
+      const closeBtn = modal.querySelector('.modal-close');
       
       cards.forEach(card => {
         card.addEventListener('click', function() {
-          // Get card data
+          console.log('Card clicked'); // Debug log
+          
+          // Get data from card attributes
           const title = this.getAttribute('data-title');
           const summary = this.getAttribute('data-summary');
           const eeg = this.getAttribute('data-eeg');
           const pdfLink = this.getAttribute('data-pdf');
           
-          console.log("Opening modal for:", title);
+          console.log('Card data:', { title, summary, eeg, pdfLink }); // Debug log
           
-          // Try the direct modal approach
-          createDirectModal(title, summary, eeg, pdfLink);
+          // Populate modal with card data
+          document.getElementById('modal-title').textContent = title;
+          document.getElementById('modal-overview').innerHTML = summary;
+          document.getElementById('modal-eeg').innerHTML = eeg || 'No specific EEG findings documented.';
+          
+          // Update PDF link
+          const pdfLinkElement = document.getElementById('pdfLink');
+          if (pdfLink) {
+            pdfLinkElement.href = pdfLink;
+            pdfLinkElement.style.display = 'inline-flex';
+          } else {
+            pdfLinkElement.style.display = 'none';
+          }
+          
+          // Show the modal
+          modal.style.display = 'flex';
+          modalContent.style.opacity = '1';
+          
+          // Prevent click from bubbling to modal background
+          modalContent.addEventListener('click', function(e) {
+            e.stopPropagation();
+          });
         });
+      });
+      
+      // Close modal when clicking the close button
+      closeBtn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        modal.style.display = 'none';
+      });
+      
+      // Close modal when clicking outside the content
+      modal.addEventListener('click', function(event) {
+        if (event.target === modal) {
+          modal.style.display = 'none';
+        }
+      });
+      
+      // Close modal with Escape key
+      document.addEventListener('keydown', function(event) {
+        if (event.key === 'Escape' && modal.style.display === 'flex') {
+          modal.style.display = 'none';
+        }
       });
     }
     
-    // Function to create a direct modal (simpler approach)
-    function createDirectModal(title, summary, eeg, pdfLink) {
-      // Remove any existing modals
-      const existingModals = document.querySelectorAll('.direct-modal-overlay, .modal');
-      existingModals.forEach(modal => {
-        if (modal.parentNode) {
-          modal.parentNode.removeChild(modal);
-        }
-      });
-      
-      // Create modal HTML
-      const modalHTML = `
-        <div class="direct-modal-overlay">
-          <div class="direct-modal-content">
-            <button class="direct-modal-close">&times;</button>
-            <h2 class="direct-modal-title">${title}</h2>
-            
-            <div class="direct-modal-section">
-              <h3>Overview</h3>
-              <p>${summary}</p>
-            </div>
-            
-            <div class="direct-modal-section">
-              <h3>EEG Findings</h3>
-              <p>${eeg}</p>
-            </div>
-            
-            <div style="text-align: center; margin-top: 1.5rem;">
-              <a href="${pdfLink}" target="_blank" class="direct-modal-link">
-                <i class="fas fa-file-pdf"></i> View Full Details (PDF)
-              </a>
-            </div>
-          </div>
-        </div>
-      `;
-      
-      // Add to document
-      document.body.insertAdjacentHTML('beforeend', modalHTML);
-      
-      // Add event listeners
-      const modal = document.querySelector('.direct-modal-overlay');
-      const closeBtn = modal.querySelector('.direct-modal-close');
-      
-      closeBtn.addEventListener('click', () => {
-        document.body.removeChild(modal);
-      });
-      
-      modal.addEventListener('click', (e) => {
-        if (e.target === modal) {
-          document.body.removeChild(modal);
-        }
-      });
-      
-      // Add escape key listener
-      document.addEventListener('keydown', function escapeClose(e) {
-        if (e.key === 'Escape') {
-          if (document.body.contains(modal)) {
-            document.body.removeChild(modal);
-          }
-          document.removeEventListener('keydown', escapeClose);
-        }
-      });
-    }
+    // Initialize when DOM is loaded
+    document.addEventListener('DOMContentLoaded', function() {
+      initializeILAEClassification();
+    });
   </script>
 </body>
 </html>

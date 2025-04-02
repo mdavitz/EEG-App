@@ -165,79 +165,7 @@
   </div>
 
   <script>
-          
-          // Initialize any footer functionality
-          const darkModeBtn = document.getElementById('dark-mode-btn');
-          const fontSizeBtn = document.getElementById('font-size-btn');
-          const copyrightTrigger = document.getElementById('copyright-trigger');
-          
-          if (darkModeBtn) {
-            darkModeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('dark');
-              localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-            });
-          }
-          
-          if (fontSizeBtn) {
-            fontSizeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('large-text');
-              localStorage.setItem('largeText', document.body.classList.contains('large-text'));
-            });
-          }
-          
-          if (copyrightTrigger) {
-            const copyrightModal = document.getElementById('copyright-modal');
-            const closeBtn = document.getElementById('copyright-close-btn');
-            
-            copyrightTrigger.addEventListener('click', function() {
-              copyrightModal.style.display = 'block';
-            });
-            
-            if (closeBtn) {
-              closeBtn.addEventListener('click', function() {
-                copyrightModal.style.display = 'none';
-              });
-            }
-            
-            window.addEventListener('click', function(event) {
-              if (event.target === copyrightModal) {
-                copyrightModal.style.display = 'none';
-              }
-            });
-          }
-        });
-    });
-    
-    // Tab switching functionality
-    function showInstructionTab(tab) {
-      // Get tab buttons
-      const natusBtn = document.getElementById('natus-btn');
-      const persystBtn = document.getElementById('persyst-btn');
-      
-      // Get tab containers
-      const natusTab = document.getElementById('natus-tab');
-      const persystTab = document.getElementById('persyst-tab');
-      
-      if (tab === 'natus') {
-        // Show natus tab, hide persyst tab
-        natusTab.style.display = 'block';
-        persystTab.style.display = 'none';
-        
-        // Update button classes
-        natusBtn.classList.add('active');
-        persystBtn.classList.remove('active');
-      } else {
-        // Show persyst tab, hide natus tab
-        natusTab.style.display = 'none';
-        persystTab.style.display = 'block';
-        
-        // Update button classes
-        persystBtn.classList.add('active');
-        natusBtn.classList.remove('active');
-      }
-    }
-    
-    // Search initialization script
+    // Initialize search functionality when page loads
     document.addEventListener('DOMContentLoaded', function() {
       const initSearch = function() {
         if (typeof UniversalSearch !== 'undefined') {
@@ -304,6 +232,21 @@
         UniversalSearch.init();
       }
     });
+
+    // Tab switching functionality
+    function showInstructionTab(tabName) {
+      // Hide all tabs
+      document.getElementById('natus-tab').style.display = 'none';
+      document.getElementById('persyst-tab').style.display = 'none';
+      
+      // Show selected tab
+      document.getElementById(tabName + '-tab').style.display = 'block';
+      
+      // Update button states
+      document.getElementById('natus-btn').classList.remove('active');
+      document.getElementById('persyst-btn').classList.remove('active');
+      document.getElementById(tabName + '-btn').classList.add('active');
+    }
   </script>
 </body>
 </html>
