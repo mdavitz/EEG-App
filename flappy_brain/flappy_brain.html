@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <!-- Mobile-friendly viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Flappy Brain – Pop-Up Game</title>
+  <title>Flappy Brain</title>
   <!-- Load a retro 8-bit font -->
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
@@ -16,6 +16,7 @@
       align-items: center;
       justify-content: center;
       height: 100vh;
+      overflow: hidden;
     }
     canvas {
       display: block;
@@ -49,143 +50,115 @@
   <!-- Mute Button -->
   <button id="muteButton">Mute</button>
   <script>
+    // Game constants
+    const GRAVITY = 0.3;
+    const JUMP_STRENGTH = -5;
+    const PIPE_SPEED = 2.3;
+    const PIPE_WIDTH = 50;
+    const GAP_MIN = 130;
+    const GAP_MAX = 180;
+    const COLLISION_MARGIN = 5;
+
+    // Game state
+    const gameState = {
+      frames: 0,
+      score: 0,
+      bestScore: Number(localStorage.getItem("bestScore")) || 0,
+      state: "menu", // "menu", "playing", "paused", "gameover"
+      isMuted: false
+    };
+
+    // Canvas setup
     const canvas = document.getElementById("gameCanvas");
     const ctx = canvas.getContext("2d");
 
-    // ----------------------- ASSET LOADING -----------------------
-    const bgImg = new Image();
-    bgImg.src = "background.png";
-    bgImg.onload = checkImagesLoaded;
-    bgImg.onerror = checkImagesLoaded;
+    // Asset loading
+    const assets = {
+      images: {},
+      sounds: {}
+    };
 
-    const fgImg = new Image();
-    fgImg.src = "foreground.png";
-    fgImg.onload = checkImagesLoaded;
-    fgImg.onerror = checkImagesLoaded;
+    // Load images
+    const imageFiles = {
+      background: "background.png",
+      foreground: "foreground.png",
+      bird: "bird.png",
+      pipeNorth: "pipeNorth.png",
+      pipeSouth: "pipeSouth.png",
+      neuron: "neuron.png"
+    };
 
-    const birdImg = new Image();
-    birdImg.src = "bird.png";
-    birdImg.onload = checkImagesLoaded;
-    birdImg.onerror = checkImagesLoaded;
+    // Load sounds
+    const soundFiles = {
+      flap: "flap.wav",
+      score: "score.wav",
+      hit: "hit.wav",
+      music: "music.m4a"
+    };
 
-    const pipeNorthImg = new Image();
-    pipeNorthImg.src = "pipeNorth.png";
-    pipeNorthImg.onload = checkImagesLoaded;
-    pipeNorthImg.onerror = checkImagesLoaded;
+    // Load all assets
+    let loadedAssets = 0;
+    const totalAssets = Object.keys(imageFiles).length + Object.keys(soundFiles).length;
 
-    const pipeSouthImg = new Image();
-    pipeSouthImg.src = "pipeSouth.png";
-    pipeSouthImg.onload = checkImagesLoaded;
-    pipeSouthImg.onerror = checkImagesLoaded;
+    function loadAssets() {
+      // Load images
+      Object.entries(imageFiles).forEach(([key, src]) => {
+        const img = new Image();
+        img.onload = () => {
+          assets.images[key] = img;
+          loadedAssets++;
+          if (loadedAssets === totalAssets) startGame();
+        };
+        img.onerror = () => {
+          console.error(`Failed to load image: ${src}`);
+          loadedAssets++;
+          if (loadedAssets === totalAssets) startGame();
+        };
+        img.src = src;
+      });
 
-    const neuronImg = new Image();
-    neuronImg.src = "neuron.png";
-    neuronImg.onload = checkImagesLoaded;
-    neuronImg.onerror = checkImagesLoaded;
-
-    // ----------------------- AUDIO (optional) -----------------------
-    const flapSound = new Audio("flap.wav");
-    const scoreSound = new Audio("score.wav");
-    const hitSound = new Audio("hit.wav");
-    const bgMusic = new Audio("music.m4a");
-    bgMusic.loop = true;
-    bgMusic.volume = 0.2;
-    document.addEventListener("click", () => { if (bgMusic.paused) bgMusic.play(); });
-    document.addEventListener("touchstart", () => { if (bgMusic.paused) bgMusic.play(); });
-
-    // ----------------------- VOLUME TOGGLE CODE -----------------------
-    const muteButton = document.getElementById("muteButton");
-    let isMuted = false;
-    muteButton.addEventListener("click", function(e) {
-      e.stopPropagation(); // Prevent event from reaching canvas
-      isMuted = !isMuted;
-      [flapSound, scoreSound, hitSound, bgMusic].forEach(sound => { sound.muted = isMuted; });
-      muteButton.textContent = isMuted ? "Unmute" : "Mute";
-    });
-
-    // ----------------------- GAME VARIABLES -----------------------
-    let frames = 0;
-    let score = 0;
-    let gameState = "menu"; // "menu", "playing", "paused", "gameover"
-    const gravity = 0.3;
-    const jumpStrength = -5;
-    const pipeSpeed = 2.3;
-    const pipeWidth = 50;
-    const gapMin = 130;
-    const gapMax = 180;
-    let pipes = [];
-    let nextPipeFrame = 90;
-    let bestScore = Number(localStorage.getItem("bestScore")) || 0;
-    const collisionMarginX = 5;
-    const collisionMarginY = 5;
-    let projectiles = [];
-    const projectileSpeed = 4;
-    const projectileWidth = 100;
-    const projectileHeight = 40;
-    let projectilePassCount = 0;
-
-    // ----------------------- PARALLAX LAYER OBJECTS -----------------------
-    const bgLayer = { x: 0, speed: 0.5, image: bgImg };
-    const fgLayer = { x: 0, speed: 2, image: fgImg };
-
-    // ----------------------- PARTICLE FUNCTIONS -----------------------
-    // Create a burst of particles at (x,y)
-    function createParticles(x, y, count) {
-      for (let i = 0; i < count; i++) {
-        particles.push({
-          x: x,
-          y: y,
-          velocity: {
-            x: (Math.random() - 0.5) * 2,
-            y: (Math.random() - 0.5) * 2
-          },
-          lifetime: 30,
-          size: Math.random() * 3 + 1
-        });
-      }
-    }
-    // Update particle positions and decrease lifetime
-    function updateParticles() {
-      for (let i = particles.length - 1; i >= 0; i--) {
-        particles[i].x += particles[i].velocity.x;
-        particles[i].y += particles[i].velocity.y;
-        particles[i].lifetime--;
-        if (particles[i].lifetime <= 0) {
-          particles.splice(i, 1);
+      // Load sounds
+      Object.entries(soundFiles).forEach(([key, src]) => {
+        const audio = new Audio(src);
+        if (key === 'music') {
+          audio.loop = true;
+          audio.volume = 0.2;
         }
-      }
-    }
-    // Draw particles on the canvas
-    function drawParticles() {
-      particles.forEach(p => {
-        ctx.beginPath();
-        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
-        ctx.fillStyle = "#ff0";
-        ctx.fill();
+        assets.sounds[key] = audio;
+        loadedAssets++;
+        if (loadedAssets === totalAssets) startGame();
       });
     }
 
-    // Array to hold particle objects
-    const particles = [];
-
-    // ----------------------- BIRD OBJECT -----------------------
+    // Game objects
     const bird = {
       x: 50,
       y: canvas.height / 2,
       width: 50,
       height: 40,
       velocity: 0,
-      draw: function() {
-        ctx.drawImage(birdImg, this.x - this.width / 2, this.y - this.height / 2, this.width, this.height);
+      rotation: 0,
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
+        ctx.drawImage(
+          assets.images.bird,
+          -this.width / 2,
+          -this.height / 2,
+          this.width,
+          this.height
+        );
+        ctx.restore();
       },
-      update: function() {
-        this.velocity += gravity;
+      update() {
+        this.velocity += GRAVITY;
         this.y += this.velocity;
+        this.rotation = Math.min(Math.PI / 2, Math.max(-Math.PI / 2, this.velocity * 0.1));
+
         if (this.y + this.height / 2 > canvas.height) {
           this.y = canvas.height - this.height / 2;
           this.velocity = 0;
-          // Trigger particle burst on crash
-          createParticles(this.x, this.y, 30);
           gameOver();
         }
         if (this.y - this.height / 2 < 0) {
@@ -193,20 +166,23 @@
           this.velocity = 0;
         }
       },
-      jump: function() {
-        this.velocity = jumpStrength;
+      jump() {
+        this.velocity = JUMP_STRENGTH;
         playSound('flap');
       },
-      reset: function() {
-        console.log("Bird reset called");
+      reset() {
         this.y = canvas.height / 2;
         this.velocity = 0;
+        this.rotation = 0;
       }
     };
 
-    // ----------------------- HELPER FUNCTIONS -----------------------
+    const pipes = [];
+    const particles = [];
+
+    // Game functions
     function createPipe() {
-      const gap = Math.floor(Math.random() * (gapMax - gapMin + 1)) + gapMin;
+      const gap = Math.floor(Math.random() * (GAP_MAX - GAP_MIN + 1)) + GAP_MIN;
       const maxPipeHeight = canvas.height - gap - 80;
       const topPipeHeight = Math.floor(Math.random() * maxPipeHeight) + 40;
       pipes.push({
@@ -217,116 +193,89 @@
       });
     }
 
-    // Update high scores
-    function updateHighScores() {
-      console.log("Updating high scores, current score:", score, "best score:", bestScore);
-      if (score > bestScore) {
-        bestScore = score;
-        localStorage.setItem("bestScore", bestScore);
-        console.log("New best score saved:", bestScore);
-      }
-      
-      // Don't try to show a restart button that doesn't exist
-      // restartBtn.style.display = "block";
-      
-      // Draw game over screen immediately
-      console.log("Drawing game over screen");
-    }
-
-    // ----------------------- PROJECTILE FUNCTIONS -----------------------
-    function createProjectile() {
-      const projY = Math.floor(Math.random() * (canvas.height - 60)) + 30;
-      projectiles.push({
-        x: canvas.width,
-        y: projY,
-        width: projectileWidth,
-        height: projectileHeight,
-        velocity: projectileSpeed,
-        passed: false
-      });
-    }
-
-    function updateProjectiles() {
-      projectiles.forEach(proj => {
-        proj.x -= proj.velocity;
-        if (
-          proj.x < bird.x + bird.width / 2 &&
-          proj.x + proj.width > bird.x - bird.width / 2 &&
-          proj.y < bird.y + bird.height / 2 &&
-          proj.y + proj.height > bird.y - bird.height / 2
-        ) {
-          gameOver();
-        }
-        if (!proj.passed && proj.x + proj.width < bird.x) {
-          proj.passed = true;
-          projectilePassCount++;
-        }
-      });
-      if (projectilePassCount >= 2) {
-        score += Math.floor(projectilePassCount / 2);
-        projectilePassCount %= 2;
-        playSound('score');
-      }
-      projectiles = projectiles.filter(proj => proj.x + proj.width > 0);
-    }
-
-    function drawProjectiles() {
-      projectiles.forEach(proj => {
-        ctx.drawImage(neuronImg, proj.x, proj.y, proj.width, proj.height);
-      });
-    }
-
-    // ----------------------- DRAWING FUNCTIONS -----------------------
-    function drawBackground() {
-      if (bgImg.complete && bgImg.naturalWidth !== 0) {
-        ctx.drawImage(bgImg, 0, 0, canvas.width, canvas.height);
-      } else {
-        ctx.fillStyle = "black";
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
-      }
-    }
-    function drawPipes() {
-      if (score < 50 || score >= 100) {
-        pipes.forEach(pipe => {
-          ctx.drawImage(pipeNorthImg, pipe.x, 0, pipeWidth, pipe.top);
-          ctx.drawImage(pipeSouthImg, pipe.x, canvas.height - pipe.bottom, pipeWidth, pipe.bottom);
+    function createParticles(x, y, count) {
+      for (let i = 0; i < count; i++) {
+        particles.push({
+          x,
+          y,
+          velocity: {
+            x: (Math.random() - 0.5) * 2,
+            y: (Math.random() - 0.5) * 2
+          },
+          lifetime: 30,
+          size: Math.random() * 3 + 1
         });
       }
     }
-    function drawForeground() {
-      const destHeight = 30;
-      let x = fgLayer.x;
-      while (x < canvas.width) {
-        ctx.drawImage(
-          fgLayer.image,
-          0, 0, fgLayer.image.width, fgLayer.image.height/2,
-          x, canvas.height - destHeight, fgLayer.image.width, destHeight
-        );
-        x += fgLayer.image.width;
-      }
-      if (fgLayer.x < 0) {
-        x = fgLayer.x + canvas.width;
-        while (x > 0) {
-          ctx.drawImage(
-            fgLayer.image,
-            0, 0, fgLayer.image.width, fgLayer.image.height/2,
-            x - fgLayer.image.width, canvas.height - destHeight, fgLayer.image.width, destHeight
-          );
-          x -= fgLayer.image.width;
-        }
+
+    function updateParticles() {
+      for (let i = particles.length - 1; i >= 0; i--) {
+        particles[i].x += particles[i].velocity.x;
+        particles[i].y += particles[i].velocity.y;
+        particles[i].lifetime--;
+        if (particles[i].lifetime <= 0) particles.splice(i, 1);
       }
     }
+
+    function drawParticles() {
+      particles.forEach(p => {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = "#ff0";
+        ctx.fill();
+      });
+    }
+
+    function updatePipes() {
+      pipes.forEach(pipe => {
+        pipe.x -= PIPE_SPEED;
+        if (
+          bird.x + bird.width/2 - COLLISION_MARGIN > pipe.x &&
+          bird.x - bird.width/2 + COLLISION_MARGIN < pipe.x + PIPE_WIDTH
+        ) {
+          if (
+            bird.y - bird.height/2 + COLLISION_MARGIN < pipe.top ||
+            bird.y + bird.height/2 - COLLISION_MARGIN > canvas.height - pipe.bottom
+          ) {
+            createParticles(bird.x, bird.y, 30);
+            gameOver();
+          }
+        }
+        if (!pipe.passed && pipe.x + PIPE_WIDTH < bird.x) {
+          pipe.passed = true;
+          gameState.score++;
+          playSound('score');
+        }
+      });
+      pipes.splice(0, pipes.findIndex(pipe => pipe.x + PIPE_WIDTH > 0));
+    }
+
+    function drawPipes() {
+      pipes.forEach(pipe => {
+        ctx.drawImage(assets.images.pipeNorth, pipe.x, 0, PIPE_WIDTH, pipe.top);
+        ctx.drawImage(assets.images.pipeSouth, pipe.x, canvas.height - pipe.bottom, PIPE_WIDTH, pipe.bottom);
+      });
+    }
+
+    function drawBackground() {
+      ctx.drawImage(assets.images.background, 0, 0, canvas.width, canvas.height);
+    }
+
+    function drawForeground() {
+      ctx.drawImage(assets.images.foreground, 0, canvas.height - 30, canvas.width, 30);
+    }
+
     function drawHUD() {
-      const margin = 20;
       ctx.fillStyle = "white";
       ctx.font = "20px Arial";
       ctx.textAlign = "left";
       ctx.textBaseline = "top";
-      ctx.fillText("Score: " + score, margin, margin);
+      ctx.fillText(`Score: ${gameState.score}`, 20, 20);
       ctx.font = "12px Arial";
       ctx.textBaseline = "bottom";
-      ctx.fillText("Best Score: " + bestScore, margin, canvas.height - margin);
+      ctx.fillText(`Best: ${gameState.bestScore}`, 20, canvas.height - 20);
     }
+
     function drawMenu() {
       ctx.fillStyle = "rgba(0,0,0,0.5)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -338,44 +287,36 @@
       ctx.fillText("Click or tap to start", canvas.width/2, canvas.height/2);
       ctx.fillText("Press P to Pause", canvas.width/2, canvas.height/2 + 30);
     }
+
     function drawGameOver() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       
-      // Game over text
       ctx.fillStyle = "#ff0";
       ctx.font = "28px 'Press Start 2P', monospace";
       ctx.textAlign = "center";
       ctx.fillText("GAME OVER", canvas.width/2, canvas.height/2 - 60);
       
-      // Score display
       ctx.font = "16px 'Press Start 2P', monospace";
-      ctx.fillText("Score: " + score, canvas.width/2, canvas.height/2 - 20);
-      ctx.fillText("Best: " + bestScore, canvas.width/2, canvas.height/2 + 10);
+      ctx.fillText(`Score: ${gameState.score}`, canvas.width/2, canvas.height/2 - 20);
+      ctx.fillText(`Best: ${gameState.bestScore}`, canvas.width/2, canvas.height/2 + 10);
       
-      // Draw restart button with pulsing effect
       const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
-      
-      // Define restart button area
       const buttonX = canvas.width/2 - 100;
       const buttonY = canvas.height/2 + 50;
-      const buttonWidth = 200;
-      const buttonHeight = 50;
       
-      // Button background with pulse
       ctx.fillStyle = `rgba(0, 200, 0, ${pulse * 0.7})`;
-      ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
+      ctx.fillRect(buttonX, buttonY, 200, 50);
       
-      // Button border
       ctx.strokeStyle = "#fff";
       ctx.lineWidth = 2;
-      ctx.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
+      ctx.strokeRect(buttonX, buttonY, 200, 50);
       
-      // Button text
       ctx.fillStyle = "#fff";
       ctx.font = "18px 'Press Start 2P', monospace";
       ctx.fillText("TAP TO RESTART", canvas.width/2, canvas.height/2 + 80);
     }
+
     function drawPause() {
       ctx.fillStyle = "rgba(0,0,0,0.3)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -385,122 +326,64 @@
       ctx.fillText("Paused", canvas.width/2, canvas.height/2);
     }
 
-    // ----------------------- UPDATE FUNCTIONS -----------------------
-    function updateBackground() {
-      bgLayer.x -= bgLayer.speed;
-      if (bgLayer.x <= -canvas.width) bgLayer.x = 0;
-    }
-    function updateForeground() {
-      fgLayer.x -= fgLayer.speed;
-      if (fgLayer.x <= -fgLayer.image.width) fgLayer.x += fgLayer.image.width;
-    }
-    function updatePipes() {
-      if (score < 50 || score >= 100) {
-        pipes.forEach(pipe => {
-          pipe.x -= pipeSpeed;
-          if (
-            bird.x + bird.width/2 - collisionMarginX > pipe.x &&
-            bird.x - bird.width/2 + collisionMarginX < pipe.x + pipeWidth
-          ) {
-            if (
-              bird.y - bird.height/2 + collisionMarginY < pipe.top ||
-              bird.y + bird.height/2 - collisionMarginY > canvas.height - pipe.bottom
-            ) {
-              createParticles(bird.x, bird.y, 30);
-              gameOver();
-            }
-          }
-          if (!pipe.passed && pipe.x + pipeWidth < bird.x) {
-            pipe.passed = true;
-            score++;
-            playSound('score');
-          }
-        });
-        if (pipes.length && pipes[0].x + pipeWidth < 0) {
-          pipes.shift();
-        }
-      }
-    }
-    function updateGame() {
-      if (gameState === "playing") {
-        frames++;
-        console.log("Game frame:", frames, "Score:", score);
-        
-        // Create new pipe at appropriate intervals
-        if (frames % 100 === 0) {
-          createPipe();
-          console.log("New pipe created, pipe count:", pipes.length);
-        }
-        
-        // Update bird, pipes, and background
-        bird.update();
-        updatePipes();
-        updateProjectiles();
-        updateBackground();
-        updateForeground();
-        updateParticles();
-      }
-      console.log("Game reset complete. Bird position:", bird.y);
-    }
-    function gameLoop() {
-      drawBackground();
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      drawBackground();
-      if (gameState === "menu") {
-        drawMenu();
-      } else if (gameState === "playing" || gameState === "paused") {
-        updateGame();
-        if (score < 50 || score >= 100) drawPipes();
-        drawProjectiles();
-        bird.draw();
-        drawForeground();
-        drawHUD();
-        if (gameState === "paused") drawPause();
-      } else if (gameState === "gameover") {
-        drawPipes();
-        drawProjectiles();
-        bird.draw();
-        drawForeground();
-        drawHUD();
-        drawGameOver();
-      }
-      drawParticles();
-      requestAnimationFrame(gameLoop);
-    }
-
-    // ----------------------- ASSET LOADING COUNTER -----------------------
-    let imagesLoaded = 0;
-    const totalImages = 6;
-    function checkImagesLoaded() {
-      imagesLoaded++;
-      if (imagesLoaded === totalImages) {
-        gameLoop();
+    function gameOver() {
+      gameState.state = "gameover";
+      playSound('hit');
+      if (gameState.score > gameState.bestScore) {
+        gameState.bestScore = gameState.score;
+        localStorage.setItem("bestScore", gameState.bestScore);
       }
     }
 
-    // ----------------------- INPUT HANDLING -----------------------
+    function resetGame() {
+      bird.reset();
+      pipes.length = 0;
+      particles.length = 0;
+      gameState.frames = 0;
+      gameState.score = 0;
+      gameState.state = "playing";
+      createParticles(canvas.width/2, canvas.height/2, 20);
+    }
+
+    function isInRestartButton(x, y) {
+      const buttonX = canvas.width/2 - 100;
+      const buttonY = canvas.height/2 + 50;
+      return (
+        x >= buttonX &&
+        x <= buttonX + 200 &&
+        y >= buttonY &&
+        y <= buttonY + 50
+      );
+    }
+
+    function playSound(name) {
+      if (gameState.isMuted) return;
+      const sound = assets.sounds[name];
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(err => console.log('Audio play failed:', err));
+      }
+    }
+
     function handleInteraction(e) {
-      // Always prevent default to avoid issues in iframe
       if (e) {
         e.preventDefault();
         e.stopPropagation();
       }
       
-      // Get click/touch coordinates relative to canvas
       const rect = canvas.getBoundingClientRect();
       const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
       const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
       
-      // Scale coordinates based on canvas size
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
       const canvasX = x * scaleX;
       const canvasY = y * scaleY;
       
-      switch (gameState) {
+      switch (gameState.state) {
         case "menu":
-          gameState = "playing";
-          bgMusic.play().catch(err => console.log('Background music failed to play:', err));
+          gameState.state = "playing";
+          playSound('music');
           break;
         case "playing":
           bird.jump();
@@ -513,108 +396,79 @@
       }
     }
 
-    // Add event listeners
-    canvas.addEventListener("click", handleInteraction);
-    canvas.addEventListener("touchstart", handleInteraction, { passive: false });
-
-    // Keyboard controls
-    document.addEventListener("keydown", function(e) {
-      if (e.code === "Space") {
-        switch (gameState) {
-          case "menu":
-            gameState = "playing";
-            bgMusic.play().catch(err => console.log('Background music failed to play:', err));
-            break;
-          case "playing":
-            bird.jump();
-            break;
-          case "gameover":
-            resetGame();
-            break;
+    function gameLoop() {
+      drawBackground();
+      
+      if (gameState.state === "menu") {
+        drawMenu();
+      } else if (gameState.state === "playing" || gameState.state === "paused") {
+        if (gameState.state === "playing") {
+          gameState.frames++;
+          if (gameState.frames % 100 === 0) createPipe();
+          bird.update();
+          updatePipes();
+          updateParticles();
         }
-      } else if (e.code === "KeyP") {
-        if (gameState === "playing") {
-          gameState = "paused";
-        } else if (gameState === "paused") {
-          gameState = "playing";
-        }
+        drawPipes();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        if (gameState.state === "paused") drawPause();
+      } else if (gameState.state === "gameover") {
+        drawPipes();
+        bird.draw();
+        drawForeground();
+        drawHUD();
+        drawGameOver();
       }
-    });
-
-    // Prevent scrolling on touch devices
-    canvas.addEventListener("touchmove", function(e) {
-      e.preventDefault();
-    }, { passive: false });
-
-    canvas.addEventListener("touchend", function(e) {
-      e.preventDefault();
-    }, { passive: false });
-
-    // Play sound with mute check
-    function playSound(name) {
-      if (isMuted) return;
       
-      try {
-        console.log("Playing sound:", name);
-        if (name === 'flap') {
-          flapSound.currentTime = 0;
-          flapSound.play().catch(err => console.log('Audio play failed:', err));
-        } else if (name === 'score') {
-          scoreSound.currentTime = 0;
-          scoreSound.play().catch(err => console.log('Audio play failed:', err));
-          console.log("Score sound played, current score:", score);
-        } else if (name === 'hit') {
-          hitSound.currentTime = 0;
-          hitSound.play().catch(err => console.log('Audio play failed:', err));
+      drawParticles();
+      requestAnimationFrame(gameLoop);
+    }
+
+    function startGame() {
+      // Event listeners
+      canvas.addEventListener("click", handleInteraction);
+      canvas.addEventListener("touchstart", handleInteraction, { passive: false });
+      canvas.addEventListener("touchmove", e => e.preventDefault(), { passive: false });
+      canvas.addEventListener("touchend", e => e.preventDefault(), { passive: false });
+
+      document.addEventListener("keydown", e => {
+        if (e.code === "Space") {
+          switch (gameState.state) {
+            case "menu":
+              gameState.state = "playing";
+              playSound('music');
+              break;
+            case "playing":
+              bird.jump();
+              break;
+            case "gameover":
+              resetGame();
+              break;
+          }
+        } else if (e.code === "KeyP") {
+          if (gameState.state === "playing") {
+            gameState.state = "paused";
+          } else if (gameState.state === "paused") {
+            gameState.state = "playing";
+          }
         }
-      } catch (e) {
-        console.error("Error playing sound:", e);
-      }
+      });
+
+      document.getElementById("muteButton").addEventListener("click", e => {
+        e.stopPropagation();
+        gameState.isMuted = !gameState.isMuted;
+        Object.values(assets.sounds).forEach(sound => sound.muted = gameState.isMuted);
+        e.target.textContent = gameState.isMuted ? "Unmute" : "Mute";
+      });
+
+      // Start the game loop
+      gameLoop();
     }
 
-    // Game over function
-    function gameOver() {
-      gameState = "gameover";
-      playSound('hit');
-      updateHighScores();
-    }
-    
-    // Reset all game state
-    function resetGame() {
-      // Reset bird
-      bird.y = canvas.height / 2;
-      bird.velocity = 0;
-      
-      // Clear game objects
-      pipes = [];
-      projectiles = [];
-      particles = [];
-      
-      // Reset game state
-      frames = 0;
-      score = 0;
-      nextPipeFrame = 100;
-      projectilePassCount = 0;
-      gameState = "playing";
-      
-      // Visual feedback
-      createParticles(canvas.width/2, canvas.height/2, 20);
-    }
-
-    // Check if click is within restart button area
-    function isInRestartButton(x, y) {
-      const buttonX = canvas.width/2 - 100;
-      const buttonY = canvas.height/2 + 50;
-      const buttonWidth = 200;
-      const buttonHeight = 50;
-      
-      return (
-        x >= buttonX &&
-        x <= buttonX + buttonWidth &&
-        y >= buttonY &&
-        y <= buttonY + buttonHeight
-      );
-    }
+    // Start loading assets
+    loadAssets();
   </script>
 </body>
 </html>
