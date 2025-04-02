@@ -96,7 +96,8 @@
     // ----------------------- VOLUME TOGGLE CODE -----------------------
     const muteButton = document.getElementById("muteButton");
     let isMuted = false;
-    muteButton.addEventListener("click", function() {
+    muteButton.addEventListener("click", function(e) {
+      e.stopPropagation(); // Prevent event from reaching canvas
       isMuted = !isMuted;
       [flapSound, scoreSound, hitSound, bgMusic].forEach(sound => { sound.muted = isMuted; });
       muteButton.textContent = isMuted ? "Unmute" : "Mute";
@@ -355,24 +356,25 @@
       // Draw restart button with pulsing effect
       const pulse = Math.sin(Date.now() / 300) * 0.2 + 0.8;
       
-      // Button background
+      // Define restart button area
+      const buttonX = canvas.width/2 - 100;
+      const buttonY = canvas.height/2 + 50;
+      const buttonWidth = 200;
+      const buttonHeight = 50;
+      
+      // Button background with pulse
       ctx.fillStyle = `rgba(0, 200, 0, ${pulse * 0.7})`;
-      ctx.fillRect(canvas.width/2 - 100, canvas.height/2 + 50, 200, 50);
+      ctx.fillRect(buttonX, buttonY, buttonWidth, buttonHeight);
       
       // Button border
       ctx.strokeStyle = "#fff";
       ctx.lineWidth = 2;
-      ctx.strokeRect(canvas.width/2 - 100, canvas.height/2 + 50, 200, 50);
+      ctx.strokeRect(buttonX, buttonY, buttonWidth, buttonHeight);
       
       // Button text
       ctx.fillStyle = "#fff";
       ctx.font = "18px 'Press Start 2P', monospace";
       ctx.fillText("TAP TO RESTART", canvas.width/2, canvas.height/2 + 80);
-      
-      // Add hint for where to tap
-      ctx.font = "12px 'Press Start 2P', monospace";
-      ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
-      ctx.fillText("(tap anywhere)", canvas.width/2, canvas.height/2 + 110);
     }
     function drawPause() {
       ctx.fillStyle = "rgba(0,0,0,0.3)";
@@ -477,206 +479,76 @@
     }
 
     // ----------------------- INPUT HANDLING -----------------------
-    function handleJump(e) {
+    function handleInteraction(e) {
       // Always prevent default to avoid issues in iframe
       if (e) {
         e.preventDefault();
         e.stopPropagation();
       }
       
-      // Handle based on game state
-      if (gameState === "menu") {
-        gameState = "playing";
-        console.log("Game started from menu");
-        bgMusic.play(); // Start music on game start
-      } else if (gameState === "playing") {
-        bird.jump();
-      } else if (gameState === "gameover") {
-        console.log("Jump during game over - directly resetting");
-        resetGame();
-        gameState = "playing";
-        createParticles(canvas.width/2, canvas.height/2, 20);
-        console.log("Game state after jump restart:", gameState);
-      }
-    }
-    
-    // Game over function
-    function gameOver() {
-      console.log("===== GAME OVER =====");
-      gameState = "gameover";
+      // Get click/touch coordinates relative to canvas
+      const rect = canvas.getBoundingClientRect();
+      const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+      const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
       
-      // Log state for debugging
-      console.log("Bird position at game over:", bird.x, bird.y);
-      console.log("Current score:", score);
+      // Scale coordinates based on canvas size
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const canvasX = x * scaleX;
+      const canvasY = y * scaleY;
       
-      // Play sound and update scores
-      playSound('hit');
-      updateHighScores();
-      
-      // Clear any timeouts or intervals
-      clearTimeout();
-      
-      // Log complete game over state
-      console.log("Game state set to:", gameState);
-    }
-    
-    // Handler for global click events during game over state
-    function handleGameOverClick(e) {
-      console.log("Game over click detected");
-      e.preventDefault();
-      e.stopPropagation();
-      
-      if (gameState === "gameover") {
-        console.log("Click during game over state - attempting restart");
-        resetGame();
-        gameState = "playing";
-        console.log("Game state changed to:", gameState);
-        createParticles(canvas.width/2, canvas.height/2, 20);
-        return true;
-      }
-      return false;
-    }
-    
-    // Reset all game state
-    function resetGame() {
-      console.log("Reset game called");
-      bird.reset();
-      pipes = [];
-      projectiles = [];
-      particles = [];
-      frames = 0;
-      score = 0;
-      nextPipeFrame = 100;
-      projectilePassCount = 0;
-      
-      // Force the bird to be at the center of the screen
-      bird.y = canvas.height / 2;
-      bird.velocity = 0;
-      
-      // Clear any lingering state
-      window.requestAnimationFrame(() => {
-        clearTimeout();
-        drawBackground();
-        bird.draw();
-        drawForeground();
-        drawHUD();
-      });
-      
-      console.log("Game reset complete. Bird position:", bird.y);
-    }
-    
-    // Add global click handler - captures all clicks no matter what
-    window.addEventListener("click", function(e) {
-      console.log("Global click detected, gameState:", gameState, "at coordinates", e.clientX, e.clientY);
-      
-      if (gameState === "gameover") {
-        console.log("===== GLOBAL CLICK DURING GAME OVER - RESTARTING =====");
-        console.log("Before reset - bird position:", bird.y, "velocity:", bird.velocity);
-        console.log("Before reset - game state:", gameState);
-        
-        // Directly reset all game state
-        bird.reset();
-        pipes = [];
-        projectiles = [];
-        particles = [];
-        frames = 0;
-        score = 0;
-        nextPipeFrame = 100;
-        projectilePassCount = 0;
-        
-        // Force the bird to be at the center of the screen
-        bird.y = canvas.height / 2;
-        bird.velocity = 0;
-        
-        // Change state
-        gameState = "playing";
-        
-        console.log("After reset - bird position:", bird.y, "velocity:", bird.velocity);
-        console.log("After reset - game state:", gameState);
-        
-        // Visual effect
-        createParticles(canvas.width/2, canvas.height/2, 20);
-        
-        // Make sure this click doesn't do anything else
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-      }
-      
-      handleJump(e);
-    });
-    
-    // Add direct restart button area click detection with improved reliability
-    canvas.addEventListener("click", function(e) {
-      console.log("Canvas click detected, gameState:", gameState);
-      
-      if (gameState === "gameover") {
-        console.log("===== CANVAS CLICK DURING GAME OVER - RESTARTING =====");
-        
-        // Bypass reset function and directly reset critical state
-        bird.y = canvas.height / 2;
-        bird.velocity = 0;
-        pipes = [];
-        projectiles = [];
-        particles = [];
-        frames = 0;
-        score = 0;
-        nextPipeFrame = 100;
-        projectilePassCount = 0;
-        
-        // Set to playing mode immediately
-        gameState = "playing";
-        
-        // Visual feedback
-        createParticles(canvas.width/2, canvas.height/2, 20);
-        console.log("Game state after forced restart:", gameState);
-        
-        // Make sure this click doesn't do anything else
-        e.preventDefault();
-        e.stopPropagation();
-      }
-    });
-    
-    // Keyboard controls 
-    document.addEventListener("keydown", function(e) {
-      // Space to jump/start/restart
-      if (e.code === "Space") {
-        console.log("Space pressed, game state:", gameState);
-        
-        if (gameState === "gameover") {
-          console.log("Space pressed during game over - forcing restart");
-          resetGame();
+      switch (gameState) {
+        case "menu":
           gameState = "playing";
-          createParticles(canvas.width/2, canvas.height/2, 20);
-          console.log("Game state after space restart:", gameState);
-          e.preventDefault();
-          e.stopPropagation();
-          return;
-        }
-        
-        handleJump(e);
+          bgMusic.play().catch(err => console.log('Background music failed to play:', err));
+          break;
+        case "playing":
+          bird.jump();
+          break;
+        case "gameover":
+          if (isInRestartButton(canvasX, canvasY)) {
+            resetGame();
+          }
+          break;
       }
-      
-      // P to pause/unpause
-      if (e.code === "KeyP") {
+    }
+
+    // Add event listeners
+    canvas.addEventListener("click", handleInteraction);
+    canvas.addEventListener("touchstart", handleInteraction, { passive: false });
+
+    // Keyboard controls
+    document.addEventListener("keydown", function(e) {
+      if (e.code === "Space") {
+        switch (gameState) {
+          case "menu":
+            gameState = "playing";
+            bgMusic.play().catch(err => console.log('Background music failed to play:', err));
+            break;
+          case "playing":
+            bird.jump();
+            break;
+          case "gameover":
+            resetGame();
+            break;
+        }
+      } else if (e.code === "KeyP") {
         if (gameState === "playing") {
           gameState = "paused";
-          console.log("Game paused");
         } else if (gameState === "paused") {
           gameState = "playing";
-          console.log("Game resumed");
         }
       }
-      
-      // R to restart if game over
-      if (e.code === "KeyR" && gameState === "gameover") {
-        console.log("R key pressed during game over - forcing restart");
-        resetGame();
-        gameState = "playing";
-        createParticles(canvas.width/2, canvas.height/2, 20);
-        console.log("Game state after R key restart:", gameState);
-      }
     });
+
+    // Prevent scrolling on touch devices
+    canvas.addEventListener("touchmove", function(e) {
+      e.preventDefault();
+    }, { passive: false });
+
+    canvas.addEventListener("touchend", function(e) {
+      e.preventDefault();
+    }, { passive: false });
 
     // Play sound with mute check
     function playSound(name) {
@@ -700,54 +572,49 @@
       }
     }
 
-    // Simplified restart game function
-    function restartGame() {
-      console.log("RESTART GAME called, current state:", gameState);
-      if (gameState === "gameover") {
-        console.log("RESET GAME starting...");
-        resetGame();
-        gameState = "playing";
-        console.log("Game state changed to playing");
-        createParticles(canvas.width/2, canvas.height/2, 20);
-        return true;
-      }
-      console.log("Could not restart game, current state:", gameState);
-      return false;
+    // Game over function
+    function gameOver() {
+      gameState = "gameover";
+      playSound('hit');
+      updateHighScores();
+    }
+    
+    // Reset all game state
+    function resetGame() {
+      // Reset bird
+      bird.y = canvas.height / 2;
+      bird.velocity = 0;
+      
+      // Clear game objects
+      pipes = [];
+      projectiles = [];
+      particles = [];
+      
+      // Reset game state
+      frames = 0;
+      score = 0;
+      nextPipeFrame = 100;
+      projectilePassCount = 0;
+      gameState = "playing";
+      
+      // Visual feedback
+      createParticles(canvas.width/2, canvas.height/2, 20);
     }
 
-    // Add global touch handler - captures all touches no matter what
-    window.addEventListener("touchstart", function(e) {
-      console.log("Global touch detected, gameState:", gameState);
+    // Check if click is within restart button area
+    function isInRestartButton(x, y) {
+      const buttonX = canvas.width/2 - 100;
+      const buttonY = canvas.height/2 + 50;
+      const buttonWidth = 200;
+      const buttonHeight = 50;
       
-      if (gameState === "gameover") {
-        console.log("===== GLOBAL TOUCH DURING GAME OVER - RESTARTING =====");
-        
-        // Directly reset all game state
-        bird.y = canvas.height / 2;
-        bird.velocity = 0;
-        pipes = [];
-        projectiles = [];
-        particles = [];
-        frames = 0;
-        score = 0;
-        nextPipeFrame = 100;
-        projectilePassCount = 0;
-        
-        // Change state
-        gameState = "playing";
-        
-        // Visual effect
-        createParticles(canvas.width/2, canvas.height/2, 20);
-        console.log("Game state after touch restart:", gameState);
-        
-        // Make sure this touch doesn't do anything else
-        e.preventDefault();
-        e.stopPropagation();
-        return;
-      }
-      
-      handleJump(e);
-    }, {passive: false});
+      return (
+        x >= buttonX &&
+        x <= buttonX + buttonWidth &&
+        y >= buttonY &&
+        y <= buttonY + buttonHeight
+      );
+    }
   </script>
 </body>
 </html>
