@@ -158,6 +158,124 @@
       margin-top: 0.5rem;
       display: none;
     }
+
+    /* Games Modal Styles */
+    .games-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+    }
+    
+    .games-modal.active {
+      display: flex;
+    }
+    
+    .games-modal-content {
+      width: 400px;
+      height: 700px;
+      background: rgba(28, 28, 30, 0.8);
+      border-radius: 14px;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      position: relative;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    .games-modal-close {
+      position: absolute;
+      top: 14px;
+      right: 14px;
+      z-index: 1001;
+      background: rgba(60, 60, 67, 0.6);
+      color: #fff;
+      border: none;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 14px;
+    }
+    
+    .games-modal h3 {
+      margin: 0;
+      padding: 16px 20px;
+      color: #fff;
+      font-size: 18px;
+      font-weight: 500;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .games-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
+      padding: 20px;
+      height: calc(100% - 56px);
+      overflow-y: auto;
+    }
+
+    .game-button {
+      background: rgba(60, 60, 67, 0.6);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 20px;
+      color: #fff;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .game-button:hover {
+      background: rgba(80, 80, 87, 0.8);
+      transform: translateY(-2px);
+    }
+
+    .game-button i {
+      font-size: 24px;
+      margin-bottom: 8px;
+    }
+
+    .game-button h4 {
+      margin: 8px 0;
+      font-size: 16px;
+    }
+
+    .game-button p {
+      margin: 0;
+      font-size: 12px;
+      opacity: 0.8;
+    }
+
+    /* Game iframe styles */
+    #game-iframe {
+      display: none;
+      width: 100%;
+      height: 100%;
+      border: none;
+      background: transparent;
+      position: absolute;
+      top: 0;
+      left: 0;
+      z-index: 1002;
+    }
+
+    #game-iframe.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -168,6 +286,32 @@
       <input type="text" class="access-code-input" id="access-code-input" placeholder="Enter access code" autocomplete="off">
       <div class="access-code-error" id="access-code-error">Invalid access code. Please try again.</div>
       <button class="access-code-submit" id="access-code-submit">Submit</button>
+    </div>
+  </div>
+
+  <!-- Games Modal -->
+  <div class="games-modal" id="games-modal">
+    <div class="games-modal-content">
+      <button class="games-modal-close" id="games-modal-close">✕</button>
+      <h3>EEG Brain Games</h3>
+      <div class="games-grid">
+        <div class="game-button" data-game="flappy_brain/flappy_brain.html">
+          <i class="fas fa-brain"></i>
+          <h4>Flappy Brain</h4>
+          <p>Navigate through neural pathways</p>
+        </div>
+        <div class="game-button" data-game="flappy_brain/galactibrain.html">
+          <i class="fas fa-space-shuttle"></i>
+          <h4>GalactiBrain</h4>
+          <p>Space adventure with neurons</p>
+        </div>
+        <div class="game-button" data-game="flappy_brain/astrobrain.html">
+          <i class="fas fa-meteor"></i>
+          <h4>AstroBrain</h4>
+          <p>Shoot through the neural cosmos</p>
+        </div>
+      </div>
+      <iframe id="game-iframe" src="about:blank" style="width: 100%; height: 100%; border: none; background: transparent; position: absolute; top: 0; left: 0; z-index: 1002; display: none;" allow="accelerometer; autoplay; encrypted-media; gyroscope;" allowfullscreen></iframe>
     </div>
   </div>
 
@@ -293,6 +437,91 @@
       input.addEventListener('keypress', function(e) {
         if (e.key === 'Enter') {
           submitBtn.click();
+        }
+      });
+
+      // Initialize secret game trigger with retries
+      function initializeSecretGameTrigger() {
+        const secretGameTrigger = document.getElementById('secret-game-trigger');
+        if (secretGameTrigger) {
+          // Only add event listener if not already initialized
+          if (!secretGameTrigger.getAttribute('data-initialized')) {
+            secretGameTrigger.addEventListener('click', function() {
+              const gamesModal = document.getElementById('games-modal');
+              gamesModal.classList.add('active');
+            });
+            secretGameTrigger.setAttribute('data-initialized', 'true');
+            console.log('Secret game trigger initialized');
+          }
+        } else {
+          // Retry after a short delay if the trigger is not found
+          setTimeout(initializeSecretGameTrigger, 100);
+        }
+      }
+
+      // Start initialization with a delay to ensure header is loaded
+      setTimeout(initializeSecretGameTrigger, 500);
+
+      // Initialize games modal
+      const gamesModal = document.getElementById('games-modal');
+      const gamesModalClose = document.getElementById('games-modal-close');
+      const gameButtons = document.querySelectorAll('.game-button');
+
+      // Handle game button clicks
+      gameButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          const gameUrl = this.getAttribute('data-game');
+          const gameIframe = document.getElementById('game-iframe');
+          const gamesGrid = document.querySelector('.games-grid');
+          
+          // Hide the games grid and show the iframe
+          gamesGrid.style.display = 'none';
+          gameIframe.style.display = 'block';
+          gameIframe.classList.add('active');
+          
+          // Force iframe reload
+          gameIframe.src = 'about:blank';
+          
+          setTimeout(() => {
+            gameIframe.src = gameUrl;
+            gameIframe.focus();
+          }, 100);
+        });
+      });
+
+      // Update close button functionality
+      gamesModalClose.addEventListener('click', function() {
+        const gameIframe = document.getElementById('game-iframe');
+        const gamesGrid = document.querySelector('.games-grid');
+        
+        // Show games grid and hide iframe
+        gamesGrid.style.display = 'grid';
+        gameIframe.style.display = 'none';
+        gameIframe.classList.remove('active');
+        
+        // Clear the iframe source
+        gameIframe.src = 'about:blank';
+        
+        // Close the modal
+        gamesModal.classList.remove('active');
+      });
+
+      // Update modal click handler
+      gamesModal.addEventListener('click', function(e) {
+        if (e.target === gamesModal) {
+          const gameIframe = document.getElementById('game-iframe');
+          const gamesGrid = document.querySelector('.games-grid');
+          
+          // Show games grid and hide iframe
+          gamesGrid.style.display = 'grid';
+          gameIframe.style.display = 'none';
+          gameIframe.classList.remove('active');
+          
+          // Clear the iframe source
+          gameIframe.src = 'about:blank';
+          
+          // Close the modal
+          gamesModal.classList.remove('active');
         }
       });
     });
