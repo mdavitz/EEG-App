@@ -1250,6 +1250,28 @@
   </div>
 
   <script>
+    // Load header and footer using fetch
+    document.addEventListener('DOMContentLoaded', function() {
+      // Load header
+      fetch('includes/header.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('header-container').innerHTML = data;
+          
+          // Attach any event listeners for header elements if needed
+          const secretGameTrigger = document.getElementById('secret-game-trigger');
+          if (secretGameTrigger) {
+            secretGameTrigger.addEventListener('click', function() {
+              window.location.href = 'flappy_brain/games_menu.html';
+            });
+          }
+        });
+      
+      // Load footer
+      fetch('includes/footer.html')
+        .then(response => response.text())
+        .then(data => {
+          document.getElementById('footer-container').innerHTML = data;
           
           // Initialize any footer functionality
           const darkModeBtn = document.getElementById('dark-mode-btn');

@@ -18,6 +18,7 @@
   <!-- Core Scripts -->
   <script src="firebase-auth.js" defer></script>
   <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
   <script src="assets/js/universal-search.js" defer></script>
 </head>
 <body>
@@ -50,20 +51,6 @@
   </div>
 
   <script>
-    // Load header and footer using fetch
-    document.addEventListener('DOMContentLoaded', function() {
-      // Load header
-      fetch('includes/header.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('header-container').innerHTML = data;
-          
-          // Attach any event listeners for header elements if needed
-          const secretGameTrigger = document.getElementById('secret-game-trigger');
-          if (secretGameTrigger) {
-            secretGameTrigger.addEventListener('click', function() {
-              window.location.href = 'flappy_brain/games_menu.html';
-            });
           }
         });
       
@@ -73,45 +60,86 @@
         .then(data => {
           document.getElementById('footer-container').innerHTML = data;
           
-          // Initialize any footer functionality
-          const darkModeBtn = document.getElementById('dark-mode-btn');
-          const fontSizeBtn = document.getElementById('font-size-btn');
-          const copyrightTrigger = document.getElementById('copyright-trigger');
-          
-          if (darkModeBtn) {
-            darkModeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('dark');
-              localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-            });
-          }
-          
-          if (fontSizeBtn) {
-            fontSizeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('large-text');
-              localStorage.setItem('largeText', document.body.classList.contains('large-text'));
-            });
-          }
-          
-          if (copyrightTrigger) {
-            const copyrightModal = document.getElementById('copyright-modal');
-            const closeBtn = document.getElementById('copyright-close-btn');
+          // Initialize footer functionality after a small delay to ensure DOM is updated
+          setTimeout(function() {
+            // Initialize dark mode button
+            const darkModeBtn = document.getElementById('dark-mode-btn');
+            if (darkModeBtn) {
+              console.log('Dark mode button found, attaching event listener');
+              darkModeBtn.addEventListener('click', function() {
+                document.body.classList.toggle('dark');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+                console.log('Dark mode toggled:', document.body.classList.contains('dark'));
+              });
+              
+              // Apply stored dark mode preference
+              if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark');
+              }
+            } else {
+              console.warn('Dark mode button not found');
+            }
             
-            copyrightTrigger.addEventListener('click', function() {
-              copyrightModal.style.display = 'block';
-            });
+            // Initialize font size button
+            const fontSizeBtn = document.getElementById('font-size-btn');
+            if (fontSizeBtn) {
+              fontSizeBtn.addEventListener('click', function() {
+                document.body.classList.toggle('large-text');
+                localStorage.setItem('largeText', document.body.classList.contains('large-text'));
+              });
+              
+              // Apply stored font size preference
+              if (localStorage.getItem('largeText') === 'true') {
+                document.body.classList.add('large-text');
+              }
+            }
             
-            if (closeBtn) {
-              closeBtn.addEventListener('click', function() {
-                copyrightModal.style.display = 'none';
+              
+              const disclaimerAcknowledge = document.getElementById('disclaimer-acknowledge');
+              if (disclaimerAcknowledge) {
+                disclaimerAcknowledge.addEventListener('click', function() {
+                  disclaimerModal.classList.remove('active');
+                });
+              }
+              
+              // Close modal when clicking outside
+              disclaimerModal.addEventListener('click', function(e) {
+                if (e.target === disclaimerModal) {
+                  disclaimerModal.classList.remove('active');
+                }
+              });
+            } else {
+              console.warn('Disclaimer elements not found:', {
+                trigger: disclaimerTrigger, 
+                modal: disclaimerModal
               });
             }
             
-            window.addEventListener('click', function(event) {
-              if (event.target === copyrightModal) {
-                copyrightModal.style.display = 'none';
+            // Initialize copyright trigger
+            const copyrightTrigger = document.getElementById('copyright-trigger');
+            if (copyrightTrigger) {
+              const copyrightModal = document.getElementById('copyright-modal');
+              const closeBtn = document.getElementById('copyright-close-btn');
+              
+              if (copyrightModal) {
+                copyrightTrigger.addEventListener('click', function() {
+                  copyrightModal.style.display = 'block';
+                });
+                
+                if (closeBtn) {
+                  closeBtn.addEventListener('click', function() {
+                    copyrightModal.style.display = 'none';
+                  });
+                }
+                
+                window.addEventListener('click', function(event) {
+                  if (event.target === copyrightModal) {
+                    copyrightModal.style.display = 'none';
+                  }
+                });
               }
-            });
-          }
+            }
+          }, 100); // Small delay to ensure footer DOM is fully loaded
         });
     });
   </script>

@@ -16,6 +16,7 @@
   <!-- Core Scripts -->
   <script src="firebase-auth.js" defer></script>
   <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
   <!-- <script src="assets/js/search.js" defer></script> -->
   <script src="assets/js/universal-search.js" defer></script>
   
@@ -482,9 +483,9 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Stabilization Phase</td>
-                    <td>0–5 minutes</td>
-                    <td>
+                    <td data-label="Phase">Stabilization Phase</td>
+                    <td data-label="Time Range">0–5 minutes</td>
+                    <td data-label="Intervention & Dosing">
                       <ul class="no-bullets">
                         <li>ABCs (Airway, Breathing, Circulation)</li>
                         <li>Record seizure onset and monitor vitals</li>
@@ -496,9 +497,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Initial Therapy Phase</td>
-                    <td>5–20 minutes</td>
-                    <td>
+                    <td data-label="Phase">Initial Therapy Phase</td>
+                    <td data-label="Time Range">5–20 minutes</td>
+                    <td data-label="Intervention & Dosing">
                       <ul class="no-bullets">
                         <li>IV Lorazepam: 0.1 mg/kg, max 4 mg (may repeat once)</li>
                         <li>OR IV Midazolam: 0.2 mg/kg, max 10 mg (IM if no IV access)</li>
@@ -507,9 +508,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Second-line Therapy</td>
-                    <td>20–40 minutes</td>
-                    <td>
+                    <td data-label="Phase">Second-line Therapy</td>
+                    <td data-label="Time Range">20–40 minutes</td>
+                    <td data-label="Intervention & Dosing">
                       <ul class="no-bullets">
                         <li>IV Fosphenytoin/Phenytoin: 20 mg/kg, single dose</li>
                         <li>OR IV Valproic Acid: 40 mg/kg, max 3000 mg/dose, single dose</li>
@@ -519,9 +520,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Refractory Therapy</td>
-                    <td>&ge; 40 minutes</td>
-                    <td>
+                    <td data-label="Phase">Refractory Therapy</td>
+                    <td data-label="Time Range">&ge; 40 minutes</td>
+                    <td data-label="Intervention & Dosing">
                       <ul class="no-bullets">
                         <li>Intubate the patient</li>
                         <li>
@@ -536,9 +537,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Breakthrough/Recurrence</td>
-                    <td>N/A</td>
-                    <td>
+                    <td data-label="Phase">Breakthrough/Recurrence</td>
+                    <td data-label="Time Range">N/A</td>
+                    <td data-label="Intervention & Dosing">
                       <ul class="no-bullets">
                         <li>Up-titrate available drips or initiate propofol if not already started</li>
                         <li>Address underlying cause of seizures</li>
@@ -552,9 +553,9 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Additional Therapies</td>
-                    <td>N/A</td>
-                    <td>
+                    <td data-label="Phase">Additional Therapies</td>
+                    <td data-label="Time Range">N/A</td>
+                    <td data-label="Intervention & Dosing">
                       <ul class="no-bullets">
                         <li>Ketogenic diet</li>
                         <li>Phenobarbital: 15–20 mg/kg</li>
@@ -576,183 +577,182 @@
             <summary class="section-header">Anti-Seizure Medications</summary>
             <div class="info-box" id="anti-seizure-medications">
               <p>Below is a list of anti-seizure medications (ASMs) with typical adult dosing ranges, common side effects, and their therapeutic ranges (if applicable) along with the metabolite measured:</p>
-              
-              <div class="table-responsive">
-                <table class="custom-table" id="medicationsTable">
-                  <thead>
-                    <tr>
-                      <th>Medication</th>
-                      <th>Typical Adult Dose Range</th>
-                      <th>Common Side Effects</th>
-                      <th>Therapeutic Range</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/brivaracetam-drug-information" target="_blank">Brivaracetam</a></td>
-                      <td>Oral or IV: 100–200 mg/day (in 2 divided doses)</td>
-                      <td>Drowsiness, dizziness, fatigue, irritability</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/carbamazepine-drug-information" target="_blank">Carbamazepine</a></td>
-                      <td>Oral: 800–1200 mg/day (in 2 divided doses; range ~400–1600 mg)</td>
-                      <td>Dizziness, drowsiness, diplopia, ataxia</td>
-                      <td>Carbamazepine 4–12 µg/mL; CBZ‑10,11‑epoxide 0.4-4 μg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/cannabidiol-drug-information" target="_blank">Cannabidiol</a> <em>(rare, for Dravet/LGS)</em></td>
-                      <td>Oral: 10–20 mg/kg/day (in 2 doses)</td>
-                      <td>Diarrhea, fatigue, decreased appetite, somnolence</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/cenobamate-drug-information" target="_blank">Cenobamate</a> <em>(new)</em></td>
-                      <td>Oral: 200 mg/day (after gradual titration; max 400 mg/day)</td>
-                      <td>Dizziness, somnolence, fatigue, headache, nausea</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/clobazam-drug-information" target="_blank">Clobazam</a> <em>(adjunct for LGS)</em></td>
-                      <td>Oral: 10–40 mg/day (usually divided BID)</td>
-                      <td>Sedation, drowsiness, drooling</td>
-                      <td>Clobazam 30 and 300 ng/mL; N-desmethylclobazam 300 and 3000 ng/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/clonazepam-drug-information" target="_blank">Clonazepam</a> <em>(rarely used long-term)</em></td>
-                      <td>Oral: 0.5 to 1.5 mg/day in 1 to 3 divided doses</td>
-                      <td>Sedation, drowsiness, cognitive impairment, tolerance</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/eslicarbazepine-drug-information" target="_blank">Eslicarbazepine acetate</a></td>
-                      <td> Oral: 800–1600 mg/day (usually once daily)</td>
-                      <td>Dizziness, headache, diplopia, somnolence</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/ethosuximide-drug-information" target="_blank">Ethosuximide</a></td>
-                      <td>Oral: 500–1500 mg/day (maximum ~60 mg/kg/day; for absence seizures only)</td>
-                      <td>Nausea, vomiting, lethargy, headache, weight loss</td>
-                      <td>40–100 µg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/fenfluramine-drug-information?sectionName=Adult&anchor=F54526112&source=auto_suggest&selectedTitle=1~1---2~4---fenflu&showDrugLabel=true&search=fenfluramine#F54526112" target="_blank">Felbamate</a> <em>(rarely used – toxicity)</em></td>
-                      <td>Oral: 1200–3600 mg/day (divided TID–QID)</td>
-                      <td>Sedation, nausea, vomiting, risk of aplastic anemia/liver failure</td>
-                      <td>40–100 µg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/felbamate-drug-information" target="_blank">Fenfluramine</a></td>
-                      <td>Oral: 0.2-0.35 mg/kg BID</td>
-                      <td>Hypertension, pulmonary hypertension, valvular Heart Disease, weight loss</td>
-                      <td>40–100 µg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/gabapentin-drug-information" target="_blank">Gabapentin</a> <em>(rarely effective for epilepsy)</em></td>
-                      <td>Oral: 900–3600 mg/day (divided TID)</td>
-                      <td>Dizziness, somnolence, peripheral edema, ataxia</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/lacosamide-drug-information" target="_blank">Lacosamide</a></td>
-                      <td>Oral or IV: 200–400 mg/day and maximum 600 mg/day (divided BID)</td>
-                      <td>Dizziness, headache, nausea</td>
-                      <td>10-20 mg/L</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/lamotrigine-drug-information" target="_blank">Lamotrigine</a></td>
-                      <td>Oral: 100–400 mg/day (in 2 divided doses; slow titration. Note that dosing changes for patients taking drugs that alter metabolism)</td>
-                      <td>Rash (risk of Stevens–Johnson syndrome), dizziness, headache</td>
-                      <td>3-15 µg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/levetiracetam-drug-information" target="_blank">Levetiracetam</a></td>
-                      <td>Oral or IV: 1000–4000 mg/day (divided BID)</td>
-                      <td>Drowsiness, dizziness, irritability, behavioral changes</td>
-                      <td>10-40 µg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/oxcarbazepine-drug-information" target="_blank">Oxcarbazepine</a></td>
-                      <td>Oral: 600–2400 mg/day (divided BID)</td>
-                      <td>Dizziness, sedation, hyponatremia</td>
-                      <td>3–35 µg/mL (MHD)</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/perampanel-drug-information" target="_blank">Perampanel</a></td>
-                      <td>Oral: 8–12 mg/day (once daily at bedtime)</td>
-                      <td>Dizziness, somnolence, hostility, irritability, falls</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/phenobarbital-drug-information" target="_blank">Phenobarbital</a></td>
-                      <td>Oral or IV: 60–200 mg/day (usually once at bedtime)</td>
-                      <td>Sedation, cognitive impairment, ataxia, dependence</td>
-                      <td>10–40 µg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/phenytoin-drug-information" target="_blank">Phenytoin</a></td>
-                      <td>Oral or IV: 300–400 mg/day (divided BID; ~5–7 mg/kg/day to maintain level 10–20 µg/mL)</td>
-                      <td>Nystagmus, ataxia, gingival hyperplasia, hirsutism, sedation</td>
-                      <td>10–20 µg/mL (zero-order)</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/primidone-drug-information" target="_blank">Primidone</a> <em>(rarely used)</em></td>
-                      <td>Oral: 750–1500 mg/day (divided BID–TID)</td>
-                      <td>Sedation, ataxia, nausea, dizziness</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/pregabalin-drug-information" target="_blank">Pregabalin</a> <em>(rarely used for epilepsy)</em></td>
-                      <td>Oral: 150–600 mg/day (divided BID)</td>
-                      <td>Dizziness, somnolence, weight gain, peripheral edema</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/rufinamide-drug-information" target="_blank">Rufinamide</a> <em>(rare, LGS)</em></td>
-                      <td>Oral: 1800–3200 mg/day (divided BID)</td>
-                      <td>Dizziness, fatigue, nausea, vomiting</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/stiripentol-drug-information" target="_blank">Stiripentol</a> <em>(rare, Dravet)</em></td>
-                      <td>Oral: 50 mg/kg/day (divided TID)</td>
-                      <td>Drowsiness, ataxia, loss of appetite</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/tiagabine-drug-information" target="_blank">Tiagabine</a> <em>(rarely used)</em></td>
-                      <td>Oral: 32–56 mg/day (divided BID–QID)</td>
-                      <td>Dizziness, nervousness, fatigue, tremor</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/topiramate-drug-information" target="_blank">Topiramate</a></td>
-                      <td>Oral: 100–400 mg/day (divided BID)</td>
-                      <td>Cognitive slowing, weight loss, paresthesias, kidney stones</td>
-                      <td>5-20 µg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/valproate-valproic-acid-drug-information" target="_blank">Valproate (Valproic acid)</a></td>
-                      <td>Oral or IV: 1000–3000 mg/day (divided BID–TID; ~15–60 mg/kg/day)</td>
-                      <td>GI upset, tremor, weight gain, hair loss, hepatotoxicity, thrombocytopenia</td>
-                      <td>50–100 µg/mL</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/vigabatrin-drug-information" target="_blank">Vigabatrin</a> <em>(rare – infantile spasms)</em></td>
-                      <td>Oral: 2000–3000 mg/day (divided BID)</td>
-                      <td>Visual field defects, sedation, irritability</td>
-                      <td>N/A</td>
-                    </tr>
-                    <tr>
-                      <td><a class="reference" href="https://www.uptodate.com/contents/zonisamide-drug-information" target="_blank">Zonisamide</a></td>
-                      <td>Oral: 100–400 mg/day (once daily or divided BID)</td>
-                      <td>Dizziness, somnolence, loss of appetite, weight loss</td>
-                      <td>N/A</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+              <table class="custom-table">
+                <thead>
+                  <tr>
+                    <th>Medication</th>
+                    <th>Typical Adult Dose Range</th>
+                    <th>Common Side Effects</th>
+                    <th>Therapeutic Range</th>
+                  </tr>
+                </thead>
+                <!-- Add an ID to the tbody so we can target its rows -->
+                <tbody id="medicationsTableBody">
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/brivaracetam-drug-information" target="_blank">Brivaracetam</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 100–200 mg/day (in 2 divided doses)</td>
+                    <td data-label="Common Side Effects">Drowsiness, dizziness, fatigue, irritability</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/carbamazepine-drug-information" target="_blank">Carbamazepine</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 800–1200 mg/day (in 2 divided doses; range ~400–1600 mg)</td>
+                    <td data-label="Common Side Effects">Dizziness, drowsiness, diplopia, ataxia</td>
+                    <td data-label="Therapeutic Range">Carbamazepine 4–12 µg/mL; CBZ‑10,11‑epoxide 0.4-4 μg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/cannabidiol-drug-information" target="_blank">Cannabidiol</a> <em>(rare, for Dravet/LGS)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 10–20 mg/kg/day (in 2 doses)</td>
+                    <td data-label="Common Side Effects">Diarrhea, fatigue, decreased appetite, somnolence</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/cenobamate-drug-information" target="_blank">Cenobamate</a> <em>(new)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 200 mg/day (after gradual titration; max 400 mg/day)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, fatigue, headache, nausea</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/clobazam-drug-information" target="_blank">Clobazam</a> <em>(adjunct for LGS)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 10–40 mg/day (usually divided BID)</td>
+                    <td data-label="Common Side Effects">Sedation, drowsiness, drooling</td>
+                    <td data-label="Therapeutic Range">Clobazam 30 and 300 ng/mL; N-desmethylclobazam 300 and 3000 ng/mL/td</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/clonazepam-drug-information" target="_blank">Clonazepam</a> <em>(rarely used long-term)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 0.5 to 1.5 mg/day in 1 to 3 divided doses
+                      <div></div> Adjunctive therapy: 0.5 to 1 mg/day in 1 to 3 divided doses</td>
+                    <td data-label="Common Side Effects">Sedation, drowsiness, cognitive impairment, tolerance</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/eslicarbazepine-drug-information" target="_blank">Eslicarbazepine acetate</a></td>
+                    <td data-label="Typical Adult Dose Range"> Oral: 800–1600 mg/day (usually once daily)</td>
+                    <td data-label="Common Side Effects">Dizziness, headache, diplopia, somnolence</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/ethosuximide-drug-information" target="_blank">Ethosuximide</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 500–1500 mg/day (maximum ~60 mg/kg/day; for absence seizures only)</td>
+                    <td data-label="Common Side Effects">Nausea, vomiting, lethargy, headache, weight loss</td>
+                    <td data-label="Therapeutic Range">40–100 µg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/fenfluramine-drug-information?sectionName=Adult&anchor=F54526112&source=auto_suggest&selectedTitle=1~1---2~4---fenflu&showDrugLabel=true&search=fenfluramine#F54526112" target="_blank">Felbamate</a> <em>(rarely used – toxicity)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 1200–3600 mg/day (divided TID–QID)</td>
+                    <td data-label="Common Side Effects">Sedation, nausea, vomiting, risk of aplastic anemia/liver failure</td>
+                    <td data-label="Therapeutic Range">40–100 µg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/felbamate-drug-information" target="_blank">Fenfluramine</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 0.2-0.35 mg/kg BID</td>
+                    <td data-label="Common Side Effects">Hypertension, pulmonary hypertension, valvular Heart Disease, weight loss</td>
+                    <td data-label="Therapeutic Range">40–100 µg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/gabapentin-drug-information" target="_blank">Gabapentin</a> <em>(rarely effective for epilepsy)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 900–3600 mg/day (divided TID)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, peripheral edema, ataxia</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/lacosamide-drug-information" target="_blank">Lacosamide</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 200–400 mg/day and maximum 600 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, headache, nausea</td>
+                    <td data-label="Therapeutic Range">10-20 mg/L</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/lamotrigine-drug-information" target="_blank">Lamotrigine</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 100–400 mg/day (in 2 divided doses; slow titration. Note that dosing changes for patients taking drugs that alter metabolism)</td>
+                    <td data-label="Common Side Effects">Rash (risk of Stevens–Johnson syndrome), dizziness, headache</td>
+                    <td data-label="Therapeutic Range">3-15 µg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/levetiracetam-drug-information" target="_blank">Levetiracetam</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 1000–4000 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Drowsiness, dizziness, irritability, behavioral changes</td>
+                    <td data-label="Therapeutic Range">10-40 µg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/oxcarbazepine-drug-information" target="_blank">Oxcarbazepine</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 600–2400 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, sedation, hyponatremia</td>
+                    <td data-label="Therapeutic Range">3–35 µg/mL (MHD)</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/perampanel-drug-information" target="_blank">Perampanel</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 8–12 mg/day (once daily at bedtime)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, hostility, irritability, falls</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/phenobarbital-drug-information" target="_blank">Phenobarbital</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 60–200 mg/day (usually once at bedtime)</td>
+                    <td data-label="Common Side Effects">Sedation, cognitive impairment, ataxia, dependence</td>
+                    <td data-label="Therapeutic Range">10–40 µg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/phenytoin-drug-information" target="_blank">Phenytoin</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 300–400 mg/day (divided BID; ~5–7 mg/kg/day to maintain level 10–20 µg/mL)</td>
+                    <td data-label="Common Side Effects">Nystagmus, ataxia, gingival hyperplasia, hirsutism, sedation</td>
+                    <td data-label="Therapeutic Range">10–20 µg/mL (zero-order)</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/primidone-drug-information" target="_blank">Primidone</a> <em>(rarely used)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 750–1500 mg/day (divided BID–TID)</td>
+                    <td data-label="Common Side Effects">Sedation, ataxia, nausea, dizziness</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/pregabalin-drug-information" target="_blank">Pregabalin</a> <em>(rarely used for epilepsy)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 150–600 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, weight gain, peripheral edema</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/rufinamide-drug-information" target="_blank">Rufinamide</a> <em>(rare, LGS)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 1800–3200 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, fatigue, nausea, vomiting</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/stiripentol-drug-information" target="_blank">Stiripentol</a> <em>(rare, Dravet)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 50 mg/kg/day (divided TID)</td>
+                    <td data-label="Common Side Effects">Drowsiness, ataxia, loss of appetite</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/tiagabine-drug-information" target="_blank">Tiagabine</a> <em>(rarely used)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 32–56 mg/day (divided BID–QID)</td>
+                    <td data-label="Common Side Effects">Dizziness, nervousness, fatigue, tremor</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/topiramate-drug-information" target="_blank">Topiramate</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 100–400 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Cognitive slowing, weight loss, paresthesias, kidney stones</td>
+                    <td data-label="Therapeutic Range">5-20 µg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/valproate-valproic-acid-drug-information" target="_blank">Valproate (Valproic acid)</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral or IV: 1000–3000 mg/day (divided BID–TID; ~15–60 mg/kg/day)</td>
+                    <td data-label="Common Side Effects">GI upset, tremor, weight gain, hair loss, hepatotoxicity, thrombocytopenia</td>
+                    <td data-label="Therapeutic Range">50–100 µg/mL</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/vigabatrin-drug-information" target="_blank">Vigabatrin</a> <em>(rare – infantile spasms)</em></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 2000–3000 mg/day (divided BID)</td>
+                    <td data-label="Common Side Effects">Visual field defects, sedation, irritability</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                  <tr>
+                    <td data-label="Medication"><a class="reference" href="https://www.uptodate.com/contents/zonisamide-drug-information" target="_blank">Zonisamide</a></td>
+                    <td data-label="Typical Adult Dose Range">Oral: 100–400 mg/day (once daily or divided BID)</td>
+                    <td data-label="Common Side Effects">Dizziness, somnolence, loss of appetite, weight loss</td>
+                    <td data-label="Therapeutic Range">N/A</td>
+                  </tr>
+                </tbody>
+              </table>
               <p>*Note:* The doses listed are typical adult maintenance ranges. Actual prescribing should be individualized, and many medications require slow titration or weight‐based dosing in children. Always consult detailed references for specific dosing and monitoring recommendations.</p>
               <p><em>References: Epilepsy Foundation; ILAE; UpToDate drug monographs.</em></p>
             </div>
@@ -780,16 +780,16 @@
                 </thead>
                 <tbody>
                   <tr>
-                    <td>Definition</td>
-                    <td>Drug-resistant epilepsy (DRE) is defined as failure to achieve sustained seizure freedom after trials of two appropriate ASMs. Approximately one-third of patients have DRE, which increases risks (including SUDEP). Early referral to an epilepsy center is essential.</td>
+                    <td data-label="Therapy Category">Definition</td>
+                    <td data-label="Description/Details">Drug-resistant epilepsy (DRE) is defined as failure to achieve sustained seizure freedom after trials of two appropriate ASMs. Approximately one-third of patients have DRE, which increases risks (including SUDEP). Early referral to an epilepsy center is essential.</td>
                   </tr>
                   <tr>
-                    <td>Surgical Options</td>
-                    <td>Resection, lesionectomy, lobar/multilobar resections, or hemispherectomy in catastrophic cases; corpus callosotomy may reduce drop attacks.</td>
+                    <td data-label="Therapy Category">Surgical Options</td>
+                    <td data-label="Description/Details">Resection, lesionectomy, lobar/multilobar resections, or hemispherectomy in catastrophic cases; corpus callosotomy may reduce drop attacks.</td>
                   </tr>
                   <tr>
-                    <td>Neuromodulation Techniques</td>
-                    <td>
+                    <td data-label="Therapy Category">Neuromodulation Techniques</td>
+                    <td data-label="Description/Details">
                       <strong>VNS:</strong> Vagus nerve stimulation (VNS) has demonstrated that approximately 49% of patients achieve a ≥50% reduction in seizure frequency within 1–2 years (see <a class="reference" href="https://pmc.ncbi.nlm.nih.gov/articles/PMC4884552/#:~:text=Specifically%2C%2049%25%20of%20patients%20responded,median%20seizure%20reduction%20%3D%2063%25" target="_blank">VNS outcomes</a>).
                       <br><br>
                       <strong>RNS:</strong> Responsive neurostimulation (RNS) offers a median seizure reduction of around 60% over several years (see <a class="reference" href="https://pubmed.ncbi.nlm.nih.gov/37655833/" target="_blank">RNS outcomes</a>).
@@ -798,12 +798,12 @@
                     </td>
                   </tr>
                   <tr>
-                    <td>Dietary &amp; Other Therapies</td>
-                    <td>Ketogenic diet (or variants), immunotherapies, etc.</td>
+                    <td data-label="Therapy Category">Dietary &amp; Other Therapies</td>
+                    <td data-label="Description/Details">Ketogenic diet (or variants), immunotherapies, etc.</td>
                   </tr>
                   <tr>
-                    <td>References</td>
-                    <td>ILAE/AAN recommendations; ACNS guidelines; UpToDate; Epilepsy Foundation.</td>
+                    <td data-label="Therapy Category">References</td>
+                    <td data-label="Description/Details">ILAE/AAN recommendations; ACNS guidelines; UpToDate; Epilepsy Foundation.</td>
                   </tr>
                 </tbody>
               </table>
@@ -845,22 +845,6 @@
   </div>
 
   <script>
-    // Load header and footer using fetch
-    document.addEventListener('DOMContentLoaded', function() {
-      // Load header
-      fetch('includes/header.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('header-container').innerHTML = data;
-          
-          // Attach any event listeners for header elements if needed
-          const secretGameTrigger = document.getElementById('secret-game-trigger');
-          if (secretGameTrigger) {
-            secretGameTrigger.addEventListener('click', function() {
-              window.location.href = 'flappy_brain/games_menu.html';
-            });
-          }
-        });
       
       // Load footer
       fetch('includes/footer.html')
@@ -868,87 +852,103 @@
         .then(data => {
           document.getElementById('footer-container').innerHTML = data;
           
-          // Initialize any footer functionality
-          const darkModeBtn = document.getElementById('dark-mode-btn');
-          const fontSizeBtn = document.getElementById('font-size-btn');
-          const copyrightTrigger = document.getElementById('copyright-trigger');
-          
-          if (darkModeBtn) {
-            darkModeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('dark');
-              localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-            });
-          }
-          
-          if (fontSizeBtn) {
-            fontSizeBtn.addEventListener('click', function() {
-              document.body.classList.toggle('large-text');
-              localStorage.setItem('largeText', document.body.classList.contains('large-text'));
-            });
-          }
-          
-          if (copyrightTrigger) {
-            const copyrightModal = document.getElementById('copyright-modal');
-            const closeBtn = document.getElementById('copyright-close-btn');
-            
-            copyrightTrigger.addEventListener('click', function() {
-              copyrightModal.style.display = 'block';
-            });
-            
-            if (closeBtn) {
-              closeBtn.addEventListener('click', function() {
-                copyrightModal.style.display = 'none';
+          // Initialize footer functionality after a small delay to ensure DOM is updated
+          setTimeout(function() {
+            // Initialize dark mode button
+            const darkModeBtn = document.getElementById('dark-mode-btn');
+            if (darkModeBtn) {
+              console.log('Dark mode button found, attaching event listener');
+              darkModeBtn.addEventListener('click', function() {
+                document.body.classList.toggle('dark');
+                localStorage.setItem('darkMode', document.body.classList.contains('dark'));
+                console.log('Dark mode toggled:', document.body.classList.contains('dark'));
               });
+              
+              // Apply stored dark mode preference
+              if (localStorage.getItem('darkMode') === 'true') {
+                document.body.classList.add('dark');
+              }
             }
             
-            window.addEventListener('click', function(event) {
-              if (event.target === copyrightModal) {
-                copyrightModal.style.display = 'none';
+            // Initialize font size button
+            const fontSizeBtn = document.getElementById('font-size-btn');
+            if (fontSizeBtn) {
+              fontSizeBtn.addEventListener('click', function() {
+                document.body.classList.toggle('large-text');
+                localStorage.setItem('largeText', document.body.classList.contains('large-text'));
+              });
+              
+              // Apply stored font size preference
+              if (localStorage.getItem('largeText') === 'true') {
+                document.body.classList.add('large-text');
               }
-            });
+            }
+          });
+        });
+        
+      // Load disclaimer modal
+      fetch('includes/disclaimer.html')
+        .then(response => response.text())
+        .then(data => {
+          // Create a container if it doesn't exist
+          let disclaimerContainer = document.getElementById('disclaimer-container');
+          if (!disclaimerContainer) {
+            disclaimerContainer = document.createElement('div');
+            disclaimerContainer.id = 'disclaimer-container';
+            document.body.appendChild(disclaimerContainer);
           }
+          disclaimerContainer.innerHTML = data;
         });
+    
+    // PWA installation
+    let deferredPrompt;
+    
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
       
-      // Initialize seizure management page specific functionality
-      
-      // Add event listeners for section headers to toggle content
-      document.querySelectorAll('.section-header').forEach(header => {
-        header.addEventListener('click', function() {
-          this.classList.toggle('expanded');
-        });
+      const installBtn = document.getElementById('installBtn');
+      installBtn.style.display = 'block';
+    
+      installBtn.addEventListener('click', async () => {
+        if (!deferredPrompt) return;
+        
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        
+        if (outcome === 'accepted') {
+          console.log('App installed');
+          installBtn.style.display = 'none';
+        } else {
+          console.log('App not installed');
+        }
+        
+        deferredPrompt = null;
       });
     });
     
-    // Function to filter content based on category
-    function filterCategory(category) {
-      // Remove active class from all buttons
-      document.querySelectorAll('.quick-links a').forEach(btn => {
-        btn.classList.remove('active');
-      });
-      
-      // Add active class to selected button
-      if (category === 'all') {
-        document.getElementById('all-btn').classList.add('active');
-      } else {
-        const selectedBtn = document.querySelector(`a[onclick="filterCategory('${category}'); return false;"]`);
-        if (selectedBtn) selectedBtn.classList.add('active');
+    // Hide install button if already installed
+    window.addEventListener('appinstalled', () => {
+      document.getElementById('installBtn').style.display = 'none';
+      deferredPrompt = null;
+    });
+    
+    // Initialize medication cards animation
+    document.addEventListener('DOMContentLoaded', function() {
+      // Find the medications table body
+      const medTableBody = document.getElementById('medicationsTableBody');
+      if (medTableBody) {
+        // Get all rows
+        const rows = medTableBody.querySelectorAll('tr');
+        
+        // Add animation class with a small delay between each
+        rows.forEach((row, index) => {
+          setTimeout(() => {
+            row.classList.add('card-visible');
+          }, index * 50); // 50ms delay between each row
+        });
       }
-      
-      // Show/hide sections based on category
-      const sections = document.querySelectorAll('.section-detail');
-      sections.forEach(section => {
-        if (category === 'all') {
-          section.style.display = 'block';
-        } else {
-          const sectionId = section.querySelector('.info-box')?.id || '';
-          if (sectionId.includes(category)) {
-            section.style.display = 'block';
-          } else {
-            section.style.display = 'none';
-          }
-        }
-      });
-    }
+    });
   </script>
 </body>
 </html>
