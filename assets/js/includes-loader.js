@@ -380,10 +380,16 @@ footerStyle.textContent = `
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1000;
+    z-index: 100;
     background: var(--footer-bg, #ffffff);
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
     transition: transform 0.3s ease-in-out;
+    pointer-events: none; /* Make footer transparent to clicks by default */
+  }
+  
+  /* But enable clicks on the actual footer content */
+  #footer * {
+    pointer-events: auto;
   }
   
   body.dark #footer {
