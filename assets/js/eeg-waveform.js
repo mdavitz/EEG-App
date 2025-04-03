@@ -576,35 +576,61 @@ class EEGWaveformDemo {
           
           // Maximum amplitude in temporal leads - make it very strong in all relevant leads
           if (leadName === 'F7-T3' || leadName === 'F8-T4') {
-            leadFactor = 1.0; // Maximum in anterior temporal
+            leadFactor = 0.595; // Further reduced by 15% (from 0.7 to 0.595)
           } else if (leadName === 'T3-T5' || leadName === 'T4-T6') {
-            leadFactor = 0.9; // Almost as strong in mid-temporal
+            leadFactor = 0.536; // Further reduced by 15% (from 0.63 to 0.536)
           } else {
             return centerY; // No effect in other leads
           }
           
-          // Simplify the timing logic for more reliable rendering
-          // Create chewing bursts at a rate of ~0.8 Hz
-          const cycleTime = 1.25; // seconds per chewing cycle
-          const cyclePosition = (timePosition % cycleTime) / cycleTime;
+          // Create intermittent chewing bursts with 15-30 second breaks
+          const totalCyclePeriod = 45; // Total cycle length (chewing + break)
+          const cyclePosition = (timePosition % totalCyclePeriod) / totalCyclePeriod;
           
-          // Show chewing artifact only during first 25% of cycle (active phase)
-          if (cyclePosition > 0.25) {
+          // Use a pseudo-random function for consistent break durations
+          const cycleSeed = Math.floor(timePosition / totalCyclePeriod);
+          const pseudoRandom = (Math.sin(cycleSeed * 98765.4321) * 0.5 + 0.5);
+          
+          // Break duration varies between 15-30 seconds
+          const breakDuration = 15 + (pseudoRandom * 15);
+          const chewingDuration = totalCyclePeriod - breakDuration;
+          
+          // Determine if we're in a chewing period
+          const chewingActiveTime = chewingDuration / totalCyclePeriod;
+          const isChewing = cyclePosition < chewingActiveTime;
+          
+          // If we're in a break, return baseline
+          if (!isChewing) {
+            return centerY;
+          }
+          
+          // Calculate chewing frequency that varies between 0.9-1.1 Hz (reduced variation)
+          // Use a slower sine wave to modulate the frequency for smoother transitions
+          const freqModulation = Math.sin(timePosition * 0.05) * 0.1; // ±0.1 Hz variation, slower modulation
+          const baseFreq = 1.0; // Center frequency
+          const chewFreq = baseFreq + freqModulation; // 0.9-1.1 Hz
+          
+          // Create chewing bursts at the calculated frequency
+          const cycleTime = 1 / chewFreq; // Time for one chew cycle
+          const chewPosition = (timePosition % cycleTime) / cycleTime;
+          
+          // Show chewing artifact for 40% of cycle (increased from 25%) for longer chews
+          if (chewPosition > 0.4) {
             return centerY; // No artifact during relaxation phase
           }
           
           // Create a strong burst with very high amplitude
           // Use simple math for reliable rendering
-          const burstIntensity = Math.sin(cyclePosition * Math.PI * 2);
+          const burstIntensity = Math.sin(chewPosition * Math.PI * 2);
           
           // Generate frequencies similar to a real EMG burst
           const emg1 = Math.sin(timePosition * 100) * 0.3;
           const emg2 = Math.sin(timePosition * 150) * 0.4;
           const emg3 = Math.sin(timePosition * 200) * 0.3;
           
-          // Use an extremely large amplitude (800) to ensure complete disruption
-          // This matches what's seen in the reference image
-          const amplitude = 800 * leadFactor * Math.abs(burstIntensity);
+          // Further reduce base amplitude by 15% (from 560 to 476)
+          const baseAmplitude = 476;
+          const amplitude = baseAmplitude * leadFactor * Math.abs(burstIntensity);
           
           // Combine frequencies for a realistic EMG appearance
           return centerY + (amplitude * (emg1 + emg2 + emg3));
@@ -1037,6 +1063,209 @@ class EEGWaveformDemo {
           this.ctx.lineTo(this.canvas.width, fakeEcgLeadY - 25);
           this.ctx.stroke();
         }
+      },
+      movement: {
+        custom: true,
+        color: '#000000',
+        description: 'Movement Artifact',
+        draw: (x, centerY, leadName, timePosition) => {
+          // Add initial 10-second delay before any movement occurs
+          const initialDelay = 10;
+          if (timePosition < initialDelay) {
+            return centerY; // No movement during initial delay
+          }
+          
+          // Adjust time to account for the initial delay
+          const adjustedTime = timePosition - initialDelay;
+          
+          // Generate a hash-based random number that's consistent for the same time positions
+          const getConsistentRandom = (seed) => {
+            const hashStr = (adjustedTime * 12345 + seed * 54321).toString();
+            let hash = 0;
+            for (let i = 0; i < hashStr.length; i++) {
+              hash = (hash << 5) - hash + hashStr.charCodeAt(i);
+              hash |= 0; // Convert to 32bit integer
+            }
+            // Normalize to 0-1 range
+            return Math.abs(hash % 1000) / 1000;
+          };
+          
+          // Create highly variable, intermittent movement bursts
+          // Use a variable cycle length to make pattern less predictable
+          const baseCycle = 30 + getConsistentRandom(adjustedTime * 0.1) * 90; // 30-120 second variable cycle
+          const totalCyclePeriod = baseCycle; // Variable total cycle length
+          const cyclePosition = (adjustedTime % totalCyclePeriod) / totalCyclePeriod;
+          
+          // Generate pseudo-random burst durations
+          const cycleSeed = Math.floor(adjustedTime / totalCyclePeriod);
+          const pseudoRandom = (Math.sin(cycleSeed * 45678.9876) * 0.5 + 0.5);
+          
+          // Movement duration varies considerably between 1-8 seconds
+          const movementDuration = 1 + (pseudoRandom * 7);
+          const movementActiveTime = movementDuration / totalCyclePeriod;
+          
+          // Determine if we're in a movement period - make these rare
+          const isMoving = cyclePosition < movementActiveTime && getConsistentRandom(cycleSeed + 999) < 0.7;
+          
+          // If we're not in a movement period, return baseline
+          if (!isMoving) {
+            return centerY;
+          }
+          
+          // Determine which leads are affected by this particular movement
+          const burstSeed = cycleSeed * 100;
+          const leadSeed = leadName.split('').reduce((a, b) => a + b.charCodeAt(0), 0);
+          const affectsThisLead = getConsistentRandom(leadSeed + burstSeed) < 0.5; // 50% chance per lead
+          
+          if (!affectsThisLead) {
+            return centerY; // This lead is unaffected by this movement burst
+          }
+          
+          // Movement intensity varies by lead
+          const leadFactor = 0.3 + getConsistentRandom(leadSeed + burstSeed + 1) * 0.7;
+          
+          // NEW APPROACH: Create dense burst of movement artifact using chunking
+          const chunkDuration = 2.0 + getConsistentRandom(cycleSeed + 8888) * 2.0; // 2-4 second chunks
+          const chunkPositionInCycle = (cyclePosition / movementActiveTime) * chunkDuration;
+          
+          // Calculate time inside the current movement burst
+          const timeInsideBurst = cyclePosition * totalCyclePeriod;
+          
+          // Create sharp density variation using multiples of sine waves
+          let movementSignal = 0;
+          
+          // Burst envelope - rise fast, maintain density, fall fast
+          let burstEnvelope;
+          const normalizedBurstPosition = cyclePosition / movementActiveTime; // 0-1 within burst
+          
+          if (normalizedBurstPosition < 0.1) {
+            // Fast rise (first 10%)
+            burstEnvelope = normalizedBurstPosition / 0.1;
+          } else if (normalizedBurstPosition > 0.9) {
+            // Fast fall (last 10%)
+            burstEnvelope = (1.0 - normalizedBurstPosition) / 0.1;
+          } else {
+            // Full amplitude for middle 80%
+            burstEnvelope = 1.0;
+          }
+          
+          // NEW: Use fixed-size dense "clusters" of activity with ~40% coverage 
+          // This ensures consistent density throughout the burst
+          const segmentLength = 0.15; // 150ms segments
+          const segmentIndex = Math.floor(timeInsideBurst / segmentLength);
+          const segmentRandom = getConsistentRandom(segmentIndex + leadSeed + cycleSeed * 1000);
+          
+          // Determine if this segment should be active (40% of segments have activity)
+          if (segmentRandom < 0.4) {
+            // This segment has dense movement activity
+            
+            // Sub-segment to create fine structure
+            const subSegmentLength = 0.03; // 30ms for fine structure
+            const subSegmentPosition = (timeInsideBurst % subSegmentLength) / subSegmentLength;
+            const subSegmentIndex = Math.floor((timeInsideBurst % segmentLength) / subSegmentLength);
+            
+            // Create 6-8 overlapping spikes per active segment for density
+            const numSpikes = 6 + Math.floor(getConsistentRandom(segmentIndex + 777) * 3);
+            
+            for (let i = 0; i < numSpikes; i++) {
+              // Each spike has different frequency and phase
+              const spikeFreq = 70 + getConsistentRandom(segmentIndex + i * 111) * 80; // 70-150 Hz
+              const spikePhase = getConsistentRandom(segmentIndex + i * 222) * Math.PI * 2;
+              const spikeAmp = 0.7 + getConsistentRandom(segmentIndex + i * 333) * 0.6; // 0.7-1.3
+              
+              // Add basic high frequency component
+              movementSignal += spikeAmp * Math.sin(timeInsideBurst * spikeFreq * Math.PI * 2 + spikePhase);
+              
+              // Add harmonics for sharpness
+              const harmonic2 = spikeAmp * 0.7 * Math.sin(timeInsideBurst * spikeFreq * 2 * Math.PI * 2 + spikePhase);
+              const harmonic3 = spikeAmp * 0.5 * Math.sin(timeInsideBurst * spikeFreq * 3 * Math.PI * 2 + spikePhase);
+              
+              movementSignal += harmonic2 + harmonic3;
+            }
+            
+            // Further amplify active segments for more contrast
+            movementSignal *= 1.5;
+          } else {
+            // Low amplitude noise between active segments
+            // Just enough to maintain visual connection between active segments
+            const noiseFreq = 50 + getConsistentRandom(segmentIndex) * 30; // 50-80 Hz
+            movementSignal = Math.sin(timeInsideBurst * noiseFreq * Math.PI * 2) * 0.15;
+          }
+          
+          // Apply the burst envelope
+          movementSignal *= burstEnvelope;
+          
+          // Scale by lead factor and base amplitude
+          const baseAmplitude = 550; // Increased for more prominence
+          const amplitude = baseAmplitude * leadFactor * movementSignal;
+          
+          return centerY + amplitude;
+        },
+        priority: 35 // Higher priority than chewing but lower than seizures
+      },
+      // Add pulse artifact pattern
+      pulseArtifact: {
+        custom: true,
+        color: '#000000',
+        description: 'Pulse Artifact',
+        draw: (x, centerY, leadName, timePosition) => {
+          // Calculate heart rate - use the same rate as ECG artifact for consistency
+          const heartRate = 65; // Fixed rate for better visibility
+          const secondsPerBeat = 60 / heartRate;
+          
+          // Calculate position within the cardiac cycle
+          const beatPosition = (timePosition % secondsPerBeat) / secondsPerBeat;
+          
+          // Pulse artifact appears after the QRS complex with a delay
+          // QRS is at 0.25-0.35, so pulse artifact starts around 0.4 (reflecting conduction delay)
+          if (beatPosition >= 0.4 && beatPosition < 0.98) {
+            // Duration of pulse artifact ~580ms (0.58 seconds) - extremely wide delta appearance
+            const pulsePhase = (beatPosition - 0.4) / 0.58;
+            
+            // Base amplitude for the delta wave
+            let baseAmplitude = 40;
+            
+            // Only affect specific mid-temporal leads with opposite polarities
+            let leadFactor = 0.0;
+            let polarity = 1.0; // Default polarity (upward)
+            
+            // Strictly limit to mid-temporal leads with specific polarities
+            if (leadName === 'F7-T3' || leadName === 'F8-T4') {
+              // Lead 1 - frontal-temporal - upward delta
+              leadFactor = 1.0; 
+              polarity = 1.0; // Upward
+            } else if (leadName === 'T3-T5' || leadName === 'T4-T6') {
+              // Lead 2 - mid-temporal - downward delta
+              leadFactor = 1.0;
+              polarity = -1.0; // Downward
+            } else {
+              // No effect in other leads
+              return 0;
+            }
+            
+            // Create a delta wave morphology (slow wave, 1-3 Hz appearance)
+            let pulseAmplitude = 0;
+            
+            // Delta wave has a rounded appearance with a slow rise and fall
+            if (pulsePhase < 0.5) {
+              // First half - slow rise (resembling delta wave upstroke)
+              pulseAmplitude = baseAmplitude * Math.sin(pulsePhase * Math.PI) * leadFactor * polarity;
+            } else {
+              // Second half - slow decline (resembling delta wave downstroke)
+              pulseAmplitude = baseAmplitude * Math.sin((1.0 - (pulsePhase - 0.5) * 2) * Math.PI/2) * leadFactor * polarity;
+            }
+            
+            // Add slight variation between heartbeats
+            const beatVariation = Math.sin(timePosition * 0.753) * 4 * polarity;
+            
+            // Return the pulse artifact as an additive offset
+            return pulseAmplitude + beatVariation;
+          }
+          
+          // No pulse artifact outside the specified window
+          return 0;
+        },
+        priority: 14 // Just below ECG priority
       }
     };
 
@@ -1196,6 +1425,9 @@ class EEGWaveformDemo {
     }
     if (this.activeWaveforms.has('ecgArtifact')) {
       artifacts.push('ECG Artifact');
+    }
+    if (this.activeWaveforms.has('movement')) {
+      artifacts.push('Movement Artifact');
     }
     
     if (artifacts.length > 0) {
@@ -1502,26 +1734,50 @@ class EEGWaveformDemo {
         }
       }
       
-      // Calculate ECG artifact baseline (using additive approach like LPDs)
+      // Initialize other arrays for all the leads
       let ecgArtifactBaseline = new Array(this.canvas.width).fill(centerY); // Changed to centerY for replacement approach
-      let hasECGArtifact = this.activeWaveforms.has('ecgArtifact'); 
+      let hasECGArtifact = this.activeWaveforms.has('ecgArtifact');
+      
+      // Add initialization for pulse artifact
+      let pulseArtifactBaseline = new Array(this.canvas.width).fill(centerY);
+      let hasPulseArtifact = this.activeWaveforms.has('pulseArtifact');
       
       if (hasECGArtifact) {
-        // Get transition factor for ECG artifact
+        // Calculate ECG waveform for each canvas position
         const ecgArtifactFactor = this.getPatternTransitionFactor('ecgArtifact');
         
-        // Calculate the ECG artifact baseline
         for (let x = 0; x < this.canvas.width; x++) {
+          // Calculate time position for this x coordinate
           const timePosition = Math.floor(((x + this.panOffset.x) / this.timeScale + time) * 100) / 100;
           
-          // Use the ECG artifact custom draw function to get the offset from center
+          // Get ECG offset from base ECG function
           const ecgOffset = this.waveforms.ecgArtifact.draw(x, 0, leadName, timePosition);
           
           // Apply transition factor for smooth appearance/disappearance
           const adjustedEcgOffset = ecgOffset * ecgArtifactFactor;
           
-          // Store as absolute baseline position (like eye blinks) rather than offset
+          // Save in our array of values, invert so it shows as upward deflections as expected
           ecgArtifactBaseline[x] = centerY - adjustedEcgOffset; // Inverted to show upward deflections
+        }
+      }
+
+      // Calculate pulse artifact, which depends on ECG timing
+      if (hasPulseArtifact) {
+        // Calculate pulse waveform for each canvas position
+        const pulseArtifactFactor = this.getPatternTransitionFactor('pulseArtifact');
+        
+        for (let x = 0; x < this.canvas.width; x++) {
+          // Calculate time position for this x coordinate
+          const timePosition = Math.floor(((x + this.panOffset.x) / this.timeScale + time) * 100) / 100;
+          
+          // Get pulse offset from pulse artifact function
+          const pulseOffset = this.waveforms.pulseArtifact.draw(x, 0, leadName, timePosition);
+          
+          // Apply transition factor for smooth appearance/disappearance
+          const adjustedPulseOffset = pulseOffset * pulseArtifactFactor;
+          
+          // Save in our array of values
+          pulseArtifactBaseline[x] = centerY - adjustedPulseOffset; // Inverted to show upward deflections
         }
       }
       
@@ -2093,6 +2349,34 @@ class EEGWaveformDemo {
         }
       }
 
+      // Calculate movement artifact (affects random leads)
+      let movementBaseline = new Array(this.canvas.width).fill(centerY);
+      let hasMovement = this.activeWaveforms.has('movement');
+
+      // Add a flag to track if any movement is active at this moment
+      let hasActiveMovementPoints = false;
+
+      if (hasMovement) {
+        // Calculate movement artifact pattern
+        const movementFactor = this.patternTransitions.get('movement') || 1; // Default to full intensity if no transition
+        
+        // Use the draw function from the waveform definition
+        for (let x = 0; x < this.canvas.width; x++) {
+          const timePosition = Math.floor(((x + this.panOffset.x) / this.timeScale + time) * 100) / 100;
+          try {
+            movementBaseline[x] = this.waveforms.movement.draw(x, centerY, lead.name, timePosition);
+            
+            // Check if this point has active movement (differs from baseline)
+            if (Math.abs(movementBaseline[x] - centerY) > 1) {
+              hasActiveMovementPoints = true;
+            }
+          } catch (error) {
+            console.error("Error generating movement waveform:", error);
+            movementBaseline[x] = centerY;
+          }
+        }
+      }
+
       // Calculate 3Hz spike and wave pattern (generalized)
       let spikeWaveBaseline = new Array(this.canvas.width).fill(centerY);
       let hasSpikeWave = this.activeWaveforms.has('custom3HzSpikeWave');
@@ -2567,12 +2851,28 @@ class EEGWaveformDemo {
                   }
                 }
                 
+                // Apply movement artifact
+                if (hasMovement && hasActiveMovementPoints) {
+                  const movementDelta = movementBaseline[x] - centerY;
+                  
+                  // Always disrupt the background with movement artifact when present
+                  if (Math.abs(movementDelta) > 0.01) {
+                    baseY = centerY + movementDelta;
+                  }
+                }
+                
                 // Apply ECG artifact (before spike-wave and seizures which have higher priority)
                 if (hasECGArtifact) {
                   // Don't completely override the baseline like before
                   // Instead, add the ECG artifact to the existing baseline (like eye blinks)
                   // This allows ECG to be visible while still showing eye blinks
                   baseY += (ecgArtifactBaseline[x] - centerY);
+                }
+                
+                // Apply pulse artifact after ECG
+                if (hasPulseArtifact) {
+                  // Add the pulse artifact to the baseline (appears as oscillations after ECG)
+                  baseY += (pulseArtifactBaseline[x] - centerY);
                 }
                 
                 // Apply spike-wave pattern (overrides everything as it's a seizure)
@@ -2645,7 +2945,7 @@ class EEGWaveformDemo {
         for (let x = 0; x < this.canvas.width; x++) {
           const normalizedY = combinedY[x] / activeCount;
           // If there's no baseline effect, use the normalized value; otherwise we've already included the baseline
-          const finalY = (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasGeneralizedSlowing || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact || hasSeizure) ? normalizedY : centerY + (normalizedY - centerY);
+          const finalY = (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasGeneralizedSlowing || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact || hasPulseArtifact || hasSeizure) ? normalizedY : centerY + (normalizedY - centerY);
           
           if (x === 0) {
             this.ctx.moveTo(x, finalY);
@@ -2654,7 +2954,7 @@ class EEGWaveformDemo {
           }
         }
         this.ctx.stroke();
-      } else if (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasChewing || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact || hasSeizure) {
+      } else if (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasChewing || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact || hasSeizure || hasMovement || hasPulseArtifact) {
         // If there are no other waveforms but we have a baseline effect, draw just that
         this.ctx.beginPath();
         this.ctx.strokeStyle = lead.color;
@@ -2721,6 +3021,17 @@ class EEGWaveformDemo {
             // Normal activity shows between chewing episodes
           }
           
+          if (hasMovement && hasActiveMovementPoints) {
+            // Apply movement artifact baseline when active
+            const movementDelta = movementBaseline[x] - centerY;
+            
+            // Always disrupt the background with movement artifact when present
+            if (Math.abs(movementDelta) > 0.01) {
+              baselineY = centerY + movementDelta;
+            }
+            // Normal activity shows between movement episodes
+          }
+          
           // Apply spike-wave pattern (overrides everything as it's a seizure)
           if (hasSpikeWave) {
             baselineY = spikeWaveBaseline[x];
@@ -2765,6 +3076,17 @@ class EEGWaveformDemo {
           if (hasECGArtifact) {
             // Use direct replacement like eye blinks (not offset addition)
             baselineY = ecgArtifactBaseline[x];
+          }
+          
+          // Apply pulse artifact after ECG
+          if (hasPulseArtifact) {
+            // If ECG is also active, add the pulse on top of it
+            if (hasECGArtifact) {
+              baselineY += (pulseArtifactBaseline[x] - centerY);
+            } else {
+              // Otherwise use the pulse artifact baseline directly
+              baselineY = pulseArtifactBaseline[x];
+            }
           }
           
           if (x === 0) {
@@ -4045,12 +4367,14 @@ class EEGWaveformDemo {
         this.startPatternTransition('pdr');
       }
     } else {
+      // Reset time to 0 to ensure we start at the beginning of the normal phase
+      this.currentTime = 0;
+      
       // Start transition
       this.startPatternTransition('seizure');
+      
       // Turn on seizure
       this.activeWaveforms.add('seizure');
-      // Reset time to show the seizure from the beginning
-      this.currentTime = 0;
       
       // Turn off PDR during seizure
       this.activeWaveforms.delete('alpha');
@@ -4061,6 +4385,9 @@ class EEGWaveformDemo {
       if (seizureAdjusters) {
         seizureAdjusters.style.display = 'block';
       }
+      
+      // Force update to ensure first frame shows properly
+      this.drawWaveform(this.currentTime);
     }
     
     // Update ACNS interpretation
@@ -4097,154 +4424,242 @@ class EEGWaveformDemo {
     
     // Factor in intensity setting 
     const intensityFactor = this.seizureIntensity || 2; // Default to moderate (2)
-    const baseAmplitude = 40 + (intensityFactor * 20); // Reduced base amplitude: 60-100 instead of 75-125
+    const baseAmplitude = 40 + (intensityFactor * 20); // Base amplitude range: 60-100
     
-    // Intermittent seizure pattern - random duration between 5-15 seconds
-    // Use a consistent seed based on timePosition to get the same seizure pattern
-    // Create a seed that changes every ~25-30 seconds
-    const cyclePeriod = 30; // Overall cycle period (including seizure and break)
-    const cyclePosition = (adjustedTime % cyclePeriod) / cyclePeriod;
+    // Define the seizure evolution timeline (in seconds)
+    const normalPhase = 10;    // First 10 seconds: normal background
+    const thetaPhase = 5;      // Next 5 seconds: rhythmic theta activity
+    const mixedPhase = 5;      // Next 5 seconds: mixture of theta and sharps
+    const sharpPhase = 8;      // Next 8 seconds: sharp waves fully developed
+    const spreadPhase = 5;     // Next 5 seconds: activity spreads
     
-    // Use a pseudo-random function for consistent values
-    const cycleSeed = Math.floor(adjustedTime / cyclePeriod);
-    const pseudoRandom = (Math.sin(cycleSeed * 12345.6789) * 0.5 + 0.5);
+    // Calculate the seizure phase
+    const seizureTotalDuration = normalPhase + thetaPhase + mixedPhase + sharpPhase + spreadPhase;
+    const cyclePosition = adjustedTime % seizureTotalDuration;
     
-    // Determine seizure duration for this cycle (5-15 seconds)
-    const seizureDuration = 5 + (pseudoRandom * 10);
+    // Determine which phase we're in
+    const inNormalPhase = cyclePosition < normalPhase;
+    const inThetaPhase = cyclePosition >= normalPhase && cyclePosition < (normalPhase + thetaPhase);
+    const inMixedPhase = cyclePosition >= (normalPhase + thetaPhase) && 
+                         cyclePosition < (normalPhase + thetaPhase + mixedPhase);
+    const inSharpPhase = cyclePosition >= (normalPhase + thetaPhase + mixedPhase) && 
+                         cyclePosition < (normalPhase + thetaPhase + mixedPhase + sharpPhase);
+    const inSpreadPhase = cyclePosition >= (normalPhase + thetaPhase + mixedPhase + sharpPhase);
     
-    // Determine if we're in a seizure period (seizures last 5-15s within each 30s cycle)
-    const seizureActiveTime = seizureDuration / cyclePeriod; // Proportion of cycle that is active seizure
-    const isInSeizure = cyclePosition < seizureActiveTime;
+    // Progress within each phase (0-1)
+    let thetaProgress = 0;
+    let mixedProgress = 0;
+    let sharpProgress = 0;
+    let spreadProgress = 0;
     
-    // If we're in a break between seizures, just return the baseline
-    if (!isInSeizure) {
-      // During the break, show post-ictal suppression that gradually recovers
-      const breakPosition = (cyclePosition - seizureActiveTime) / (1 - seizureActiveTime);
-      
-      // More suppression immediately after seizure, gradually recovering
-      if (breakPosition < 0.3) {
-        // First 30% of break - strong post-ictal suppression
-        // Determine suppression factor for each lead (more in areas most involved in seizure)
-        let suppressionFactor = 0.05; // Default minimal activity (95% suppressed)
-        
-        // More suppression in areas that were most involved in seizure
-        if (leadName.includes('T6') || leadName.includes('T4')) {
-          suppressionFactor = 0.02; // 98% suppressed in right temporal
-        } else if (leadName.includes('O2') || leadName.includes('F8')) {
-          suppressionFactor = 0.03; // 97% suppressed in right occipital/frontal
-        }
-        
-        // Very subtle, slow activity during suppression
-        const slowFreq = 1 + (breakPosition * 2); // 1-2 Hz
-        return centerY + (Math.sin(adjustedTime * slowFreq) * 5 * suppressionFactor);
-      } else if (breakPosition < 0.7) {
-        // Middle of break - gradual recovery
-        const recoveryPhase = (breakPosition - 0.3) / 0.4;
-        
-        // Gradually increasing activity
-        const recoveryFactor = 0.05 + (recoveryPhase * 0.2); // 5-25% of normal
-        const recoveryFreq = 3 + (recoveryPhase * 5); // 3-8 Hz
-        return centerY + (Math.sin(adjustedTime * recoveryFreq) * 15 * recoveryFactor);
+    if (inThetaPhase) {
+      thetaProgress = (cyclePosition - normalPhase) / thetaPhase;
+    } else if (inMixedPhase) {
+      thetaProgress = 1;
+      mixedProgress = (cyclePosition - (normalPhase + thetaPhase)) / mixedPhase;
+    } else if (inSharpPhase) {
+      thetaProgress = 1;
+      mixedProgress = 1;
+      sharpProgress = (cyclePosition - (normalPhase + thetaPhase + mixedPhase)) / sharpPhase;
+    } else if (inSpreadPhase) {
+      thetaProgress = 1;
+      mixedProgress = 1;
+      sharpProgress = 1;
+      spreadProgress = (cyclePosition - (normalPhase + thetaPhase + mixedPhase + sharpPhase)) / spreadPhase;
+    }
+    
+    // Generate normal background activity (used in multiple phases)
+    const generateNormalBackground = () => {
+      if (leadName.includes('O1') || leadName.includes('O2') || 
+          leadName.includes('P3') || leadName.includes('P4') ||
+          leadName.includes('T5') || leadName.includes('T6')) {
+        // Posterior alpha (8-12 Hz)
+        const alphaFreq = 9 + (Math.sin(adjustedTime * 0.5) * 1.5);
+        const alphaAmp = 15 + (Math.sin(adjustedTime * 0.3) * 5);
+        return Math.sin(adjustedTime * alphaFreq) * alphaAmp;
       } else {
-        // End of break - nearly normal activity
-        return centerY + (Math.sin(adjustedTime * 9) * 7); // Subtle background
+        // Anterior beta (14-30 Hz)
+        const betaFreq = 18 + (Math.sin(adjustedTime * 0.4) * 4);
+        const betaAmp = 8 + (Math.sin(adjustedTime * 0.25) * 3);
+        return Math.sin(adjustedTime * betaFreq) * betaAmp;
+      }
+    };
+    
+    // Generate theta rhythm (used in multiple phases)
+    const generateTheta = (amplitudeFactor = 1.0) => {
+      // Theta frequency (4-8 Hz) with slight variability
+      const thetaFreq = 6 - thetaProgress * 1; // Slowing from 6Hz to 5Hz
+      const thetaAmp = baseAmplitude * 0.4 * amplitudeFactor;
+      return Math.sin(adjustedTime * thetaFreq) * thetaAmp;
+    };
+    
+    // Generate sharp waves (used in multiple phases)
+    const generateSharpWaves = (frequency, sharpnessFactor, amplitudeFactor = 1.0) => {
+      // Create sharp wave pattern
+      const cycle = (adjustedTime * frequency) % 1; // 0-1 for each cycle
+      
+      // Generate asymmetric waveform
+      let waveform;
+      if (cycle < 0.2) { // Rising phase (fast)
+        waveform = cycle / 0.2; // 0-1 linear rise
+      } else { // Falling phase (slower)
+        waveform = Math.pow(1 - ((cycle - 0.2) / 0.8), sharpnessFactor);
+      }
+      
+      const amplitude = baseAmplitude * amplitudeFactor;
+      return waveform * amplitude;
+    };
+    
+    // Phase 1: Normal background - completely normal, no seizure activity
+    if (inNormalPhase) {
+      // Generate pure normal background
+      if (leadName.includes('O1') || leadName.includes('O2') || 
+          leadName.includes('P3') || leadName.includes('P4') ||
+          leadName.includes('T5') || leadName.includes('T6')) {
+        // Posterior alpha (8-12 Hz)
+        const alphaFreq = 9 + (Math.sin(adjustedTime * 0.5) * 1.5);
+        const alphaAmp = 15 + (Math.sin(adjustedTime * 0.3) * 5);
+        return centerY + Math.sin(adjustedTime * alphaFreq) * alphaAmp;
+      } else {
+        // Anterior beta (14-30 Hz)
+        const betaFreq = 18 + (Math.sin(adjustedTime * 0.4) * 4);
+        const betaAmp = 8 + (Math.sin(adjustedTime * 0.25) * 3);
+        return centerY + Math.sin(adjustedTime * betaFreq) * betaAmp;
       }
     }
     
-    // If we are in a seizure, calculate seizure parameters
-    // Normalize seizure progress from 0-1 for this seizure period
-    const seizureProgress = cyclePosition / seizureActiveTime;
-    
-    // Start from right posterior temporal (T6) and spread more gradually
-    let regionalFactor = 0;
-    
-    // Initial seizure in T6 (right posterior temporal)
-    if (leadName.includes('T6')) {
-      regionalFactor = 1.0; // Full amplitude from the start
-    } 
-    // Secondary spread to adjacent regions - with slower spread
-    else if (leadName.includes('T4') && seizureProgress > 0.25) {
-      // Right mid-temporal spread after 25% into seizure
-      regionalFactor = Math.min(0.9, (seizureProgress - 0.25) * 2.5);
-    }
-    else if (leadName.includes('O2') && seizureProgress > 0.35) {
-      // Right occipital spread after 35% into seizure
-      regionalFactor = Math.min(0.8, (seizureProgress - 0.35) * 2);
-    }
-    else if (leadName.includes('F8') && seizureProgress > 0.45) {
-      // Right frontal spread after 45% into seizure
-      regionalFactor = Math.min(0.7, (seizureProgress - 0.45) * 1.8);
-    }
-    // Tertiary spread to contralateral side - much more delayed spread
-    else if (leadName.includes('T5') && seizureProgress > 0.6) {
-      // Left posterior temporal spread after 60% into seizure
-      regionalFactor = Math.min(0.6, (seizureProgress - 0.6) * 1.5);
-    }
-    else if (leadName.includes('T3') && seizureProgress > 0.7) {
-      // Left mid-temporal spread after 70% into seizure
-      regionalFactor = Math.min(0.5, (seizureProgress - 0.7) * 1.5);
-    }
-    else if ((leadName.includes('F7') || leadName.includes('O1')) && seizureProgress > 0.8) {
-      // Left frontal and occipital spread after 80% into seizure
-      regionalFactor = Math.min(0.4, (seizureProgress - 0.8) * 1.2);
-    }
-    // Minimal spread to other regions
-    else if (seizureProgress > 0.9) {
-      // All other leads affected minimally after 90% into seizure
-      regionalFactor = Math.min(0.2, (seizureProgress - 0.9) * 1);
-    }
-    
-    // Active seizure phase - first half is fast, second half builds to 3Hz sharp waves
-    if (regionalFactor > 0) {
-      // First half of seizure: Higher frequencies (beta/gamma range)
-      if (seizureProgress < 0.5) {
-        // Start with much faster frequencies (faster gamma)
-        const freq = 18 + seizureProgress * 10; // 18-23Hz range (much faster)
-        
-        // More modest amplitude build-up with no large slow waves
-        const amp = baseAmplitude * regionalFactor * (0.2 + seizureProgress * 0.7);
-        
-        // Add complexity to make it look more realistic with multiple frequency components
-        const complexityFactor1 = 0.3 * Math.sin(adjustedTime * freq * 1.2);
-        const complexityFactor2 = 0.2 * Math.sin(adjustedTime * freq * 1.5);
-        
-        return centerY + (Math.sin(adjustedTime * freq) + complexityFactor1 + complexityFactor2) * amp;
+    // Phase 2: Theta rhythm development
+    // Starts in right temporal region (T6)
+    if (inThetaPhase) {
+      // Calculate spatial factor (where the rhythm starts)
+      let spatialFactor = 0;
+      
+      // Start in T6 initially
+      if (leadName.includes('T6')) {
+        spatialFactor = 0.2 + thetaProgress * 0.8; // Gradual build-up
       } 
-      // Second half: Evolving to 3Hz sharp waves
-      else {
-        // Calculate how far we are in the second half (0-1)
-        const latePhaseProgress = (seizureProgress - 0.5) * 2; // 0-1 during late phase
-        
-        // Build toward 3Hz pattern
-        const freq = 5 - latePhaseProgress * 2; // Slowing from 5Hz to 3Hz
-        
-        // Base amplitude with controlled growth
-        const baseAmp = baseAmplitude * regionalFactor * Math.min(1.3, 1 + latePhaseProgress * 0.6);
-        
-        // Create sharp wave pattern at the target frequency (increasingly sharp with progress)
-        const sharpnessFactor = 0.3 + latePhaseProgress * 0.7; // Increasing sharpness
-        
-        // Use sawtooth-like waveform to create sharp waves, increasingly prominent
-        const cycle = (adjustedTime * freq) % 1; // 0-1 for each cycle
-        
-        // Generate the sharp wave - asymmetric with fast upstroke and slower downstroke
-        let sharpWave;
-        if (cycle < 0.2) { // Fast upstroke (20% of cycle)
-          // Rapid rise
-          sharpWave = cycle / 0.2; // 0-1 linear rise
-        } else { // Slower downstroke (80% of cycle)
-          // Exponential-like decay
-          sharpWave = Math.pow(1 - ((cycle - 0.2) / 0.8), sharpnessFactor);
-        }
-        
-        // Apply amplitude and mix with some background faster activity
-        const sharpWaveComponent = sharpWave * baseAmp;
-        const backgroundComponent = Math.sin(adjustedTime * 12) * baseAmp * 0.2 * (1 - latePhaseProgress * 0.5);
-        
-        return centerY + (sharpWaveComponent + backgroundComponent);
+      // Spread to adjacent regions gradually
+      else if (leadName.includes('T4') || leadName.includes('O2')) {
+        spatialFactor = Math.max(0, thetaProgress - 0.3) * 0.6; // Delayed start, up to 0.6
+      }
+      
+      if (spatialFactor > 0) {
+        // Mix decreasing normal background with increasing theta
+        const normalComponent = generateNormalBackground() * (1 - thetaProgress * 0.8);
+        const thetaComponent = generateTheta(spatialFactor);
+        return centerY + normalComponent + thetaComponent;
+      } else {
+        // Other leads keep their normal background but gradually decrease in amplitude
+        return centerY + generateNormalBackground() * (1 - thetaProgress * 0.3);
       }
     }
     
+    // Phase 3: Mixed theta and sharp waves
+    if (inMixedPhase) {
+      // Calculate spatial factor
+      let spatialFactor = 0;
+      
+      // Start in right temporal and adjacent areas
+      if (leadName.includes('T6')) {
+        spatialFactor = 1.0;
+      } 
+      else if (leadName.includes('T4')) {
+        spatialFactor = 0.8;
+      }
+      else if (leadName.includes('O2')) {
+        spatialFactor = 0.7;
+      }
+      else if (leadName.includes('F8')) {
+        spatialFactor = 0.4 + mixedProgress * 0.2; // Gradual involvement
+      }
+      
+      if (spatialFactor > 0) {
+        // Mix between theta rhythm and sharp waves
+        const thetaComponent = generateTheta(spatialFactor * (1 - mixedProgress * 0.7)); // Decreasing theta
+        const sharpnessFactor = 0.3 + mixedProgress * 0.4; // Increasing sharpness
+        const sharpComponent = generateSharpWaves(5, sharpnessFactor, spatialFactor * mixedProgress); // Increasing sharp waves
+        
+        return centerY + thetaComponent + sharpComponent;
+      } else {
+        // Other leads have diminishing normal background
+        return centerY + generateNormalBackground() * (1 - mixedProgress * 0.6);
+      }
+    }
+    
+    // Phase 4: Sharp waves fully developed
+    if (inSharpPhase) {
+      // Calculate spatial factor
+      let spatialFactor = 0;
+      
+      // Involvement in right temporal and adjacent areas
+      if (leadName.includes('T6')) {
+        spatialFactor = 1.0;
+      } 
+      else if (leadName.includes('T4')) {
+        spatialFactor = 0.9;
+      }
+      else if (leadName.includes('O2')) {
+        spatialFactor = 0.8;
+      }
+      else if (leadName.includes('F8')) {
+        spatialFactor = 0.7;
+      }
+      // Beginning spread to left sides
+      else if (leadName.includes('T5') && sharpProgress > 0.5) {
+        spatialFactor = Math.min(0.6, (sharpProgress - 0.5) * 1.2);
+      }
+      
+      if (spatialFactor > 0) {
+        // Fully developed 5Hz sharp waves
+        const sharpnessFactor = 0.7 + sharpProgress * 0.3; // Maximum sharpness achieved
+        return centerY + generateSharpWaves(5, sharpnessFactor, spatialFactor);
+      } else {
+        // Other leads have minimal activity
+        return centerY + generateNormalBackground() * 0.2;
+      }
+    }
+    
+    // Phase 5: Spread to other brain regions
+    if (inSpreadPhase) {
+      // Calculate regional involvement
+      let regionalFactor = 0;
+      
+      // Initial regions remain fully involved
+      if (leadName.includes('T6') || leadName.includes('T4') || leadName.includes('O2')) {
+        regionalFactor = 1.0;
+      }
+      // Secondary spread to right frontal
+      else if (leadName.includes('F8') || leadName.includes('Fp2')) {
+        regionalFactor = 0.8;
+      }
+      // Tertiary spread to left posterior
+      else if (leadName.includes('T5')) {
+        regionalFactor = 0.7;
+      }
+      else if (leadName.includes('O1')) {
+        regionalFactor = 0.6;
+      }
+      // Quaternary spread to remaining left hemisphere
+      else if (leadName.includes('T3') && spreadProgress > 0.3) {
+        regionalFactor = Math.min(0.6, (spreadProgress - 0.3) * 1.5);
+      }
+      else if ((leadName.includes('F7') || leadName.includes('Fp1')) && spreadProgress > 0.5) {
+        regionalFactor = Math.min(0.5, (spreadProgress - 0.5) * 1.5);
+      }
+      // Final involvement of central regions 
+      else if (spreadProgress > 0.7) {
+        regionalFactor = Math.min(0.3, (spreadProgress - 0.7) * 1.5);
+      }
+      
+      if (regionalFactor > 0) {
+        // Sharp wave pattern fully developed
+        return centerY + generateSharpWaves(5, 1.0, regionalFactor);
+      } else {
+        // Minimal activity in uninvolved regions
+        return centerY + (Math.sin(adjustedTime * 15) * 3);
+      }
+    }
+
     // Default return if no seizure activity at this lead
     return centerY;
   }
@@ -4262,5 +4677,79 @@ class EEGWaveformDemo {
   setGRDAPeriodicity(periodicity) {
     console.log(`Setting GRDA periodicity to ${periodicity}`);
     this.grdaPeriodicity = parseFloat(periodicity);
+  }
+
+  // Add toggleMovement function to handle the movement artifact button
+  toggleMovement() {
+    console.log("Toggling movement artifact");
+    const button = document.getElementById('movementToggle');
+    const isActive = button.classList.contains('active');
+    
+    // Toggle the button state
+    button.classList.toggle('active');
+    
+    if (isActive) {
+      // Turn off movement artifact
+      console.log("Turning off movement artifact");
+      this.activeWaveforms.delete('movement');
+      this.patternTransitions.delete('movement');
+    } else {
+      // Turn on movement artifact
+      console.log("Turning on movement artifact");
+      
+      // Ensure movement is added to active waveforms
+      this.activeWaveforms.add('movement');
+      
+      // Start transition with short duration for quick effect
+      this.startPatternTransition('movement', 500);
+      
+      // Log active waveforms for debugging
+      console.log("Active waveforms:", Array.from(this.activeWaveforms));
+      console.log("Pattern transitions:", Array.from(this.patternTransitions.keys()));
+    }
+    
+    // Update ACNS interpretation
+    this.updateScaleInfo();
+  }
+
+  // Add toggle function for pulse artifact
+  togglePulseArtifact() {
+    const button = document.getElementById('pulseArtifactToggle');
+    const isActive = button.classList.contains('active');
+    
+    // Toggle the button state
+    button.classList.toggle('active');
+    
+    if (isActive) {
+      // Turn off pulse artifact
+      this.activeWaveforms.delete('pulseArtifact');
+      this.patternTransitions.delete('pulseArtifact');
+    } else {
+      // Start transition - fast transition for immediate visibility
+      this.startPatternTransition('pulseArtifact', 300);
+      
+      // Turn on pulse artifact
+      this.activeWaveforms.add('pulseArtifact');
+      
+      // Remove automatic ECG activation - let user control ECG separately
+      
+      // For better visualization, turn off competing artifacts
+      this.activeWaveforms.delete('sixtyHzArtifact');
+      this.activeWaveforms.delete('sweatArtifact');
+      
+      // Update UI to reflect state of incompatible artifacts
+      const sixtyHzButton = document.getElementById('sixtyHzArtifactToggle');
+      if (sixtyHzButton && sixtyHzButton.classList.contains('active')) {
+        sixtyHzButton.classList.remove('active');
+      }
+      
+      const sweatButton = document.getElementById('sweatArtifactToggle');
+      if (sweatButton && sweatButton.classList.contains('active')) {
+        sweatButton.classList.remove('active');
+      }
+    }
+    
+    // Update ACNS interpretation
+    this.updateScaleInfo();
   }
 } 
