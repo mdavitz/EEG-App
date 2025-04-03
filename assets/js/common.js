@@ -216,7 +216,7 @@ function getTabName(url) {
     'acns_criteria.html': 'ACNS Criteria',
     'eeg_atlas.html': 'EEG Atlas',
     'eeg_videos.html': 'EEG Videos',
-    'faq.html': 'Discussion Forum'
+    'faq.html': 'Learning Resources'
   };
   
   return mapping[url] || 'Menu';
