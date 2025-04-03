@@ -411,6 +411,62 @@
       border-bottom: 1px solid var(--border-color);
       padding-bottom: 5px;
     }
+
+    /* Findings display styling */
+    .findings-display {
+      margin: 15px 0;
+      padding: 15px;
+      background-color: var(--card-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      border: 1px solid var(--border-color);
+    }
+    
+    .finding-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+    }
+    
+    .finding-header h4 {
+      color: var(--accent-color);
+      margin: 0;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .finding-header button {
+      background: none;
+      border: none;
+      color: var(--text-color);
+      cursor: pointer;
+      font-size: 1.2rem;
+      padding: 5px;
+      opacity: 0.7;
+    }
+    
+    .finding-header button:hover {
+      opacity: 1;
+    }
+    
+    .finding-content {
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+    
+    .finding-content p {
+      margin: 8px 0;
+    }
+    
+    .finding-content .highlight {
+      color: var(--accent-color);
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -433,7 +489,7 @@
           <h4>Normal Features:</h4>
           <button id="eyeBlinkToggle" onclick="demo.toggleEyeBlinks()" class="active"><i class="fa-solid fa-eye"></i> Eye Blinks</button>
           <button id="pdrToggle" onclick="demo.togglePDR()" class="active"><i class="fa-solid fa-wave-square"></i> Posterior Dominant Rhythm</button>
-          <button id="chewingToggle" onclick="demo.toggleChewing()"><i class="fa-solid fa-tooth"></i> Chewing Artifact</button>
+          <button id="chewingToggle"><i class="fa-solid fa-tooth"></i> Chewing Artifact</button>
           <button id="sweatArtifactToggle" onclick="demo.toggleSweatArtifact()"><i class="fa-solid fa-droplet"></i> Sweat Artifact</button>
           <button id="sixtyHzArtifactToggle" onclick="demo.toggleSixtyHzArtifact()"><i class="fa-solid fa-bolt"></i> 60Hz Artifact</button>
           <button id="ecgArtifactToggle" onclick="demo.toggleECGArtifact()"><i class="fa-solid fa-heartbeat"></i> ECG Artifact</button>
@@ -445,6 +501,7 @@
           <button id="moderateSlowingToggle" onclick="demo.toggleModerateSlowing()"><i class="fa-solid fa-temperature-arrow-down"></i> Moderate Slowing</button>
           <button id="severeSlowingToggle" onclick="demo.toggleSevereSlowing()"><i class="fa-solid fa-temperature-empty"></i> Severe Slowing</button>
           <button id="burstSuppressionToggle" onclick="demo.toggleBurstSuppression()"><i class="fa-solid fa-wave-pulse"></i> Burst Suppression</button>
+          <button id="generalizedSlowingToggle" onclick="demo.toggleGeneralizedSlowing()"><i class="fa-solid fa-brain"></i> GRDA</button>
         </div>
 
         <div class="waveform-controls">
@@ -452,11 +509,22 @@
           <button class="wave-btn" data-wave="spikes"><i class="fa-solid fa-bolt"></i> Spikes</button>
           <button class="wave-btn" data-wave="sharpWaves"><i class="fa-solid fa-bolt-lightning"></i> Sharp Waves</button>
           <button class="wave-btn" data-wave="spikeAndWaves"><i class="fa-solid fa-bolt-lightning"></i> Spike & Wave</button>
-          <button id="focalSlowingToggle" onclick="demo.toggleFocalSlowing()"><i class="fa-solid fa-brain"></i> Temporal LRDA</button>
-          <button id="focalSeizureToggle" onclick="demo.toggleFocalSeizure()"><i class="fa-solid fa-burst"></i> R Temporal Seizure</button>
+          <button id="focalSlowingToggle" onclick="demo.toggleFocalSlowing()"><i class="fa-solid fa-brain"></i> LRDA</button>
+          <button id="seizureToggle"><i class="fa-solid fa-fire"></i> Seizure</button>
         </div>
 
         <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+
+        <!-- Findings Display Area -->
+        <div id="findings-display" class="findings-display" style="display: none;">
+          <div class="finding-header">
+            <h4><i class="fa-solid fa-circle-info"></i> <span id="finding-title">Pattern Information</span></h4>
+            <button id="close-finding" onclick="document.getElementById('findings-display').style.display = 'none'"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div id="finding-content" class="finding-content">
+            <!-- Content will be updated dynamically -->
+          </div>
+        </div>
 
         <!-- Waveform Control Panels -->
         <div class="waveform-control-panels">
@@ -539,11 +607,49 @@
               <span class="slider-label-max">2 Hz</span>
             </div>
           </div>
+          
+          <!-- GRDA Adjusters -->
+          <div id="grda-adjusters" style="display: none;">
+            <h4><i class="fa-solid fa-sliders"></i> GRDA Settings</h4>
+            <div class="slider-container">
+              <label for="grda-frequency">Frequency: <span id="grda-frequency-value">Occasional</span></label>
+              <input type="range" id="grda-frequency" min="1" max="4" step="1" value="2" 
+                     oninput="updateGRDAFrequency(this.value)">
+              <span class="slider-label-min">Rare</span>
+              <span class="slider-label-max">Abundant</span>
+            </div>
+            
+            <div class="slider-container">
+              <label for="grda-periodicity">Periodicity: <span id="grda-periodicity-value">1</span> Hz</label>
+              <input type="range" id="grda-periodicity" min="0" max="2" step="0.5" value="1" 
+                     oninput="updateGRDAPeriodicity(this.value)">
+              <span class="slider-label-min">0 Hz</span>
+              <span class="slider-label-max">2 Hz</span>
+            </div>
+          </div>
+          
+          <!-- Seizure Adjusters -->
+          <div id="seizure-adjusters" style="display: none;">
+            <h4><i class="fa-solid fa-sliders"></i> Seizure Settings</h4>
+            <div class="slider-container">
+              <label for="seizure-speed">Evolution Speed: <span id="seizure-speed-value">Normal</span></label>
+              <input type="range" id="seizure-speed" min="1" max="3" step="1" value="2" 
+                     oninput="updateSeizureSpeed(this.value)">
+              <span class="slider-label-min">Slow</span>
+              <span class="slider-label-max">Fast</span>
+            </div>
+            
+            <div class="slider-container">
+              <label for="seizure-intensity">Intensity: <span id="seizure-intensity-value">Moderate</span></label>
+              <input type="range" id="seizure-intensity" min="1" max="3" step="1" value="2" 
+                     oninput="updateSeizureIntensity(this.value)">
+              <span class="slider-label-min">Mild</span>
+              <span class="slider-label-max">Severe</span>
+            </div>
+          </div>
         </div>
 
         <div class="waveform-info">
-          <div class="measurement-container"></div>
-          
           <h3><i class="fa-solid fa-brain"></i> Normal EEG Patterns</h3>
           <div class="responsive-table">
             <table>
@@ -655,16 +761,16 @@
                   <td>Longer duration than spikes but similar morphology; often with slow wave following</td>
                 </tr>
                 <tr>
-                  <td>Temporal LRDA</td>
+                  <td>LRDA</td>
                   <td>Lateralized rhythmic delta (1-4Hz)</td>
                   <td>Focal cerebral dysfunction</td>
-                  <td>Continuous rhythmic slowing in temporal region; indicates underlying structural pathology</td>
+                  <td>Continuous rhythmic slowing in localized regions; indicates underlying structural or functional pathology</td>
                 </tr>
                 <tr>
-                  <td>R Temporal Seizure</td>
-                  <td>Evolving rhythmic discharge</td>
-                  <td>Focal aware seizure</td>
-                  <td>Evolution in frequency, amplitude, or distribution; typically begins with fast activity</td>
+                  <td>GRDA</td>
+                  <td>Generalized rhythmic delta (1-4Hz)</td>
+                  <td>Diffuse cerebral dysfunction</td>
+                  <td>Continuous rhythmic slowing across all regions; indicates global encephalopathy or metabolic disturbance</td>
                 </tr>
               </tbody>
             </table>
@@ -686,8 +792,39 @@
   <script>
     // Initialize the waveform demo when the page loads
     document.addEventListener('DOMContentLoaded', function() {
+      console.log("Document ready, initializing EEG waveform demo");
+      
+      // Initialize main demo object
       window.demo = new EEGWaveformDemo('waveformCanvas');
+      
+      // Start animation immediately to ensure canvas is rendered
+      window.demo.play();
+      
+      // Explicitly ensure PDR is turned on
+      if (window.demo && window.demo.waveforms && window.demo.waveforms.alpha) {
+        window.demo.waveforms.alpha.modulationPattern = true;
+        window.demo.startPatternTransition('pdr');
+      }
+      
+      console.log("EEG demo initialized with active waveforms:", Array.from(window.demo.activeWaveforms));
 
+      // Handle chewing artifact toggle directly
+      const chewingToggle = document.getElementById('chewingToggle');
+      if (chewingToggle) {
+        console.log("Adding event listener to chewing toggle");
+        chewingToggle.addEventListener('click', function() {
+          console.log("Chewing button clicked");
+          if (window.demo && typeof window.demo.toggleChewing === 'function') {
+            window.demo.toggleChewing();
+            if (this.classList.contains('active')) showPatternInfo('Chewing');
+          } else {
+            console.error("toggleChewing function not available");
+          }
+        });
+      } else {
+        console.error("Chewing toggle button not found");
+      }
+      
       // Handle wave button clicks with specific handlers for each type
       const waveButtons = document.querySelectorAll('.wave-btn');
       waveButtons.forEach(button => {
@@ -703,10 +840,13 @@
             // Show/hide adjusters based on button type
             if (type === 'spikes') {
               document.getElementById('spike-adjusters').style.display = isActive ? 'block' : 'none';
+              if (isActive) showPatternInfo('Spikes');
             } else if (type === 'sharpWaves') {
               document.getElementById('sharp-wave-adjusters').style.display = isActive ? 'block' : 'none';
+              if (isActive) showPatternInfo('Sharp Waves');
             } else if (type === 'spikeAndWaves') {
               document.getElementById('spike-and-wave-adjusters').style.display = isActive ? 'block' : 'none';
+              if (isActive) showPatternInfo('Spike & Wave');
             }
           }
         });
@@ -718,9 +858,220 @@
         focalSlowingToggle.addEventListener('click', function() {
           const isActive = this.classList.contains('active');
           document.getElementById('lrda-adjusters').style.display = isActive ? 'block' : 'none';
+          if (isActive) showPatternInfo('LRDA');
         });
       }
+      
+      // Add event listener for GRDA toggle
+      const generalizedSlowingToggle = document.getElementById('generalizedSlowingToggle');
+      if (generalizedSlowingToggle) {
+        generalizedSlowingToggle.addEventListener('click', function() {
+          const isActive = this.classList.contains('active');
+          document.getElementById('grda-adjusters').style.display = isActive ? 'block' : 'none';
+          if (isActive) showPatternInfo('GRDA');
+        });
+      }
+      
+      // Add listeners for other buttons to show pattern info
+      document.getElementById('eyeBlinkToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('Eye Blinks');
+      });
+      
+      document.getElementById('pdrToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('Alpha');
+      });
+      
+      document.getElementById('sweatArtifactToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('Sweat');
+      });
+      
+      document.getElementById('sixtyHzArtifactToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('60Hz');
+      });
+      
+      document.getElementById('ecgArtifactToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('ECG');
+      });
+      
+      document.getElementById('mildSlowingToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('Mild Slowing');
+      });
+      
+      document.getElementById('moderateSlowingToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('Moderate Slowing');
+      });
+      
+      document.getElementById('severeSlowingToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('Severe Slowing');
+      });
+      
+      document.getElementById('burstSuppressionToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('Burst Suppression');
+      });
+      
+      // Make sure seizure toggle properly shows/hides adjusters
+      const seizureToggle = document.getElementById('seizureToggle');
+      if (seizureToggle) {
+        seizureToggle.addEventListener('click', function() {
+          console.log("Seizure toggle clicked, active:", this.classList.contains('active'));
+          
+          // Direct call to demo.toggleSeizure() to ensure it's triggered
+          if (window.demo && typeof window.demo.toggleSeizure === 'function') {
+            window.demo.toggleSeizure();
+            console.log("Called demo.toggleSeizure() directly");
+            if (this.classList.contains('active')) showPatternInfo('Seizure');
+          } else {
+            console.error("demo.toggleSeizure is not available!");
+          }
+          
+          // The adjusters are now handled inside toggleSeizure()
+        });
+      }
+      
+      // Initialize the adjusters with default values
+      if (document.getElementById('seizure-speed')) {
+        updateSeizureSpeed(document.getElementById('seizure-speed').value);
+      }
+      
+      if (document.getElementById('seizure-intensity')) {
+        updateSeizureIntensity(document.getElementById('seizure-intensity').value);
+      }
     });
+    
+    // Function to show pattern information in the findings display
+    function showPatternInfo(patternName) {
+      const findingsDisplay = document.getElementById('findings-display');
+      const findingTitle = document.getElementById('finding-title');
+      const findingContent = document.getElementById('finding-content');
+      
+      // Set the title
+      findingTitle.textContent = patternName;
+      
+      // Get information based on pattern name
+      let content = '';
+      
+      // Find the pattern in the tables
+      switch(patternName) {
+        case 'Alpha':
+          content = `
+            <p><span class="highlight">Frequency:</span> 8-13 Hz</p>
+            <p><span class="highlight">Location:</span> Posterior dominant (occipital)</p>
+            <p><span class="highlight">Clinical Significance:</span> Normal awake rhythm with eyes closed; attenuates with eye opening or mental activity</p>
+          `;
+          break;
+        case 'Eye Blinks':
+          content = `
+            <p><span class="highlight">Appearance:</span> Large amplitude downward deflections</p>
+            <p><span class="highlight">Location:</span> Frontal (Fp1/Fp2), attenuating posteriorly</p>
+            <p><span class="highlight">Identification Tips:</span> Occurs at 0.5-2Hz when awake; synchronous with visible eye movements; maximal at frontal polar leads</p>
+          `;
+          break;
+        case 'Chewing':
+          content = `
+            <p><span class="highlight">Appearance:</span> Rhythmic EMG bursts at ~1Hz with high-frequency spikes</p>
+            <p><span class="highlight">Location:</span> Temporal leads (T3/T4)</p>
+            <p><span class="highlight">Identification Tips:</span> Distinguished by muscle artifact clusters, rhythmic appearance at 1Hz; disrupts normal activity</p>
+          `;
+          break;
+        case 'Sweat':
+          content = `
+            <p><span class="highlight">Appearance:</span> Slow, undulating baseline shifts (0.1-0.7 Hz)</p>
+            <p><span class="highlight">Location:</span> Often frontal/temporal</p>
+            <p><span class="highlight">Identification Tips:</span> Appears as slow baseline wander; often in anxious patients or warm environments</p>
+          `;
+          break;
+        case '60Hz':
+          content = `
+            <p><span class="highlight">Appearance:</span> Regular, fast oscillations superimposed on EEG</p>
+            <p><span class="highlight">Location:</span> Often one electrode or side</p>
+            <p><span class="highlight">Identification Tips:</span> Perfect 60Hz rhythm; indicates electrical interference or poor electrode contact</p>
+          `;
+          break;
+        case 'ECG':
+          content = `
+            <p><span class="highlight">Appearance:</span> Regular QRS complexes seen as sharp upward deflections across channels</p>
+            <p><span class="highlight">Location:</span> All channels; strongest in temporal leads (T3/T4) closest to neck/heart</p>
+            <p><span class="highlight">Identification Tips:</span> Precisely synchronous with heartbeat; most prominent in patients with short/thick necks, low BMI, or when using non-cephalic references</p>
+          `;
+          break;
+        case 'Spikes':
+          content = `
+            <p><span class="highlight">Morphology:</span> Brief (&lt;70ms) pointed transients</p>
+            <p><span class="highlight">Clinical Association:</span> Epilepsy, irritative zone</p>
+            <p><span class="highlight">Key Features:</span> Fast upstroke, pointy peak, slow downstroke; isolated or grouped; usually pathological</p>
+          `;
+          break;
+        case 'Sharp Waves':
+          content = `
+            <p><span class="highlight">Morphology:</span> 70-200ms pointed transients</p>
+            <p><span class="highlight">Clinical Association:</span> Epilepsy, cerebral injury</p>
+            <p><span class="highlight">Key Features:</span> Longer duration than spikes but similar morphology; often with slow wave following</p>
+          `;
+          break;
+        case 'LRDA':
+          content = `
+            <p><span class="highlight">Morphology:</span> Lateralized rhythmic delta (1-4Hz)</p>
+            <p><span class="highlight">Clinical Association:</span> Focal cerebral dysfunction</p>
+            <p><span class="highlight">Key Features:</span> Continuous rhythmic slowing in localized regions; indicates underlying structural or functional pathology</p>
+          `;
+          break;
+        case 'GRDA':
+          content = `
+            <p><span class="highlight">Morphology:</span> Generalized rhythmic delta (1-4Hz)</p>
+            <p><span class="highlight">Clinical Association:</span> Diffuse cerebral dysfunction</p>
+            <p><span class="highlight">Key Features:</span> Continuous rhythmic slowing across all regions; indicates global encephalopathy or metabolic disturbance</p>
+          `;
+          break;
+        case 'Mild Slowing':
+          content = `
+            <p><span class="highlight">Morphology:</span> Mild excess of theta activity (4-7 Hz)</p>
+            <p><span class="highlight">Clinical Association:</span> Mild encephalopathy</p>
+            <p><span class="highlight">Key Features:</span> Mild excess of theta activity with relatively preserved background alpha rhythm</p>
+          `;
+          break;
+        case 'Moderate Slowing':
+          content = `
+            <p><span class="highlight">Morphology:</span> Predominant theta with some delta activity</p>
+            <p><span class="highlight">Clinical Association:</span> Moderate encephalopathy</p>
+            <p><span class="highlight">Key Features:</span> Predominant theta activity with some delta, loss of normal background alpha rhythm</p>
+          `;
+          break;
+        case 'Severe Slowing':
+          content = `
+            <p><span class="highlight">Morphology:</span> Predominant delta activity (1-3 Hz)</p>
+            <p><span class="highlight">Clinical Association:</span> Severe encephalopathy</p>
+            <p><span class="highlight">Key Features:</span> Predominantly delta activity (1-3 Hz), complete loss of faster frequencies</p>
+          `;
+          break;
+        case 'Burst Suppression':
+          content = `
+            <p><span class="highlight">Morphology:</span> Alternating periods of high-amplitude activity and suppression</p>
+            <p><span class="highlight">Clinical Association:</span> Severe brain dysfunction, coma, anesthesia</p>
+            <p><span class="highlight">Key Features:</span> Bursts of mixed frequency activity alternating with periods of suppression or flatline EEG</p>
+          `;
+          break;
+        case 'Seizure':
+          content = `
+            <p><span class="highlight">Morphology:</span> Evolving pattern of rhythmic activity often with increasing frequency and decreasing amplitude</p>
+            <p><span class="highlight">Clinical Association:</span> Epileptic seizure</p>
+            <p><span class="highlight">Key Features:</span> Evolution in frequency, amplitude, and spatial distribution; rhythmic activity typically exceeding 10 seconds</p>
+          `;
+          break;
+        case 'Spike & Wave':
+          content = `
+            <p><span class="highlight">Morphology:</span> Spike followed by a slow wave at 2-3 Hz</p>
+            <p><span class="highlight">Clinical Association:</span> Generalized epilepsy, absence seizures</p>
+            <p><span class="highlight">Key Features:</span> Generalized, synchronous 3 Hz spike-and-wave complexes; seen in absence epilepsy and other generalized epilepsy syndromes</p>
+          `;
+          break;
+        default:
+          content = `<p>No detailed information available for this pattern.</p>`;
+      }
+      
+      // Update content and show the display
+      findingContent.innerHTML = content;
+      findingsDisplay.style.display = 'block';
+    }
     
     // Spike frequency adjuster
     function updateSpikeFrequency(value) {
@@ -854,6 +1205,41 @@
       }
     }
 
+    // GRDA frequency adjuster
+    function updateGRDAFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('grda-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setGRDAFrequency(parseInt(value));
+      }
+    }
+    
+    // GRDA periodicity adjuster
+    function updateGRDAPeriodicity(value) {
+      document.getElementById('grda-periodicity-value').textContent = value;
+      if (window.demo) {
+        window.demo.setGRDAPeriodicity(parseFloat(value));
+      }
+    }
+
     // Spike and Wave frequency adjuster
     function updateSpikeAndWaveFrequency(value) {
       // Map numeric value to ACNS criteria text
@@ -878,6 +1264,54 @@
       document.getElementById('spike-and-wave-frequency-value').textContent = frequencyText;
       if (window.demo) {
         window.demo.setSpikeAndWaveFrequency(parseInt(value));
+      }
+    }
+
+    // Seizure speed adjuster
+    function updateSeizureSpeed(value) {
+      let speedText;
+      switch(parseInt(value)) {
+        case 1:
+          speedText = "Slow";
+          break;
+        case 2:
+          speedText = "Normal";
+          break;
+        case 3:
+          speedText = "Fast";
+          break;
+        default:
+          speedText = "Normal";
+      }
+      
+      document.getElementById('seizure-speed-value').textContent = speedText;
+      if (window.demo) {
+        console.log("Setting seizure speed to:", value);
+        window.demo.setSeizureSpeed(parseInt(value));
+      }
+    }
+    
+    // Seizure intensity adjuster
+    function updateSeizureIntensity(value) {
+      let intensityText;
+      switch(parseInt(value)) {
+        case 1:
+          intensityText = "Mild";
+          break;
+        case 2:
+          intensityText = "Moderate";
+          break;
+        case 3:
+          intensityText = "Severe";
+          break;
+        default:
+          intensityText = "Moderate";
+      }
+      
+      document.getElementById('seizure-intensity-value').textContent = intensityText;
+      if (window.demo) {
+        console.log("Setting seizure intensity to:", value);
+        window.demo.setSeizureIntensity(parseInt(value));
       }
     }
   </script>
