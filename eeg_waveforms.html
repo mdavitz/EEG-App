@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEG Simulator - EEG Training</title>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+  <script src="assets/js/eeg-waveform.js" defer></script>
+  
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from eeg_waveforms.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+
+  <style>
+    /* Override any styles as needed for the EEG waveform page */
+    .waveform-container {
+      background: var(--info-bg);
+      border-radius: 10px;
+      padding: 2rem;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 15px var(--shadow-color);
+      transition: background var(--transition-duration);
+    }
+
+    .waveform-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-bottom: 20px;
+      justify-content: center;
+    }
+
+    .waveform-controls button {
+      display: inline-block;
+      background: var(--info-bg);
+      color: var(--text-color);
+      text-decoration: none;
+      padding: 0.7rem 1.5rem;
+      border-radius: 5px;
+      font-weight: 500;
+      border: 1px solid var(--border-color);
+      cursor: pointer;
+      transition: background 0.3s ease, transform 0.3s ease;
+      text-align: center;
+      box-shadow: 0 2px 5px var(--shadow-color);
+      font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .waveform-controls button:hover {
+      background: var(--hover-bg);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px var(--shadow-color);
+    }
+
+    .wave-btn.active, .waveform-controls button.active {
+      background: var(--accent-color) !important;
+      color: white !important;
+      border-color: var(--accent-color) !important;
+    }
+
+    .waveform-canvas {
+      width: 100%;
+      height: 400px;
+      background: var(--info-bg);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      margin-bottom: 20px;
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+
+    .waveform-info, .instructions {
+      margin: 2rem 0;
+    }
+
+    .waveform-info h3, .instructions h3 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1.5rem;
+      margin: 1.5rem 0 1rem;
+      padding-bottom: 0.25rem;
+      border-bottom: 2px solid var(--accent-color);
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--primary-color);
+      transition: color var(--transition-duration);
+    }
+
+    .instructions {
+      background: var(--info-bg);
+      padding: 1.2em;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+      margin-bottom: 1.5em;
+      transition: background var(--transition-duration);
+    }
+
+    .instructions ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .instructions li {
+      margin-bottom: 10px;
+      padding-left: 20px;
+      position: relative;
+      color: var(--text-color);
+    }
+
+    .instructions li:before {
+      content: "•";
+      position: absolute;
+      left: 0;
+      color: var(--accent-color);
+    }
+
+    .instructions li strong {
+      color: var(--accent-color);
+    }
+
+    /* Override table styles to match site's table component */
+    .waveform-info table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      background: var(--info-bg);
+      font-size: 1rem;
+      color: var(--text-color);
+      border-radius: 8px;
+      overflow: hidden;
+      border: none;
+      box-shadow: 0 2px 6px var(--shadow-color);
+      margin: 1.5rem 0;
+      transition: background var(--transition-duration), box-shadow var(--transition-duration);
+      font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+    }
+
+    .waveform-info thead tr {
+      background-color: var(--accent-color);
+      color: white;
+      border-bottom: 1px solid var(--border-color);
+      transition: background var(--transition-duration);
+    }
+
+    .waveform-info thead th {
+      font-weight: 600;
+      padding: 16px;
+      text-align: left;
+      border: none;
+    }
+
+    .waveform-info tbody tr {
+      border-bottom: 1px solid var(--border-color);
+      transition: background var(--transition-duration);
+    }
+
+    .waveform-info tbody tr:last-child {
+      border-bottom: none;
+    }
+
+    .waveform-info td,
+    .waveform-info th {
+      padding: 16px;
+      text-align: left;
+      border: none;
+    }
+
+    .waveform-info td + td,
+    .waveform-info th + th {
+      border-left: 1px solid var(--border-color);
+    }
+
+    .waveform-info tr:hover td {
+      background-color: var(--hover-bg);
+    }
+
+    .waveform-info tr:nth-child(even) {
+      background-color: rgba(0, 0, 0, 0.02);
+    }
+
+    .measurement-container {
+      margin-bottom: 20px;
+    }
+
+    .measurement-result {
+      background: var(--info-bg);
+      padding: 15px;
+      border-radius: 8px;
+      margin-bottom: 15px;
+      border: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 2px 6px var(--shadow-color);
+    }
+
+    select {
+      background: var(--info-bg);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+      padding: 0.7rem 1rem;
+      border-radius: 5px;
+      font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+      transition: border 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 2px 5px var(--shadow-color);
+    }
+    
+    select:focus {
+      outline: none;
+      border-color: var(--accent-color);
+      box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+    }
+
+    @media (max-width: 768px) {
+      .waveform-controls {
+        flex-direction: column;
+      }
+      
+      .waveform-controls button {
+        width: 100%;
+      }
+
+      .waveform-canvas {
+        height: 300px;
+      }
+
+      .waveform-info table {
+        display: block;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        font-size: 0.9rem;
+      }
+      
+      .waveform-info th,
+      .waveform-info td {
+        padding: 12px;
+      }
+    }
+
+    .waveform-controls h4 {
+      width: 100%;
+      text-align: left;
+      margin: 5px 0;
+      color: var(--accent-color);
+      font-weight: 600;
+      font-size: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <!-- Include Header -->
+  <div id="header-container"></div>
+
+  <!-- Main Content -->
+  <main id="page-content">
+    <h1 class="page-title">EEG Simulator</h1>
+    
+    <div class="container">
+      <div class="waveform-container">
+        <div class="waveform-controls">
+          <button onclick="demo.play()"><i class="fa-solid fa-play"></i> Play</button>
+          <button onclick="demo.pause()"><i class="fa-solid fa-pause"></i> Pause</button>
+          <button onclick="demo.reset()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
+        </div>
+
+        <div class="waveform-controls">
+          <h4>Normal Features:</h4>
+          <button id="eyeBlinkToggle" onclick="demo.toggleEyeBlinks()" class="active"><i class="fa-solid fa-eye"></i> Eye Blinks</button>
+          <button id="pdrToggle" onclick="demo.togglePDR()" class="active"><i class="fa-solid fa-wave-square"></i> Posterior Dominant Rhythm</button>
+          <button id="chewingToggle" onclick="demo.toggleChewing()"><i class="fa-solid fa-tooth"></i> Chewing Artifact</button>
+          <button id="sweatArtifactToggle" onclick="demo.toggleSweatArtifact()"><i class="fa-solid fa-droplet"></i> Sweat Artifact</button>
+          <button id="sixtyHzArtifactToggle" onclick="demo.toggleSixtyHzArtifact()"><i class="fa-solid fa-bolt"></i> 60Hz Artifact</button>
+          <button id="ecgArtifactToggle" onclick="demo.toggleECGArtifact()"><i class="fa-solid fa-heartbeat"></i> ECG Artifact</button>
+        </div>
+
+        <div class="waveform-controls">
+          <h4>Slowing Patterns:</h4>
+          <button id="mildSlowingToggle" onclick="demo.toggleMildSlowing()"><i class="fa-solid fa-temperature-low"></i> Mild Slowing</button>
+          <button id="moderateSlowingToggle" onclick="demo.toggleModerateSlowing()"><i class="fa-solid fa-temperature-arrow-down"></i> Moderate Slowing</button>
+          <button id="severeSlowingToggle" onclick="demo.toggleSevereSlowing()"><i class="fa-solid fa-temperature-empty"></i> Severe Slowing</button>
+          <button id="burstSuppressionToggle" onclick="demo.toggleBurstSuppression()"><i class="fa-solid fa-wave-pulse"></i> Burst Suppression</button>
+        </div>
+
+        <div class="waveform-controls">
+          <h4>Epileptiform Patterns:</h4>
+          <button onclick="demo.setWaveform('spikes')" class="wave-btn" data-wave="spikes"><i class="fa-solid fa-bolt"></i> Spikes</button>
+          <button onclick="demo.setWaveform('sharpWaves')" class="wave-btn" data-wave="sharpWaves"><i class="fa-solid fa-bolt-lightning"></i> Sharp Waves</button>
+          <button id="lpdsToggle" onclick="demo.toggleLPDs()"><i class="fa-solid fa-bolt"></i> LPDs (2Hz)</button>
+          <button id="focalSlowingToggle" onclick="demo.toggleFocalSlowing()"><i class="fa-solid fa-brain"></i> Temporal LRDA</button>
+          <button id="spikeWave3HzToggle" onclick="demo.toggleSpikeWave3Hz()"><i class="fa-solid fa-atom"></i> 3Hz Spike & Wave</button>
+          <button id="focalSeizureToggle" onclick="demo.toggleFocalSeizure()"><i class="fa-solid fa-burst"></i> R Temporal Seizure</button>
+        </div>
+
+        <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+
+        <div class="waveform-info">
+          <div class="measurement-container"></div>
+          
+          <h3><i class="fa-solid fa-brain"></i> Normal EEG Patterns</h3>
+          <div class="responsive-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rhythm</th>
+                  <th>Frequency</th>
+                  <th>Location</th>
+                  <th>Clinical Significance</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Alpha</td>
+                  <td>8-13 Hz</td>
+                  <td>Posterior dominant (occipital)</td>
+                  <td>Normal awake rhythm with eyes closed; attenuates with eye opening or mental activity</td>
+                </tr>
+                <tr>
+                  <td>Beta</td>
+                  <td>13-30 Hz</td>
+                  <td>Frontal predominant</td>
+                  <td>Normal during alertness, cognitive activity; enhanced by benzodiazepines and barbiturates</td>
+                </tr>
+                <tr>
+                  <td>Theta</td>
+                  <td>4-8 Hz</td>
+                  <td>Diffuse, temporal</td>
+                  <td>Normal in drowsiness and young adults; excessive in awake adults may indicate abnormality</td>
+                </tr>
+                <tr>
+                  <td>Delta</td>
+                  <td>0.5-4 Hz</td>
+                  <td>Diffuse</td>
+                  <td>Normal in deep sleep (N3) and infants; abnormal when awake except in anterior head regions</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3><i class="fa-solid fa-triangle-exclamation"></i> Common Artifacts</h3>
+          <div class="responsive-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Artifact</th>
+                  <th>Appearance</th>
+                  <th>Location</th>
+                  <th>Identification Tips</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Eye Blinks</td>
+                  <td>Large amplitude downward deflections</td>
+                  <td>Frontal (Fp1/Fp2), attenuating posteriorly</td>
+                  <td>Occurs at 0.5-2Hz when awake; synchronous with visible eye movements; maximal at frontal polar leads</td>
+                </tr>
+                <tr>
+                  <td>Chewing</td>
+                  <td>Rhythmic EMG bursts at ~1Hz with high-frequency spikes</td>
+                  <td>Temporal leads (T3/T4)</td>
+                  <td>Distinguished by muscle artifact clusters, rhythmic appearance at 1Hz; disrupts normal activity</td>
+                </tr>
+                <tr>
+                  <td>Sweat</td>
+                  <td>Slow, undulating baseline shifts (0.1-0.7 Hz)</td>
+                  <td>Often frontal/temporal</td>
+                  <td>Appears as slow baseline wander; often in anxious patients or warm environments</td>
+                </tr>
+                <tr>
+                  <td>60Hz</td>
+                  <td>Regular, fast oscillations superimposed on EEG</td>
+                  <td>Often one electrode or side</td>
+                  <td>Perfect 60Hz rhythm; indicates electrical interference or poor electrode contact</td>
+                </tr>
+                <tr>
+                  <td>ECG</td>
+                  <td>Regular QRS complexes seen as sharp upward deflections across channels</td>
+                  <td>All channels; strongest in temporal leads (T3/T4) closest to neck/heart</td>
+                  <td>Precisely synchronous with heartbeat; most prominent in patients with short/thick necks, low BMI, or when using non-cephalic references (e.g., ear/mastoid)</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <h3><i class="fa-solid fa-bolt"></i> Abnormal EEG Patterns</h3>
+          <div class="responsive-table">
+            <table>
+              <thead>
+                <tr>
+                  <th>Pattern</th>
+                  <th>Morphology</th>
+                  <th>Clinical Association</th>
+                  <th>Key Features</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Spikes</td>
+                  <td>Brief (&lt;70ms) pointed transients</td>
+                  <td>Epilepsy, irritative zone</td>
+                  <td>Fast upstroke, pointy peak, slow downstroke; isolated or grouped; usually pathological</td>
+                </tr>
+                <tr>
+                  <td>Sharp Waves</td>
+                  <td>70-200ms pointed transients</td>
+                  <td>Epilepsy, cerebral injury</td>
+                  <td>Longer duration than spikes but similar morphology; often with slow wave following</td>
+                </tr>
+                <tr>
+                  <td>Temporal LRDA</td>
+                  <td>Lateralized rhythmic delta (1-4Hz)</td>
+                  <td>Focal cerebral dysfunction</td>
+                  <td>Continuous rhythmic slowing in temporal region; indicates underlying structural pathology</td>
+                </tr>
+                <tr>
+                  <td>LPDs (2Hz)</td>
+                  <td>Periodic sharp waves or spikes at regular intervals</td>
+                  <td>Stroke, HSV encephalitis, tumor</td>
+                  <td>Repeating waveforms at consistent 2Hz rate; often indicates severe focal injury</td>
+                </tr>
+                <tr>
+                  <td>3Hz Spike & Wave</td>
+                  <td>3Hz spike-wave complexes</td>
+                  <td>Absence epilepsy</td>
+                  <td>Generalized, symmetric pattern; characteristic of absence seizures; sudden onset/offset</td>
+                </tr>
+                <tr>
+                  <td>R Temporal Seizure</td>
+                  <td>Evolving rhythmic discharge</td>
+                  <td>Focal aware seizure</td>
+                  <td>Evolution in frequency, amplitude, or distribution; typically begins with fast activity</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Include Footer -->
+  <div id="footer-container"></div>
+
+  <!-- Include Disclaimer -->
+  <div id="disclaimer-container"></div>
+
+  <!-- Include Copyright -->
+  <div id="copyright-container"></div>
+
+  <script>
+    // Initialize the waveform demo when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      window.demo = new EEGWaveformDemo('waveformCanvas');
+
+      // Handle wave button clicks
+      const waveButtons = document.querySelectorAll('.wave-btn');
+      waveButtons.forEach(button => {
+        button.addEventListener('click', () => {
+          const type = button.dataset.wave;
+          const isActive = button.classList.toggle('active');
+          demo.setWaveform(type, isActive);
+        });
+      });
+    });
+  </script>
+</body>
+</html> 

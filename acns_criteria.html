@@ -7,7 +7,7 @@
   <title>ACNS Criteria - EEG Curriculum</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="icon" type="image/png" href="assets/images/logo.png" />
   <link rel="apple-touch-icon" href="assets/images/logo.png" />
   <link rel="manifest" href="manifest.json">
@@ -51,96 +51,9 @@
   </div>
 
   <script>
-          }
-        });
-      
-      // Load footer
-      fetch('includes/footer.html')
-        .then(response => response.text())
-        .then(data => {
-          document.getElementById('footer-container').innerHTML = data;
-          
-          // Initialize footer functionality after a small delay to ensure DOM is updated
-          setTimeout(function() {
-            // Initialize dark mode button
-            const darkModeBtn = document.getElementById('dark-mode-btn');
-            if (darkModeBtn) {
-              console.log('Dark mode button found, attaching event listener');
-              darkModeBtn.addEventListener('click', function() {
-                document.body.classList.toggle('dark');
-                localStorage.setItem('darkMode', document.body.classList.contains('dark'));
-                console.log('Dark mode toggled:', document.body.classList.contains('dark'));
-              });
-              
-              // Apply stored dark mode preference
-              if (localStorage.getItem('darkMode') === 'true') {
-                document.body.classList.add('dark');
-              }
-            } else {
-              console.warn('Dark mode button not found');
-            }
-            
-            // Initialize font size button
-            const fontSizeBtn = document.getElementById('font-size-btn');
-            if (fontSizeBtn) {
-              fontSizeBtn.addEventListener('click', function() {
-                document.body.classList.toggle('large-text');
-                localStorage.setItem('largeText', document.body.classList.contains('large-text'));
-              });
-              
-              // Apply stored font size preference
-              if (localStorage.getItem('largeText') === 'true') {
-                document.body.classList.add('large-text');
-              }
-            }
-            
-              
-              const disclaimerAcknowledge = document.getElementById('disclaimer-acknowledge');
-              if (disclaimerAcknowledge) {
-                disclaimerAcknowledge.addEventListener('click', function() {
-                  disclaimerModal.classList.remove('active');
-                });
-              }
-              
-              // Close modal when clicking outside
-              disclaimerModal.addEventListener('click', function(e) {
-                if (e.target === disclaimerModal) {
-                  disclaimerModal.classList.remove('active');
-                }
-              });
-            } else {
-              console.warn('Disclaimer elements not found:', {
-                trigger: disclaimerTrigger, 
-                modal: disclaimerModal
-              });
-            }
-            
-            // Initialize copyright trigger
-            const copyrightTrigger = document.getElementById('copyright-trigger');
-            if (copyrightTrigger) {
-              const copyrightModal = document.getElementById('copyright-modal');
-              const closeBtn = document.getElementById('copyright-close-btn');
-              
-              if (copyrightModal) {
-                copyrightTrigger.addEventListener('click', function() {
-                  copyrightModal.style.display = 'block';
-                });
-                
-                if (closeBtn) {
-                  closeBtn.addEventListener('click', function() {
-                    copyrightModal.style.display = 'none';
-                  });
-                }
-                
-                window.addEventListener('click', function(event) {
-                  if (event.target === copyrightModal) {
-                    copyrightModal.style.display = 'none';
-                  }
-                });
-              }
-            }
-          }, 100); // Small delay to ensure footer DOM is fully loaded
-        });
+    document.addEventListener('DOMContentLoaded', function() {
+      // Components will be loaded via includes-loader.js
+      console.log('ACNS Criteria page loaded');
     });
   </script>
 
