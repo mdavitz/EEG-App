@@ -34,7 +34,25 @@ class EEGWaveformDemo {
     this.isPanning = false;
     this.lastPanPosition = null;
     this.currentMode = 'normal'; // Set default mode
-
+    
+    // Spike customization parameters
+    this.spikeFrequency = 2; // 1-4 = rare, occasional, frequent, abundant
+    this.spikePeriodicity = 0.2; // 0.0 to 1.0 - affects how regular/periodic the spikes are (0 = random, 1 = perfectly periodic)
+    
+    // Sharp wave customization parameters
+    this.sharpWaveFrequency = 2; // 1-4 = rare, occasional, frequent, abundant
+    this.sharpWavePeriodicity = 0.5; // 0 to 3.0 Hz - controls the periodicity of sharp waves
+    
+    // Spike and wave periodicity (0, 2, 3, or 5 Hz)
+    this.spikeAndWavePeriodicity = 2.0;
+    
+    // LRDA periodicity (0-2 Hz)
+    this.lrdaPeriodicity = 1.0;
+    
+    // Spike and wave frequency and LRDA frequency (1-4 = rare, occasional, frequent, abundant)
+    this.spikeAndWaveFrequency = 2;
+    this.lrdaFrequency = 2;
+    
     // EEG Modes
     this.modes = {
       custom: {
@@ -210,40 +228,34 @@ class EEGWaveformDemo {
       { name: 'T6-O2', color: '#ff0000', region: 'posterior' }  // Right posterior - Red
     ];
 
-    // Waveform parameters
+    // Initialize waveforms
     this.waveforms = {
-      // Normal patterns
-      delta: { 
-        freq: 2, 
-        amp: 100, // Keep original amplitude
-        color: '#000000', // Black for white background
-        description: 'Delta (0.5-4 Hz)'
+      // Normal waveforms
+      alpha: {
+        draw: this.generateSinusoidalWaveform.bind(this, 8, 10),
+        modulationPattern: false
       },
-      theta: { 
-        freq: 5.5, 
-        amp: 60, // Keep original amplitude
-        color: '#000000',
-        description: 'Theta (4-8 Hz)'
+      beta: {
+        draw: this.generateSinusoidalWaveform.bind(this, 15, 5)
       },
-      alpha: { 
-        freq: 10, 
-        amp: 8, // Further reduced from 15 to 8
-        color: '#000000',
-        description: 'Alpha (8-13 Hz)',
-        modulationPattern: true  // Enable special modulation pattern
+      theta: {
+        draw: this.generateSinusoidalWaveform.bind(this, 6, 8)
       },
-      beta: { 
-        freq: 20, 
-        amp: 4, // Further reduced from 8 to 4
-        color: '#000000',
-        description: 'Beta (13-30 Hz)'
+      delta: {
+        draw: this.generateSinusoidalWaveform.bind(this, 3, 12)
       },
-      gamma: { 
-        freq: 40, 
-        amp: 20, // Keep original amplitude
-        color: '#000000',
-        description: 'Gamma (30-100 Hz)'
+      
+      // Epileptiform patterns
+      spikes: {
+        draw: this.generateSpikeWaveform.bind(this, 100, 0.2)
       },
+      sharpWaves: {
+        draw: this.generateSharpWaveWaveform.bind(this, 80, 0.15)
+      },
+      spikeAndWaves: {
+        draw: this.generateSpikeAndWaveWaveform.bind(this, 250, 0.2)
+      },
+      
       // Abnormal patterns
       eyeBlinks: {
         custom: true,
@@ -535,124 +547,6 @@ class EEGWaveformDemo {
         custom: true,
         color: '#B10DC9',
         description: 'Slowing',
-      },
-      // Added LPDs pattern
-      lpds: {
-        custom: true,
-        color: '#FF4136',
-        description: 'LPDs (Lateralized Periodic Discharges)',
-        draw: (x, centerY, leadName, timePosition) => {
-          // Only apply to left hemisphere leads (similar to spikes pattern)
-          const affectedLeads = ['F7-T3', 'T3-T5', 'Fp1-F7', 'T5-O1'];
-          if (!affectedLeads.includes(leadName)) {
-            return 0; // No effect on unaffected leads - return zero offset
-          }
-          
-          // Determine polarity and amplitude based on lead
-          let polarity = 1;
-          let amplitudeScale = 1;
-          
-          if (leadName === 'T3-T5') {
-            // Phase reversal in T3-T5
-            polarity = -1; 
-            amplitudeScale = 1;
-          } else if (leadName === 'Fp1-F7') {
-            // Slight deflection in the lead above with same polarity but lower amplitude
-            polarity = 1;
-            amplitudeScale = 0.5;
-          } else if (leadName === 'T5-O1') {
-            // Slight deflection in the lead below with same polarity as T3-T5 but lower amplitude
-            polarity = -1;
-            amplitudeScale = 0.4;
-          }
-          
-          // Super-cycle that determines presence or absence of LPDs over longer periods
-          // This creates a natural "coming and going" effect
-          const superCycleDuration = 180; // 3-minute total cycle
-          const superCyclePosition = (timePosition % superCycleDuration) / superCycleDuration;
-          
-          // LPDs only appear during certain parts of the super-cycle (e.g., 30% of the time)
-          // Use a sine wave to create gradual appearance and disappearance
-          const lpdsPresenceFactor = Math.sin(superCyclePosition * Math.PI * 2) * 0.5 + 0.5;
-          
-          // If lpdsPresenceFactor is below threshold, no LPDs appear
-          if (lpdsPresenceFactor < 0.7) {
-            return 0; // No LPDs in this part of the cycle
-          }
-          
-          // Create bursts of LPDs lasting 2-10 seconds
-          // Total cycle including gaps between bursts
-          const burstCycle = 20 + Math.sin(timePosition * 0.008) * 15; // 5-35 second variable cycle
-          const cyclePosition = (timePosition % burstCycle) / burstCycle;
-          
-          // Determine burst duration using a seed-based approach for variety
-          const seed = Math.sin(timePosition * 0.017 + 1.5) * 0.5 + 0.5; // 0-1 value that changes slowly
-          const burstDuration = 2 + (seed * 8); // 2-10 second variable burst
-          
-          // Bursts occur in the first part of the cycle
-          const burstWindow = burstDuration / burstCycle;
-          const inActiveBurst = cyclePosition < burstWindow;
-          
-          // If we're not in an active burst, return zero offset
-          if (!inActiveBurst) {
-            return 0;
-          }
-          
-          // Key difference from spikes: LPDs occur at a regular 2 Hz frequency
-          // But add slight variation to frequency over time
-          const freqVariation = Math.sin(timePosition * 0.025) * 0.1; // ±10% variation
-          const lpdFrequency = 2.0 * (1 + freqVariation); // ~1.8-2.2 Hz
-          const lpdCycle = 1 / lpdFrequency;
-          
-          // Calculate position within the cycle
-          const dischargePosition = (timePosition % lpdCycle) / lpdCycle; // 0-1 within each cycle
-          
-          // Only show the discharge during first 20% of each cycle
-          const dischargeDuration = 0.2; // 20% of cycle = 100ms at 2Hz
-          
-          if (dischargePosition < dischargeDuration) {
-            // Calculate discharge shape - similar to spikes but slightly wider
-            let dischargeAmplitude;
-            
-            // Create an asymmetric discharge shape with classic epileptiform morphology
-            if (dischargePosition < 0.04) { // Fast upstroke (40ms)
-              // Sharp rise
-              dischargeAmplitude = 45 * Math.pow(dischargePosition / 0.04, 0.6); // Reduced from 90
-            } else if (dischargePosition < 0.08) { // Fast downstroke (40ms)
-              const downPhase = (dischargePosition - 0.04) / 0.04;
-              // Steep descent
-              dischargeAmplitude = 90 * (1 - Math.pow(downPhase, 0.6));
-            } else { // After-wave and slow return to baseline
-              const afterWavePhase = (dischargePosition - 0.08) / (dischargeDuration - 0.08);
-              // Negative after-wave
-              dischargeAmplitude = 90 * (0.2 - 0.4 * Math.sin(afterWavePhase * Math.PI * 0.8)) * 
-                                (1 - Math.pow(afterWavePhase, 0.6));
-            }
-            
-            // Apply intensity scaling based on position in the burst
-            // Ramp up at start and down at end of burst for natural appearance
-            let intensityFactor = 1.0;
-            const normalizedBurstPosition = cyclePosition / burstWindow; // 0-1 within burst
-            
-            if (normalizedBurstPosition < 0.1) {
-              // Ramp up intensity at start of burst
-              intensityFactor = normalizedBurstPosition / 0.1;
-            } else if (normalizedBurstPosition > 0.9) {
-              // Ramp down intensity at end of burst
-              intensityFactor = 1 - ((normalizedBurstPosition - 0.9) / 0.1);
-            }
-            
-            // Also apply the super-cycle presence factor for smooth transitions
-            intensityFactor *= Math.pow(lpdsPresenceFactor - 0.7, 0.5) / Math.pow(0.3, 0.5);
-            
-            // Apply polarity, scaling, and intensity
-            return dischargeAmplitude * polarity * amplitudeScale * intensityFactor;
-          }
-          
-          // Outside discharge window, return zero offset
-          return 0;
-        },
-        priority: 25 // Higher priority than normal waves but lower than seizures
       },
       // Added focal slowing as separate pattern
       focalSlowing: {
@@ -1615,6 +1509,9 @@ class EEGWaveformDemo {
           // More realistic spike timing - variable intervals, sometimes clustering
           // Use a combination of regular timing and clustering effects
           
+          // Apply spike frequency parameter (lower value = longer intervals)
+          const frequencyAdjustment = 1.0 / this.spikeFrequency; // Inverse relationship
+          
           // Base timing uses a non-linear function to create irregular but deterministic intervals
           const baseIntervalFactor = 0.8 + 0.4 * Math.sin(timePosition * 0.03);
           
@@ -1624,27 +1521,59 @@ class EEGWaveformDemo {
           
           // Calculate effective interval - shorter during clusters, longer outside clusters
           let effectiveInterval;
-          if (clusterFactor > clusterThreshold) {
-            // In clustering mode - spikes are closer together (4-7 seconds)
-            effectiveInterval = 5.5 + Math.sin(timePosition * 0.15) * 1.5;
+          
+          // NEW IMPLEMENTATION: Periodicity is now in Hz (0-3Hz)
+          // - 0 Hz means random/non-periodic
+          // - 0.5-3 Hz means specific frequency in Hz
+          
+          if (this.spikePeriodicity > 0) {
+            // Convert from Hz to seconds (period = 1/frequency)
+            effectiveInterval = 1.0 / this.spikePeriodicity;
+            
+            // Add slight variability for natural appearance (less at higher frequencies)
+            const maxVariability = Math.max(0, 0.1 - (this.spikePeriodicity * 0.02));
+            const variabilityFactor = 1.0 + (Math.sin(timePosition * 0.3) * maxVariability);
+            effectiveInterval *= variabilityFactor;
           } else {
-            // Regular mode - spikes are further apart (10-14 seconds)
-            effectiveInterval = 12 + Math.sin(timePosition * 0.05) * 2;
+            // At periodicity = 0 Hz (random), use variable timing with clustering
+            if (clusterFactor > clusterThreshold) {
+              // In clustering mode - spikes are closer together
+              effectiveInterval = 5.5 + Math.sin(timePosition * 0.15) * 1.5;
+            } else {
+              // Regular mode - more variable intervals
+              effectiveInterval = 12 + Math.sin(timePosition * 0.05) * 2;
+            }
+            
+            // Apply the base interval factor for more natural variation
+            effectiveInterval *= baseIntervalFactor;
+            
+            // Apply frequency adjustment to make spikes more or less frequent
+            effectiveInterval *= frequencyAdjustment;
           }
           
-          // Further adjust the interval based on the base interval factor
-          effectiveInterval *= baseIntervalFactor;
-          
           // Calculate nearest spike time using this variable interval
-          let nearestSpikeTime = 0;
-          let currentTime = 0;
-          while (currentTime <= timePosition) {
-            // Calculate next interval dynamically based on current time
-            const dynamicInterval = 5.5 + 8 * Math.pow(Math.sin(currentTime * 0.01), 2) + 
-                                    Math.sin(currentTime * 0.15) * 2;
-            currentTime += dynamicInterval;
-            if (currentTime > timePosition) break;
-            nearestSpikeTime = currentTime;
+          let nearestSpikeTime;
+          
+          if (this.spikePeriodicity > 0) {
+            // For any non-zero periodicity, use the frequency-based effectiveInterval
+            nearestSpikeTime = Math.floor(timePosition / effectiveInterval) * effectiveInterval;
+          } else {
+            // For periodicity = 0, use more variable timing
+            // Initialize variables for the while loop
+            let currentTime = 0;
+            nearestSpikeTime = 0;
+            
+            while (currentTime <= timePosition) {
+              // Calculate next interval dynamically based on current time
+              const fixedComponent = 5.5 * frequencyAdjustment;
+              const variableComponent = 8 * Math.pow(Math.sin(currentTime * 0.01), 2) + 
+                                      Math.sin(currentTime * 0.15) * 2;
+              
+              const dynamicInterval = fixedComponent + variableComponent;
+              currentTime += dynamicInterval;
+              if (currentTime > timePosition) break;
+              nearestSpikeTime = currentTime;
+            }
           }
           
           const xTimeFromSpike = timePosition - nearestSpikeTime;
@@ -1731,22 +1660,55 @@ class EEGWaveformDemo {
           // More realistic sharp wave timing with variable intervals
           // Create clustering pattern occasionally
           
-          // Sharp waves tend to be more frequent than spikes with less clustering 
+          // Apply sharp wave frequency parameter (lower value = longer intervals)
+          const frequencyAdjustment = 1.0 / this.sharpWaveFrequency; // Inverse relationship
+          
+          // Base timing uses a non-linear function to create irregular but deterministic intervals
           const baseIntervalFactor = 0.9 + 0.2 * Math.sin(timePosition * 0.025);
           
-          // Calculate the effective interval - less variability than spikes
-          // Per clinical presentations, sharp waves are often more regular
-          const effectiveInterval = (7 + Math.sin(timePosition * 0.04) * 1.5) * baseIntervalFactor;
+          // Calculate effective interval based on periodicity
+          let effectiveInterval;
           
-          // Calculate the nearest sharp wave time using a more regular pattern
-          let nearestSharpWaveTime = 0;
-          let currentTime = 0;
-          while (currentTime <= timePosition) {
-            // More regular intervals with less variation
-            const dynamicInterval = 7 + Math.sin(currentTime * 0.07) * 1.5;
-            currentTime += dynamicInterval;
-            if (currentTime > timePosition) break;
-            nearestSharpWaveTime = currentTime;
+          // Apply periodicity parameter (now in Hz)
+          // When periodicity is > 0, use that exact frequency in Hz
+          // When periodicity is 0, use variable intervals
+          if (this.sharpWavePeriodicity > 0) {
+            // Convert from Hz to seconds (period = 1/frequency)
+            effectiveInterval = 1.0 / this.sharpWavePeriodicity;
+            
+            // Add slight variability for natural appearance (less at higher frequencies)
+            const maxVariability = Math.max(0, 0.15 - (this.sharpWavePeriodicity * 0.03));
+            const variabilityFactor = 1.0 + (Math.sin(timePosition * 0.3) * maxVariability);
+            effectiveInterval *= variabilityFactor;
+          } else {
+            // At periodicity = 0 Hz (random), use variable timing
+            // Sharp waves tend to be more frequent than spikes with less clustering 
+            effectiveInterval = (7 + Math.sin(timePosition * 0.04) * 1.5) * baseIntervalFactor;
+            
+            // Apply frequency adjustment to make sharp waves more or less frequent
+            effectiveInterval *= frequencyAdjustment;
+          }
+          
+          // Calculate nearest sharp wave time using this variable interval
+          let nearestSharpWaveTime;
+          
+          if (this.sharpWavePeriodicity > 0) {
+            // For any non-zero periodicity, use the frequency-based effectiveInterval
+            nearestSharpWaveTime = Math.floor(timePosition / effectiveInterval) * effectiveInterval;
+          } else {
+            // For periodicity = 0, use more variable timing
+            // Initialize variables for the while loop
+            let currentTime = 0;
+            nearestSharpWaveTime = 0;
+            
+            while (currentTime <= timePosition) {
+              // More regular intervals with less variation than spikes
+              const dynamicInterval = 7 + Math.sin(currentTime * 0.07) * 1.5;
+              // Apply frequency adjustment
+              currentTime += dynamicInterval * frequencyAdjustment;
+              if (currentTime > timePosition) break;
+              nearestSharpWaveTime = currentTime;
+            }
           }
           
           const timeFromSharpWave = timePosition - nearestSharpWaveTime;
@@ -1822,41 +1784,74 @@ class EEGWaveformDemo {
         for (let x = 0; x < this.canvas.width; x++) {
           const timePosition = Math.floor(((x + this.panOffset.x) / this.timeScale + time) * 100) / 100;
           
-          // LRDA key characteristics:
-          // 1. More regular frequency than polymorphic delta (1-2 Hz)
-          // 2. Rhythmic, repetitive morphology
-          // 3. Often evolves over time (changing frequency/amplitude)
+          // Use the user-selected periodicity instead of fixed value
+          const baseFreq = this.lrdaPeriodicity; // User-configurable frequency (0-2 Hz)
           
-          // Create evolving frequency pattern (starts slower, speeds up slightly)
-          const baseFreq = 1.3; // Base frequency around 1.3 Hz (typical for LRDA)
-          const evolveRate = Math.sin(timePosition * 0.03) * 0.2; // Slow evolution of frequency
-          const effectiveFreq = baseFreq * (1 + evolveRate); // 1.0-1.6 Hz range
+          // Create evolving frequency pattern (slight variation around base frequency)
+          const evolveRate = Math.sin(timePosition * 0.03) * 0.1; // Reduced variation
+          let effectiveFreq = baseFreq * (1 + evolveRate);
           
-          // Create distinct burst pattern (10-15 second bursts with 5-10 second pauses)
-          const burstCycle = 20 + Math.sin(timePosition * 0.04) * 5; // 15-25 second total cycle
-          const burstPosition = (timePosition % burstCycle) / burstCycle;
+          // Special handling for 0 Hz (random discharges)
           let burstModulator = 0;
           
-          // Active for 60% of the cycle (longer bursts characteristic of LRDA)
-          if (burstPosition < 0.6) {
-            // Within active burst period
-            const burstPhase = burstPosition / 0.6;
+          if (baseFreq === 0) {
+            // In 0 Hz mode, generate random infrequent discharges (similar to spike and wave)
+            // Create a seed based on time that changes every ~8-10 seconds
+            const dischargeInterval = 9; // Base interval of 9 seconds
+            const randomSeed = Math.floor(timePosition / dischargeInterval);
             
-            // Amplitude waxing and waning within burst (characteristic of LRDA)
-            if (burstPhase < 0.15) {
-              // Ramp up - first 15% of burst
-              burstModulator = burstPhase / 0.15;
-            } else if (burstPhase > 0.85) {
-              // Ramp down - last 15% of burst
-              burstModulator = (1 - burstPhase) / 0.15;
-            } else {
-              // Middle of burst - slight amplitude variation (not perfectly constant)
-              burstModulator = 0.9 + 0.1 * Math.sin(burstPhase * Math.PI * 4);
+            // Use a consistent random value for this time period
+            const pseudo_random = (Math.sin(randomSeed * 12345.6789) * 0.5 + 0.5);
+            
+            // Add a small random variation to the interval (±1 second)
+            const adjustedInterval = dischargeInterval + (pseudo_random * 2 - 1);
+            
+            // Calculate current position within the interval
+            const intervalPosition = timePosition % adjustedInterval;
+            
+            // Discharge occurs at the beginning of the interval
+            if (intervalPosition < 0.7) { // 700ms discharge duration
+              // Calculate phase within the discharge (0 to 1)
+              const dischargePhase = intervalPosition / 0.7;
+              
+              // Create smooth envelope for discharge
+              const envelope = Math.sin(Math.PI * dischargePhase) * 0.9 + 0.1;
+              
+              // Set the modulator based on the envelope
+              burstModulator = envelope;
+              
+              // Use a higher effective frequency for random discharges (waves at ~2-3 Hz)
+              effectiveFreq = 2.5;
+            }
+          } else {
+            // Regular LRDA pattern with bursts when frequency > 0
+            // Create distinct burst pattern (10-15 second bursts with 5-10 second pauses)
+            const burstCycle = 20 + Math.sin(timePosition * 0.04) * 5; // 15-25 second total cycle
+            const burstPosition = (timePosition % burstCycle) / burstCycle;
+            
+            // Active for 60% of the cycle (longer bursts characteristic of LRDA)
+            if (burstPosition < 0.6) {
+              // Within active burst period
+              const burstPhase = burstPosition / 0.6;
+              
+              // Amplitude waxing and waning within burst (characteristic of LRDA)
+              if (burstPhase < 0.15) {
+                // Ramp up - first 15% of burst
+                burstModulator = burstPhase / 0.15;
+              } else if (burstPhase > 0.85) {
+                // Ramp down - last 15% of burst
+                burstModulator = (1 - burstPhase) / 0.15;
+              } else {
+                // Middle of burst - slight amplitude variation (not perfectly constant)
+                burstModulator = 0.9 + 0.1 * Math.sin(burstPhase * Math.PI * 4);
+              }
             }
           }
           
-          // Calculate LRDA waveform with appropriate amplitude (20-35 μV)
-          const amplitude = 30 * amplitudeScale * burstModulator;
+          // Calculate LRDA waveform with appropriate amplitude (20-40 μV)
+          // Higher amplitude for higher periodicity values to maintain visibility
+          const baseAmplitude = 30 * (1 + (baseFreq > 0 ? baseFreq * 0.2 : 0));
+          const amplitude = baseAmplitude * amplitudeScale * burstModulator;
           const phase = 2 * Math.PI * effectiveFreq * timePosition;
           
           // Create smoother, more sinusoidal waveform (less sharp contours)
@@ -2001,6 +1996,29 @@ class EEGWaveformDemo {
       let spikeWaveBaseline = new Array(this.canvas.width).fill(centerY);
       let hasSpikeWave = this.activeWaveforms.has('custom3HzSpikeWave');
       
+      // Calculate custom spike and wave pattern with adjustable frequency
+      let spikeAndWavesBaseline = new Array(this.canvas.width).fill(centerY);
+      let hasSpikeAndWaves = this.activeWaveforms.has('spikeAndWaves');
+      
+      if (hasSpikeAndWaves) {
+        // Get transition factor for spike and waves
+        const spikeAndWavesFactor = this.getPatternTransitionFactor('spikeAndWaves');
+        
+        // Calculate the spike and wave pattern
+        for (let x = 0; x < this.canvas.width; x++) {
+          const timePosition = Math.floor(((x + this.panOffset.x) / this.timeScale + time) * 100) / 100;
+          
+          // Use the spike and wave generator function
+          const spikeAndWaveValue = this.waveforms.spikeAndWaves.draw(x, centerY, leadName, timePosition);
+          
+          // Apply transition factor
+          const adjustedValue = centerY + ((spikeAndWaveValue - centerY) * spikeAndWavesFactor);
+          
+          // Set the value
+          spikeAndWavesBaseline[x] = adjustedValue;
+        }
+      }
+      
       if (hasSpikeWave) {
         // Get transition factor for 3Hz spike-wave
         const spikeWaveFactor = this.getPatternTransitionFactor('custom3HzSpikeWave');
@@ -2139,8 +2157,8 @@ class EEGWaveformDemo {
       this.activeWaveforms.forEach(type => {
         // Skip eye blinks, spikes, sharp waves and chewing as they're handled as the baseline
         if (type === 'eyeBlinks' || type === 'spikes' || type === 'sharpWaves' || 
-            type === 'chewing' || type === 'custom3HzSpikeWave' || type === 'focalSeizure' || 
-            type === 'lpds') return;
+            type === 'chewing' || type === 'custom3HzSpikeWave' || type === 'spikeAndWaves' || 
+            type === 'focalSeizure' || type === 'lpds') return;
         
         const waveform = this.waveforms[type];
         const modeConfig = this.modes[this.currentMode];
@@ -2436,6 +2454,18 @@ class EEGWaveformDemo {
                   baseY = spikeWaveBaseline[x];
                 }
                 
+                // Apply spike and waves pattern with custom frequency
+                if (hasSpikeAndWaves) {
+                  // If we have eye blinks, add the spike and wave pattern to it rather than replacing
+                  if (hasEyeBlink) {
+                    // Add the spike and wave deviation from center to the current baseline
+                    baseY += (spikeAndWavesBaseline[x] - centerY);
+                  } else {
+                    // Otherwise just use the spike and wave baseline
+                    baseY = spikeAndWavesBaseline[x];
+                  }
+                }
+                
                 // Apply focal seizure pattern (highest priority)
                 if (hasFocalSeizure) {
                   baseY = focalSeizureBaseline[x];
@@ -2484,7 +2514,7 @@ class EEGWaveformDemo {
         for (let x = 0; x < this.canvas.width; x++) {
           const normalizedY = combinedY[x] / activeCount;
           // If there's no baseline effect, use the normalized value; otherwise we've already included the baseline
-          const finalY = (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasSpikeWave || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact) ? normalizedY : centerY + (normalizedY - centerY);
+          const finalY = (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact) ? normalizedY : centerY + (normalizedY - centerY);
           
           if (x === 0) {
             this.ctx.moveTo(x, finalY);
@@ -2493,7 +2523,7 @@ class EEGWaveformDemo {
           }
         }
         this.ctx.stroke();
-      } else if (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasChewing || hasSpikeWave || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact) {
+      } else if (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasChewing || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact) {
         // If there are no other waveforms but we have a baseline effect, draw just that
         this.ctx.beginPath();
         this.ctx.strokeStyle = lead.color;
@@ -2568,6 +2598,18 @@ class EEGWaveformDemo {
           // Apply spike-wave pattern (overrides everything as it's a seizure)
           if (hasSpikeWave) {
             baselineY = spikeWaveBaseline[x];
+          }
+          
+          // Apply spike and waves pattern with custom frequency
+          if (hasSpikeAndWaves) {
+            // If we have eye blinks, add the spike and wave pattern to it rather than replacing
+            if (hasEyeBlink) {
+              // Add the spike and wave deviation from center to the current baseline
+              baselineY += (spikeAndWavesBaseline[x] - centerY);
+            } else {
+              // Otherwise just use the spike and wave baseline
+              baselineY = spikeAndWavesBaseline[x];
+            }
           }
           
           // Apply focal seizure pattern (highest priority)
@@ -2788,8 +2830,8 @@ class EEGWaveformDemo {
         }
         
         this.activeWaveforms.add(type);
-        // For spikes, sharp waves, and slowing, we want to show them immediately
-        if (type === 'spikes' || type === 'sharpWaves' || type === 'slowing') {
+        // For spikes, sharp waves, spike and waves, and slowing, we want to show them immediately
+        if (type === 'spikes' || type === 'sharpWaves' || type === 'spikeAndWaves' || type === 'slowing') {
           this.currentTime = 0; // Reset time to show the abnormality
         }
       } else {
@@ -2884,11 +2926,23 @@ class EEGWaveformDemo {
       // Turn off focal slowing
       this.activeWaveforms.delete('focalSlowing');
       this.patternTransitions.delete('focalSlowing');
+      
+      // Hide the LRDA adjusters
+      const lrdaAdjusters = document.getElementById('lrdaAdjusters');
+      if (lrdaAdjusters) {
+        lrdaAdjusters.style.display = 'none';
+      }
     } else {
       // Start transition for focal slowing
       this.startPatternTransition('focalSlowing');
       // Turn on focal slowing
       this.activeWaveforms.add('focalSlowing');
+      
+      // Show the LRDA adjusters
+      const lrdaAdjusters = document.getElementById('lrdaAdjusters');
+      if (lrdaAdjusters) {
+        lrdaAdjusters.style.display = 'block';
+      }
     }
     
     // Update ACNS interpretation
@@ -3375,5 +3429,411 @@ class EEGWaveformDemo {
     
     // Update ACNS interpretation
     this.updateScaleInfo();
+  }
+
+  setSpikeFrequency(frequency) {
+    // Convert from ACNS criteria numerical scale to internal frequency adjustment value
+    // 1 = Rare (<1% of record)
+    // 2 = Occasional (1-10% of record)
+    // 3 = Frequent (10-50% of record) 
+    // 4 = Abundant (>50% of record)
+    const frequencyValue = parseInt(frequency);
+    
+    // Map ACNS criteria value to internal frequency values
+    let internalValue;
+    switch(frequencyValue) {
+      case 1: // Rare
+        internalValue = 0.1; // Very low frequency
+        break;
+      case 2: // Occasional
+        internalValue = 0.4; // Low-moderate frequency
+        break;
+      case 3: // Frequent
+        internalValue = 0.7; // Moderate-high frequency
+        break;
+      case 4: // Abundant
+        internalValue = 1.0; // Highest frequency
+        break;
+      default:
+        internalValue = 0.4; // Default to Occasional
+    }
+    
+    this.spikeFrequency = internalValue;
+    console.log("Spike frequency set to:", this.spikeFrequency, "(ACNS criteria level:", frequencyValue, ")");
+  }
+  
+  setSpikePeriodicity(periodicity) {
+    // Ensure periodicity is within valid range (now 0-3 Hz)
+    this.spikePeriodicity = Math.max(0, Math.min(3.0, parseFloat(periodicity)));
+    console.log("Spike periodicity set to:", this.spikePeriodicity, "Hz");
+  }
+  
+  setSharpWaveFrequency(frequency) {
+    // Convert from ACNS criteria numerical scale to internal frequency adjustment value
+    // 1 = Rare (<1% of record)
+    // 2 = Occasional (1-10% of record)
+    // 3 = Frequent (10-50% of record) 
+    // 4 = Abundant (>50% of record)
+    const frequencyValue = parseInt(frequency);
+    
+    // Map ACNS criteria value to internal frequency values
+    let internalValue;
+    switch(frequencyValue) {
+      case 1: // Rare
+        internalValue = 0.1; // Very low frequency
+        break;
+      case 2: // Occasional
+        internalValue = 0.4; // Low-moderate frequency
+        break;
+      case 3: // Frequent
+        internalValue = 0.7; // Moderate-high frequency
+        break;
+      case 4: // Abundant
+        internalValue = 1.0; // Highest frequency
+        break;
+      default:
+        internalValue = 0.4; // Default to Occasional
+    }
+    
+    this.sharpWaveFrequency = internalValue;
+    console.log("Sharp wave frequency set to:", this.sharpWaveFrequency, "(ACNS criteria level:", frequencyValue, ")");
+  }
+  
+  setSharpWavePeriodicity(periodicity) {
+    // Ensure periodicity is within valid range (now 0-3 Hz)
+    this.sharpWavePeriodicity = Math.max(0, Math.min(3.0, parseFloat(periodicity)));
+    console.log("Sharp wave periodicity set to:", this.sharpWavePeriodicity, "Hz");
+  }
+  
+  setSpikeAndWavePeriodicity(periodicity) {
+    // Set the periodicity for spike and waves (in Hz)
+    this.spikeAndWavePeriodicity = periodicity;
+    
+    // If the pattern is active, update the display
+    if (this.activeWaveforms.has('spikeAndWaves')) {
+      // Optional: Reset the timing to show the new frequency from the beginning
+      this.currentTime = 0;
+    }
+  }
+  
+  // Set the periodicity for LRDA (in Hz)
+  setLRDAPeriodicity(periodicity) {
+    // Set the periodicity for LRDA (in Hz)
+    this.lrdaPeriodicity = periodicity;
+    
+    // If the pattern is active, update the display
+    if (this.activeWaveforms.has('focalSlowing')) {
+      // Optional: Reset the timing to show the new frequency from the beginning
+      this.currentTime = 0;
+    }
+  }
+
+  // Generate a sharp wave pattern (longer duration than spikes, same general shape)
+  generateSharpWaveWaveform(amplitude, duration, x, centerY, leadName, time) {
+    // Similar to spike waveform but with longer duration (150-200ms)
+    return this.generateSharpOrSpikeWaveform(amplitude, duration, x, centerY, leadName, time, true);
+  }
+  
+  // Generate a spike and wave pattern with adjustable periodicity
+  generateSpikeAndWaveWaveform(amplitude, duration, x, centerY, leadName, time) {
+    // Determine if this lead is affected (temporal leads mainly)
+    let leadFactor = 0;
+    
+    // Make the pattern more generalized - higher lead factors across all leads
+    if (leadName === 'F7-T3' || leadName === 'F8-T4') {
+      leadFactor = 0.9; // Strong in frontal-temporal
+    } else if (leadName === 'T3-T5' || leadName === 'T4-T6') {
+      leadFactor = 1.0; // Strongest in temporal
+    } else if (leadName === 'T5-O1' || leadName === 'T6-O2') {
+      leadFactor = 0.9; // Strong in temporal-occipital
+    } else if (leadName === 'Fp1-F7' || leadName === 'Fp2-F8') {
+      leadFactor = 0.8; // Strong in frontopolar
+    } else {
+      leadFactor = 0.7; // Strong but less pronounced in others
+    }
+    
+    // No effect if lead factor is 0
+    if (leadFactor === 0) {
+      return centerY;
+    }
+    
+    // Get the current periodicity setting
+    const periodicity = this.spikeAndWavePeriodicity; 
+    
+    // When periodicity is 0 Hz, display random single discharges instead of regular pattern
+    if (periodicity === 0) {
+      // Generate random infrequent discharges (approximately every 8-10 seconds)
+      // Use the same timing for all leads to ensure synchronized discharges
+      const randomOffset = Math.sin(time * 0.37) * 1; // Small variation based only on time
+      const dischargeInterval = 9 + randomOffset; // Base interval with slight random variation
+      
+      // Calculate if we're in a discharge window - same calculation for all leads
+      const dischargeTime = Math.floor(time / dischargeInterval) * dischargeInterval;
+      const timeFromDischarge = time - dischargeTime;
+      const dischargeDuration = 0.7; // 700ms for a single discharge
+      
+      if (timeFromDischarge < dischargeDuration) {
+        // We're in a discharge window
+        const dischargePhase = timeFromDischarge / dischargeDuration;
+        
+        // First 40% of the discharge is the spike
+        const spikePhase = 0.4;
+        // Remaining 60% is the wave (slower than the spike)
+        const wavePhase = 0.6;
+        
+        let waveformOffset = 0;
+        
+        if (dischargePhase < spikePhase) {
+          // Generate spike during first phase - spike goes down (negative)
+          const spikeProgress = dischargePhase / spikePhase;
+          if (spikeProgress < 0.3) {
+            // Fast rising phase (0-30% of spike)
+            waveformOffset = -(amplitude * 1.2 * leadFactor) * (spikeProgress / 0.3); // Increased amplitude for spikes
+          } else if (spikeProgress < 0.4) {
+            // Quick peak (30-40% of spike)
+            waveformOffset = -(amplitude * 1.2 * leadFactor); // Increased amplitude for spikes
+          } else {
+            // Descending phase (40-100% of spike)
+            const descendingProgress = (spikeProgress - 0.4) / 0.6;
+            waveformOffset = -(amplitude * 1.2 * leadFactor) * (1 - descendingProgress); // Increased amplitude for spikes
+          }
+        } else {
+          // Generate slow wave during second phase - wave goes up (positive)
+          const waveProgress = (dischargePhase - spikePhase) / wavePhase;
+          // Invert the sine wave (make it negative) so it goes upward instead of downward
+          waveformOffset = -(amplitude * 1.1 * leadFactor) * Math.sin(waveProgress * Math.PI); // Increased amplitude for wave
+        }
+        
+        // Add smooth onset/offset for the discharge
+        let envelopeModifier = 1.0;
+        if (dischargePhase < 0.1) {
+          // Smooth onset - first 10% of the discharge
+          envelopeModifier = dischargePhase / 0.1;
+        } else if (dischargePhase > 0.9) {
+          // Smooth offset - last 10% of the discharge
+          envelopeModifier = (1 - dischargePhase) / 0.1;
+        }
+        
+        waveformOffset *= envelopeModifier;
+        
+        return centerY + waveformOffset;
+      }
+      
+      return centerY; // No discharge at this time
+    }
+    
+    // Create bursts of activity lasting 1-5 seconds
+    const burstCycleDuration = 10; // Total cycle duration in seconds
+    const minBurstDuration = 1; // Minimum duration of burst in seconds
+    const maxBurstDuration = 5; // Maximum duration of burst in seconds
+    
+    // Calculate burst duration based on periodicity (higher periodicity = longer bursts)
+    const burstDuration = minBurstDuration + ((maxBurstDuration - minBurstDuration) * (periodicity / 5.0));
+    
+    // Calculate when bursts should occur
+    const burstCyclePosition = (time % burstCycleDuration) / burstCycleDuration;
+    
+    // Only show activity during the burst window (first part of the cycle)
+    const burstWindow = burstDuration / burstCycleDuration;
+    if (burstCyclePosition > burstWindow) {
+      return centerY; // Outside burst window, return to baseline
+    }
+    
+    // Calculate cycle time in seconds based on periodicity (inverse of frequency)
+    const cycleTime = 1.0 / periodicity;
+    
+    // Calculate position in the cycle
+    const cyclePosition = (time % cycleTime) / cycleTime;
+    
+    // Spike phase (first 20% of the cycle)
+    const spikePhase = 0.2;
+    // Wave phase (next 60% of the cycle)
+    const wavePhase = 0.6;
+    // Rest phase (remaining 20% of the cycle)
+    const restPhase = 0.2;
+    
+    let waveformOffset = 0;
+    
+    // Apply smooth onset/offset to the burst
+    let burstEnvelope = 1.0;
+    if (burstCyclePosition < 0.05) {
+      // Smooth onset - first 5% of the burst window
+      burstEnvelope = burstCyclePosition / 0.05;
+    } else if (burstCyclePosition > (burstWindow - 0.05)) {
+      // Smooth offset - last 5% of the burst window
+      burstEnvelope = (burstWindow - burstCyclePosition) / 0.05;
+    }
+    
+    if (cyclePosition < spikePhase) {
+      // Generate spike during spike phase - spike goes down (negative)
+      const spikeProgress = cyclePosition / spikePhase;
+      if (spikeProgress < 0.3) {
+        // Fast rising phase (0-30% of spike)
+        waveformOffset = -(amplitude * leadFactor) * (spikeProgress / 0.3);
+      } else if (spikeProgress < 0.4) {
+        // Quick peak (30-40% of spike)
+        waveformOffset = -(amplitude * leadFactor);
+      } else {
+        // Descending phase (40-100% of spike)
+        const descendingProgress = (spikeProgress - 0.4) / 0.6;
+        waveformOffset = -(amplitude * leadFactor) * (1 - descendingProgress);
+      }
+    } else if (cyclePosition < spikePhase + wavePhase) {
+      // Generate slow wave during wave phase - wave goes up (positive)
+      const waveProgress = (cyclePosition - spikePhase) / wavePhase;
+      // Invert the sine wave (make it negative) so it goes upward instead of downward
+      waveformOffset = -(amplitude * 0.9 * leadFactor) * Math.sin(waveProgress * Math.PI);
+    }
+    
+    // Apply burst envelope (smooth onset/offset)
+    waveformOffset *= burstEnvelope;
+    
+    // Return final waveform value
+    return centerY + waveformOffset;
+  }
+  
+  // Generate a sinusoidal waveform with specified frequency and amplitude
+  generateSinusoidalWaveform(frequency, amplitude, x, centerY, leadName, time) {
+    // ... existing code ...
+  }
+
+  // Generate a spike waveform pattern
+  generateSpikeWaveform(amplitude, duration, x, centerY, leadName, time) {
+    return this.generateSharpOrSpikeWaveform(amplitude, duration, x, centerY, leadName, time, false);
+  }
+  
+  // Generate spike or sharp wave patterns with customizable parameters
+  generateSharpOrSpikeWaveform(amplitude, duration, x, centerY, leadName, time, isSharpWave) {
+    // Determine if this lead is affected (temporal leads mainly)
+    let leadFactor = 0;
+    let isLeft = leadName.includes('1') || leadName.includes('3') || leadName.includes('5') || leadName.includes('7');
+    
+    // For spikes or sharp waves, we want them primarily in temporal regions with some spread
+    if (leadName === 'F7-T3' || leadName === 'F8-T4') {
+      leadFactor = 0.9; // Strong in frontal-temporal
+    } else if (leadName === 'T3-T5' || leadName === 'T4-T6') {
+      leadFactor = 1.0; // Strongest in mid-temporal
+    } else if (leadName === 'T5-O1' || leadName === 'T6-O2') {
+      leadFactor = 0.7; // Good in temporal-occipital
+    } else if (leadName === 'Fp1-F7' || leadName === 'Fp2-F8') {
+      leadFactor = 0.4; // Mild in frontopolar
+    } else {
+      leadFactor = 0.2; // Minimal in others
+    }
+    
+    // No effect if lead factor is 0
+    if (leadFactor === 0) {
+      return centerY;
+    }
+    
+    // Get frequency and periodicity based on type
+    const frequency = isSharpWave ? this.sharpWaveFrequency : this.spikeFrequency;
+    const periodicity = isSharpWave ? this.sharpWavePeriodicity : this.spikePeriodicity;
+    
+    // Calculate the base interval between patterns in seconds (inverse of frequency)
+    // Lower frequency = longer interval between spikes
+    const baseInterval = 1.0 / (frequency * 0.2); // Convert 0.1-1.0 scale to realistic intervals (5-50 seconds)
+    
+    // Apply periodicity factor (0-1) to randomize timing
+    // Higher periodicity = more regular timing (less random)
+    let randomOffset = 0;
+    if (periodicity < 1.0) {
+      // Only apply randomness if periodicity is not at maximum
+      const randomFactor = 1.0 - periodicity; // Invert (0 = perfectly periodic, 1 = completely random)
+      randomOffset = (Math.sin(time * 0.1 + leadName.length) * baseInterval * 0.5) * randomFactor;
+    }
+    
+    // Final interval with randomization
+    const interval = baseInterval + randomOffset;
+    
+    // Calculate spike/sharp wave timing
+    const patternTime = Math.floor(time / interval) * interval;
+    const timeFromPattern = time - patternTime;
+    
+    // Duration depends on type (spikes are shorter than sharp waves)
+    const patternDuration = isSharpWave ? duration * 3.0 : duration; // Sharp waves are 3x longer
+    
+    // Check if we're in a pattern window
+    if (timeFromPattern < patternDuration) {
+      // Calculate the spike shape
+      const normalizedTime = timeFromPattern / patternDuration;
+      
+      // Create shape with fast rise and slower decay
+      let waveformOffset;
+      
+      if (isSharpWave) {
+        // Sharper waves have a more gradual rise and fall
+        if (normalizedTime < 0.3) {
+          // Rising phase (0-30%)
+          waveformOffset = -(amplitude * leadFactor) * (normalizedTime / 0.3);
+        } else if (normalizedTime < 0.4) {
+          // Peak (30-40%)
+          waveformOffset = -(amplitude * leadFactor);
+        } else {
+          // Falling phase (40-100%)
+          waveformOffset = -(amplitude * leadFactor) * (1 - ((normalizedTime - 0.4) / 0.6));
+        }
+      } else {
+        // Spikes have very fast rise and slightly slower fall
+        if (normalizedTime < 0.15) {
+          // Rising phase (very fast - 0-15%)
+          waveformOffset = -(amplitude * leadFactor) * (normalizedTime / 0.15);
+        } else if (normalizedTime < 0.25) {
+          // Peak (15-25%)
+          waveformOffset = -(amplitude * leadFactor);
+        } else {
+          // Falling phase (25-100%)
+          waveformOffset = -(amplitude * leadFactor) * (1 - ((normalizedTime - 0.25) / 0.75));
+        }
+      }
+      
+      return centerY + waveformOffset;
+    }
+    
+    return centerY; // No pattern effect
+  }
+
+  // Add method to set spike and wave periodicity
+  setSpikeAndWavePeriodicity(periodicity) {
+    this.spikeAndWavePeriodicity = parseFloat(periodicity);
+    
+    // If spike and wave is currently active, update the display
+    if (this.activeWaveforms.has('spikeAndWaves')) {
+      // Keep playing to show the new pattern
+      this.play();
+    }
+  }
+  
+  // Add method to set LRDA periodicity
+  setLRDAPeriodicity(periodicity) {
+    this.lrdaPeriodicity = parseFloat(periodicity);
+    
+    // If LRDA is currently active, update the display
+    if (this.activeWaveforms.has('focalSlowing')) {
+      // Keep playing to show the new pattern
+      this.play();
+    }
+  }
+  
+  // Add method to set spike and wave frequency
+  setSpikeAndWaveFrequency(frequency) {
+    this.spikeAndWaveFrequency = parseInt(frequency);
+    
+    // If spike and wave is currently active, update the display
+    if (this.activeWaveforms.has('spikeAndWaves')) {
+      // Keep playing to show the new pattern
+      this.play();
+    }
+  }
+  
+  // Add method to set LRDA frequency
+  setLRDAFrequency(frequency) {
+    this.lrdaFrequency = parseInt(frequency);
+    
+    // If LRDA is currently active, update the display
+    if (this.activeWaveforms.has('focalSlowing')) {
+      // Keep playing to show the new pattern
+      this.play();
+    }
   }
 } 
