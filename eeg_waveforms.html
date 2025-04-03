@@ -20,6 +20,7 @@
   <script src="assets/js/common.js" defer></script>
   <script src="assets/js/includes-loader.js" defer></script>
   <script src="assets/js/universal-search.js" defer></script>
+  <script src="assets/js/eeg-findings.js" defer></script>
   <script src="assets/js/eeg-waveform.js" defer></script>
   
   <!-- Search initialization script -->
@@ -490,9 +491,11 @@
           <button id="eyeBlinkToggle" onclick="demo.toggleEyeBlinks()" class="active"><i class="fa-solid fa-eye"></i> Eye Blinks</button>
           <button id="pdrToggle" onclick="demo.togglePDR()" class="active"><i class="fa-solid fa-wave-square"></i> Posterior Dominant Rhythm</button>
           <button id="chewingToggle"><i class="fa-solid fa-tooth"></i> Chewing Artifact</button>
+          <button id="movementToggle"><i class="fa-solid fa-person-running"></i> Movement Artifact</button>
           <button id="sweatArtifactToggle" onclick="demo.toggleSweatArtifact()"><i class="fa-solid fa-droplet"></i> Sweat Artifact</button>
           <button id="sixtyHzArtifactToggle" onclick="demo.toggleSixtyHzArtifact()"><i class="fa-solid fa-bolt"></i> 60Hz Artifact</button>
           <button id="ecgArtifactToggle" onclick="demo.toggleECGArtifact()"><i class="fa-solid fa-heartbeat"></i> ECG Artifact</button>
+          <button id="pulseArtifactToggle" onclick="demo.togglePulseArtifact()"><i class="fa-solid fa-heart-pulse"></i> Pulse Artifact</button>
         </div>
 
         <div class="waveform-controls">
@@ -516,12 +519,12 @@
         <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
 
         <!-- Findings Display Area -->
-        <div id="findings-display" class="findings-display" style="display: none;">
-          <div class="finding-header">
-            <h4><i class="fa-solid fa-circle-info"></i> <span id="finding-title">Pattern Information</span></h4>
-            <button id="close-finding" onclick="document.getElementById('findings-display').style.display = 'none'"><i class="fa-solid fa-xmark"></i></button>
+        <div id="findings-display" class="findings-display">
+          <div class="findings-header">
+            <h4><i class="fa-solid fa-circle-info"></i> <span>Pattern Information</span></h4>
+            <button class="findings-close"><i class="fa-solid fa-xmark"></i></button>
           </div>
-          <div id="finding-content" class="finding-content">
+          <div class="findings-content">
             <!-- Content will be updated dynamically -->
           </div>
         </div>
@@ -825,6 +828,23 @@
         console.error("Chewing toggle button not found");
       }
       
+      // Handle movement artifact toggle
+      const movementToggle = document.getElementById('movementToggle');
+      if (movementToggle) {
+        console.log("Adding event listener to movement toggle");
+        movementToggle.addEventListener('click', function() {
+          console.log("Movement button clicked");
+          if (window.demo && typeof window.demo.toggleMovement === 'function') {
+            window.demo.toggleMovement();
+            if (this.classList.contains('active')) showPatternInfo('Movement');
+          } else {
+            console.error("toggleMovement function not available");
+          }
+        });
+      } else {
+        console.error("Movement toggle button not found");
+      }
+      
       // Handle wave button clicks with specific handlers for each type
       const waveButtons = document.querySelectorAll('.wave-btn');
       waveButtons.forEach(button => {
@@ -840,13 +860,13 @@
             // Show/hide adjusters based on button type
             if (type === 'spikes') {
               document.getElementById('spike-adjusters').style.display = isActive ? 'block' : 'none';
-              if (isActive) showPatternInfo('Spikes');
+              if (isActive) showPatternInfo('spikes');
             } else if (type === 'sharpWaves') {
               document.getElementById('sharp-wave-adjusters').style.display = isActive ? 'block' : 'none';
-              if (isActive) showPatternInfo('Sharp Waves');
+              if (isActive) showPatternInfo('sharpWaves');
             } else if (type === 'spikeAndWaves') {
               document.getElementById('spike-and-wave-adjusters').style.display = isActive ? 'block' : 'none';
-              if (isActive) showPatternInfo('Spike & Wave');
+              if (isActive) showPatternInfo('spikeWave3Hz');
             }
           }
         });
@@ -858,7 +878,7 @@
         focalSlowingToggle.addEventListener('click', function() {
           const isActive = this.classList.contains('active');
           document.getElementById('lrda-adjusters').style.display = isActive ? 'block' : 'none';
-          if (isActive) showPatternInfo('LRDA');
+          if (isActive) showPatternInfo('focalSlowing');
         });
       }
       
@@ -868,45 +888,49 @@
         generalizedSlowingToggle.addEventListener('click', function() {
           const isActive = this.classList.contains('active');
           document.getElementById('grda-adjusters').style.display = isActive ? 'block' : 'none';
-          if (isActive) showPatternInfo('GRDA');
+          if (isActive) showPatternInfo('generalizedSlowing');
         });
       }
       
       // Add listeners for other buttons to show pattern info
       document.getElementById('eyeBlinkToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('Eye Blinks');
+        if (this.classList.contains('active')) showPatternInfo('eyeBlinks');
       });
       
       document.getElementById('pdrToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('Alpha');
+        if (this.classList.contains('active')) showPatternInfo('pdr');
       });
       
       document.getElementById('sweatArtifactToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('Sweat');
+        if (this.classList.contains('active')) showPatternInfo('sweatArtifact');
       });
       
       document.getElementById('sixtyHzArtifactToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('60Hz');
+        if (this.classList.contains('active')) showPatternInfo('sixtyHzArtifact');
       });
       
       document.getElementById('ecgArtifactToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('ECG');
+        if (this.classList.contains('active')) showPatternInfo('ecgArtifact');
+      });
+      
+      document.getElementById('pulseArtifactToggle').addEventListener('click', function() {
+        if (this.classList.contains('active')) showPatternInfo('pulseArtifact');
       });
       
       document.getElementById('mildSlowingToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('Mild Slowing');
+        if (this.classList.contains('active')) showPatternInfo('mildSlowing');
       });
       
       document.getElementById('moderateSlowingToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('Moderate Slowing');
+        if (this.classList.contains('active')) showPatternInfo('moderateSlowing');
       });
       
       document.getElementById('severeSlowingToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('Severe Slowing');
+        if (this.classList.contains('active')) showPatternInfo('severeSlowing');
       });
       
       document.getElementById('burstSuppressionToggle').addEventListener('click', function() {
-        if (this.classList.contains('active')) showPatternInfo('Burst Suppression');
+        if (this.classList.contains('active')) showPatternInfo('burstSuppression');
       });
       
       // Make sure seizure toggle properly shows/hides adjusters
@@ -919,7 +943,7 @@
           if (window.demo && typeof window.demo.toggleSeizure === 'function') {
             window.demo.toggleSeizure();
             console.log("Called demo.toggleSeizure() directly");
-            if (this.classList.contains('active')) showPatternInfo('Seizure');
+            if (this.classList.contains('active')) showPatternInfo('seizure');
           } else {
             console.error("demo.toggleSeizure is not available!");
           }
@@ -936,141 +960,24 @@
       if (document.getElementById('seizure-intensity')) {
         updateSeizureIntensity(document.getElementById('seizure-intensity').value);
       }
+      
+      // Initialize the findings display
+      const findingsDisplay = document.getElementById('findings-display');
+      if (findingsDisplay && typeof initializeFindingsDisplay === 'function') {
+        initializeFindingsDisplay(findingsDisplay);
+      } else {
+        console.error("Findings display initialization failed");
+      }
     });
     
     // Function to show pattern information in the findings display
-    function showPatternInfo(patternName) {
+    function showPatternInfo(patternKey) {
       const findingsDisplay = document.getElementById('findings-display');
-      const findingTitle = document.getElementById('finding-title');
-      const findingContent = document.getElementById('finding-content');
-      
-      // Set the title
-      findingTitle.textContent = patternName;
-      
-      // Get information based on pattern name
-      let content = '';
-      
-      // Find the pattern in the tables
-      switch(patternName) {
-        case 'Alpha':
-          content = `
-            <p><span class="highlight">Frequency:</span> 8-13 Hz</p>
-            <p><span class="highlight">Location:</span> Posterior dominant (occipital)</p>
-            <p><span class="highlight">Clinical Significance:</span> Normal awake rhythm with eyes closed; attenuates with eye opening or mental activity</p>
-          `;
-          break;
-        case 'Eye Blinks':
-          content = `
-            <p><span class="highlight">Appearance:</span> Large amplitude downward deflections</p>
-            <p><span class="highlight">Location:</span> Frontal (Fp1/Fp2), attenuating posteriorly</p>
-            <p><span class="highlight">Identification Tips:</span> Occurs at 0.5-2Hz when awake; synchronous with visible eye movements; maximal at frontal polar leads</p>
-          `;
-          break;
-        case 'Chewing':
-          content = `
-            <p><span class="highlight">Appearance:</span> Rhythmic EMG bursts at ~1Hz with high-frequency spikes</p>
-            <p><span class="highlight">Location:</span> Temporal leads (T3/T4)</p>
-            <p><span class="highlight">Identification Tips:</span> Distinguished by muscle artifact clusters, rhythmic appearance at 1Hz; disrupts normal activity</p>
-          `;
-          break;
-        case 'Sweat':
-          content = `
-            <p><span class="highlight">Appearance:</span> Slow, undulating baseline shifts (0.1-0.7 Hz)</p>
-            <p><span class="highlight">Location:</span> Often frontal/temporal</p>
-            <p><span class="highlight">Identification Tips:</span> Appears as slow baseline wander; often in anxious patients or warm environments</p>
-          `;
-          break;
-        case '60Hz':
-          content = `
-            <p><span class="highlight">Appearance:</span> Regular, fast oscillations superimposed on EEG</p>
-            <p><span class="highlight">Location:</span> Often one electrode or side</p>
-            <p><span class="highlight">Identification Tips:</span> Perfect 60Hz rhythm; indicates electrical interference or poor electrode contact</p>
-          `;
-          break;
-        case 'ECG':
-          content = `
-            <p><span class="highlight">Appearance:</span> Regular QRS complexes seen as sharp upward deflections across channels</p>
-            <p><span class="highlight">Location:</span> All channels; strongest in temporal leads (T3/T4) closest to neck/heart</p>
-            <p><span class="highlight">Identification Tips:</span> Precisely synchronous with heartbeat; most prominent in patients with short/thick necks, low BMI, or when using non-cephalic references</p>
-          `;
-          break;
-        case 'Spikes':
-          content = `
-            <p><span class="highlight">Morphology:</span> Brief (&lt;70ms) pointed transients</p>
-            <p><span class="highlight">Clinical Association:</span> Epilepsy, irritative zone</p>
-            <p><span class="highlight">Key Features:</span> Fast upstroke, pointy peak, slow downstroke; isolated or grouped; usually pathological</p>
-          `;
-          break;
-        case 'Sharp Waves':
-          content = `
-            <p><span class="highlight">Morphology:</span> 70-200ms pointed transients</p>
-            <p><span class="highlight">Clinical Association:</span> Epilepsy, cerebral injury</p>
-            <p><span class="highlight">Key Features:</span> Longer duration than spikes but similar morphology; often with slow wave following</p>
-          `;
-          break;
-        case 'LRDA':
-          content = `
-            <p><span class="highlight">Morphology:</span> Lateralized rhythmic delta (1-4Hz)</p>
-            <p><span class="highlight">Clinical Association:</span> Focal cerebral dysfunction</p>
-            <p><span class="highlight">Key Features:</span> Continuous rhythmic slowing in localized regions; indicates underlying structural or functional pathology</p>
-          `;
-          break;
-        case 'GRDA':
-          content = `
-            <p><span class="highlight">Morphology:</span> Generalized rhythmic delta (1-4Hz)</p>
-            <p><span class="highlight">Clinical Association:</span> Diffuse cerebral dysfunction</p>
-            <p><span class="highlight">Key Features:</span> Continuous rhythmic slowing across all regions; indicates global encephalopathy or metabolic disturbance</p>
-          `;
-          break;
-        case 'Mild Slowing':
-          content = `
-            <p><span class="highlight">Morphology:</span> Mild excess of theta activity (4-7 Hz)</p>
-            <p><span class="highlight">Clinical Association:</span> Mild encephalopathy</p>
-            <p><span class="highlight">Key Features:</span> Mild excess of theta activity with relatively preserved background alpha rhythm</p>
-          `;
-          break;
-        case 'Moderate Slowing':
-          content = `
-            <p><span class="highlight">Morphology:</span> Predominant theta with some delta activity</p>
-            <p><span class="highlight">Clinical Association:</span> Moderate encephalopathy</p>
-            <p><span class="highlight">Key Features:</span> Predominant theta activity with some delta, loss of normal background alpha rhythm</p>
-          `;
-          break;
-        case 'Severe Slowing':
-          content = `
-            <p><span class="highlight">Morphology:</span> Predominant delta activity (1-3 Hz)</p>
-            <p><span class="highlight">Clinical Association:</span> Severe encephalopathy</p>
-            <p><span class="highlight">Key Features:</span> Predominantly delta activity (1-3 Hz), complete loss of faster frequencies</p>
-          `;
-          break;
-        case 'Burst Suppression':
-          content = `
-            <p><span class="highlight">Morphology:</span> Alternating periods of high-amplitude activity and suppression</p>
-            <p><span class="highlight">Clinical Association:</span> Severe brain dysfunction, coma, anesthesia</p>
-            <p><span class="highlight">Key Features:</span> Bursts of mixed frequency activity alternating with periods of suppression or flatline EEG</p>
-          `;
-          break;
-        case 'Seizure':
-          content = `
-            <p><span class="highlight">Morphology:</span> Evolving pattern of rhythmic activity often with increasing frequency and decreasing amplitude</p>
-            <p><span class="highlight">Clinical Association:</span> Epileptic seizure</p>
-            <p><span class="highlight">Key Features:</span> Evolution in frequency, amplitude, and spatial distribution; rhythmic activity typically exceeding 10 seconds</p>
-          `;
-          break;
-        case 'Spike & Wave':
-          content = `
-            <p><span class="highlight">Morphology:</span> Spike followed by a slow wave at 2-3 Hz</p>
-            <p><span class="highlight">Clinical Association:</span> Generalized epilepsy, absence seizures</p>
-            <p><span class="highlight">Key Features:</span> Generalized, synchronous 3 Hz spike-and-wave complexes; seen in absence epilepsy and other generalized epilepsy syndromes</p>
-          `;
-          break;
-        default:
-          content = `<p>No detailed information available for this pattern.</p>`;
+      if (findingsDisplay && typeof showFindingsForPattern === 'function') {
+        showFindingsForPattern(findingsDisplay, patternKey);
+      } else {
+        console.error("Failed to show pattern info: Module functions not available");
       }
-      
-      // Update content and show the display
-      findingContent.innerHTML = content;
-      findingsDisplay.style.display = 'block';
     }
     
     // Spike frequency adjuster
