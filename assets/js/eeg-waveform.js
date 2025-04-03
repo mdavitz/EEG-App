@@ -2695,14 +2695,59 @@ class EEGWaveformDemo {
   }
 
   reset() {
+    // Reset all parameters
     this.currentTime = 0;
     this.zoomLevel = 1;
     this.panOffset = { x: 0, y: 0 };
     this.isPlaying = false;
+    
+    // Cancel any existing animation
     if (this.animationFrame) {
       cancelAnimationFrame(this.animationFrame);
       this.animationFrame = null;
     }
+    
+    // Reset to normal mode - exactly the way it's initialized in the constructor
+    this.currentMode = 'normal';
+    
+    // Reset to default waveforms and make sure they match constructor state
+    this.activeWaveforms.clear();
+    this.activeWaveforms.add('alpha');
+    this.activeWaveforms.add('beta');  
+    this.activeWaveforms.add('eyeBlinks');
+    
+    // Initialize the waveforms if needed
+    if (!this.waveforms) {
+      this.setupWaveforms();
+    }
+    
+    // Specifically set the alpha modulationPattern for PDR
+    if (this.waveforms && this.waveforms.alpha) {
+      this.waveforms.alpha.modulationPattern = true;
+    }
+    
+    // Reset the UI to match default state - only eyeBlinks and PDR should be active
+    const allToggleButtons = document.querySelectorAll('.waveform-controls button');
+    
+    allToggleButtons.forEach(button => {
+      // Default active buttons are eyeBlinks and pdrToggle
+      if (button.id === 'eyeBlinkToggle' || button.id === 'pdrToggle') {
+        button.classList.add('active');
+      } else if (button.id !== 'play' && button.id !== 'pause' && button.id !== 'reset') {
+        button.classList.remove('active');
+      }
+    });
+    
+    // Remove all pattern transitions
+    this.patternTransitions = new Map();
+    
+    // Update any ACNS interpretation
+    this.updateScaleInfo();
+    
+    // Force immediate redraw to show the correct state
+    this.drawWaveform(this.currentTime);
+    
+    // Start a new animation
     this.startAnimation();
   }
 
