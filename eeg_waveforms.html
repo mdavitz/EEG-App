@@ -12,6 +12,8 @@
   
   <!-- Main CSS file that imports all modular CSS -->
   <link rel="stylesheet" href="assets/css/main.css" />
+  <!-- Page-specific CSS for EEG Waveforms -->
+  <link rel="stylesheet" href="assets/css/pages/eeg-waveforms.css" />
   
   <!-- Core Scripts -->
   <script src="firebase-auth.js" defer></script>
@@ -294,6 +296,85 @@
       box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
     }
 
+    /* Waveform control panels styling */
+    .waveform-control-panels {
+      margin: 20px 0;
+      padding: 15px;
+      background-color: var(--info-bg);
+      border-radius: 8px;
+      box-shadow: 0 2px 8px var(--shadow-color);
+    }
+    
+    .waveform-control-panels > div {
+      margin-bottom: 15px;
+      padding: 12px;
+      background-color: rgba(0, 0, 0, 0.02);
+      border-radius: 6px;
+      border: 1px solid var(--border-color);
+    }
+    
+    .waveform-control-panels > div:last-child {
+      margin-bottom: 0;
+    }
+    
+    .waveform-control-panels h4 {
+      color: var(--accent-color);
+      margin: 0 0 10px 0;
+      font-weight: 600;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 6px;
+    }
+    
+    .slider-container {
+      margin-bottom: 10px;
+      position: relative;
+    }
+    
+    .slider-container:last-child {
+      margin-bottom: 0;
+    }
+    
+    .slider-container label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+    
+    .slider-container input[type="range"] {
+      width: 100%;
+      margin: 0;
+      background: var(--info-bg);
+    }
+    
+    .slider-label-min, .slider-label-max {
+      display: inline-block;
+      font-size: 0.8rem;
+      opacity: 0.7;
+      margin-top: 5px;
+    }
+    
+    .slider-label-min {
+      float: left;
+    }
+    
+    .slider-label-max {
+      float: right;
+    }
+    
+    /* Multi-panel layout for larger screens */
+    @media (min-width: 768px) {
+      .waveform-control-panels {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+      
+      .waveform-control-panels > div {
+        flex: 1 0 calc(50% - 15px);
+        margin-bottom: 0;
+      }
+    }
+
     @media (max-width: 768px) {
       .waveform-controls {
         flex-direction: column;
@@ -368,15 +449,97 @@
 
         <div class="waveform-controls">
           <h4>Epileptiform Patterns:</h4>
-          <button onclick="demo.setWaveform('spikes')" class="wave-btn" data-wave="spikes"><i class="fa-solid fa-bolt"></i> Spikes</button>
-          <button onclick="demo.setWaveform('sharpWaves')" class="wave-btn" data-wave="sharpWaves"><i class="fa-solid fa-bolt-lightning"></i> Sharp Waves</button>
-          <button id="lpdsToggle" onclick="demo.toggleLPDs()"><i class="fa-solid fa-bolt"></i> LPDs (2Hz)</button>
+          <button class="wave-btn" data-wave="spikes"><i class="fa-solid fa-bolt"></i> Spikes</button>
+          <button class="wave-btn" data-wave="sharpWaves"><i class="fa-solid fa-bolt-lightning"></i> Sharp Waves</button>
+          <button class="wave-btn" data-wave="spikeAndWaves"><i class="fa-solid fa-bolt-lightning"></i> Spike & Wave</button>
           <button id="focalSlowingToggle" onclick="demo.toggleFocalSlowing()"><i class="fa-solid fa-brain"></i> Temporal LRDA</button>
-          <button id="spikeWave3HzToggle" onclick="demo.toggleSpikeWave3Hz()"><i class="fa-solid fa-atom"></i> 3Hz Spike & Wave</button>
           <button id="focalSeizureToggle" onclick="demo.toggleFocalSeizure()"><i class="fa-solid fa-burst"></i> R Temporal Seizure</button>
         </div>
 
         <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+
+        <!-- Waveform Control Panels -->
+        <div class="waveform-control-panels">
+          <!-- Spike Adjusters -->
+          <div id="spike-adjusters" style="display: none;">
+            <h4><i class="fa-solid fa-sliders"></i> Spike Settings</h4>
+            <div class="slider-container">
+              <label for="spike-frequency">Frequency: <span id="spike-frequency-value">Occasional</span></label>
+              <input type="range" id="spike-frequency" min="1" max="4" step="1" value="2" 
+                     oninput="updateSpikeFrequency(this.value)">
+              <span class="slider-label-min">Rare</span>
+              <span class="slider-label-max">Abundant</span>
+            </div>
+            
+            <div class="slider-container">
+              <label for="spike-periodicity">Periodicity: <span id="spike-periodicity-value">0.5</span> Hz</label>
+              <input type="range" id="spike-periodicity" min="0" max="3.0" step="0.5" value="0.5" 
+                     oninput="updateSpikePeriodicity(this.value)">
+              <span class="slider-label-min">0 Hz</span>
+              <span class="slider-label-max">3 Hz</span>
+            </div>
+          </div>
+          
+          <!-- Sharp Wave Adjusters -->
+          <div id="sharp-wave-adjusters" style="display: none;">
+            <h4><i class="fa-solid fa-sliders"></i> Sharp Wave Settings</h4>
+            <div class="slider-container">
+              <label for="sharp-wave-frequency">Frequency: <span id="sharp-wave-frequency-value">Occasional</span></label>
+              <input type="range" id="sharp-wave-frequency" min="1" max="4" step="1" value="2" 
+                     oninput="updateSharpWaveFrequency(this.value)">
+              <span class="slider-label-min">Rare</span>
+              <span class="slider-label-max">Abundant</span>
+            </div>
+            
+            <div class="slider-container">
+              <label for="sharp-wave-periodicity">Periodicity: <span id="sharp-wave-periodicity-value">0.5</span> Hz</label>
+              <input type="range" id="sharp-wave-periodicity" min="0" max="3.0" step="0.5" value="0.5" 
+                     oninput="updateSharpWavePeriodicity(this.value)">
+              <span class="slider-label-min">0 Hz</span>
+              <span class="slider-label-max">3 Hz</span>
+            </div>
+          </div>
+          
+          <!-- Spike and Wave Adjusters -->
+          <div id="spike-and-wave-adjusters" style="display: none;">
+            <h4><i class="fa-solid fa-sliders"></i> Spike & Wave Settings</h4>
+            <div class="slider-container">
+              <label for="spike-and-wave-frequency">Frequency: <span id="spike-and-wave-frequency-value">Occasional</span></label>
+              <input type="range" id="spike-and-wave-frequency" min="1" max="4" step="1" value="2" 
+                     oninput="updateSpikeAndWaveFrequency(this.value)">
+              <span class="slider-label-min">Rare</span>
+              <span class="slider-label-max">Abundant</span>
+            </div>
+            
+            <div class="slider-container">
+              <label for="spike-and-wave-periodicity">Periodicity: <span id="spike-and-wave-periodicity-value">2</span> Hz</label>
+              <input type="range" id="spike-and-wave-periodicity" min="0" max="3" step="1" value="1" 
+                     oninput="updateSpikeAndWavePeriodicity(this.value)">
+              <span class="slider-label-min">0 Hz</span>
+              <span class="slider-label-max">5 Hz</span>
+            </div>
+          </div>
+          
+          <!-- LRDA Adjusters -->
+          <div id="lrda-adjusters" style="display: none;">
+            <h4><i class="fa-solid fa-sliders"></i> LRDA Settings</h4>
+            <div class="slider-container">
+              <label for="lrda-frequency">Frequency: <span id="lrda-frequency-value">Occasional</span></label>
+              <input type="range" id="lrda-frequency" min="1" max="4" step="1" value="2" 
+                     oninput="updateLRDAFrequency(this.value)">
+              <span class="slider-label-min">Rare</span>
+              <span class="slider-label-max">Abundant</span>
+            </div>
+            
+            <div class="slider-container">
+              <label for="lrda-periodicity">Periodicity: <span id="lrda-periodicity-value">1</span> Hz</label>
+              <input type="range" id="lrda-periodicity" min="0" max="2" step="0.5" value="1" 
+                     oninput="updateLRDAPeriodicity(this.value)">
+              <span class="slider-label-min">0 Hz</span>
+              <span class="slider-label-max">2 Hz</span>
+            </div>
+          </div>
+        </div>
 
         <div class="waveform-info">
           <div class="measurement-container"></div>
@@ -498,18 +661,6 @@
                   <td>Continuous rhythmic slowing in temporal region; indicates underlying structural pathology</td>
                 </tr>
                 <tr>
-                  <td>LPDs (2Hz)</td>
-                  <td>Periodic sharp waves or spikes at regular intervals</td>
-                  <td>Stroke, HSV encephalitis, tumor</td>
-                  <td>Repeating waveforms at consistent 2Hz rate; often indicates severe focal injury</td>
-                </tr>
-                <tr>
-                  <td>3Hz Spike & Wave</td>
-                  <td>3Hz spike-wave complexes</td>
-                  <td>Absence epilepsy</td>
-                  <td>Generalized, symmetric pattern; characteristic of absence seizures; sudden onset/offset</td>
-                </tr>
-                <tr>
                   <td>R Temporal Seizure</td>
                   <td>Evolving rhythmic discharge</td>
                   <td>Focal aware seizure</td>
@@ -537,16 +688,198 @@
     document.addEventListener('DOMContentLoaded', function() {
       window.demo = new EEGWaveformDemo('waveformCanvas');
 
-      // Handle wave button clicks
+      // Handle wave button clicks with specific handlers for each type
       const waveButtons = document.querySelectorAll('.wave-btn');
       waveButtons.forEach(button => {
-        button.addEventListener('click', () => {
-          const type = button.dataset.wave;
-          const isActive = button.classList.toggle('active');
-          demo.setWaveform(type, isActive);
+        button.addEventListener('click', function() {
+          const type = this.dataset.wave;
+          const isActive = this.classList.toggle('active');
+          
+          // Call the appropriate function based on the wave type
+          if (type && window.demo) {
+            console.log(`Setting waveform: ${type}, active: ${isActive}`);
+            window.demo.setWaveform(type, isActive);
+            
+            // Show/hide adjusters based on button type
+            if (type === 'spikes') {
+              document.getElementById('spike-adjusters').style.display = isActive ? 'block' : 'none';
+            } else if (type === 'sharpWaves') {
+              document.getElementById('sharp-wave-adjusters').style.display = isActive ? 'block' : 'none';
+            } else if (type === 'spikeAndWaves') {
+              document.getElementById('spike-and-wave-adjusters').style.display = isActive ? 'block' : 'none';
+            }
+          }
         });
       });
+      
+      // Add event listeners for toggle buttons that need adjusters
+      const focalSlowingToggle = document.getElementById('focalSlowingToggle');
+      if (focalSlowingToggle) {
+        focalSlowingToggle.addEventListener('click', function() {
+          const isActive = this.classList.contains('active');
+          document.getElementById('lrda-adjusters').style.display = isActive ? 'block' : 'none';
+        });
+      }
     });
+    
+    // Spike frequency adjuster
+    function updateSpikeFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('spike-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setSpikeFrequency(parseInt(value));
+      }
+    }
+    
+    // Spike periodicity adjuster
+    function updateSpikePeriodicity(value) {
+      document.getElementById('spike-periodicity-value').textContent = value;
+      if (window.demo) {
+        window.demo.setSpikePeriodicity(parseFloat(value));
+      }
+    }
+    
+    // Sharp wave frequency adjuster
+    function updateSharpWaveFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('sharp-wave-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setSharpWaveFrequency(parseInt(value));
+      }
+    }
+    
+    // Sharp wave periodicity adjuster
+    function updateSharpWavePeriodicity(value) {
+      document.getElementById('sharp-wave-periodicity-value').textContent = value;
+      if (window.demo) {
+        window.demo.setSharpWavePeriodicity(parseFloat(value));
+      }
+    }
+    
+    // Spike and wave periodicity adjuster
+    function updateSpikeAndWavePeriodicity(value) {
+      // Map slider value to the desired Hz values (0, 2, 3, 5)
+      let periodicityHz;
+      switch(parseInt(value)) {
+        case 0:
+          periodicityHz = 0;
+          break;
+        case 1:
+          periodicityHz = 2;
+          break;
+        case 2:
+          periodicityHz = 3;
+          break;
+        case 3:
+          periodicityHz = 5;
+          break;
+        default:
+          periodicityHz = 2;
+      }
+      
+      document.getElementById('spike-and-wave-periodicity-value').textContent = periodicityHz;
+      if (window.demo) {
+        window.demo.setSpikeAndWavePeriodicity(periodicityHz);
+      }
+    }
+    
+    // LRDA frequency adjuster
+    function updateLRDAFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('lrda-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setLRDAFrequency(parseInt(value));
+      }
+    }
+    
+    // LRDA periodicity adjuster
+    function updateLRDAPeriodicity(value) {
+      document.getElementById('lrda-periodicity-value').textContent = value;
+      if (window.demo) {
+        window.demo.setLRDAPeriodicity(parseFloat(value));
+      }
+    }
+
+    // Spike and Wave frequency adjuster
+    function updateSpikeAndWaveFrequency(value) {
+      // Map numeric value to ACNS criteria text
+      let frequencyText;
+      switch(parseInt(value)) {
+        case 1:
+          frequencyText = "Rare";
+          break;
+        case 2:
+          frequencyText = "Occasional";
+          break;
+        case 3:
+          frequencyText = "Frequent";
+          break;
+        case 4:
+          frequencyText = "Abundant";
+          break;
+        default:
+          frequencyText = "Occasional";
+      }
+      
+      document.getElementById('spike-and-wave-frequency-value').textContent = frequencyText;
+      if (window.demo) {
+        window.demo.setSpikeAndWaveFrequency(parseInt(value));
+      }
+    }
   </script>
 </body>
 </html> 
