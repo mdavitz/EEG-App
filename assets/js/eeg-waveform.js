@@ -249,6 +249,11 @@ class EEGWaveformDemo {
       spikes: {
         draw: this.generateSpikeWaveform.bind(this, 100, 0.2)
       },
+      // Add seizure pattern right in the constructor
+      seizure: {
+        draw: this.generateSeizureWaveform.bind(this),
+        description: 'Focal seizure with right temporal onset, secondary generalization, and postictal slowing'
+      },
       sharpWaves: {
         draw: this.generateSharpWaveWaveform.bind(this, 80, 0.15)
       },
@@ -548,17 +553,63 @@ class EEGWaveformDemo {
         color: '#B10DC9',
         description: 'Slowing',
       },
-      // Added focal slowing as separate pattern
+      // Add focal slowing as separate pattern
       focalSlowing: {
         custom: true,
         color: '#0074D9',
         description: 'LRDA (Lateralized Rhythmic Delta Activity)',
+      },
+      // Add GRDA as separate pattern
+      generalizedSlowing: {
+        custom: true,
+        color: '#7FDBFF',
+        description: 'GRDA (Generalized Rhythmic Delta Activity)',
       },
       // Added chewing artifact
       chewing: {
         custom: true,
         color: '#000000',
         description: 'Chewing Artifact',
+        draw: (x, centerY, leadName, timePosition) => {
+          // Chewing affects only temporal leads
+          let leadFactor = 0;
+          
+          // Maximum amplitude in temporal leads - make it very strong in all relevant leads
+          if (leadName === 'F7-T3' || leadName === 'F8-T4') {
+            leadFactor = 1.0; // Maximum in anterior temporal
+          } else if (leadName === 'T3-T5' || leadName === 'T4-T6') {
+            leadFactor = 0.9; // Almost as strong in mid-temporal
+          } else {
+            return centerY; // No effect in other leads
+          }
+          
+          // Simplify the timing logic for more reliable rendering
+          // Create chewing bursts at a rate of ~0.8 Hz
+          const cycleTime = 1.25; // seconds per chewing cycle
+          const cyclePosition = (timePosition % cycleTime) / cycleTime;
+          
+          // Show chewing artifact only during first 25% of cycle (active phase)
+          if (cyclePosition > 0.25) {
+            return centerY; // No artifact during relaxation phase
+          }
+          
+          // Create a strong burst with very high amplitude
+          // Use simple math for reliable rendering
+          const burstIntensity = Math.sin(cyclePosition * Math.PI * 2);
+          
+          // Generate frequencies similar to a real EMG burst
+          const emg1 = Math.sin(timePosition * 100) * 0.3;
+          const emg2 = Math.sin(timePosition * 150) * 0.4;
+          const emg3 = Math.sin(timePosition * 200) * 0.3;
+          
+          // Use an extremely large amplitude (800) to ensure complete disruption
+          // This matches what's seen in the reference image
+          const amplitude = 800 * leadFactor * Math.abs(burstIntensity);
+          
+          // Combine frequencies for a realistic EMG appearance
+          return centerY + (amplitude * (emg1 + emg2 + emg3));
+        },
+        priority: 30 // Extremely high priority to ensure it's always visible
       },
       // Add 3Hz spike and wave pattern for generalized seizures
       custom3HzSpikeWave: {
@@ -1761,23 +1812,42 @@ class EEGWaveformDemo {
         }
       }
 
-      // Calculate LRDA (Lateralized Rhythmic Delta Activity) - specifically for left hemisphere
+      // Calculate LRDA (Lateralized Rhythmic Delta Activity)
       let focalSlowingBaseline = new Array(this.canvas.width).fill(centerY);
+      
+      // Use the current timestamp to ensure consistent selection within a session
+      // but varies between sessions
+      const timestamp = new Date().getTime();
+      const sessionSeed = Math.floor(timestamp / 1000) % 1000; // Changes every session
+      
+      // Generate a random lead pair that remains fixed during usage
+      // Use a property to store the selected leads if not already set
+      if (!this.lrdaLeadPair) {
+        const random = Math.abs(Math.sin(sessionSeed * 12345.6789));
+        // Select a starting lead index between 0 and 6 (to ensure second lead exists)
+        this.lrdaLeadPair = {
+          start: Math.floor(random * 7),
+          initialized: true
+        };
+        console.log("Selected LRDA lead pair starting at index:", this.lrdaLeadPair.start);
+      }
+      
+      // Check if the current lead is one of the two adjacent leads selected for LRDA
       let hasFocalSlowing = this.activeWaveforms.has('focalSlowing') && 
-                           // Only show in left temporal leads
-                           (lead.name === 'F7-T3' || lead.name === 'T3-T5');
+                           (leadIndex === this.lrdaLeadPair.start || 
+                            leadIndex === this.lrdaLeadPair.start + 1);
                          
       if (hasFocalSlowing) {
         // Get transition factor for focal slowing
         const focalSlowingFactor = this.getPatternTransitionFactor('focalSlowing');
         
-        // Maximum amplitude in T3-T5, slightly less in F7-T3
+        // Maximum amplitude in the second affected lead, slightly less in the first
         let amplitudeScale = 1.0;
         
-        if (lead.name === 'F7-T3') {
-          amplitudeScale = 0.85; // 85% amplitude in frontal-temporal
-        } else if (lead.name === 'T3-T5') {
-          amplitudeScale = 1.0; // Full amplitude in mid-temporal (maximum)
+        if (leadIndex === this.lrdaLeadPair.start) {
+          amplitudeScale = 0.85; // 85% amplitude in first lead
+        } else if (leadIndex === this.lrdaLeadPair.start + 1) {
+          amplitudeScale = 1.0; // Full amplitude in second lead
         }
         
         // Calculate the LRDA pattern
@@ -1875,6 +1945,116 @@ class EEGWaveformDemo {
         }
       }
 
+      // Calculate GRDA (Generalized Rhythmic Delta Activity) - affects all channels
+      let generalizedSlowingBaseline = new Array(this.canvas.width).fill(centerY);
+      let hasGeneralizedSlowing = this.activeWaveforms.has('generalizedSlowing');
+                         
+      if (hasGeneralizedSlowing) {
+        // Get transition factor for generalized slowing
+        const generalizedSlowingFactor = this.getPatternTransitionFactor('generalizedSlowing');
+        
+        // Subtle variation in amplitude across channels (for natural appearance)
+        // Use lead index to create slight variation (5% per channel)
+        const leadVariation = 0.95 + (leadIndex * 0.01);
+        
+        // Calculate the GRDA pattern
+        for (let x = 0; x < this.canvas.width; x++) {
+          const timePosition = Math.floor(((x + this.panOffset.x) / this.timeScale + time) * 100) / 100;
+          
+          // Use the user-selected periodicity instead of fixed value
+          const baseFreq = this.grdaPeriodicity || 1.0; // User-configurable frequency (0-2 Hz), default 1Hz
+          
+          // Create evolving frequency pattern (slight variation around base frequency)
+          const evolveRate = Math.sin(timePosition * 0.02) * 0.1; // Reduced variation
+          let effectiveFreq = baseFreq * (1 + evolveRate);
+          
+          // Special handling for 0 Hz (random discharges)
+          let burstModulator = 0;
+          
+          if (baseFreq === 0) {
+            // In 0 Hz mode, generate random infrequent discharges
+            // Create a seed based on time that changes every ~10-12 seconds
+            const dischargeInterval = 11; // Base interval of 11 seconds
+            const randomSeed = Math.floor(timePosition / dischargeInterval);
+            
+            // Use a consistent random value for this time period
+            const pseudo_random = (Math.sin(randomSeed * 54321.9876) * 0.5 + 0.5);
+            
+            // Add a small random variation to the interval (±1 second)
+            const adjustedInterval = dischargeInterval + (pseudo_random * 2 - 1);
+            
+            // Calculate current position within the interval
+            const intervalPosition = timePosition % adjustedInterval;
+            
+            // Discharge occurs at the beginning of the interval
+            if (intervalPosition < 0.8) { // 800ms discharge duration (slightly longer than LRDA)
+              // Calculate phase within the discharge (0 to 1)
+              const dischargePhase = intervalPosition / 0.8;
+              
+              // Create smooth envelope for discharge
+              const envelope = Math.sin(Math.PI * dischargePhase) * 0.9 + 0.1;
+              
+              // Set the modulator based on the envelope
+              burstModulator = envelope;
+              
+              // Use a lower effective frequency for random discharges (waves at ~1.5-2 Hz)
+              effectiveFreq = 1.5 + (leadIndex * 0.05); // Slight variation by lead
+            }
+            } else {
+            // Regular GRDA pattern with bursts when frequency > 0
+            // Create distinct burst pattern (15-20 second bursts with 5-10 second pauses)
+            const burstCycle = 25 + Math.sin(timePosition * 0.03) * 5; // 20-30 second total cycle
+            const burstPosition = (timePosition % burstCycle) / burstCycle;
+            
+            // Active for 70% of the cycle (longer bursts characteristic of GRDA vs LRDA)
+            if (burstPosition < 0.7) {
+              // Within active burst period
+              const burstPhase = burstPosition / 0.7;
+              
+              // Amplitude waxing and waning within burst (characteristic of GRDA)
+              if (burstPhase < 0.2) {
+                // Ramp up - first 20% of burst
+                burstModulator = burstPhase / 0.2;
+              } else if (burstPhase > 0.8) {
+                // Ramp down - last 20% of burst
+                burstModulator = (1 - burstPhase) / 0.2;
+              } else {
+                // Middle of burst - slight amplitude variation (not perfectly constant)
+                burstModulator = 0.9 + 0.1 * Math.sin(burstPhase * Math.PI * 3);
+              }
+            }
+          }
+          
+          // Calculate GRDA waveform with appropriate amplitude (20-40 μV)
+          // Higher amplitude for higher periodicity values to maintain visibility
+          const baseAmplitude = 25 * (1 + (baseFreq > 0 ? baseFreq * 0.15 : 0));
+          const amplitude = baseAmplitude * leadVariation * burstModulator;
+          
+          // Add slight phase offset based on lead index to create propagation effect
+          const phaseOffset = leadIndex * 0.3;
+          const phase = 2 * Math.PI * effectiveFreq * timePosition + phaseOffset;
+          
+          // Create smoother, more sinusoidal waveform (less sharp contours)
+          const sharpness = 0.9; // More sinusoidal than LRDA
+          const normalizedSine = Math.sin(phase);
+          const smootherWave = Math.sign(normalizedSine) * Math.pow(Math.abs(normalizedSine), sharpness);
+          
+          // Add minor harmonics for realistic appearance
+          const mainWave = smootherWave;
+          const harmonic1 = 0.15 * Math.sin(phase * 2 + 0.3); // Second harmonic
+          const harmonic2 = 0.05 * Math.sin(phase * 3 - 0.2); // Third harmonic
+          
+          // Combine waves into final GRDA pattern
+          const grdaValue = amplitude * (mainWave + harmonic1 + harmonic2);
+          
+          // GRDA completely disrupts background when active
+          generalizedSlowingBaseline[x] = centerY + grdaValue;
+          
+          // Apply pattern transition factor
+          generalizedSlowingBaseline[x] = centerY + ((generalizedSlowingBaseline[x] - centerY) * generalizedSlowingFactor);
+        }
+      }
+
       // Calculate chewing artifact (affects temporalis muscle areas - all temporal leads)
       let chewingBaseline = new Array(this.canvas.width).fill(centerY);
       let hasChewing = this.activeWaveforms.has('chewing') && 
@@ -1885,110 +2065,31 @@ class EEGWaveformDemo {
       let hasActiveChewingPoints = false;
       
       if (hasChewing) {
-        // Get transition factor for chewing
-        const chewingFactor = this.getPatternTransitionFactor('chewing');
+        // Calculate chewing artifact pattern
+        // Chewing typically occurs at ~1Hz and appears as high-frequency EMG bursts
+        const chewingFactor = this.patternTransitions.get('chewing') || 1; // Default to full intensity if no transition
         
-        // Calculate chewing artifact - appears bilaterally but with slight asymmetry
-        let amplitudeScale = 1.0;
+        console.log(`Drawing chewing for ${lead.name}, factor: ${chewingFactor}`);
         
-        // Create slight asymmetry (slightly higher on left)
-        if (lead.name === 'F7-T3' || lead.name === 'T3-T5') {
-          amplitudeScale = 1.15; // 15% higher on left
-        }
-        
-        // Mid-temporal leads have higher amplitude than frontal-temporal
-        if (lead.name === 'T3-T5' || lead.name === 'T4-T6') {
-          amplitudeScale *= 1.2; // 20% higher in mid-temporal
-        }
-        
-        // Special handling for second row (F7-T3 and F8-T4)
-        // They need stronger EMG bursts to be visible but clear gaps between chewing
-        const isSecondRow = (lead.name === 'F7-T3' || lead.name === 'F8-T4');
-        if (isSecondRow) {
-          amplitudeScale *= 1.5; // 50% stronger for second row to make active periods more visible
-        }
-        
-        // Calculate the chewing pattern
+        // Use the draw function from the waveform definition instead of generating separately
         for (let x = 0; x < this.canvas.width; x++) {
           const timePosition = Math.floor(((x + this.panOffset.x) / this.timeScale + time) * 100) / 100;
-          
-          // Create intermittent chewing pattern (chew for a few seconds, then pause)
-          const chewingCycle = 6 + Math.sin(timePosition * 0.05) * 1; // 5-7 second cycle
-          const chewPosition = (timePosition % chewingCycle) / chewingCycle;
-          let chewModulator = 0;
-          
-          // Active chewing during first 60% of cycle
-          if (chewPosition < 0.6) {
-            // Within active chewing period
-            const activePhase = chewPosition / 0.6;
+          try {
+            chewingBaseline[x] = this.waveforms.chewing.draw(x, centerY, lead.name, timePosition);
             
-            // Smooth onset and offset
-            if (activePhase < 0.1) {
-              // Ramp up - first 10% of active phase
-              chewModulator = activePhase / 0.1;
-            } else if (activePhase > 0.9) {
-              // Ramp down - last 10% of active phase
-              chewModulator = (1 - activePhase) / 0.1;
-            } else {
-              // Create 1Hz cluster rhythm (each chew takes about 1 second)
-              // Each chew has ~0.5 second EMG burst followed by ~0.5 second pause
-              const chewsPerSecond = 1.0;
-              const chewPhase = (activePhase * chewingCycle * 0.6) % (1.0/chewsPerSecond);
-              const normalizedChewPhase = chewPhase * chewsPerSecond;
-              
-              // EMG active during first half of each chew cycle (0.5 seconds)
-              if (normalizedChewPhase < 0.5) {
-                // Full amplitude during active EMG phase
-                chewModulator = 0.9 + 0.1 * Math.sin(normalizedChewPhase * Math.PI * 4);
-              } else {
-                // For second row, make the gaps more pronounced (lower value)
-                chewModulator = isSecondRow ? 0.05 : 0.1;
-              }
-            }
-          }
-          
-          // Chewing is a flat line with EMG spikes, not a rhythmic wave
-          let chewingValue = 0;
-          
-          // For second row, use a higher threshold to ensure a clearer distinction
-          // between chewing and non-chewing periods
-          const activeThreshold = isSecondRow ? 0.3 : 0.2;
-          
-          if (chewModulator > activeThreshold) { // Only apply when modulator is significant
-            // Base flat line DC component (bite pressure)
-            const basePressure = 40 * amplitudeScale * chewModulator;
-            
-            // High-frequency EMG spikes (20-100Hz components)
-            // Use multiple frequencies to create realistic EMG
-            const emgFreq1 = Math.sin(2 * Math.PI * 35 * Math.floor(timePosition * 100) / 100 + timePosition * 5);
-            const emgFreq2 = Math.sin(2 * Math.PI * 50 * Math.floor(timePosition * 120) / 120 + timePosition * 7); 
-            const emgFreq3 = Math.sin(2 * Math.PI * 70 * Math.floor(timePosition * 150) / 150 + timePosition * 9);
-            const emgFreq4 = Math.sin(2 * Math.PI * 90 * Math.floor(timePosition * 180) / 180 + timePosition * 11);
-            
-            // Combine EMG components with varying phase
-            const emgRaw = (emgFreq1 + emgFreq2 + emgFreq3 + emgFreq4) / 4;
-            
-            // Apply amplitude
-            const emgAmplitude = 280 * amplitudeScale * chewModulator;
-            const emgComponent = emgRaw * emgAmplitude;
-            
-            // Combine flat baseline shift with EMG spikes
-            chewingValue = basePressure + emgComponent;
-            
-            // Apply transition factor
-            chewingValue *= chewingFactor;
-            
-            // Mark that active chewing exists if amplitude is significant
-            if (Math.abs(chewingValue) > 10) {
+            // Check if this point has active chewing (differs from baseline)
+            if (Math.abs(chewingBaseline[x] - centerY) > 1) {
               hasActiveChewingPoints = true;
             }
-            
-            // Add to baseline
-            chewingBaseline[x] = centerY + chewingValue;
-          } else {
-            // If not in active chewing period, just use centerY to allow background EEG to show
+          } catch (error) {
+            console.error("Error generating chewing waveform:", error);
             chewingBaseline[x] = centerY;
           }
+        }
+        
+        // Log whether we have any active points
+        if (hasActiveChewingPoints) {
+          console.log(`Active chewing points detected for ${lead.name}`);
         }
       }
 
@@ -2148,6 +2249,26 @@ class EEGWaveformDemo {
           lpdsBaseline[x] = lpdsValue;
         }
       }
+      
+      // Calculate seizure pattern
+      let seizureBaseline = new Array(this.canvas.width).fill(centerY);
+      let hasSeizure = this.activeWaveforms.has('seizure');
+      
+      if (hasSeizure) {
+        // Get transition factor for seizure
+        const seizureFactor = this.getPatternTransitionFactor('seizure');
+        
+        // Calculate the seizure pattern
+        for (let x = 0; x < this.canvas.width; x++) {
+          const timePosition = Math.floor(((x + this.panOffset.x) / this.timeScale + time) * 100) / 100;
+          
+          // Generate seizure waveform for this position
+          const seizureY = this.generateSeizureWaveform(x, centerY, leadName, timePosition);
+          
+          // Apply transition factor
+          seizureBaseline[x] = centerY + ((seizureY - centerY) * seizureFactor);
+        }
+      }
 
       // Draw waveforms using the eye blink baseline for frontal leads
       let combinedY = new Array(this.canvas.width).fill(0);
@@ -2158,7 +2279,7 @@ class EEGWaveformDemo {
         // Skip eye blinks, spikes, sharp waves and chewing as they're handled as the baseline
         if (type === 'eyeBlinks' || type === 'spikes' || type === 'sharpWaves' || 
             type === 'chewing' || type === 'custom3HzSpikeWave' || type === 'spikeAndWaves' || 
-            type === 'focalSeizure' || type === 'lpds') return;
+            type === 'focalSeizure' || type === 'lpds' || type === 'seizure') return;
         
         const waveform = this.waveforms[type];
         const modeConfig = this.modes[this.currentMode];
@@ -2424,21 +2545,26 @@ class EEGWaveformDemo {
                   }
                 }
                 
+                // Apply generalized slowing baseline
+                if (hasGeneralizedSlowing) {
+                  const generalizedDelta = generalizedSlowingBaseline[x] - centerY;
+                  
+                  // Only apply generalized slowing if it's active at this position
+                  if (Math.abs(generalizedDelta) > 0.01) {
+                    // When generalized slowing is active, it completely disrupts the background
+                    baseY = centerY + generalizedDelta;
+                  }
+                }
+                
                 // Apply chewing artifact baseline
                 if (hasChewing) {
                   const chewDelta = chewingBaseline[x] - centerY;
-                  const isSecondRow = (lead.name === 'F7-T3' || lead.name === 'F8-T4');
                   
-                  // Use different thresholds for different rows to ensure proper display
-                  // Higher threshold for second row to ensure clear separation between chewing bursts
-                  const chewingThreshold = isSecondRow ? 30 : 20;
-                  
-                  // Only apply significant chewing artifact to allow background EEG to show through between bursts
-                  if (Math.abs(chewDelta) > chewingThreshold) {
-                    // Chewing disrupts the background only during active chewing
+                  // Always disrupt the background with chewing artifact when present
+                  // No threshold check so it fully replaces the background EEG
+                  if (Math.abs(chewDelta) > 0.01) {
                     baseY = centerY + chewDelta;
                   }
-                  // Normal activity shows between chewing episodes
                 }
                 
                 // Apply ECG artifact (before spike-wave and seizures which have higher priority)
@@ -2469,6 +2595,11 @@ class EEGWaveformDemo {
                 // Apply focal seizure pattern (highest priority)
                 if (hasFocalSeizure) {
                   baseY = focalSeizureBaseline[x];
+                }
+                
+                // Apply seizure pattern (highest priority)
+                if (hasSeizure) {
+                  baseY = seizureBaseline[x];
                 }
                 
                 // Apply LPDs pattern additively after checking for other higher priority patterns
@@ -2514,7 +2645,7 @@ class EEGWaveformDemo {
         for (let x = 0; x < this.canvas.width; x++) {
           const normalizedY = combinedY[x] / activeCount;
           // If there's no baseline effect, use the normalized value; otherwise we've already included the baseline
-          const finalY = (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact) ? normalizedY : centerY + (normalizedY - centerY);
+          const finalY = (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasGeneralizedSlowing || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact || hasSeizure) ? normalizedY : centerY + (normalizedY - centerY);
           
           if (x === 0) {
             this.ctx.moveTo(x, finalY);
@@ -2523,7 +2654,7 @@ class EEGWaveformDemo {
           }
         }
         this.ctx.stroke();
-      } else if (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasChewing || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact) {
+      } else if (hasEyeBlink || hasSweatArtifact || hasSpike || hasSharpWaves || hasFocalSlowing || hasChewing || hasSpikeWave || hasSpikeAndWaves || hasFocalSeizure || hasSixtyHzArtifact || hasECGArtifact || hasSeizure) {
         // If there are no other waveforms but we have a baseline effect, draw just that
         this.ctx.beginPath();
         this.ctx.strokeStyle = lead.color;
@@ -2581,15 +2712,10 @@ class EEGWaveformDemo {
           if (hasChewing) {
             // Apply chewing artifact baseline when active
             const chewDelta = chewingBaseline[x] - centerY;
-            const isSecondRow = (lead.name === 'F7-T3' || lead.name === 'F8-T4');
             
-            // Use different thresholds for different rows to ensure proper display
-            // Higher threshold for second row to ensure clear separation between chewing bursts
-            const chewingThreshold = isSecondRow ? 30 : 20;
-            
-            // Only apply significant chewing artifact to allow background EEG to show through between bursts
-            if (Math.abs(chewDelta) > chewingThreshold) {
-              // Chewing disrupts the background only during active chewing
+            // Always disrupt the background with chewing artifact when present
+            // No threshold check so it fully replaces the background EEG
+            if (Math.abs(chewDelta) > 0.01) {
               baselineY = centerY + chewDelta;
             }
             // Normal activity shows between chewing episodes
@@ -2615,6 +2741,11 @@ class EEGWaveformDemo {
           // Apply focal seizure pattern (highest priority)
           if (hasFocalSeizure) {
             baselineY = focalSeizureBaseline[x];
+          }
+          
+          // Apply seizure pattern (highest priority)
+          if (hasSeizure) {
+            baselineY = seizureBaseline[x];
           }
           
           // Apply LPDs pattern additively after checking for other higher priority patterns
@@ -2876,18 +3007,35 @@ class EEGWaveformDemo {
   }
 
   toggleChewing() {
+    console.log("Toggling chewing artifact");
     const button = document.getElementById('chewingToggle');
-    if (button.classList.contains('active')) {
+    const isActive = button.classList.contains('active');
+    
+    // Toggle the button state
+    button.classList.toggle('active');
+    
+    if (isActive) {
       // Turn off chewing artifact
-      button.classList.remove('active');
+      console.log("Turning off chewing artifact");
       this.activeWaveforms.delete('chewing');
       this.patternTransitions.delete('chewing');
     } else {
       // Turn on chewing artifact
-      button.classList.add('active');
-      this.startPatternTransition('chewing');
+      console.log("Turning on chewing artifact");
+      
+      // Ensure chewing is added to active waveforms
       this.activeWaveforms.add('chewing');
+      
+      // Start transition with longer duration for smoother effect
+      this.startPatternTransition('chewing', 1000);
+      
+      // Log active waveforms for debugging
+      console.log("Active waveforms:", Array.from(this.activeWaveforms));
+      console.log("Pattern transitions:", Array.from(this.patternTransitions.keys()));
     }
+    
+    // Update ACNS interpretation
+    this.updateScaleInfo();
   }
 
   togglePDR() {
@@ -2928,7 +3076,7 @@ class EEGWaveformDemo {
       this.patternTransitions.delete('focalSlowing');
       
       // Hide the LRDA adjusters
-      const lrdaAdjusters = document.getElementById('lrdaAdjusters');
+      const lrdaAdjusters = document.getElementById('lrda-adjusters');
       if (lrdaAdjusters) {
         lrdaAdjusters.style.display = 'none';
       }
@@ -2939,9 +3087,43 @@ class EEGWaveformDemo {
       this.activeWaveforms.add('focalSlowing');
       
       // Show the LRDA adjusters
-      const lrdaAdjusters = document.getElementById('lrdaAdjusters');
+      const lrdaAdjusters = document.getElementById('lrda-adjusters');
       if (lrdaAdjusters) {
         lrdaAdjusters.style.display = 'block';
+      }
+    }
+    
+    // Update ACNS interpretation
+    this.updateScaleInfo();
+  }
+
+  toggleGeneralizedSlowing() {
+    const button = document.getElementById('generalizedSlowingToggle');
+    const isActive = button.classList.contains('active');
+    
+    // Toggle the button state
+    button.classList.toggle('active');
+    
+    if (isActive) {
+      // Turn off generalized slowing
+      this.activeWaveforms.delete('generalizedSlowing');
+      this.patternTransitions.delete('generalizedSlowing');
+      
+      // Hide the GRDA adjusters
+      const grdaAdjusters = document.getElementById('grda-adjusters');
+      if (grdaAdjusters) {
+        grdaAdjusters.style.display = 'none';
+      }
+    } else {
+      // Start transition for generalized slowing
+      this.startPatternTransition('generalizedSlowing');
+      // Turn on generalized slowing
+      this.activeWaveforms.add('generalizedSlowing');
+      
+      // Show the GRDA adjusters
+      const grdaAdjusters = document.getElementById('grda-adjusters');
+      if (grdaAdjusters) {
+        grdaAdjusters.style.display = 'block';
       }
     }
     
@@ -3835,5 +4017,250 @@ class EEGWaveformDemo {
       // Keep playing to show the new pattern
       this.play();
     }
+  }
+
+  // Add toggleSeizure function to handle the seizure button
+  toggleSeizure() {
+    const button = document.getElementById('seizureToggle');
+    const isActive = button.classList.contains('active');
+    
+    // Toggle the button state
+    button.classList.toggle('active');
+    
+    if (isActive) {
+      // Turn off seizure
+      this.activeWaveforms.delete('seizure');
+      this.patternTransitions.delete('seizure');
+      
+      // Hide seizure adjusters
+      const seizureAdjusters = document.getElementById('seizure-adjusters');
+      if (seizureAdjusters) {
+        seizureAdjusters.style.display = 'none';
+      }
+      
+      // Restore PDR if it was previously active (checked via button state)
+      const pdrButton = document.getElementById('pdrToggle');
+      if (pdrButton && pdrButton.classList.contains('active')) {
+        this.activeWaveforms.add('alpha');
+        this.startPatternTransition('pdr');
+      }
+    } else {
+      // Start transition
+      this.startPatternTransition('seizure');
+      // Turn on seizure
+      this.activeWaveforms.add('seizure');
+      // Reset time to show the seizure from the beginning
+      this.currentTime = 0;
+      
+      // Turn off PDR during seizure
+      this.activeWaveforms.delete('alpha');
+      this.patternTransitions.delete('pdr');
+      
+      // Show seizure adjusters
+      const seizureAdjusters = document.getElementById('seizure-adjusters');
+      if (seizureAdjusters) {
+        seizureAdjusters.style.display = 'block';
+      }
+    }
+    
+    // Update ACNS interpretation
+    this.updateScaleInfo();
+  }
+
+  // Set seizure speed (1=slow, 2=normal, 3=fast)
+  setSeizureSpeed(speed) {
+    this.seizureSpeed = parseInt(speed);
+    console.log("Seizure speed set to:", this.seizureSpeed);
+    
+    // If seizure is active, reset the time to show the effect immediately
+    if (this.activeWaveforms.has('seizure')) {
+      this.currentTime = 0;
+    }
+  }
+  
+  // Set seizure intensity (1=mild, 2=moderate, 3=severe)
+  setSeizureIntensity(intensity) {
+    this.seizureIntensity = parseInt(intensity);
+    console.log("Seizure intensity set to:", this.seizureIntensity);
+    
+    // If seizure is active, reset the time to show the effect immediately
+    if (this.activeWaveforms.has('seizure')) {
+      this.currentTime = 0;
+    }
+  }
+
+  // Generate a seizure waveform based on time and lead
+  generateSeizureWaveform(x, centerY, leadName, timePosition) {
+    // Factor in seizure speed setting
+    const speedFactor = this.seizureSpeed || 2; // Default to normal (2)
+    const adjustedTime = timePosition * (speedFactor / 2); // Adjust time based on speed
+    
+    // Factor in intensity setting 
+    const intensityFactor = this.seizureIntensity || 2; // Default to moderate (2)
+    const baseAmplitude = 40 + (intensityFactor * 20); // Reduced base amplitude: 60-100 instead of 75-125
+    
+    // Intermittent seizure pattern - random duration between 5-15 seconds
+    // Use a consistent seed based on timePosition to get the same seizure pattern
+    // Create a seed that changes every ~25-30 seconds
+    const cyclePeriod = 30; // Overall cycle period (including seizure and break)
+    const cyclePosition = (adjustedTime % cyclePeriod) / cyclePeriod;
+    
+    // Use a pseudo-random function for consistent values
+    const cycleSeed = Math.floor(adjustedTime / cyclePeriod);
+    const pseudoRandom = (Math.sin(cycleSeed * 12345.6789) * 0.5 + 0.5);
+    
+    // Determine seizure duration for this cycle (5-15 seconds)
+    const seizureDuration = 5 + (pseudoRandom * 10);
+    
+    // Determine if we're in a seizure period (seizures last 5-15s within each 30s cycle)
+    const seizureActiveTime = seizureDuration / cyclePeriod; // Proportion of cycle that is active seizure
+    const isInSeizure = cyclePosition < seizureActiveTime;
+    
+    // If we're in a break between seizures, just return the baseline
+    if (!isInSeizure) {
+      // During the break, show post-ictal suppression that gradually recovers
+      const breakPosition = (cyclePosition - seizureActiveTime) / (1 - seizureActiveTime);
+      
+      // More suppression immediately after seizure, gradually recovering
+      if (breakPosition < 0.3) {
+        // First 30% of break - strong post-ictal suppression
+        // Determine suppression factor for each lead (more in areas most involved in seizure)
+        let suppressionFactor = 0.05; // Default minimal activity (95% suppressed)
+        
+        // More suppression in areas that were most involved in seizure
+        if (leadName.includes('T6') || leadName.includes('T4')) {
+          suppressionFactor = 0.02; // 98% suppressed in right temporal
+        } else if (leadName.includes('O2') || leadName.includes('F8')) {
+          suppressionFactor = 0.03; // 97% suppressed in right occipital/frontal
+        }
+        
+        // Very subtle, slow activity during suppression
+        const slowFreq = 1 + (breakPosition * 2); // 1-2 Hz
+        return centerY + (Math.sin(adjustedTime * slowFreq) * 5 * suppressionFactor);
+      } else if (breakPosition < 0.7) {
+        // Middle of break - gradual recovery
+        const recoveryPhase = (breakPosition - 0.3) / 0.4;
+        
+        // Gradually increasing activity
+        const recoveryFactor = 0.05 + (recoveryPhase * 0.2); // 5-25% of normal
+        const recoveryFreq = 3 + (recoveryPhase * 5); // 3-8 Hz
+        return centerY + (Math.sin(adjustedTime * recoveryFreq) * 15 * recoveryFactor);
+      } else {
+        // End of break - nearly normal activity
+        return centerY + (Math.sin(adjustedTime * 9) * 7); // Subtle background
+      }
+    }
+    
+    // If we are in a seizure, calculate seizure parameters
+    // Normalize seizure progress from 0-1 for this seizure period
+    const seizureProgress = cyclePosition / seizureActiveTime;
+    
+    // Start from right posterior temporal (T6) and spread more gradually
+    let regionalFactor = 0;
+    
+    // Initial seizure in T6 (right posterior temporal)
+    if (leadName.includes('T6')) {
+      regionalFactor = 1.0; // Full amplitude from the start
+    } 
+    // Secondary spread to adjacent regions - with slower spread
+    else if (leadName.includes('T4') && seizureProgress > 0.25) {
+      // Right mid-temporal spread after 25% into seizure
+      regionalFactor = Math.min(0.9, (seizureProgress - 0.25) * 2.5);
+    }
+    else if (leadName.includes('O2') && seizureProgress > 0.35) {
+      // Right occipital spread after 35% into seizure
+      regionalFactor = Math.min(0.8, (seizureProgress - 0.35) * 2);
+    }
+    else if (leadName.includes('F8') && seizureProgress > 0.45) {
+      // Right frontal spread after 45% into seizure
+      regionalFactor = Math.min(0.7, (seizureProgress - 0.45) * 1.8);
+    }
+    // Tertiary spread to contralateral side - much more delayed spread
+    else if (leadName.includes('T5') && seizureProgress > 0.6) {
+      // Left posterior temporal spread after 60% into seizure
+      regionalFactor = Math.min(0.6, (seizureProgress - 0.6) * 1.5);
+    }
+    else if (leadName.includes('T3') && seizureProgress > 0.7) {
+      // Left mid-temporal spread after 70% into seizure
+      regionalFactor = Math.min(0.5, (seizureProgress - 0.7) * 1.5);
+    }
+    else if ((leadName.includes('F7') || leadName.includes('O1')) && seizureProgress > 0.8) {
+      // Left frontal and occipital spread after 80% into seizure
+      regionalFactor = Math.min(0.4, (seizureProgress - 0.8) * 1.2);
+    }
+    // Minimal spread to other regions
+    else if (seizureProgress > 0.9) {
+      // All other leads affected minimally after 90% into seizure
+      regionalFactor = Math.min(0.2, (seizureProgress - 0.9) * 1);
+    }
+    
+    // Active seizure phase - first half is fast, second half builds to 3Hz sharp waves
+    if (regionalFactor > 0) {
+      // First half of seizure: Higher frequencies (beta/gamma range)
+      if (seizureProgress < 0.5) {
+        // Start with much faster frequencies (faster gamma)
+        const freq = 18 + seizureProgress * 10; // 18-23Hz range (much faster)
+        
+        // More modest amplitude build-up with no large slow waves
+        const amp = baseAmplitude * regionalFactor * (0.2 + seizureProgress * 0.7);
+        
+        // Add complexity to make it look more realistic with multiple frequency components
+        const complexityFactor1 = 0.3 * Math.sin(adjustedTime * freq * 1.2);
+        const complexityFactor2 = 0.2 * Math.sin(adjustedTime * freq * 1.5);
+        
+        return centerY + (Math.sin(adjustedTime * freq) + complexityFactor1 + complexityFactor2) * amp;
+      } 
+      // Second half: Evolving to 3Hz sharp waves
+      else {
+        // Calculate how far we are in the second half (0-1)
+        const latePhaseProgress = (seizureProgress - 0.5) * 2; // 0-1 during late phase
+        
+        // Build toward 3Hz pattern
+        const freq = 5 - latePhaseProgress * 2; // Slowing from 5Hz to 3Hz
+        
+        // Base amplitude with controlled growth
+        const baseAmp = baseAmplitude * regionalFactor * Math.min(1.3, 1 + latePhaseProgress * 0.6);
+        
+        // Create sharp wave pattern at the target frequency (increasingly sharp with progress)
+        const sharpnessFactor = 0.3 + latePhaseProgress * 0.7; // Increasing sharpness
+        
+        // Use sawtooth-like waveform to create sharp waves, increasingly prominent
+        const cycle = (adjustedTime * freq) % 1; // 0-1 for each cycle
+        
+        // Generate the sharp wave - asymmetric with fast upstroke and slower downstroke
+        let sharpWave;
+        if (cycle < 0.2) { // Fast upstroke (20% of cycle)
+          // Rapid rise
+          sharpWave = cycle / 0.2; // 0-1 linear rise
+        } else { // Slower downstroke (80% of cycle)
+          // Exponential-like decay
+          sharpWave = Math.pow(1 - ((cycle - 0.2) / 0.8), sharpnessFactor);
+        }
+        
+        // Apply amplitude and mix with some background faster activity
+        const sharpWaveComponent = sharpWave * baseAmp;
+        const backgroundComponent = Math.sin(adjustedTime * 12) * baseAmp * 0.2 * (1 - latePhaseProgress * 0.5);
+        
+        return centerY + (sharpWaveComponent + backgroundComponent);
+      }
+    }
+    
+    // Default return if no seizure activity at this lead
+    return centerY;
+  }
+
+  setLRDAPeriodicity(periodicity) {
+    console.log(`Setting LRDA periodicity to ${periodicity}`);
+    this.lrdaPeriodicity = parseFloat(periodicity);
+  }
+  
+  setGRDAFrequency(frequency) {
+    console.log(`Setting GRDA frequency to ${frequency}`);
+    this.grdaFrequency = parseInt(frequency);
+  }
+  
+  setGRDAPeriodicity(periodicity) {
+    console.log(`Setting GRDA periodicity to ${periodicity}`);
+    this.grdaPeriodicity = parseFloat(periodicity);
   }
 } 
