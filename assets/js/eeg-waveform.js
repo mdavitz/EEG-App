@@ -3194,7 +3194,7 @@ class EEGWaveformDemo {
     this.currentTime = 0;
     this.zoomLevel = 1;
     this.panOffset = { x: 0, y: 0 };
-    this.isPlaying = false;
+    this.isPlaying = true; // Set to true to ensure animation plays after reset
     
     // Cancel any existing animation
     if (this.animationFrame) {
@@ -3640,14 +3640,8 @@ class EEGWaveformDemo {
         this.activeWaveforms.delete(type);
       });
     } else {
-      // Return to normal mode
-      this.currentMode = 'normal';
-      this.activeWaveforms.clear();
-      
-      // Restore normal waveforms
-      Object.keys(this.modes.normal.waveforms).forEach(type => {
-        this.activeWaveforms.add(type);
-      });
+      // Call reset when turning off mild slowing
+      this.reset();
     }
   }
 
@@ -3707,25 +3701,8 @@ class EEGWaveformDemo {
         this.activeWaveforms.delete(type);
       });
     } else {
-      // Return to normal mode
-      this.currentMode = 'normal';
-      this.activeWaveforms.clear();
-      
-      // Restore normal waveforms
-      Object.keys(this.modes.normal.waveforms).forEach(type => {
-        this.activeWaveforms.add(type);
-      });
-      
-      // Re-enable eye blinks and PDR in UI
-      const eyeBlinkBtn = document.getElementById('eyeBlinkToggle');
-      if (eyeBlinkBtn && !eyeBlinkBtn.classList.contains('active')) {
-        eyeBlinkBtn.classList.add('active');
-      }
-      
-      const pdrBtn = document.getElementById('pdrToggle');
-      if (pdrBtn && !pdrBtn.classList.contains('active')) {
-        pdrBtn.classList.add('active');
-      }
+      // Call reset when turning off moderate slowing
+      this.reset();
     }
   }
 
@@ -3788,25 +3765,8 @@ class EEGWaveformDemo {
         this.activeWaveforms.delete(type);
       });
     } else {
-      // Return to normal mode
-      this.currentMode = 'normal';
-      this.activeWaveforms.clear();
-      
-      // Restore normal waveforms
-      Object.keys(this.modes.normal.waveforms).forEach(type => {
-        this.activeWaveforms.add(type);
-      });
-      
-      // Re-enable eye blinks and PDR in UI
-      const eyeBlinkBtn = document.getElementById('eyeBlinkToggle');
-      if (eyeBlinkBtn && !eyeBlinkBtn.classList.contains('active')) {
-        eyeBlinkBtn.classList.add('active');
-      }
-      
-      const pdrBtn = document.getElementById('pdrToggle');
-      if (pdrBtn && !pdrBtn.classList.contains('active')) {
-        pdrBtn.classList.add('active');
-      }
+      // Call reset when turning off severe slowing
+      this.reset();
     }
   }
 
