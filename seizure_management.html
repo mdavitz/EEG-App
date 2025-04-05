@@ -461,9 +461,11 @@
       cursor: pointer;
       font-weight: 500;
       font-size: 14px;
-      transition: background-color 0.3s, transform 0.2s;
+      transition: all 0.3s ease;
       text-align: center;
       min-width: 120px;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
     
     .filter-checkbox:hover {
@@ -471,10 +473,17 @@
       transform: scale(1.02);
     }
     
+    /* Hide checkbox visually but keep it accessible */
     .filter-checkbox input {
-      margin-right: 8px;
-      position: relative;
-      top: 1px;
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    
+    /* Active states using the checkbox state */
+    .filter-checkbox input:checked + span {
+      font-weight: 600;
     }
     
     body.dark .filter-checkbox {
@@ -485,14 +494,42 @@
       background-color: rgba(41, 151, 255, 0.25);
     }
     
+    /* Active state using class instead of directly styling the checkbox */
     .filter-checkbox.active {
       background-color: var(--accent-color);
       color: white;
+      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+      transform: translateY(-1px);
     }
     
     /* Hide rows based on data attributes */
     tr.hidden-by-filter {
       display: none;
+    }
+
+    /* Mobile responsive improvements */
+    @media (max-width: 768px) {
+      .asm-filters {
+        gap: 8px;
+      }
+      
+      .filter-checkbox {
+        padding: 12px 16px;
+        min-width: 100px;
+        flex: 1;
+      }
+      
+      /* Ensure filters work with responsive table/card layout */
+      .custom-table[data-mobile-cards="true"] tr.hidden-by-filter {
+        display: none !important;
+      }
+      
+      /* Improve touch targets for mobile */
+      .filter-checkbox input {
+        height: 20px;
+        width: 20px;
+        top: 3px;
+      }
     }
   </style>
 </head>
@@ -631,18 +668,21 @@
               
               <!-- ASM Filters -->
               <div class="asm-filters">
-                <label class="filter-checkbox">
-                  <input type="checkbox" id="filter-broad-spectrum"> Broad Spectrum
+                <label class="filter-checkbox" for="filter-broad-spectrum">
+                  <input type="checkbox" id="filter-broad-spectrum">
+                  <span>Broad Spectrum</span>
                 </label>
-                <label class="filter-checkbox">
-                  <input type="checkbox" id="filter-focal"> Narrow Spectrum
+                <label class="filter-checkbox" for="filter-focal">
+                  <input type="checkbox" id="filter-focal">
+                  <span>Narrow Spectrum</span>
                 </label>
-                <label class="filter-checkbox">
-                  <input type="checkbox" id="filter-other"> Other
+                <label class="filter-checkbox" for="filter-other">
+                  <input type="checkbox" id="filter-other">
+                  <span>Other</span>
                 </label>
               </div>
               
-              <table class="custom-table">
+              <table class="custom-table" data-mobile-cards="true">
                 <thead>
                   <tr>
                     <th>Medication</th>
@@ -1006,11 +1046,14 @@
         // Get all rows
         const rows = medTableBody.querySelectorAll('tr');
         
+        // Check if we're on mobile
+        const isMobile = window.innerWidth < 768;
+        
         // Add animation class with a small delay between each
         rows.forEach((row, index) => {
           setTimeout(() => {
             row.classList.add('card-visible');
-          }, index * 50); // 50ms delay between each row
+          }, index * (isMobile ? 30 : 50)); // Faster animation on mobile
         });
 
         // ASM Filter functionality
@@ -1053,6 +1096,16 @@
               row.classList.add('hidden-by-filter');
             }
           });
+          
+          // Scroll to table after filtering on mobile for better UX
+          if (isMobile) {
+            const table = document.querySelector('.custom-table[data-mobile-cards="true"]');
+            if (table && !showAll) {
+              setTimeout(() => {
+                table.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+              }, 100);
+            }
+          }
         }
         
         // Add event listeners to the checkboxes
