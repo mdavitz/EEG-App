@@ -2,8 +2,8 @@
 <html>
 <head>
   <meta charset="UTF-8">
-  <!-- Fixed viewport so canvas stays 320px wide -->
-  <meta name="viewport" content="width=320, initial-scale=1.0, user-scalable=no">
+  <!-- Responsive viewport for better mobile compatibility -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Pac Brain</title>
   <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
   <style>
@@ -16,11 +16,18 @@
       height: 100vh;
       overflow: hidden;
       position: relative;
+      /* Prevent pull-to-refresh issues on mobile */
+      overscroll-behavior: contain;
+      touch-action: none;
     }
     canvas {
       background: url('space-background.jpg') no-repeat center center / cover;
       border: 2px solid #0f0;
       box-shadow: 0 0 10px #0f0;
+      /* Ensure canvas fits mobile screens */
+      max-width: 100%;
+      max-height: 100vh;
+      object-fit: contain;
     }
     #scoreBoard {
       position: absolute;
@@ -30,6 +37,10 @@
       color: #0f0;
       font-family: sans-serif;
       z-index: 1000;
+      /* Better visibility on mobile */
+      font-size: 16px;
+      font-weight: bold;
+      text-shadow: 0 0 4px rgba(0,255,0,0.5);
     }
     #muteButton {
       position: absolute;
@@ -44,10 +55,25 @@
       border: 2px solid #0f0;
       box-shadow: 3px 3px 0 #0f0;
       cursor: pointer;
+      /* Better touch target for mobile */
+      min-width: 44px;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
     }
     #muteButton:active {
       box-shadow: none;
       transform: translate(3px, 3px);
+    }
+    
+    /* Mobile-specific adjustments */
+    @media (max-width: 768px) {
+      #muteButton {
+        top: auto;
+        bottom: 20px;
+        right: 20px;
+      }
     }
   </style>
 </head>
@@ -157,7 +183,35 @@
         const nextCellX = Math.floor(nextX / CELL_SIZE);
         const nextCellY = Math.floor(nextY / CELL_SIZE);
 
+        // Check if the next position is valid
         if (gameState.maze[nextCellY] && gameState.maze[nextCellY][nextCellX] !== 1) {
+          // For vertical movement, snap to center of cell
+          if (this.direction === Math.PI/2 || this.direction === -Math.PI/2) {
+            const currentCellX = Math.floor(this.x / CELL_SIZE);
+            const targetX = currentCellX * CELL_SIZE + CELL_SIZE/2;
+            
+            // Move horizontally to center if needed
+            if (Math.abs(this.x - targetX) > 0.5) {
+              this.x += (targetX - this.x) * 0.2;
+            } else {
+              this.x = targetX;
+            }
+          }
+          
+          // For horizontal movement, snap to center of cell
+          if (this.direction === 0 || this.direction === Math.PI) {
+            const currentCellY = Math.floor(this.y / CELL_SIZE);
+            const targetY = currentCellY * CELL_SIZE + CELL_SIZE/2;
+            
+            // Move vertically to center if needed
+            if (Math.abs(this.y - targetY) > 0.5) {
+              this.y += (targetY - this.y) * 0.2;
+            } else {
+              this.y = targetY;
+            }
+          }
+
+          // Update position
           this.x = nextX;
           this.y = nextY;
 
@@ -716,14 +770,26 @@
     const SWIPE_THRESHOLD = 30; // minimum distance for a swipe
 
     function handleTouchStart(e) {
-      e.preventDefault();
+      // Don't prevent default for menu interactions
+      if (gameState.state === "playing") {
+        e.preventDefault();
+      }
       const touch = e.touches[0];
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
+      
+      // Handle menu and game over state taps same as mouse clicks
+      if (gameState.state === "menu" || gameState.state === "gameover") {
+        handleInteraction(e);
+      }
     }
 
     function handleTouchMove(e) {
-      e.preventDefault();
+      // Only prevent default during gameplay to avoid page scrolling issues
+      if (gameState.state === "playing") {
+        e.preventDefault();
+      }
+      
       if (!touchStartX || !touchStartY || gameState.state !== "playing") {
         return;
       }
@@ -760,7 +826,10 @@
     }
 
     function handleTouchEnd(e) {
-      e.preventDefault();
+      // Only prevent default for gameplay
+      if (gameState.state === "playing") {
+        e.preventDefault();
+      }
       touchStartX = null;
       touchStartY = null;
     }
@@ -839,7 +908,7 @@
       } else if (gameState.state === "playing" || gameState.state === "paused") {
         if (gameState.state === "playing") {
           pacman.update();
-          updateGhosts();
+        updateGhosts();
 
           if (gameState.powerMode) {
             gameState.powerModeTimer--;
@@ -847,7 +916,7 @@
               gameState.powerMode = false;
             }
           }
-          checkLevelComplete();
+        checkLevelComplete();
         }
         drawMaze();
         drawGhosts();
@@ -940,10 +1009,10 @@
       // Event listeners
       canvas.addEventListener("click", handleInteraction);
       
-      // Touch controls
-      canvas.addEventListener("touchstart", handleTouchStart, { passive: false });
+      // Touch controls with optimized passive settings for mobile
+      canvas.addEventListener("touchstart", handleTouchStart, { passive: true });
       canvas.addEventListener("touchmove", handleTouchMove, { passive: false });
-      canvas.addEventListener("touchend", handleTouchEnd, { passive: false });
+      canvas.addEventListener("touchend", handleTouchEnd, { passive: true });
 
       document.addEventListener("keydown", e => {
         if (e.code === "Space") {
