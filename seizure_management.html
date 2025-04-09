@@ -531,6 +531,105 @@
         top: 3px;
       }
     }
+    
+    /* Reference Cards Styling */
+    .reference-cards-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    
+    .reference-card-link {
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      background-color: rgba(0, 102, 204, 0.1);
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      text-decoration: none;
+      color: var(--accent-color);
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      position: relative;
+      overflow: hidden;
+      flex: 1 1 250px;
+    }
+    
+    .reference-card-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      background-color: rgba(0, 102, 204, 0.15);
+    }
+    
+    .reference-card-icon {
+      margin-right: 12px;
+      font-size: 1.4em;
+      color: #e74c3c;
+    }
+    
+    .reference-card-text strong {
+      display: block;
+      margin-bottom: 2px;
+    }
+    
+    .reference-card-subtext {
+      font-size: 0.85em;
+      opacity: 0.9;
+    }
+    
+    .reference-download-icon {
+      margin-left: auto;
+      font-size: 0.85em;
+      opacity: 0.7;
+    }
+    
+    @media (max-width: 768px) {
+      .reference-card-link {
+        flex: 1 1 100%;
+        padding: 14px 16px;
+      }
+      
+      .reference-card-icon {
+        font-size: 1.2em;
+      }
+      
+      .reference-card-text strong {
+        font-size: 1em;
+      }
+    }
+
+    /* Action Button Styling */
+    .action-button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background-color: var(--accent-color);
+      color: white;
+      font-weight: 500;
+      padding: 12px 24px;
+      border-radius: 8px;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0, 102, 204, 0.3);
+      transition: all 0.3s ease;
+    }
+    
+    .action-button:hover {
+      background-color: var(--accent-hover);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.4);
+    }
+    
+    .action-button:active {
+      transform: translateY(0);
+      box-shadow: 0 1px 4px rgba(0, 102, 204, 0.3);
+    }
+    
+    body.dark .action-button {
+      box-shadow: 0 2px 8px rgba(41, 151, 255, 0.3);
+    }
+    
+    body.dark .action-button:hover {
+      box-shadow: 0 4px 12px rgba(41, 151, 255, 0.4);
+    }
   </style>
 </head>
 <body>
@@ -548,8 +647,9 @@
           <a href="#" id="all-btn" class="active" onclick="filterCategory('all'); return false;">All Content</a>
           <a href="#status-epilepticus" onclick="filterCategory('epilepticus'); return false;">Status Epilepticus</a>
           <a href="#anti-seizure-medications" onclick="filterCategory('medications'); return false;">Medications</a>
-          <a href="#asm-withdrawal" onclick="filterCategory('management'); return false;">ASM Withdrawal</a>
-          <a href="#refractory-epilepsy" onclick="filterCategory('management'); return false;">Refractory Epilepsy</a>
+          <a href="#asm-flowcharts" onclick="filterCategory('asm-flowcharts'); return false;">ASM Flowcharts</a>
+          <a href="#asm-withdrawal" onclick="filterCategory('asm-withdrawal'); return false;">ASM Withdrawal</a>
+          <a href="#refractory-epilepsy" onclick="filterCategory('refractory-epilepsy'); return false;">Refractory Epilepsy</a>
         </div>
         
         <!-- Content Container with Expandable Details -->
@@ -558,8 +658,103 @@
           <details open class="section-detail">
             <summary class="section-header">Status Epilepticus</summary>
             <div class="info-box" id="status-epilepticus">
+              <div class="info-box" style="margin-bottom: 1.5rem; background-color: rgba(0, 102, 204, 0.08); border-left: 4px solid var(--accent-color);">
+                <h3 style="margin-top: 0; color: var(--primary-color); font-size: 1.1rem; display: flex; align-items: center;">
+                  <i class="fas fa-bookmark" style="margin-right: 8px; color: var(--accent-color);"></i>
+                  Clinical Reference Cards
+                </h3>
+                <p style="margin-bottom: 1rem; font-style: italic; color: var(--text-secondary);">Courtesy of Dr. Gena Ghearing</p>
+                
+                <div class="reference-cards-container">
+                  <a href="assets/documents/IIC card.pdf" target="_blank" class="reference reference-card-link">
+                    <i class="fas fa-file-pdf reference-card-icon"></i>
+                    <span class="reference-card-text">
+                      <strong>Ictal Interictal Continuum (IIC) Card</strong>
+                      <span class="reference-card-subtext">Management Protocol</span>
+                    </span>
+                    <i class="fas fa-download reference-download-icon"></i>
+                  </a>
+                  
+                  <a href="assets/documents/status epilepticus pocket card - revised - GG.pdf" target="_blank" class="reference reference-card-link">
+                    <i class="fas fa-file-pdf reference-card-icon"></i>
+                    <span class="reference-card-text">
+                      <strong>Status Epilepticus</strong>
+                      <span class="reference-card-subtext">Pocket Reference Card</span>
+                    </span>
+                    <i class="fas fa-download reference-download-icon"></i>
+                  </a>
+                </div>
+              </div>
+              
               <p><strong>Management of Convulsive Status Epilepticus</strong></p>
               <p><a class="reference" href="https://www.neurocriticalcare.org/Portals/0/ENLS%205.0/ENLS%205.0%20Protocol%20-%20SE.pdf" target="_blank">Neurocritical Care Society Guidelines</a></p>
+              
+              <style>
+                .reference-cards-container {
+                  display: flex;
+                  flex-wrap: wrap;
+                  gap: 12px;
+                }
+                
+                .reference-card-link {
+                  display: flex;
+                  align-items: center;
+                  padding: 12px 16px;
+                  background-color: rgba(0, 102, 204, 0.1);
+                  border-radius: 8px;
+                  transition: all 0.3s ease;
+                  text-decoration: none;
+                  color: var(--accent-color);
+                  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                  position: relative;
+                  overflow: hidden;
+                  flex: 1 1 250px;
+                }
+                
+                .reference-card-link:hover {
+                  transform: translateY(-2px);
+                  box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+                  background-color: rgba(0, 102, 204, 0.15);
+                }
+                
+                .reference-card-icon {
+                  margin-right: 12px;
+                  font-size: 1.4em;
+                  color: #e74c3c;
+                }
+                
+                .reference-card-text strong {
+                  display: block;
+                  margin-bottom: 2px;
+                }
+                
+                .reference-card-subtext {
+                  font-size: 0.85em;
+                  opacity: 0.9;
+                }
+                
+                .reference-download-icon {
+                  margin-left: auto;
+                  font-size: 0.85em;
+                  opacity: 0.7;
+                }
+                
+                @media (max-width: 768px) {
+                  .reference-card-link {
+                    flex: 1 1 100%;
+                    padding: 14px 16px;
+                  }
+                  
+                  .reference-card-icon {
+                    font-size: 1.2em;
+                  }
+                  
+                  .reference-card-text strong {
+                    font-size: 1em;
+                  }
+                }
+              </style>
+
               <p>The following table outlines the time‐based phases, interventions, and dosing regimens:</p>
               <table class="custom-table">
                 <thead>
@@ -863,16 +1058,63 @@
             </div>
           </details>
           
-          <!-- 3. ASM Withdrawal Section -->
+          <!-- 3. ASM Flowcharts Section (moved up from bottom) -->
           <details open class="section-detail">
-            <summary class="section-header">ASM Withdrawal</summary>
-            <div class="info-box" id="asm-withdrawal">
-              <p>This section provides calculators and risk assessment tools for ASM withdrawal. Use these tools as guidance and consult your epilepsy specialist before tapering medications.</p>
-              <p><a class="reference" href="http://epilepsypredictiontools.info/index" target="_blank">Epilepsy Prediction Tools</a></p>
+            <summary class="section-header">ASM Flowcharts</summary>
+            <div class="info-box" id="asm-flowcharts">
+              <p>These flow charts provide guidance on anti-seizure medication selection based on seizure type, mechanisms of action, and clinical applications:</p>
+              
+              <div class="image-container">
+                <h3>Choice of Anti-Seizure Medications</h3>
+                <p>Monotherapy and add-on therapy options for seizures in adults and children:</p>
+                <img src="assets/images/Clinica_choice.png" alt="Anti-seizure medication choice flowchart" class="responsive-image">
+              </div>
+              
+              <div class="image-container">
+                <h3>Mechanisms of Action</h3>
+                <p>Neurobiological targets of commonly used anti-seizure medications:</p>
+                <img src="assets/images/Clinical_mechanism.png" alt="Anti-seizure medication mechanisms of action" class="responsive-image">
+              </div>
+              
+              <div class="image-container">
+                <h3>Clinical Spectrum of Anti-Seizure Medications</h3>
+                <p>Treatment approaches for different types of epilepsy in adults and children:</p>
+                <img src="assets/images/Clinical_spectrum.png" alt="Clinical spectrum of anti-seizure medications" class="responsive-image">
+              </div>
+              
+              <div class="reference">
+                <p><strong>Reference:</strong> Löscher, W., Klein, P. The Pharmacology and Clinical Efficacy of Antiseizure Medications: From Bromide Salts to Cenobamate and Beyond. <em>CNS Drugs</em> 35, 935–963 (2021). <a href="https://link.springer.com/article/10.1007/s40263-021-00827-8" target="_blank">https://link.springer.com/article/10.1007/s40263-021-00827-8</a></p>
+              </div>
             </div>
           </details>
           
-          <!-- 4. Management of Refractory Epilepsy Section -->
+          <!-- 4. ASM Withdrawal Section -->
+          <details open class="section-detail">
+            <summary class="section-header">ASM Withdrawal</summary>
+            <div class="info-box" id="asm-withdrawal">
+              <p>ASM withdrawal should be performed gradually under medical supervision after careful consideration of seizure recurrence risk factors.</p>
+              
+              <h3 style="margin-top: 1rem;">Key Considerations for ASM Withdrawal:</h3>
+              <ul>
+                <li>Minimum 2 years seizure-free before attempting withdrawal</li>
+                <li>Longer seizure-free period for patients with prior relapses or refractory epilepsy</li>
+                <li>Gradual tapering over months (typically 3-6 months)</li>
+                <li>Higher recurrence risk with multiple seizure types, abnormal EEG, or structural lesions</li>
+                <li>Consider driving restrictions during and after medication withdrawal</li>
+              </ul>
+              
+              <p style="margin-top: 1rem;">Use the prediction tool below to estimate seizure recurrence risk after medication withdrawal, but always consult your epilepsy specialist before making any medication changes.</p>
+              
+              <div style="text-align: center; margin: 20px 0;">
+                <a href="http://epilepsypredictiontools.info/index" target="_blank" class="action-button">
+                  <i class="fas fa-calculator" style="margin-right: 8px;"></i>
+                  Epilepsy Prediction Tools
+                </a>
+              </div>
+            </div>
+          </details>
+          
+          <!-- 5. Management of Refractory Epilepsy Section -->
           <details open class="section-detail">
             <summary class="section-header">Management of Refractory Epilepsy</summary>
             <div class="info-box" id="refractory-epilepsy">
@@ -912,33 +1154,6 @@
                   </tr>
                 </tbody>
               </table>
-            </div>
-          </details>
-          
-          <!-- 5. Seizure Management Decision Tree Section -->
-          <details open class="section-detail">
-            <summary class="section-header">Seizure Management Decision Tree</summary>
-            <div class="info-box">
-              <p>The following decision tree helps guide the management of patients with different seizure types:</p>
-              <!-- Decision Tree Content -->
-            </div>
-          </details>
-          
-          <!-- 6. Seizure First Aid Section -->
-          <details open class="section-detail">
-            <summary class="section-header">Seizure First Aid</summary>
-            <div class="info-box">
-              <p><strong>For Convulsive (Tonic-Clonic) Seizures:</strong></p>
-              <!-- First Aid Content -->
-            </div>
-          </details>
-          
-          <!-- 7. Pharmacokinetics of ASMs Section -->
-          <details open class="section-detail">
-            <summary class="section-header">Pharmacokinetics of Anti-Seizure Medications</summary>
-            <div class="info-box">
-              <p>Understanding the pharmacokinetics of anti-seizure medications is crucial for proper dosing:</p>
-              <!-- Pharmacokinetics Content -->
             </div>
           </details>
         </div>
@@ -1056,6 +1271,11 @@
           }, index * (isMobile ? 30 : 50)); // Faster animation on mobile
         });
 
+        // Initialize filtering to "All" on page load
+        setTimeout(() => {
+          filterCategory('all');
+        }, 100);
+
         // ASM Filter functionality
         const filterBroadSpectrum = document.getElementById('filter-broad-spectrum');
         const filterFocal = document.getElementById('filter-focal');
@@ -1139,6 +1359,59 @@
         }
       }
     });
+
+    // Content filtering function to show/hide sections
+    function filterCategory(category) {
+      // Get all quick link buttons and section details
+      const quickLinks = document.querySelectorAll('.quick-links a');
+      const sectionDetails = document.querySelectorAll('.section-detail');
+      
+      // Update active state for quick links
+      quickLinks.forEach(link => {
+        link.classList.remove('active');
+        if ((category === 'all' && link.id === 'all-btn') || 
+            (link.getAttribute('href').includes(category))) {
+          link.classList.add('active');
+        }
+      });
+      
+      // Show/hide sections based on selected category
+      sectionDetails.forEach(section => {
+        const sectionId = section.querySelector('.info-box').id;
+        
+        if (category === 'all') {
+          // Show all sections
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'epilepticus' && sectionId === 'status-epilepticus') {
+          // Show only status epilepticus section
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'medications' && sectionId === 'anti-seizure-medications') {
+          // Show only medications section
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'asm-withdrawal' && sectionId === 'asm-withdrawal') {
+          // Show only ASM withdrawal section
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'refractory-epilepsy' && sectionId === 'refractory-epilepsy') {
+          // Show only refractory epilepsy section
+          section.style.display = 'block';
+          section.open = true;
+        } else if (category === 'asm-flowcharts' && sectionId === 'asm-flowcharts') {
+          // Show only ASM flowcharts section
+          section.style.display = 'block';
+          section.open = true;
+        } else {
+          // Hide all other sections
+          section.style.display = 'none';
+        }
+      });
+      
+      // Scroll to the top of the content area
+      document.getElementById('seizure-management').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   </script>
 </body>
 </html>
