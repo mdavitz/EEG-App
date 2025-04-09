@@ -7,6 +7,8 @@
   --accent-color: #0066cc;
   --accent-hover: #0055b3;
   --accent-active: #004499;
+  --accent-rgb: 0, 102, 204;
+  --border-rgb: 210, 210, 215;
   --bg-color: #f5f5f7;
   --text-color: #1d1d1f;
   --text-secondary: #6e6e73;
@@ -26,6 +28,8 @@
   --accent-color: #2997ff;
   --accent-hover: #0077ed;
   --accent-active: #0068d6;
+  --accent-rgb: 41, 151, 255;
+  --border-rgb: 66, 66, 69;
   --bg-color: #1d1d1f;
   --text-color: #f5f5f7;
   --text-secondary: #a1a1a6;
@@ -107,6 +111,48 @@ body.dark .section-title {
   box-shadow: 0 2px 8px var(--shadow-color);
   margin-bottom: 1.5em;
   transition: background var(--transition-duration);
+}
+
+/*-----------------------------------------------
+  RESPONSIVE IMAGES AND IMAGE CONTAINERS
+-----------------------------------------------*/
+.responsive-image {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px var(--shadow-color);
+}
+
+.image-container {
+  margin-bottom: 2rem;
+}
+
+.image-container h3 {
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  color: var(--primary-color);
+}
+
+body.dark .image-container h3 {
+  color: var(--text-color);
+}
+
+.reference {
+  margin-top: 2rem;
+  font-size: 0.9rem;
+  border-top: 1px solid var(--border-color);
+  padding-top: 1rem;
+  color: var(--text-secondary);
+}
+
+.reference a {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+.reference a:hover {
+  text-decoration: underline;
 }
 
 /*-----------------------------------------------
