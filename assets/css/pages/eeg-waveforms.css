@@ -1,0 +1,406 @@
+/* Slider Container Styles */
+.slider-container {
+  margin-bottom: 24px;
+  position: relative;
+  padding: 0 10px;
+}
+
+.slider-container label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 0.95rem;
+  transition: color var(--transition-duration);
+}
+
+.slider-container label span {
+  color: var(--accent-color);
+  font-weight: 700;
+  transition: color var(--transition-duration);
+}
+
+input[type="range"] {
+  width: 100%;
+  height: 6px;
+  background: var(--border-color);
+  border-radius: 6px;
+  outline: none;
+  -webkit-appearance: none;
+  margin-bottom: 22px;
+  transition: background var(--transition-duration);
+}
+
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid white;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+  transition: all 0.2s ease;
+}
+
+input[type="range"]::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 6px;
+  transition: background var(--transition-duration);
+}
+
+input[type="range"]::-moz-range-track {
+  height: 6px;
+  border-radius: 6px;
+  transition: background var(--transition-duration);
+}
+
+input[type="range"]:focus {
+  outline: none;
+}
+
+input[type="range"]::-webkit-slider-thumb:hover {
+  background: var(--accent-hover);
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"]::-moz-range-thumb:hover {
+  background: var(--accent-hover);
+  transform: scale(1.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+input[type="range"]:active::-webkit-slider-thumb {
+  background: var(--accent-active);
+  transform: scale(1.15);
+}
+
+input[type="range"]:active::-moz-range-thumb {
+  background: var(--accent-active);
+  transform: scale(1.15);
+}
+
+.slider-label-min,
+.slider-label-max {
+  position: absolute;
+  bottom: 0;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  transition: color var(--transition-duration);
+}
+
+.slider-label-min {
+  left: 10px;
+}
+
+.slider-label-max {
+  right: 10px;
+}
+
+#spike-adjusters {
+  background: var(--info-bg);
+  border-radius: 10px;
+  padding: 20px;
+  margin-bottom: 25px;
+  box-shadow: 0 3px 8px var(--shadow-color);
+  transition: all var(--transition-duration);
+  border: 1px solid var(--border-color);
+}
+
+#spike-adjusters h4 {
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--primary-color);
+  font-size: 1.1rem;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 8px;
+  transition: color var(--transition-duration);
+}
+
+/* Dark Mode Support */
+.dark-mode .slider-container label {
+  color: var(--text-color);
+}
+
+.dark-mode .slider-container label span {
+  color: var(--accent-color);
+}
+
+.dark-mode input[type="range"] {
+  background: var(--border-color);
+}
+
+.dark-mode input[type="range"]::-webkit-slider-thumb {
+  background: var(--accent-color);
+  border-color: var(--info-bg);
+}
+
+.dark-mode input[type="range"]::-moz-range-thumb {
+  background: var(--accent-color);
+  border-color: var(--info-bg);
+}
+
+.dark-mode .slider-label-min,
+.dark-mode .slider-label-max {
+  color: var(--text-secondary);
+}
+
+.dark-mode #spike-adjusters {
+  background: var(--info-bg);
+  box-shadow: 0 3px 10px var(--shadow-color);
+}
+
+.dark-mode #spike-adjusters h4 {
+  color: var(--primary-color);
+}
+
+/* Add CSS for the findings display */
+.findings-display {
+  position: relative;
+  background: var(--info-bg);
+  border-radius: 10px;
+  padding: 20px;
+  margin: 20px 0;
+  box-shadow: 0 4px 12px var(--shadow-color);
+  border: 1px solid var(--border-color);
+  max-width: 100%;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.3s ease, transform 0.3s ease, display 0.3s ease;
+  display: none;
+}
+
+.findings-display.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.findings-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.findings-header h4 {
+  font-size: 1.2rem;
+  margin: 0;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.findings-header h4 i {
+  color: var(--accent-color);
+}
+
+.findings-close {
+  background: transparent;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: color 0.2s ease;
+  padding: 5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.findings-close:hover {
+  color: var(--accent-color);
+}
+
+.findings-content {
+  padding: 5px;
+}
+
+.findings-content h3 {
+  font-size: 1.3rem;
+  margin-top: 0;
+  margin-bottom: 15px;
+  color: var(--accent-color);
+}
+
+.findings-section {
+  margin-bottom: 20px;
+}
+
+.findings-section h4 {
+  font-size: 1.1rem;
+  margin-bottom: 8px;
+  color: var(--primary-color);
+  border-left: 3px solid var(--accent-color);
+  padding-left: 8px;
+}
+
+.findings-section p {
+  margin: 8px 0;
+  color: var(--text-color);
+  line-height: 1.5;
+}
+
+/* Add styling for the Sleep EEG tab link */
+.tab-link {
+  display: inline-block;
+  background: var(--info-bg);
+  color: var(--text-color);
+  text-decoration: none;
+  padding: 0.7rem 1.5rem;
+  border-radius: 5px;
+  font-weight: 500;
+  border: 1px solid var(--border-color);
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.3s ease;
+  text-align: center;
+  box-shadow: 0 2px 5px var(--shadow-color);
+  font-family: "SF Pro Text", "SF Pro Icons", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-link:hover {
+  background: var(--hover-bg);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px var(--shadow-color);
+  color: var(--text-color);
+  text-decoration: none;
+}
+
+/* Also ensure the tab controls styling works for the Sleep EEG tab */
+.tab-controls .tab-btn {
+  cursor: pointer;
+  padding: 10px 15px;
+  background-color: var(--info-bg);
+  border: 1px solid var(--border-color);
+  border-bottom: none;
+  border-radius: 5px 5px 0 0;
+  margin-right: 5px;
+  transition: background-color 0.3s;
+  font-weight: 500;
+}
+
+.tab-controls .tab-btn.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.tab-controls a.tab-btn {
+  display: inline-block;
+  text-decoration: none;
+  color: var(--text-color);
+}
+
+/* Styling for sleep controls */
+.sleep-stage-selector {
+  margin-bottom: 15px;
+}
+
+.sleep-stage-selector label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.sleep-stage-selector select {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 5px;
+  border: 1px solid var(--border-color);
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+}
+
+.sleep-stage-selector select:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 102, 204, 0.2);
+}
+
+.sleep-pattern-toggles {
+  margin-bottom: 15px;
+}
+
+.sleep-pattern-toggles h5 {
+  margin-bottom: 10px;
+  font-size: 1rem;
+  color: var(--text-color);
+  font-weight: 600;
+}
+
+.sleep-pattern-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.sleep-pattern-buttons button {
+  padding: 6px 12px;
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.sleep-pattern-buttons button:hover {
+  background-color: var(--hover-bg);
+  transform: translateY(-2px);
+}
+
+.sleep-pattern-buttons button.active {
+  background-color: var(--accent-color);
+  color: white;
+  border-color: var(--accent-color);
+}
+
+.sleep-info {
+  background-color: rgba(0, 0, 0, 0.03);
+  border-radius: 5px;
+  padding: 12px;
+  margin-top: 15px;
+}
+
+.sleep-info h5 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  color: var(--text-color);
+}
+
+.sleep-info h5 span {
+  color: var(--accent-color);
+  font-weight: 600;
+}
+
+.sleep-info p {
+  margin: 0;
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+} 
