@@ -1213,6 +1213,16 @@
       scoreDisplay = document.getElementById('score');
       feedbackDisplay = document.getElementById('feedback');
       
+      // Log elements to ensure they exist
+      console.log('Leads container found:', !!leadsContainer);
+      console.log('Head model found:', !!headModel);
+      console.log('Dropped leads container found:', !!droppedLeadsContainer);
+      console.log('Montage select found:', !!montageSelect);
+      console.log('Check button found:', !!checkBtn);
+      console.log('Reset button found:', !!resetBtn);
+      console.log('Score display found:', !!scoreDisplay);
+      console.log('Feedback display found:', !!feedbackDisplay);
+      
       // Initialize UI components
       initLeadButtons();
       setupHeadModelDropZone();
@@ -1222,6 +1232,17 @@
         currentMontage = e.target.value;
         updateMontageView();
       });
+      
+      // Make sure event listeners are attached for buttons
+      if (checkBtn) {
+        checkBtn.addEventListener('click', checkPlacement);
+        console.log('Check button event listener attached');
+      }
+      
+      if (resetBtn) {
+        resetBtn.addEventListener('click', resetAll);
+        console.log('Reset button event listener attached');
+      }
       
       // Initialize tutorial mode - with a slight delay to ensure DOM is fully processed
       setTimeout(initTutorialMode, 100);
@@ -1647,7 +1668,8 @@
     }
     
     // Check the accuracy of lead placements
-    checkBtn.addEventListener('click', () => {
+    function checkPlacement() {
+      console.log('Check placement called');
       let correct = 0;
       let total = 0;
       
@@ -1672,11 +1694,17 @@
           // Get the element for this lead
           const leadElement = document.querySelector(`.eeg-lead[data-lead="${lead}"]`);
           
-          // Check if it's within acceptable distance (15% of container)
-          if (distance <= 15) {
+          // Check if it's within acceptable distance (18% of container)
+          if (distance <= 18) {
             correct++;
             if (leadElement) {
               leadElement.classList.add('correct');
+              
+              // Update position to the correct position
+              leadElement.style.left = `${correctPos.left}%`;
+              leadElement.style.top = `${correctPos.top}%`;
+              placedLeads[lead].x = correctPos.left;
+              placedLeads[lead].y = correctPos.top;
             }
           } else {
             if (leadElement) {
@@ -1707,10 +1735,11 @@
         feedbackDisplay.style.color = '#dc3545';
         showMemeModal(false);
       }
-    });
+    }
     
     // Reset the practice
-    resetBtn.addEventListener('click', () => {
+    function resetAll() {
+      console.log('Reset all called');
       // Clear all placed leads
       droppedLeadsContainer.innerHTML = '';
       
@@ -1727,7 +1756,7 @@
       // Reset feedback
       scoreDisplay.textContent = '0 / 0 correct';
       feedbackDisplay.textContent = '';
-    });
+    }
     
     // Initialize tutorial mode
     function initTutorialMode() {
