@@ -1431,10 +1431,49 @@
         
         // Make it draggable for repositioning
         leadElement.setAttribute('draggable', 'true');
+        
+        // Add drag event listeners for repositioning
         leadElement.addEventListener('dragstart', (e) => {
           selectedLead = leadName;
           e.dataTransfer.setData('text/plain', leadName);
           e.dataTransfer.effectAllowed = 'move';
+          
+          // Create a custom drag image instead of using the default one
+          const dragIcon = document.createElement('div');
+          dragIcon.style.width = '50px';
+          dragIcon.style.height = '50px';
+          dragIcon.style.borderRadius = '50%';
+          dragIcon.style.backgroundColor = 'var(--accent-color)';
+          dragIcon.style.display = 'flex';
+          dragIcon.style.alignItems = 'center';
+          dragIcon.style.justifyContent = 'center';
+          dragIcon.style.color = 'white';
+          dragIcon.style.fontWeight = 'bold';
+          dragIcon.textContent = leadName;
+          dragIcon.style.opacity = '0.8';
+          
+          // Need to add to the document for it to work as drag image
+          document.body.appendChild(dragIcon);
+          dragIcon.style.position = 'absolute';
+          dragIcon.style.top = '-1000px'; // Off-screen
+          
+          // Set custom drag image
+          e.dataTransfer.setDragImage(dragIcon, 25, 25);
+          
+          // Remove dragIcon after a short delay
+          setTimeout(() => {
+            document.body.removeChild(dragIcon);
+          }, 100);
+          
+          // Hide the original element during drag
+          setTimeout(() => {
+            leadElement.style.opacity = '0.2';
+          }, 0);
+        });
+        
+        leadElement.addEventListener('dragend', (e) => {
+          // Restore visibility
+          leadElement.style.opacity = '1';
         });
         
         // Double click to remove
@@ -1484,6 +1523,10 @@
         element: this
       };
       
+      // Add a visual effect to show it's being dragged
+      this.style.opacity = '0.8';
+      this.style.zIndex = '100';
+      
       e.preventDefault();
     }
     
@@ -1518,6 +1561,10 @@
       // Calculate final position
       const x = ((touch.clientX - headRect.left) / headRect.width) * 100;
       const y = ((touch.clientY - headRect.top) / headRect.height) * 100;
+      
+      // Reset visual properties
+      initialTouchPos.element.style.opacity = '1';
+      initialTouchPos.element.style.zIndex = '5';
       
       // Check if ended outside the head model
       if (
