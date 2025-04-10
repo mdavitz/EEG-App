@@ -169,4 +169,30 @@ body.dark .disabled-link:hover {
 
 body.dark .card a.disabled-link:hover {
   background-color: #444444 !important;
+}
+
+/* Font toggle button styling */
+.font-toggle-btn {
+  position: relative;
+  overflow: hidden;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.font-toggle-btn.active {
+  background-color: var(--accent-color);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.font-toggle-btn:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(var(--accent-rgb), 0.4);
+}
+
+/* Ensure buttons scale properly with large font */
+body.large-font .btn,
+body.large-font .btn-primary,
+body.large-font .btn-light {
+  padding: 0.8rem 1.7rem;
 } 

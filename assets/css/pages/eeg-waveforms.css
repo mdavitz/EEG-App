@@ -403,4 +403,67 @@ input[type="range"]:active::-moz-range-thumb {
   font-size: 0.9rem;
   line-height: 1.5;
   color: var(--text-secondary);
+}
+
+/*-----------------------------------------------
+  EEG WAVEFORM SIMULATOR STYLING
+-----------------------------------------------*/
+
+/* Tab buttons - Apple style */
+.tab-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-bottom: 2em;
+}
+
+.tab-buttons button, 
+.tab-buttons a {
+  padding: 8px 18px;
+  border: none;
+  border-radius: 980px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  min-width: 140px;
+  transition: background-color 0.3s, transform 0.3s;
+  background-color: rgba(0, 102, 204, 0.1);
+  color: var(--accent-color);
+  text-decoration: none;
+  text-align: center;
+  display: inline-block;
+}
+
+.tab-buttons button:hover,
+.tab-buttons a:hover {
+  transform: scale(1.02);
+  background-color: rgba(0, 102, 204, 0.2);
+}
+
+.tab-buttons button.active,
+.tab-buttons a.active {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+/* Dark mode overrides */
+body.dark .tab-buttons button:not(.active),
+body.dark .tab-buttons a:not(.active) {
+  background-color: rgba(41, 151, 255, 0.15);
+  color: var(--accent-color);
+}
+
+body.dark .tab-buttons button:hover:not(.active),
+body.dark .tab-buttons a:hover:not(.active) {
+  background-color: rgba(41, 151, 255, 0.25);
+}
+
+/* Subtitle styles */
+.page-subtitle {
+  text-align: center;
+  color: var(--primary-color);
+  margin-top: 0;
+  margin-bottom: 20px;
+  font-size: 1.5rem;
+  font-weight: 500;
 } 

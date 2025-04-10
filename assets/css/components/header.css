@@ -412,4 +412,31 @@ body.dark .menu-section a.disabled-link {
 
 body.dark .menu-section a.disabled-link:hover {
   color: #666666 !important;
+}
+
+/* Secret game trigger */
+.secret-game-container {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  z-index: 999;
+  opacity: 0.01;
+  transition: opacity 0.3s ease;
+}
+
+.secret-game-container:hover {
+  opacity: 0.6;
+}
+
+.secret-game-trigger {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.game-icon {
+  font-size: 20px;
 } 

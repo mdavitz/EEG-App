@@ -230,4 +230,60 @@ body.dark .copyright-content h2 {
 
 body.dark .copyright-content p {
   color: var(--text-color);
+}
+
+/* Additional footer button styles */
+.footer-btn {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+  padding: 5px 10px;
+  margin-left: 5px;
+}
+
+.footer-btn:hover {
+  background-color: var(--hover-bg);
+}
+
+.disclaimer-btn {
+  margin-left: 10px;
+  font-size: 0.9em;
+  padding: 3px 8px;
+}
+
+/* Text size utilities for the font toggle */
+.font-toggle-btn .text-large {
+  font-size: 1.4em;
+}
+
+.font-toggle-btn .text-small {
+  font-size: 0.8em;
+}
+
+/* Improved active state styling for font toggle button */
+.font-toggle-btn.active {
+  background-color: var(--accent-color);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.font-toggle-btn.active .text-large {
+  font-weight: bold;
+}
+
+body.large-font .font-toggle-btn {
+  background-color: var(--accent-color);
+  color: white;
+  transform: scale(1.05);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Dark mode states */
+body.dark .footer-btn {
+  background-color: var(--info-bg);
+  color: var(--text-color);
 } 

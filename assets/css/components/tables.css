@@ -90,4 +90,27 @@ body.dark .custom-table tr:nth-child(even) {
   .custom-table td {
     padding: 12px;
   }
+}
+
+/* Large font mode adjustments for tables */
+body.large-font .custom-table {
+  word-break: normal;
+  overflow-wrap: break-word;
+}
+
+body.large-font .custom-table th,
+body.large-font .custom-table td {
+  padding: 12px 15px;
+}
+
+/* Improve mobile table readability in large font mode */
+@media (max-width: 768px) {
+  body.large-font .custom-table td:before {
+    font-weight: 600;
+    padding-right: 10px;
+  }
+  
+  body.large-font .custom-table td {
+    padding: 10px 8px;
+  }
 } 

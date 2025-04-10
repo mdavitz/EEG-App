@@ -191,7 +191,44 @@ body.dark .image-container h3 {
 
 /* Font sizing */
 body.large-font { 
-  font-size: 110%; 
+  font-size: 130% !important; 
+}
+
+/* Ensure large font affects specific elements that might have fixed font sizes */
+body.large-font p,
+body.large-font li,
+body.large-font td,
+body.large-font th,
+body.large-font input,
+body.large-font label,
+body.large-font button,
+body.large-font .info-box,
+body.large-font .card p,
+body.large-font .custom-table,
+body.large-font .footer-copy,
+body.large-font .footer-btns button {
+  font-size: 1.1em !important;
+}
+
+body.large-font h1 { font-size: 2.6rem !important; }
+body.large-font h2 { font-size: 2.2rem !important; }
+body.large-font h3 { font-size: 1.8rem !important; }
+body.large-font h4 { font-size: 1.5rem !important; }
+body.large-font h5 { font-size: 1.3rem !important; }
+body.large-font h6 { font-size: 1.1rem !important; }
+
+body.large-font .page-title,
+body.large-font .section-title {
+  font-size: 2.8rem !important;
+}
+
+body.large-font .section-header {
+  font-size: 1.8rem !important;
+}
+
+/* Ensure tables are readable with large font */
+body.large-font .custom-table {
+  line-height: 1.6 !important;
 }
 
 h1, h2, h3, h4, h5, h6 {
