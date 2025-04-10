@@ -12,12 +12,29 @@
   
   <!-- Main CSS file that imports all modular CSS -->
   <link rel="stylesheet" href="assets/css/main.css" />
+  <!-- Page-specific CSS for EEG Simulator -->
+  <link rel="stylesheet" href="assets/css/pages/eeg-waveforms.css" />
   
   <!-- Core Scripts -->
   <script src="firebase-auth.js" defer></script>
   <script src="assets/js/common.js" defer></script>
   <script src="assets/js/includes-loader.js" defer></script>
   <script src="assets/js/universal-search.js" defer></script>
+  
+  <!-- Page-specific JS -->
+  <script src="assets/js/pages/eeg-lead-practice.js" defer></script>
+  
+  <style>
+    /* Page specific styles can go here */
+    .page-subtitle {
+      text-align: center;
+      color: var(--primary-color);
+      margin-top: 0;
+      margin-bottom: 20px;
+      font-size: 1.5rem;
+      font-weight: 500;
+    }
+  </style>
   
   <!-- Search initialization script -->
   <script>
@@ -89,730 +106,6 @@
       }
     });
   </script>
-  
-  <style>
-    /* EEG Lead Practice Specific Styles */
-    .page-eeg_lead_practice {
-      display: flex;
-      flex-direction: column;
-      max-width: 1440px;
-      margin: 0 auto;
-      position: relative;
-      padding: 0 20px;
-    }
-    
-    .page-title {
-      text-align: center;
-      font-size: 2.2rem;
-      margin: 1.5rem 0 2rem;
-      color: var(--primary-color);
-      position: relative;
-      padding-bottom: 12px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
-    }
-    
-    .page-title:after {
-      content: '';
-      position: absolute;
-      width: 120px;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      border-radius: 2px;
-    }
-    
-    #lead-practice-container {
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 2rem;
-      background: var(--card-bg);
-      border-radius: 16px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-    }
-    
-    /* App Introduction */
-    .app-intro {
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto 2rem;
-      line-height: 1.6;
-      position: relative;
-    }
-    
-    .tutorial-button {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: var(--accent-color);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 600;
-      font-size: 1rem;
-      cursor: pointer;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
-    }
-    
-    .tutorial-button i {
-      font-size: 1.2rem;
-    }
-    
-    .tutorial-button:hover {
-      background: var(--accent-color-dark, #0056b3);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    }
-    
-    .welcome-message {
-      background-color: #e3f2fd;
-      border-left: 4px solid var(--accent-color);
-      padding: 15px 20px;
-      margin: 0 0 20px 0;
-      border-radius: 6px;
-      text-align: left;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-      animation: pulse 2s infinite;
-    }
-    
-    .welcome-message h3 {
-      color: var(--accent-color);
-      margin: 0 0 8px 0;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .welcome-message p {
-      margin: 0;
-      font-size: 1rem;
-    }
-    
-    .welcome-message strong {
-      color: var(--accent-color);
-    }
-    
-    @keyframes pulse {
-      0% { box-shadow: 0 0 0 0 rgba(0, 136, 255, 0.4); }
-      70% { box-shadow: 0 0 0 8px rgba(0, 136, 255, 0); }
-      100% { box-shadow: 0 0 0 0 rgba(0, 136, 255, 0); }
-    }
-    
-    /* Practice Area Styles */
-    .practice-area {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-    }
-    
-    @media (min-width: 992px) {
-      .practice-area {
-        flex-direction: row;
-      }
-    }
-    
-    /* Controls Section */
-    .controls-section {
-      flex: 1;
-      min-width: 250px;
-    }
-    
-    .montage-selector {
-      margin-bottom: 2rem;
-    }
-    
-    .montage-selector select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 8px;
-      border: 1px solid var(--border-color);
-      background-color: var(--card-bg);
-      color: var(--text-color);
-      font-size: 1rem;
-    }
-    
-    /* Lead Selection */
-    .leads-container {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 15px;
-      margin-bottom: 1.5rem;
-      justify-content: center;
-    }
-    
-    .lead-item {
-      width: 50px;
-      height: 50px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background-color: var(--accent-color);
-      color: white;
-      border: 2px solid var(--border-color);
-      border-radius: 50%;
-      cursor: move;
-      transition: all 0.2s ease;
-      font-weight: bold;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      user-select: none;
-      position: relative;
-      z-index: 10;
-      touch-action: none; /* Important for mobile drag */
-    }
-    
-    .lead-item:hover {
-      transform: scale(1.1);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-    
-    .lead-item.selected {
-      background-color: var(--accent-color-dark, #0056b3);
-      transform: scale(1.1);
-    }
-    
-    .lead-item.placed {
-      opacity: 0.5;
-      background-color: #999;
-      cursor: not-allowed;
-    }
-    
-    /* Head Model Area */
-    .head-model-area {
-      flex: 2;
-      position: relative;
-      min-height: 500px;
-      background-color: var(--info-bg);
-      border-radius: 12px;
-      overflow: visible;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-    }
-    
-    .head-model {
-      position: relative;
-      width: 100%;
-      max-width: 600px;
-      aspect-ratio: 1 / 1;
-    }
-    
-    .head-outline {
-      position: absolute;
-      top: 10%;
-      left: 10%;
-      width: 80%;
-      height: 80%;
-      border: 3px solid var(--text-color);
-      border-radius: 50%;
-      opacity: 0.7;
-      background-color: rgba(255, 255, 255, 0.2);
-    }
-    
-    /* Add top view landmarks */
-    .head-outline:before {
-      content: '';
-      position: absolute;
-      top: 50%;
-      left: -5%;
-      width: 110%;
-      height: 2px;
-      background-color: var(--text-color);
-      opacity: 0.5;
-    }
-    
-    .head-outline:after {
-      content: '';
-      position: absolute;
-      top: -5%;
-      left: 50%;
-      width: 2px;
-      height: 110%;
-      background-color: var(--text-color);
-      opacity: 0.5;
-    }
-    
-    /* Head direction indicators */
-    .direction-indicator {
-      position: absolute;
-      font-size: 0.9rem;
-      color: var(--text-color);
-      font-weight: bold;
-    }
-    
-    .indicator-front {
-      top: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-    
-    .indicator-back {
-      bottom: -25px;
-      left: 50%;
-      transform: translateX(-50%);
-    }
-    
-    .indicator-left {
-      top: 50%;
-      left: -25px;
-      transform: translateY(-50%);
-    }
-    
-    .indicator-right {
-      top: 50%;
-      right: -25px;
-      transform: translateY(-50%);
-    }
-    
-    /* Dropped Lead Styles */
-    .eeg-lead {
-      position: absolute;
-      width: 50px;
-      height: 50px;
-      background-color: var(--accent-color);
-      border: 2px solid var(--border-color);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      cursor: move;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-      z-index: 5;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: white;
-      font-size: 14px;
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      touch-action: none;
-    }
-    
-    .eeg-lead:hover {
-      z-index: 6;
-      transform: translate(-50%, -50%) scale(1.1);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-    }
-    
-    .eeg-lead.correct {
-      background-color: #28a745;
-      border-color: #28a745;
-      color: white;
-      box-shadow: 0 0 10px rgba(40, 167, 69, 0.5);
-    }
-    
-    .eeg-lead.incorrect {
-      background-color: #dc3545;
-      border-color: #dc3545;
-      color: white;
-      box-shadow: 0 0 10px rgba(220, 53, 69, 0.5);
-    }
-    
-    /* Connection Line Styles */
-    .connection-line {
-      position: absolute;
-      height: 2px;
-      background: rgba(0, 102, 204, 0.6);
-      transform-origin: 0 0;
-      z-index: 1;
-      box-shadow: 0 0 3px rgba(0, 102, 204, 0.3);
-    }
-    
-    /* Action Buttons */
-    .action-buttons {
-      display: flex;
-      gap: 1rem;
-      margin-top: 1.5rem;
-    }
-    
-    .action-btn {
-      padding: 10px 20px;
-      border: none;
-      border-radius: 8px;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .check-btn {
-      background-color: var(--accent-color);
-      color: white;
-    }
-    
-    .reset-btn {
-      background-color: #f8f9fa;
-      color: #dc3545;
-      border: 2px solid #dc3545;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      font-weight: 600;
-    }
-    
-    .reset-btn:hover {
-      background-color: #dc3545;
-      color: white;
-    }
-    
-    .action-btn:hover {
-      opacity: 0.9;
-      transform: translateY(-2px);
-    }
-    
-    /* Meme Success Modal */
-    .meme-modal {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      z-index: 1000;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .meme-modal.active {
-      display: flex;
-      opacity: 1;
-    }
-    
-    .meme-content {
-      background-color: white;
-      max-width: 500px;
-      width: 90%;
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 6px 24px rgba(0, 0, 0, 0.25);
-      animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-      text-align: center;
-    }
-    
-    @keyframes pop-in {
-      0% { transform: scale(0.5); opacity: 0; }
-      100% { transform: scale(1); opacity: 1; }
-    }
-    
-    .meme-image {
-      width: 100%;
-      height: auto;
-      border-bottom: 1px solid #eee;
-    }
-    
-    .meme-text {
-      padding: 20px;
-      font-weight: bold;
-      font-size: 1.2rem;
-      color: #333;
-    }
-    
-    .meme-close {
-      display: block;
-      margin: 0 auto 20px;
-      padding: 10px 25px;
-      background-color: var(--accent-color);
-      color: white;
-      border: none;
-      border-radius: 6px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-    
-    .meme-close:hover {
-      background-color: var(--accent-color-dark, #0056b3);
-      transform: translateY(-2px);
-    }
-    
-    /* Tutorial Mode Styles */
-    .tutorial-mode {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.7);
-      z-index: 1000;
-      display: none;
-      justify-content: center;
-      align-items: center;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-    
-    .tutorial-mode.active {
-      display: flex;
-      opacity: 1;
-    }
-    
-    .tutorial-content {
-      background-color: white;
-      max-width: 700px;
-      width: 90%;
-      border-radius: 16px;
-      overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
-      animation: pop-in 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
-      padding-bottom: 20px;
-    }
-    
-    .tutorial-header {
-      background: linear-gradient(135deg, var(--accent-color), var(--accent-color-dark, #0056b3));
-      color: white;
-      padding: 20px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    
-    .tutorial-header h3 {
-      margin: 0;
-      font-size: 1.4rem;
-      font-weight: 600;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    .tutorial-close {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      font-size: 1.2rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      opacity: 0.9;
-      transition: all 0.2s ease;
-    }
-    
-    .tutorial-close:hover {
-      opacity: 1;
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(1.1);
-    }
-    
-    .tutorial-body {
-      padding: 24px;
-      max-height: 60vh;
-      overflow-y: auto;
-      color: var(--text-color);
-      position: relative;
-    }
-    
-    .tutorial-step {
-      display: none;
-      animation: fade-in 0.3s ease;
-      opacity: 0;
-      transform: translateY(10px);
-      position: absolute;
-      width: 100%;
-      left: 0;
-      top: 0;
-    }
-    
-    .tutorial-step.active {
-      display: block;
-      opacity: 1;
-      transform: translateY(0);
-      position: relative;
-    }
-    
-    .tutorial-step h4 {
-      margin-top: 0;
-      color: var(--accent-color);
-      font-size: 1.2rem;
-      border-bottom: 2px solid var(--accent-color);
-      padding-bottom: 10px;
-      margin-bottom: 16px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    
-    .tutorial-step h4 i {
-      font-size: 1.1rem;
-      width: 24px;
-      text-align: center;
-    }
-    
-    .tutorial-step p {
-      margin-bottom: 16px;
-      line-height: 1.6;
-      font-size: 1rem;
-    }
-    
-    .tutorial-step img {
-      max-width: 100%;
-      border-radius: 10px;
-      margin: 16px 0;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    }
-    
-    .tutorial-step ul, .tutorial-step ol {
-      padding-left: 24px;
-      margin-bottom: 16px;
-    }
-    
-    .tutorial-step li {
-      margin-bottom: 8px;
-      line-height: 1.5;
-    }
-    
-    .tutorial-highlight {
-      background-color: rgba(255, 245, 157, 0.5);
-      color: #5a4500;
-      padding: 2px 6px;
-      border-radius: 4px;
-      font-weight: 500;
-    }
-    
-    .tutorial-navigation {
-      display: flex;
-      justify-content: space-between;
-      padding: 0 24px 12px;
-    }
-    
-    .tutorial-nav-btn {
-      background: var(--accent-color);
-      color: white;
-      border: none;
-      padding: 12px 24px;
-      border-radius: 8px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      transition: all 0.2s ease;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
-    }
-    
-    .tutorial-nav-btn:hover {
-      background: var(--accent-color-dark, #0056b3);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.2);
-    }
-    
-    .tutorial-nav-btn:disabled {
-      background: #ccc;
-      cursor: not-allowed;
-      transform: none;
-      box-shadow: none;
-    }
-    
-    .tutorial-progress {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-      gap: 8px;
-    }
-    
-    .progress-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: #ddd;
-      transition: all 0.3s ease;
-      cursor: pointer;
-    }
-    
-    .progress-dot:hover {
-      transform: scale(1.2);
-    }
-    
-    .progress-dot.active {
-      background: var(--accent-color);
-      transform: scale(1.2);
-    }
-    
-    @keyframes fade-in {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    
-    .tutorial-diagram {
-      margin: 30px auto;
-      padding: 20px;
-      background-color: #ffffff;
-      border-radius: 10px;
-      border: 1px solid var(--border-color);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-      max-width: 550px;
-    }
-    
-    .diagram-head {
-      position: relative;
-      width: 100%;
-      padding-bottom: 100%;
-      border: 2px solid #666;
-      border-radius: 50%;
-      margin: 0 auto;
-      max-width: 500px;
-      background-color: #ffffff;
-    }
-    
-    .diagram-head:before, .diagram-head:after {
-      content: '';
-      position: absolute;
-      background-color: #666;
-      opacity: 0.4;
-    }
-    
-    .diagram-head:before {
-      top: 50%;
-      left: 0;
-      right: 0;
-      height: 2px;
-    }
-    
-    .diagram-head:after {
-      left: 50%;
-      top: 0;
-      bottom: 0;
-      width: 2px;
-    }
-    
-    .diagram-point {
-      position: absolute;
-      width: 40px;
-      height: 40px;
-      background-color: var(--accent-color);
-      color: white;
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 14px;
-      box-shadow: 0 3px 6px rgba(0, 0, 0, 0.2);
-      z-index: 2;
-    }
-    
-    .diagram-caption {
-      text-align: center;
-      margin-top: 20px;
-      font-weight: 600;
-      color: var(--accent-color);
-      font-size: 1.1rem;
-    }
-  </style>
 </head>
 <body>
   <!-- Include Header -->
@@ -821,7 +114,15 @@
   <!-- Main Content -->
   <main>
     <div class="page-eeg_lead_practice">
-      <h1 class="page-title">EEG Lead Placement Practice</h1>
+      <h1 class="page-title">EEG Simulator</h1>
+      
+      <!-- Tab Buttons for Waveform Simulator and Lead Practice -->
+      <div class="tab-buttons">
+        <a href="eeg_waveforms.html" id="waveform-btn">EEG Waveform Simulator</a>
+        <button id="lead-practice-btn" class="active">EEG Lead Practice</button>
+      </div>
+      
+      <h2 class="page-subtitle">Lead Placement Practice</h2>
       
       <!-- Tutorial Button -->
       <button id="tutorial-btn" class="tutorial-button">
@@ -848,48 +149,6 @@
           </div>
         </div>
         
-        <style>
-          .instruction-box {
-            background: var(--info-bg);
-            border-left: 4px solid var(--accent-color);
-            border-radius: 8px;
-            padding: 1.2rem;
-            margin: 1.5rem auto;
-            max-width: 800px;
-          }
-          
-          .instruction-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 1rem;
-            color: var(--accent-color);
-          }
-          
-          .instruction-header i {
-            font-size: 1.2rem;
-            margin-right: 0.5rem;
-          }
-          
-          .instruction-header h3 {
-            margin: 0;
-            font-size: 1.1rem;
-          }
-          
-          .instruction-box ol {
-            margin: 0;
-            padding-left: 1.5rem;
-          }
-          
-          .instruction-box li {
-            margin-bottom: 0.5rem;
-            line-height: 1.4;
-          }
-          
-          .instruction-box li:last-child {
-            margin-bottom: 0;
-          }
-        </style>
-        
         <!-- Practice Area -->
         <div class="practice-area">
           <!-- Controls Section -->
@@ -904,6 +163,53 @@
                 <option value="referential">Referential</option>
                 <option value="laplacian">Laplacian</option>
               </select>
+            </div>
+            
+            <!-- Difficulty Selector -->
+            <div class="difficulty-selector">
+              <h3>Difficulty Level</h3>
+              <select id="difficulty-select">
+                <option value="easy">Easy</option>
+                <option value="medium" selected>Medium</option>
+                <option value="hard">Hard</option>
+                <option value="expert">Expert</option>
+              </select>
+              <div id="difficulty-info" class="difficulty-info medium">
+                Standard tolerance for correct placement
+              </div>
+            </div>
+            
+            <!-- Practice Mode Selector - NEW -->
+            <div class="mode-selector">
+              <h3>Practice Mode</h3>
+              <select id="mode-select">
+                <option value="standard" selected>Standard Practice</option>
+                <option value="timed">Timed Challenge</option>
+                <option value="random">Random Lead Quiz</option>
+                <option value="guided">Guided Practice</option>
+              </select>
+              <div id="mode-info" class="mode-info standard">
+                Place all leads at your own pace
+              </div>
+              <button id="start-btn" class="action-btn start-btn" style="display: none;">
+                Start Practice
+              </button>
+            </div>
+            
+            <!-- Mode-specific UI elements -->
+            <div class="mode-specific-container">
+              <!-- Timer Display for Timed Mode -->
+              <div id="timer-display" class="timer-display" style="display: none;">2:00</div>
+              
+              <!-- Random Lead Prompt for Random Mode -->
+              <div id="random-lead-prompt" class="mode-prompt" style="display: none;">
+                Click Start to begin Random Lead Quiz
+              </div>
+              
+              <!-- Guided Instructions for Guided Mode -->
+              <div id="guided-instructions" class="mode-prompt" style="display: none;">
+                Click Start to begin Guided Practice
+              </div>
             </div>
             
             <!-- Lead Selection -->
@@ -931,11 +237,11 @@
           <!-- Head Model Area -->
           <div class="head-model-area">
             <div class="head-model">
+              <div class="direction-indicator indicator-front">Nasion</div>
+              <div class="direction-indicator indicator-back">Inion</div>
+              <div class="direction-indicator indicator-left">Left</div>
+              <div class="direction-indicator indicator-right">Right</div>
               <div class="head-outline">
-                <div class="direction-indicator indicator-front">Nasion</div>
-                <div class="direction-indicator indicator-back">Inion</div>
-                <div class="direction-indicator indicator-left">Left</div>
-                <div class="direction-indicator indicator-right">Right</div>
                 <!-- Dropped leads will appear here -->
               </div>
               <div id="dropped-leads">
@@ -976,7 +282,12 @@
           <p>The 10-20 system is an internationally recognized method to describe the placement of electrodes on the scalp for recording EEG signals.</p>
           
           <div class="tutorial-diagram">
+            <div class="direction-label label-front">Nasion</div>
+            <div class="direction-label label-back">Inion</div>
+            <div class="direction-label label-left">Left</div>
+            <div class="direction-label label-right">Right</div>
             <div class="diagram-head">
+              <div class="diagram-nose"></div>
               <div class="diagram-point" style="top: 15%; left: 38%;" title="Fp1">Fp1</div>
               <div class="diagram-point" style="top: 15%; left: 62%;" title="Fp2">Fp2</div>
               <div class="diagram-point" style="top: 32%; left: 15%;" title="F7">F7</div>
@@ -1013,6 +324,19 @@
         
         <!-- Step 3 -->
         <div class="tutorial-step" data-step="3">
+          <h4><i class="fas fa-sliders-h"></i> Difficulty Levels</h4>
+          <p>This practice tool offers multiple difficulty levels to help you improve your skills:</p>
+          <ul>
+            <li><b>Easy:</b> Larger tolerance for correct placement - great for beginners</li>
+            <li><b>Medium:</b> Standard tolerance - suitable for most students</li>
+            <li><b>Hard:</b> Small tolerance - challenges experienced users</li>
+            <li><b>Expert:</b> Very precise placement required - test your mastery</li>
+          </ul>
+          <p>You can change the difficulty level at any time using the dropdown menu.</p>
+        </div>
+        
+        <!-- Step 4 (restored naming convention) -->
+        <div class="tutorial-step" data-step="4">
           <h4><i class="fas fa-tags"></i> Naming Convention</h4>
           <p>EEG leads are named based on their location on the head:</p>
           <ul>
@@ -1026,8 +350,8 @@
           <p>Odd numbers (1, 3, 5, 7) indicate the left side of the head, while even numbers (2, 4, 6, 8) indicate the right side. The letter 'z' indicates the midline.</p>
         </div>
         
-        <!-- Step 4 -->
-        <div class="tutorial-step" data-step="4">
+        <!-- Step 5 (adjusted) -->
+        <div class="tutorial-step" data-step="5">
           <h4><i class="fas fa-map-marker-alt"></i> Basic Lead Positions</h4>
           <p>Here are the key positions to remember:</p>
           <ul>
@@ -1040,52 +364,59 @@
           <p>Try placing these leads first as reference points.</p>
         </div>
         
-        <!-- Step 5 -->
-        <div class="tutorial-step" data-step="5">
-          <h4><i class="fas fa-hand-pointer"></i> Placing Leads</h4>
-          <p>To place a lead:</p>
-          <ol>
-            <li>Click and hold on a lead from the left panel</li>
-            <li>Drag it to the correct position on the head model</li>
-            <li>Release to place it</li>
-          </ol>
-          <p>If you're using a touch device, tap on a lead and then tap where you want to place it.</p>
-          <p>To remove a lead, drag it off the head model.</p>
-        </div>
-        
-        <!-- Step 6 -->
+        <!-- Step 6 (adjusted) -->
         <div class="tutorial-step" data-step="6">
-          <h4><i class="fas fa-check-circle"></i> Checking Your Work</h4>
-          <p>When you've placed all the leads, click the <span class="tutorial-highlight">Check Placement</span> button to see how accurately you've positioned them.</p>
-          <p>Leads will be highlighted in green if they're correctly placed, or red if they need adjustment.</p>
-          <p>You can also use the <span class="tutorial-highlight">Reset All</span> button to start over.</p>
+          <h4><i class="fas fa-hand-pointer"></i> Placing Leads</h4>
+          <p>To place leads:</p>
+          <ol>
+            <li>Click and drag a lead from the left panel</li>
+            <li>Drop it onto the appropriate position on the head model</li>
+            <li>To reposition a lead, drag it to a new location</li>
+            <li>To remove a lead, double-click it</li>
+          </ol>
+          <p>Leads that have been placed will be grayed out in the selection panel.</p>
         </div>
         
-        <!-- Step 7 -->
+        <!-- Step 7 (adjusted) -->
         <div class="tutorial-step" data-step="7">
-          <h4><i class="fas fa-project-diagram"></i> Montages</h4>
-          <p>A montage refers to the arrangement of EEG channels during recording or display.</p>
-          <p>You can select different montages from the dropdown menu to see how leads are connected in clinical practice:</p>
-          <ul>
-            <li><strong>10-20 System</strong> - Shows individual lead placements</li>
-            <li><strong>Longitudinal Bipolar</strong> - Shows connections from front to back</li>
-            <li><strong>Transverse Bipolar</strong> - Shows connections from left to right</li>
-            <li><strong>Referential</strong> - Shows connections to a reference electrode</li>
-            <li><strong>Laplacian</strong> - Shows connections to averaged surrounding electrodes</li>
-          </ul>
+          <h4><i class="fas fa-check-circle"></i> Checking Your Work</h4>
+          <p>After placing all the leads, click the <span class="tutorial-highlight">Check Placement</span> button to see how accurate your placements are.</p>
+          <p>Correctly placed leads will turn green, while incorrectly placed ones will remain blue.</p>
+          <p>Your score shows how many leads you placed correctly out of the total placed.</p>
         </div>
         
-        <!-- Step 8 -->
+        <!-- Step 8 (adjusted) -->
         <div class="tutorial-step" data-step="8">
-          <h4><i class="fas fa-thumbs-up"></i> Ready to Practice!</h4>
-          <p>Now you're ready to start practicing EEG lead placement!</p>
-          <p>Remember:</p>
+          <h4><i class="fas fa-sync-alt"></i> Montage Visualization</h4>
+          <p>You can use the <span class="tutorial-highlight">Montage</span> dropdown to visualize different EEG montage types:</p>
           <ul>
-            <li>Take your time to learn the correct positions</li>
-            <li>Use anatomical landmarks as guides</li>
-            <li>Practice makes perfect</li>
+            <li><strong>10-20 System</strong> - Shows all individual electrode placements</li>
+            <li><strong>Longitudinal Bipolar</strong> - Shows electrode pairs front-to-back</li>
+            <li><strong>Transverse Bipolar</strong> - Shows electrode pairs side-to-side</li>
+            <li><strong>Referential</strong> - Shows connections to a reference electrode</li>
           </ul>
-          <p>Click "Finish Tutorial" to begin practicing.</p>
+          <p>This will help you understand how the leads are connected in actual EEG recordings.</p>
+        </div>
+        
+        <!-- Step 9 (updated to explain practice modes) -->
+        <div class="tutorial-step" data-step="9">
+          <h4><i class="fas fa-gamepad"></i> Practice Modes</h4>
+          <p>This tool offers different practice modes to help you learn in various ways:</p>
+          <ul>
+            <li><strong>Standard Practice:</strong> Place all leads at your own pace</li>
+            <li><strong>Timed Challenge:</strong> Test your speed by placing all leads before the timer runs out</li>
+            <li><strong>Random Lead Quiz:</strong> Place specific leads one at a time as they're requested</li>
+            <li><strong>Guided Practice:</strong> Follow step-by-step instructions with explanations for each lead</li>
+          </ul>
+          <p>Try different modes to reinforce your learning and challenge yourself as you improve.</p>
+        </div>
+        
+        <!-- Step 10 (final step) -->
+        <div class="tutorial-step" data-step="10">
+          <h4><i class="fas fa-graduation-cap"></i> Practice Makes Perfect</h4>
+          <p>Start with the <span class="tutorial-highlight">Easy</span> difficulty and work your way up to <span class="tutorial-highlight">Expert</span> as you improve.</p>
+          <p>Remember that this is a tool for learning, so take your time and don't be discouraged if you don't get all placements correct at first.</p>
+          <p>Good luck with your EEG lead placement practice!</p>
         </div>
       </div>
       
@@ -1107,916 +438,10 @@
         <div class="progress-dot" data-step="6"></div>
         <div class="progress-dot" data-step="7"></div>
         <div class="progress-dot" data-step="8"></div>
+        <div class="progress-dot" data-step="9"></div>
+        <div class="progress-dot" data-step="10"></div>
       </div>
     </div>
   </div>
-  
-  <!-- EEG Lead Practice Script -->
-  <script>
-    // Global variables to share across functions
-    const eegLeads = [
-      'Fp1', 'Fp2', 'F7', 'F3', 'Fz', 'F4', 'F8',
-      'T7', 'C3', 'Cz', 'C4', 'T8',
-      'P7', 'P3', 'Pz', 'P4', 'P8',
-      'O1', 'O2', 'A1', 'A2'
-    ];
-    
-    // Lead positions on the head model (percentages of container width/height)
-    const leadPositions = {
-      'Fp1': { top: 15, left: 38 },
-      'Fp2': { top: 15, left: 62 },
-      'F7': { top: 32, left: 15 },
-      'F3': { top: 32, left: 32 },
-      'Fz': { top: 32, left: 50 },
-      'F4': { top: 32, left: 68 },
-      'F8': { top: 32, left: 85 },
-      'T7': { top: 50, left: 10 },
-      'C3': { top: 50, left: 32 },
-      'Cz': { top: 50, left: 50 },
-      'C4': { top: 50, left: 68 },
-      'T8': { top: 50, left: 90 },
-      'P7': { top: 68, left: 15 },
-      'P3': { top: 68, left: 32 },
-      'Pz': { top: 68, left: 50 },
-      'P4': { top: 68, left: 68 },
-      'P8': { top: 68, left: 85 },
-      'O1': { top: 85, left: 38 },
-      'O2': { top: 85, left: 62 },
-      'A1': { top: 60, left: 3 },
-      'A2': { top: 60, left: 97 }
-    };
-    
-    // Montage definitions
-    const montages = {
-      '10-20': eegLeads,
-      'longitudinal-bipolar': [
-        'Fp1-F3', 'F3-C3', 'C3-P3', 'P3-O1',
-        'Fp2-F4', 'F4-C4', 'C4-P4', 'P4-O2',
-        'Fp1-F7', 'F7-T7', 'T7-P7', 'P7-O1',
-        'Fp2-F8', 'F8-T8', 'T8-P8', 'P8-O2'
-      ],
-      'transverse-bipolar': [
-        'Fp1-Fp2',
-        'F7-F3', 'F3-Fz', 'Fz-F4', 'F4-F8',
-        'A1-T7', 'T7-C3', 'C3-Cz', 'Cz-C4', 'C4-T8', 'T8-A2',
-        'P7-P3', 'P3-Pz', 'Pz-P4', 'P4-P8',
-        'O1-Pz', 'Pz-O2', 'O1-O2'
-      ],
-      'referential': [
-        'Fp1-Cz', 'F7-Cz', 'F3-Cz', 'T7-Cz', 'C3-Cz', 
-        'P7-Cz', 'P3-Cz', 'O1-Cz',
-        'Fp2-Cz', 'F8-Cz', 'F4-Cz', 'T8-Cz', 'C4-Cz',
-        'P8-Cz', 'P4-Cz', 'O2-Cz',
-        'Fz-Cz', 'Pz-Cz'
-      ],
-      'laplacian': [
-        'Fp1-avg(F3,F7,Fp2)', 
-        'C3-avg(F3,P3,T7,Cz)', 
-        'O1-avg(P3,O2)',
-        'Fp2-avg(F4,F8,Fp1)',
-        'C4-avg(F4,P4,T8,Cz)',
-        'O2-avg(P4,O1)',
-        'Fz-avg(F3,F4,Cz)',
-        'Cz-avg(Fz,C3,C4,Pz)',
-        'Pz-avg(Cz,P3,P4)'
-      ]
-    };
-    
-    // Variables to track state
-    let currentMontage = '10-20';
-    let placedLeads = {};
-    let selectedLead = null;
-    let initialTouchPos = null;
-    
-    // DOM elements
-    let leadsContainer;
-    let headModel;
-    let droppedLeadsContainer;
-    let montageSelect;
-    let checkBtn;
-    let resetBtn;
-    let scoreDisplay;
-    let feedbackDisplay;
-    
-    document.addEventListener('DOMContentLoaded', function() {
-      // Initialize the full application
-      init();
-    });
-    
-    function init() {
-      // Initialize DOM references
-      leadsContainer = document.getElementById('leads-container');
-      headModel = document.querySelector('.head-model');
-      droppedLeadsContainer = document.getElementById('dropped-leads');
-      montageSelect = document.getElementById('montage-select');
-      checkBtn = document.getElementById('check-btn');
-      resetBtn = document.getElementById('reset-btn');
-      scoreDisplay = document.getElementById('score');
-      feedbackDisplay = document.getElementById('feedback');
-      
-      // Log elements to ensure they exist
-      console.log('Leads container found:', !!leadsContainer);
-      console.log('Head model found:', !!headModel);
-      console.log('Dropped leads container found:', !!droppedLeadsContainer);
-      console.log('Montage select found:', !!montageSelect);
-      console.log('Check button found:', !!checkBtn);
-      console.log('Reset button found:', !!resetBtn);
-      console.log('Score display found:', !!scoreDisplay);
-      console.log('Feedback display found:', !!feedbackDisplay);
-      
-      // Initialize UI components
-      initLeadButtons();
-      setupHeadModelDropZone();
-      
-      // For visualization of montages
-      montageSelect.addEventListener('change', function(e) {
-        currentMontage = e.target.value;
-        updateMontageView();
-      });
-      
-      // Make sure event listeners are attached for buttons
-      if (checkBtn) {
-        checkBtn.addEventListener('click', checkPlacement);
-        console.log('Check button event listener attached');
-      }
-      
-      if (resetBtn) {
-        resetBtn.addEventListener('click', resetAll);
-        console.log('Reset button event listener attached');
-      }
-      
-      // Initialize tutorial mode - with a slight delay to ensure DOM is fully processed
-      setTimeout(initTutorialMode, 100);
-      
-      console.log("EEG Lead Practice initialized successfully");
-    }
-    
-    function initLeadButtons() {
-      leadsContainer.innerHTML = '';
-      
-      eegLeads.forEach(lead => {
-        const leadBtn = document.createElement('div');
-        leadBtn.classList.add('lead-item');
-        leadBtn.textContent = lead;
-        leadBtn.setAttribute('data-lead', lead);
-        
-        // Check if this lead is already placed
-        if (placedLeads[lead]) {
-          leadBtn.classList.add('placed');
-        }
-        
-        // Make lead draggable
-        leadBtn.setAttribute('draggable', 'true');
-        
-        // Add drag event listeners
-        leadBtn.addEventListener('dragstart', function(e) {
-          // Only allow dragging if not already placed
-          if (this.classList.contains('placed')) {
-            e.preventDefault();
-            return;
-          }
-          
-          selectedLead = this.getAttribute('data-lead');
-          this.classList.add('selected');
-          
-          // Set drag image (optional, for better UX)
-          if (e.dataTransfer) {
-            e.dataTransfer.setData('text/plain', selectedLead);
-            e.dataTransfer.effectAllowed = 'move';
-          }
-        });
-        
-        leadBtn.addEventListener('dragend', function(e) {
-          e.preventDefault(); // Prevent default behavior
-          this.classList.remove('selected');
-        });
-        
-        // Touch support for mobile
-        leadBtn.addEventListener('touchstart', function(e) {
-          // Only allow dragging if not already placed
-          if (this.classList.contains('placed')) {
-            return;
-          }
-          
-          selectedLead = this.getAttribute('data-lead');
-          this.classList.add('selected');
-          
-          // Create a visual clone for dragging
-          const clone = this.cloneNode(true);
-          clone.id = 'dragging-clone';
-          clone.style.position = 'absolute';
-          clone.style.zIndex = '1000';
-          clone.style.opacity = '0.8';
-          clone.style.pointerEvents = 'none';
-          document.body.appendChild(clone);
-          
-          // Store touch start position
-          const touch = e.touches[0];
-          initialTouchPos = {
-            x: touch.clientX,
-            y: touch.clientY,
-            offsetX: touch.clientX - this.getBoundingClientRect().left,
-            offsetY: touch.clientY - this.getBoundingClientRect().top
-          };
-          
-          // Update clone position
-          updateClonePosition(touch.clientX, touch.clientY);
-          
-          e.preventDefault(); // Prevent default touch behavior
-        });
-        
-        leadBtn.addEventListener('touchmove', function(e) {
-          if (!selectedLead || !initialTouchPos) return;
-          
-          const touch = e.touches[0];
-          updateClonePosition(touch.clientX, touch.clientY);
-          e.preventDefault();
-        });
-        
-        leadBtn.addEventListener('touchend', function(e) {
-          if (!selectedLead || !initialTouchPos) return;
-          
-          // Get final touch position
-          const touch = e.changedTouches[0];
-          const clone = document.getElementById('dragging-clone');
-          
-          // Check if touch ended over the head model
-          const headRect = headModel.getBoundingClientRect();
-          
-          if (
-            touch.clientX >= headRect.left &&
-            touch.clientX <= headRect.right &&
-            touch.clientY >= headRect.top &&
-            touch.clientY <= headRect.bottom
-          ) {
-            // Calculate position relative to head model
-            const x = ((touch.clientX - headRect.left) / headRect.width) * 100;
-            const y = ((touch.clientY - headRect.top) / headRect.height) * 100;
-            
-            // Add lead to head model
-            placeLead(selectedLead, x, y);
-            
-            // Mark the source lead as placed
-            this.classList.add('placed');
-          }
-          
-          // Clean up
-          if (clone) {
-            document.body.removeChild(clone);
-          }
-          
-          this.classList.remove('selected');
-          selectedLead = null;
-          initialTouchPos = null;
-        });
-        
-        leadsContainer.appendChild(leadBtn);
-      });
-    }
-    
-    function updateClonePosition(x, y) {
-      const clone = document.getElementById('dragging-clone');
-      if (clone && initialTouchPos) {
-        clone.style.left = (x - initialTouchPos.offsetX) + 'px';
-        clone.style.top = (y - initialTouchPos.offsetY) + 'px';
-      }
-    }
-    
-    function setupHeadModelDropZone() {
-      // Add event listeners for drag and drop on the head model
-      headModel.addEventListener('dragover', (e) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-      });
-      
-      headModel.addEventListener('drop', (e) => {
-        e.preventDefault();
-        
-        if (!selectedLead) return;
-        
-        // Calculate drop position relative to head model
-        const rect = headModel.getBoundingClientRect();
-        const x = ((e.clientX - rect.left) / rect.width) * 100;
-        const y = ((e.clientY - rect.top) / rect.height) * 100;
-        
-        // Place the lead
-        placeLead(selectedLead, x, y);
-        
-        // Mark the source lead as placed
-        const sourceLead = document.querySelector(`.lead-item[data-lead="${selectedLead}"]`);
-        if (sourceLead) {
-          sourceLead.classList.add('placed');
-        }
-        
-        selectedLead = null;
-      });
-    }
-    
-    // Function to place a lead on the head model
-    function placeLead(leadName, x, y) {
-      // Check if lead is already on head (for repositioning)
-      const existingLead = document.querySelector(`.eeg-lead[data-lead="${leadName}"]`);
-      if (existingLead) {
-        // Update position
-        existingLead.style.left = `${x}%`;
-        existingLead.style.top = `${y}%`;
-      } else {
-        // Create new lead element
-        const leadElement = document.createElement('div');
-        leadElement.classList.add('eeg-lead');
-        leadElement.setAttribute('data-lead', leadName);
-        leadElement.textContent = leadName;
-        leadElement.style.left = `${x}%`;
-        leadElement.style.top = `${y}%`;
-        
-        // Make it draggable for repositioning
-        leadElement.setAttribute('draggable', 'true');
-        
-        // Add drag event listeners for repositioning
-        leadElement.addEventListener('dragstart', (e) => {
-          selectedLead = leadName;
-          e.dataTransfer.setData('text/plain', leadName);
-          e.dataTransfer.effectAllowed = 'move';
-          
-          // Create a custom drag image instead of using the default one
-          const dragIcon = document.createElement('div');
-          dragIcon.style.width = '50px';
-          dragIcon.style.height = '50px';
-          dragIcon.style.borderRadius = '50%';
-          dragIcon.style.backgroundColor = 'var(--accent-color)';
-          dragIcon.style.display = 'flex';
-          dragIcon.style.alignItems = 'center';
-          dragIcon.style.justifyContent = 'center';
-          dragIcon.style.color = 'white';
-          dragIcon.style.fontWeight = 'bold';
-          dragIcon.textContent = leadName;
-          dragIcon.style.opacity = '0.8';
-          
-          // Need to add to the document for it to work as drag image
-          document.body.appendChild(dragIcon);
-          dragIcon.style.position = 'absolute';
-          dragIcon.style.top = '-1000px'; // Off-screen
-          
-          // Set custom drag image
-          e.dataTransfer.setDragImage(dragIcon, 25, 25);
-          
-          // Remove dragIcon after a short delay
-          setTimeout(() => {
-            document.body.removeChild(dragIcon);
-          }, 100);
-          
-          // Hide the original element during drag
-          setTimeout(() => {
-            leadElement.style.opacity = '0.2';
-          }, 0);
-        });
-        
-        leadElement.addEventListener('dragend', (e) => {
-          // Restore visibility
-          leadElement.style.opacity = '1';
-        });
-        
-        // Double click to remove
-        leadElement.addEventListener('dblclick', () => {
-          removeLead(leadName);
-        });
-        
-        // Add touch events for mobile
-        leadElement.addEventListener('touchstart', handleLeadTouchStart);
-        leadElement.addEventListener('touchmove', handleLeadTouchMove);
-        leadElement.addEventListener('touchend', handleLeadTouchEnd);
-        
-        droppedLeadsContainer.appendChild(leadElement);
-      }
-      
-      // Store position data for checking
-      placedLeads[leadName] = { x, y };
-    }
-    
-    // Function to remove a lead
-    function removeLead(leadName) {
-      const leadElement = document.querySelector(`.eeg-lead[data-lead="${leadName}"]`);
-      if (leadElement) {
-        droppedLeadsContainer.removeChild(leadElement);
-      }
-      
-      // Update the source lead item
-      const sourceLead = document.querySelector(`.lead-item[data-lead="${leadName}"]`);
-      if (sourceLead) {
-        sourceLead.classList.remove('placed');
-      }
-      
-      // Remove from stored positions
-      delete placedLeads[leadName];
-    }
-    
-    // Touch handlers for placed leads
-    function handleLeadTouchStart(e) {
-      const leadName = this.getAttribute('data-lead');
-      selectedLead = leadName;
-      
-      // Store touch start position
-      const touch = e.touches[0];
-      initialTouchPos = {
-        x: touch.clientX,
-        y: touch.clientY,
-        element: this
-      };
-      
-      // Add a visual effect to show it's being dragged
-      this.style.opacity = '0.8';
-      this.style.zIndex = '100';
-      
-      e.preventDefault();
-    }
-    
-    function handleLeadTouchMove(e) {
-      if (!initialTouchPos) return;
-      
-      const touch = e.touches[0];
-      const headRect = headModel.getBoundingClientRect();
-      
-      // Calculate new position relative to head model
-      let x = ((touch.clientX - headRect.left) / headRect.width) * 100;
-      let y = ((touch.clientY - headRect.top) / headRect.height) * 100;
-      
-      // Keep within boundaries
-      x = Math.max(0, Math.min(100, x));
-      y = Math.max(0, Math.min(100, y));
-      
-      // Update position
-      initialTouchPos.element.style.left = `${x}%`;
-      initialTouchPos.element.style.top = `${y}%`;
-      
-      e.preventDefault();
-    }
-    
-    function handleLeadTouchEnd(e) {
-      if (!initialTouchPos) return;
-      
-      const leadName = selectedLead;
-      const touch = e.changedTouches[0];
-      const headRect = headModel.getBoundingClientRect();
-      
-      // Calculate final position
-      const x = ((touch.clientX - headRect.left) / headRect.width) * 100;
-      const y = ((touch.clientY - headRect.top) / headRect.height) * 100;
-      
-      // Reset visual properties
-      initialTouchPos.element.style.opacity = '1';
-      initialTouchPos.element.style.zIndex = '5';
-      
-      // Check if ended outside the head model
-      if (
-        touch.clientX < headRect.left || 
-        touch.clientX > headRect.right || 
-        touch.clientY < headRect.top || 
-        touch.clientY > headRect.bottom
-      ) {
-        // Remove lead if dragged outside
-        removeLead(leadName);
-      } else {
-        // Update position if within head
-        placedLeads[leadName] = { x, y };
-      }
-      
-      selectedLead = null;
-      initialTouchPos = null;
-    }
-    
-    // Handle montage selection change
-    montageSelect.addEventListener('change', (e) => {
-      currentMontage = e.target.value;
-      updateMontageView();
-    });
-    
-    // Update the display based on selected montage
-    function updateMontageView() {
-      // Clear current view
-      droppedLeadsContainer.innerHTML = '';
-      
-      if (currentMontage === '10-20') {
-        // For 10-20 system, show the placement practice
-        leadsContainer.style.display = 'flex';
-        checkBtn.style.display = 'block';
-        
-        // Reset placed leads visual state
-        document.querySelectorAll('.lead-item').forEach(el => {
-          if (placedLeads[el.getAttribute('data-lead')]) {
-            el.classList.add('placed');
-          } else {
-            el.classList.remove('placed');
-          }
-        });
-      } else {
-        // For other montages, show the montage visualization
-        showMontageVisualization();
-        leadsContainer.style.display = 'none';
-        checkBtn.style.display = 'none';
-      }
-    }
-    
-    // Show visualization of selected montage
-    function showMontageVisualization() {
-      // Clear any placed leads first
-      droppedLeadsContainer.innerHTML = '';
-      
-      const montageLeads = montages[currentMontage];
-      
-      // Display the leads in the selected montage
-      montageLeads.forEach(item => {
-        let leadComponents;
-        let position;
-        
-        if (item.includes('-')) {
-          // For bipolar or referential montages
-          leadComponents = item.split('-');
-          
-          // Check if this is a laplacian montage with avg syntax
-          if (leadComponents[1] && leadComponents[1].toLowerCase().startsWith('avg(')) {
-            // Extract the main lead
-            const mainLead = leadComponents[0];
-            // Extract the reference leads
-            const avgPart = leadComponents[1].match(/avg\((.*?)\)/i);
-            
-            if (avgPart && avgPart[1] && leadPositions[mainLead]) {
-              const refLeads = avgPart[1].split(',');
-              // Create connections to each reference lead
-              refLeads.forEach(refLead => {
-                if (leadPositions[refLead]) {
-                  createConnectionLine(mainLead, refLead, 'rgba(0, 102, 204, 0.3)');
-                }
-              });
-              // Create the main lead point
-              position = leadPositions[mainLead];
-              createMontagePoint(mainLead, position.top, position.left);
-            }
-          } else {
-            // For simple bipolar or referential montages
-            // Create line between the two leads
-            if (leadPositions[leadComponents[0]] && leadPositions[leadComponents[1]]) {
-              createConnectionLine(leadComponents[0], leadComponents[1]);
-            }
-            
-            // Add points for both leads
-            leadComponents.forEach(lead => {
-              if (leadPositions[lead]) {
-                position = leadPositions[lead];
-                createMontagePoint(lead, position.top, position.left);
-              }
-            });
-          }
-        } else {
-          // For 10-20 system (single leads)
-          if (leadPositions[item]) {
-            position = leadPositions[item];
-            createMontagePoint(item, position.top, position.left);
-          }
-        }
-      });
-    }
-    
-    // Create a visual point for montage display
-    function createMontagePoint(label, top, left) {
-      const point = document.createElement('div');
-      point.classList.add('eeg-lead');
-      point.style.top = `${top}%`;
-      point.style.left = `${left}%`;
-      point.textContent = label;
-      point.style.pointerEvents = 'none'; // Disable interaction in visualization mode
-      droppedLeadsContainer.appendChild(point);
-    }
-    
-    // Create a line connecting two leads
-    function createConnectionLine(lead1, lead2, color = 'var(--accent-color)') {
-      const pos1 = leadPositions[lead1];
-      const pos2 = leadPositions[lead2];
-      
-      if (!pos1 || !pos2) return;
-      
-      const line = document.createElement('div');
-      line.classList.add('connection-line');
-      
-      // Calculate line length and angle
-      const length = Math.sqrt(Math.pow(pos2.left - pos1.left, 2) + Math.pow(pos2.top - pos1.top, 2));
-      const angle = Math.atan2(pos2.top - pos1.top, pos2.left - pos1.left) * 180 / Math.PI;
-      
-      // Set line styles
-      line.style.width = `${length}%`;
-      line.style.height = '2px';
-      line.style.background = color;
-      line.style.position = 'absolute';
-      line.style.top = `${pos1.top}%`;
-      line.style.left = `${pos1.left}%`;
-      line.style.transformOrigin = '0 0';
-      line.style.transform = `rotate(${angle}deg)`;
-      line.style.zIndex = '1';
-      
-      droppedLeadsContainer.appendChild(line);
-    }
-    
-    // Check the accuracy of lead placements
-    function checkPlacement() {
-      console.log('Check placement called');
-      let correct = 0;
-      let total = 0;
-      
-      // Reset previous results
-      document.querySelectorAll('.eeg-lead').forEach(el => {
-        el.classList.remove('correct', 'incorrect');
-      });
-      
-      // Check each placed lead
-      for (const lead in placedLeads) {
-        total++;
-        const placement = placedLeads[lead];
-        const correctPos = leadPositions[lead];
-        
-        if (correctPos) {
-          // Calculate distance from correct position
-          const distance = Math.sqrt(
-            Math.pow(placement.x - correctPos.left, 2) + 
-            Math.pow(placement.y - correctPos.top, 2)
-          );
-          
-          // Get the element for this lead
-          const leadElement = document.querySelector(`.eeg-lead[data-lead="${lead}"]`);
-          
-          // Check if it's within acceptable distance (18% of container)
-          if (distance <= 18) {
-            correct++;
-            if (leadElement) {
-              leadElement.classList.add('correct');
-              
-              // Update position to the correct position
-              leadElement.style.left = `${correctPos.left}%`;
-              leadElement.style.top = `${correctPos.top}%`;
-              placedLeads[lead].x = correctPos.left;
-              placedLeads[lead].y = correctPos.top;
-            }
-          } else {
-            if (leadElement) {
-              leadElement.classList.add('incorrect');
-            }
-          }
-        }
-      }
-      
-      // Update score and feedback
-      scoreDisplay.textContent = `${correct} / ${total} correct`;
-      
-      if (correct === total && total > 0) {
-        feedbackDisplay.textContent = 'Perfect! All leads are correctly placed.';
-        feedbackDisplay.style.color = '#28a745';
-        showMemeModal(true);
-      } else if (correct > 0) {
-        feedbackDisplay.textContent = 'Some leads are in the wrong position. Try adjusting them.';
-        feedbackDisplay.style.color = '#ffc107';
-        if (correct < total / 2) {
-          showMemeModal(false);
-        }
-      } else if (total === 0) {
-        feedbackDisplay.textContent = 'Place some leads on the head model first.';
-        feedbackDisplay.style.color = '#17a2b8';
-      } else {
-        feedbackDisplay.textContent = 'None of the leads are correctly placed. Try again.';
-        feedbackDisplay.style.color = '#dc3545';
-        showMemeModal(false);
-      }
-    }
-    
-    // Reset the practice
-    function resetAll() {
-      console.log('Reset all called');
-      // Clear all placed leads
-      droppedLeadsContainer.innerHTML = '';
-      
-      // Reset lead buttons
-      document.querySelectorAll('.lead-item').forEach(el => {
-        el.classList.remove('selected', 'placed');
-      });
-      
-      // Clear data
-      placedLeads = {};
-      selectedLead = null;
-      initialTouchPos = null;
-      
-      // Reset feedback
-      scoreDisplay.textContent = '0 / 0 correct';
-      feedbackDisplay.textContent = '';
-    }
-    
-    // Initialize tutorial mode
-    function initTutorialMode() {
-      console.log('Initializing tutorial mode');
-      
-      const tutorialBtn = document.getElementById('tutorial-btn');
-      const tutorialMode = document.querySelector('.tutorial-mode');
-      const tutorialClose = document.querySelector('.tutorial-close');
-      const prevStepBtn = document.getElementById('prev-step');
-      const nextStepBtn = document.getElementById('next-step');
-      const progressDots = document.querySelectorAll('.progress-dot');
-      const tutorialSteps = document.querySelectorAll('.tutorial-step');
-      
-      // Log elements to ensure they exist
-      console.log('Tutorial button found:', !!tutorialBtn);
-      console.log('Tutorial modal found:', !!tutorialMode);
-      
-      if (!tutorialBtn || !tutorialMode) {
-        console.error('Missing tutorial elements!');
-        return;
-      }
-      
-      let currentStep = 1;
-      const totalSteps = tutorialSteps.length;
-      
-      // Open tutorial
-      tutorialBtn.addEventListener('click', function() {
-        console.log('Tutorial button clicked');
-        
-        // Make sure we have the correct elements
-        if (!tutorialMode) {
-          console.error('Tutorial mode element not found!');
-          return;
-        }
-        
-        // Add active class to show the modal
-        tutorialMode.classList.add('active');
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
-        
-        console.log('Tutorial mode activated');
-      });
-      
-      // Close tutorial
-      tutorialClose.addEventListener('click', function() {
-        tutorialMode.classList.remove('active');
-        document.body.style.overflow = ''; // Re-enable scrolling
-      });
-      
-      // Click outside to close
-      tutorialMode.addEventListener('click', function(e) {
-        if (e.target === tutorialMode) {
-          tutorialMode.classList.remove('active');
-          document.body.style.overflow = ''; // Re-enable scrolling
-        }
-      });
-      
-      // Previous step
-      prevStepBtn.addEventListener('click', function() {
-        if (currentStep > 1) {
-          goToStep(currentStep - 1);
-        }
-      });
-      
-      // Next step
-      nextStepBtn.addEventListener('click', function() {
-        if (currentStep < totalSteps) {
-          goToStep(currentStep + 1);
-        } else {
-          // On last step, finish the tutorial
-          tutorialMode.classList.remove('active');
-          document.body.style.overflow = ''; // Re-enable scrolling
-        }
-      });
-      
-      // Go to specific step
-      function goToStep(step) {
-        // Hide all steps
-        tutorialSteps.forEach(stepEl => {
-          stepEl.classList.remove('active');
-        });
-        
-        // Show the target step
-        const targetStep = document.querySelector(`.tutorial-step[data-step="${step}"]`);
-        if (targetStep) {
-          targetStep.classList.add('active');
-          currentStep = step;
-          
-          // Update buttons
-          prevStepBtn.disabled = (currentStep === 1);
-          
-          if (currentStep === totalSteps) {
-            nextStepBtn.innerHTML = 'Finish Tutorial <i class="fas fa-check"></i>';
-          } else {
-            nextStepBtn.innerHTML = 'Next <i class="fas fa-arrow-right"></i>';
-          }
-          
-          // Update progress dots
-          progressDots.forEach(dot => {
-            const dotStep = parseInt(dot.getAttribute('data-step'));
-            if (dotStep <= currentStep) {
-              dot.classList.add('active');
-            } else {
-              dot.classList.remove('active');
-            }
-          });
-        }
-      }
-      
-      // Allow clicking on progress dots to jump to that step
-      progressDots.forEach(dot => {
-        dot.addEventListener('click', function() {
-          const step = parseInt(this.getAttribute('data-step'));
-          goToStep(step);
-        });
-      });
-    }
-    
-    function showMemeModal(isCorrect) {
-      const memeModal = document.querySelector('.meme-modal');
-      const memeImage = document.querySelector('.meme-image');
-      const memeText = document.querySelector('.meme-text');
-      const memeClose = document.querySelector('.meme-close');
-      
-      // Different text based on success or failure
-      const successTexts = [
-        "You've got a BRAIN for neuroscience!",
-        "EEG-xcellent work! Your knowledge is off the charts!",
-        "You've got those leads placed perfectly! Are you a mind reader?",
-        "Look at you, placing leads like a pro! Your parents must be so proud!",
-        "Congrats! You're officially an EEG whiz!"
-      ];
-      
-      const failureTexts = [
-        "Oops! Those leads aren't quite right...",
-        "Keep practicing! You'll get better with each attempt.",
-        "Almost there! Maybe check your anatomy textbook again?",
-        "Those leads seem a bit lost. Want to try again?",
-        "Not quite! But don't give up - you're learning!"
-      ];
-      
-      // Select appropriate text based on success/failure
-      const texts = isCorrect ? successTexts : failureTexts;
-      const randomIndex = Math.floor(Math.random() * texts.length);
-      memeText.textContent = texts[randomIndex];
-      
-      // Show loading state
-      memeImage.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDI0IDI0Ij48Y2lyY2xlIGN4PSIxMiIgY3k9IjEyIiByPSIxMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjMDA4OGZmIiBzdHJva2Utd2lkdGg9IjQiIHN0cm9rZS1kYXNoYXJyYXk9IjE1LjcgMTUuNyI+PGFuaW1hdGVUcmFuc2Zvcm0gYXR0cmlidXRlTmFtZT0idHJhbnNmb3JtIiB0eXBlPSJyb3RhdGUiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIiBkdXI9IjFzIiB2YWx1ZXM9IjAgMTIgMTI7MzYwIDEyIDEyIiBrZXlUaW1lcz0iMDsxIj48L2FuaW1hdGVUcmFuc2Zvcm0+PC9jaXJjbGU+PC9zdmc+';
-      
-      // Giphy API key
-      const giphyKey = 'GZKGwdu6xlIM0iV58yFKJOFLqj0NLXFw';
-      
-      // Search query based on success/failure
-      const searchQuery = isCorrect 
-        ? 'happy animal celebration' 
-        : 'sad puppy';
-      
-      // Fetch GIF from Giphy
-      fetch(`https://api.giphy.com/v1/gifs/search?api_key=${giphyKey}&q=${encodeURIComponent(searchQuery)}&limit=25&offset=0&rating=g&lang=en&bundle=messaging_non_clips`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.data && data.data.length > 0) {
-            // Get a random GIF from the results
-            const randomGifIndex = Math.floor(Math.random() * Math.min(data.data.length, 10));
-            memeImage.src = data.data[randomGifIndex].images.original.url;
-          } else {
-            // Fallback to static images if API fails
-            const fallbackImages = isCorrect
-              ? [
-                  'https://i.imgur.com/DKUR9Tk.jpg',
-                  'https://i.imgur.com/6wYt4hw.jpg',
-                  'https://i.imgur.com/OWfGlQc.jpg'
-                ]
-              : [
-                  'https://i.imgur.com/d4zHYV1.jpg', // Sad puppy
-                  'https://i.imgur.com/jDimNTk.jpg', // Another sad puppy
-                  'https://i.imgur.com/8FRK4aP.jpg'  // Yet another sad puppy
-                ];
-            memeImage.src = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
-          }
-        })
-        .catch(err => {
-          console.error('Error fetching GIF:', err);
-          // Fallback to static images if API fails
-          const fallbackImages = isCorrect
-            ? [
-                'https://i.imgur.com/DKUR9Tk.jpg',
-                'https://i.imgur.com/6wYt4hw.jpg',
-                'https://i.imgur.com/OWfGlQc.jpg'
-              ]
-            : [
-                'https://i.imgur.com/d4zHYV1.jpg', // Sad puppy
-                'https://i.imgur.com/jDimNTk.jpg', // Another sad puppy
-                'https://i.imgur.com/8FRK4aP.jpg'  // Yet another sad puppy
-              ];
-          memeImage.src = fallbackImages[Math.floor(Math.random() * fallbackImages.length)];
-        });
-      
-      // Show the modal
-      memeModal.classList.add('active');
-      
-      // Click anywhere to close
-      memeModal.addEventListener('click', function(e) {
-        if (e.target === memeModal) {
-          memeModal.classList.remove('active');
-        }
-      });
-      
-      // Close button
-      memeClose.addEventListener('click', function() {
-        memeModal.classList.remove('active');
-      });
-    }
-  </script>
 </body>
 </html>

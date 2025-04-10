@@ -480,352 +480,361 @@
     <h1 class="page-title">EEG Simulator</h1>
     
     <div class="container">
-      <!-- Navigation Button to EEG Lead Practice -->
-      <div class="practice-nav-button" style="margin-bottom: 20px; text-align: center;">
-        <a href="eeg_lead_practice.html" class="nav-button" style="display: inline-block; background: var(--accent-color); color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: all 0.3s ease; border: none;">
-          <i class="fas fa-brain" style="margin-right: 8px;"></i> Practice EEG Lead Placement
-        </a>
+      <!-- Tab Buttons for Waveform Simulator and Lead Practice -->
+      <div class="tab-buttons">
+        <button id="waveform-btn" class="active">EEG Waveform Simulator</button>
+        <a href="eeg_lead_practice.html" id="lead-practice-btn">EEG Lead Practice</a>
       </div>
       
-      <div class="waveform-container">
-        <div class="waveform-controls">
-          <button onclick="demo.play()"><i class="fa-solid fa-play"></i> Play</button>
-          <button onclick="demo.pause()"><i class="fa-solid fa-pause"></i> Pause</button>
-          <button onclick="demo.reset()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
-        </div>
-
-        <div class="waveform-controls">
-          <h4>Normal Features:</h4>
-          <button id="eyeBlinkToggle" onclick="demo.toggleEyeBlinks()" class="active"><i class="fa-solid fa-eye"></i> Eye Blinks</button>
-          <button id="pdrToggle" onclick="demo.togglePDR()" class="active"><i class="fa-solid fa-wave-square"></i> Posterior Dominant Rhythm</button>
-          <button id="sleepToggle" onclick="toggleSleepMode()"><i class="fa-solid fa-moon"></i> Sleep EEG</button>
-          <button id="chewingToggle"><i class="fa-solid fa-tooth"></i> Chewing Artifact</button>
-          <button id="movementToggle"><i class="fa-solid fa-person-running"></i> Movement Artifact</button>
-          <button id="sweatArtifactToggle" onclick="demo.toggleSweatArtifact()"><i class="fa-solid fa-droplet"></i> Sweat Artifact</button>
-          <button id="sixtyHzArtifactToggle" onclick="demo.toggleSixtyHzArtifact()"><i class="fa-solid fa-bolt"></i> 60Hz Artifact</button>
-          <button id="ecgArtifactToggle" onclick="demo.toggleECGArtifact()"><i class="fa-solid fa-heartbeat"></i> ECG Artifact</button>
-          <button id="pulseArtifactToggle" onclick="demo.togglePulseArtifact()"><i class="fa-solid fa-heart-pulse"></i> Pulse Artifact</button>
-        </div>
-
-        <div class="waveform-controls">
-          <h4>Slowing Patterns:</h4>
-          <button id="mildSlowingToggle" onclick="demo.toggleMildSlowing()"><i class="fa-solid fa-temperature-low"></i> Mild Slowing</button>
-          <button id="moderateSlowingToggle" onclick="demo.toggleModerateSlowing()"><i class="fa-solid fa-temperature-arrow-down"></i> Moderate Slowing</button>
-          <button id="severeSlowingToggle" onclick="demo.toggleSevereSlowing()"><i class="fa-solid fa-temperature-empty"></i> Severe Slowing</button>
-          <button id="burstSuppressionToggle" onclick="demo.toggleBurstSuppression()"><i class="fa-solid fa-wave-pulse"></i> Burst Suppression</button>
-          <button id="generalizedSlowingToggle" onclick="demo.toggleGeneralizedSlowing()"><i class="fa-solid fa-brain"></i> GRDA</button>
-        </div>
-
-        <div class="waveform-controls">
-          <h4>Epileptiform Patterns:</h4>
-          <button class="wave-btn" data-wave="spikes"><i class="fa-solid fa-bolt"></i> Spikes</button>
-          <button class="wave-btn" data-wave="sharpWaves"><i class="fa-solid fa-bolt-lightning"></i> Sharp Waves</button>
-          <button class="wave-btn" data-wave="spikeAndWaves"><i class="fa-solid fa-bolt-lightning"></i> Spike & Wave</button>
-          <button id="focalSlowingToggle" onclick="demo.toggleFocalSlowing()"><i class="fa-solid fa-brain"></i> LRDA</button>
-          <button id="seizureToggle"><i class="fa-solid fa-fire"></i> Seizure</button>
-        </div>
-
-        <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
-
-        <!-- Findings Display Area -->
-        <div id="findings-display" class="findings-display">
-          <div class="findings-header">
-            <h4><i class="fa-solid fa-circle-info"></i> <span>Pattern Information</span></h4>
-            <button class="findings-close"><i class="fa-solid fa-xmark"></i></button>
+      <h2 class="page-subtitle">Waveform Simulator</h2>
+      
+      <!-- Waveform Simulator Tab -->
+      <div id="waveform-tab" style="display: block;">
+        <div class="waveform-container">
+          <div class="waveform-controls">
+            <button onclick="demo.play()"><i class="fa-solid fa-play"></i> Play</button>
+            <button onclick="demo.pause()"><i class="fa-solid fa-pause"></i> Pause</button>
+            <button onclick="demo.reset()"><i class="fa-solid fa-rotate-left"></i> Reset</button>
           </div>
-          <div class="findings-content">
-            <!-- Content will be updated dynamically -->
-          </div>
-        </div>
 
-        <!-- Add a sleep stage controls section after the findings display -->
-        <div id="sleep-controls" class="waveform-control-panels" style="display: none;">
-          <div>
-            <h4><i class="fa-solid fa-moon"></i> Sleep Stage Settings</h4>
-            <div class="sleep-stage-selector">
-              <label for="sleep-stage">Sleep Stage:</label>
-              <select id="sleep-stage" onchange="changeSleepStage(this.value)" class="form-control">
-                <option value="wakefulness">Wakefulness</option>
-                <option value="n1">N1 Sleep (Light)</option>
-                <option value="n2">N2 Sleep (Spindles & K-complexes)</option>
-                <option value="n3">N3 Sleep (Slow Wave)</option>
-                <option value="rem">REM Sleep</option>
-              </select>
+          <div class="waveform-controls">
+            <h4>Normal Features:</h4>
+            <button id="eyeBlinkToggle" onclick="demo.toggleEyeBlinks()" class="active"><i class="fa-solid fa-eye"></i> Eye Blinks</button>
+            <button id="pdrToggle" onclick="demo.togglePDR()" class="active"><i class="fa-solid fa-wave-square"></i> Posterior Dominant Rhythm</button>
+            <button id="sleepToggle" onclick="toggleSleepMode()"><i class="fa-solid fa-moon"></i> Sleep EEG</button>
+            <button id="chewingToggle"><i class="fa-solid fa-tooth"></i> Chewing Artifact</button>
+            <button id="movementToggle"><i class="fa-solid fa-person-running"></i> Movement Artifact</button>
+            <button id="sweatArtifactToggle" onclick="demo.toggleSweatArtifact()"><i class="fa-solid fa-droplet"></i> Sweat Artifact</button>
+            <button id="sixtyHzArtifactToggle" onclick="demo.toggleSixtyHzArtifact()"><i class="fa-solid fa-bolt"></i> 60Hz Artifact</button>
+            <button id="ecgArtifactToggle" onclick="demo.toggleECGArtifact()"><i class="fa-solid fa-heartbeat"></i> ECG Artifact</button>
+            <button id="pulseArtifactToggle" onclick="demo.togglePulseArtifact()"><i class="fa-solid fa-heart-pulse"></i> Pulse Artifact</button>
+          </div>
+
+          <div class="waveform-controls">
+            <h4>Slowing Patterns:</h4>
+            <button id="mildSlowingToggle" onclick="demo.toggleMildSlowing()"><i class="fa-solid fa-temperature-low"></i> Mild Slowing</button>
+            <button id="moderateSlowingToggle" onclick="demo.toggleModerateSlowing()"><i class="fa-solid fa-temperature-arrow-down"></i> Moderate Slowing</button>
+            <button id="severeSlowingToggle" onclick="demo.toggleSevereSlowing()"><i class="fa-solid fa-temperature-empty"></i> Severe Slowing</button>
+            <button id="burstSuppressionToggle" onclick="demo.toggleBurstSuppression()"><i class="fa-solid fa-wave-pulse"></i> Burst Suppression</button>
+            <button id="generalizedSlowingToggle" onclick="demo.toggleGeneralizedSlowing()"><i class="fa-solid fa-brain"></i> GRDA</button>
+          </div>
+
+          <div class="waveform-controls">
+            <h4>Epileptiform Patterns:</h4>
+            <button class="wave-btn" data-wave="spikes"><i class="fa-solid fa-bolt"></i> Spikes</button>
+            <button class="wave-btn" data-wave="sharpWaves"><i class="fa-solid fa-bolt-lightning"></i> Sharp Waves</button>
+            <button class="wave-btn" data-wave="spikeAndWaves"><i class="fa-solid fa-bolt-lightning"></i> Spike & Wave</button>
+            <button id="focalSlowingToggle" onclick="demo.toggleFocalSlowing()"><i class="fa-solid fa-brain"></i> LRDA</button>
+            <button id="seizureToggle"><i class="fa-solid fa-fire"></i> Seizure</button>
+          </div>
+
+          <canvas id="waveformCanvas" class="waveform-canvas"></canvas>
+
+          <!-- Findings Display Area -->
+          <div id="findings-display" class="findings-display">
+            <div class="findings-header">
+              <h4><i class="fa-solid fa-circle-info"></i> <span>Pattern Information</span></h4>
+              <button class="findings-close"><i class="fa-solid fa-xmark"></i></button>
             </div>
-            
-            <div class="montage-info" style="margin: 10px 0; padding: 5px; background-color: #f8f9fa; border-radius: 5px;">
-              <p style="margin: 0;"><i class="fa-solid fa-info-circle"></i> <strong>Sleep Montage:</strong> In sleep mode, central leads (C3, C4) replace temporal leads (T3, T4) to better visualize sleep features.</p>
+            <div class="findings-content">
+              <!-- Content will be updated dynamically -->
             </div>
-            
-            <div class="sleep-pattern-toggles">
-              <h5>Sleep Patterns:</h5>
-              <div class="sleep-pattern-buttons">
-                <button id="sleepSpindlesToggle" onclick="toggleSleepPattern('sleepSpindles')"><i class="fa-solid fa-wave-square"></i> Sleep Spindles</button>
-                <button id="kComplexesToggle" onclick="toggleSleepPattern('kComplexes')"><i class="fa-solid fa-bolt"></i> K-Complexes</button>
-                <button id="vertexWavesToggle" onclick="toggleSleepPattern('vertexWaves')"><i class="fa-solid fa-chevron-up"></i> Vertex Waves</button>
-                <button id="sawtoothWavesToggle" onclick="toggleSleepPattern('sawtoothWaves')"><i class="fa-solid fa-angles-up"></i> Sawtooth Waves</button>
+          </div>
+
+          <!-- Add a sleep stage controls section after the findings display -->
+          <div id="sleep-controls" class="waveform-control-panels" style="display: none;">
+            <div>
+              <h4><i class="fa-solid fa-moon"></i> Sleep Stage Settings</h4>
+              <div class="sleep-stage-selector">
+                <label for="sleep-stage">Sleep Stage:</label>
+                <select id="sleep-stage" onchange="changeSleepStage(this.value)" class="form-control">
+                  <option value="wakefulness">Wakefulness</option>
+                  <option value="n1">N1 Sleep (Light)</option>
+                  <option value="n2">N2 Sleep (Spindles & K-complexes)</option>
+                  <option value="n3">N3 Sleep (Slow Wave)</option>
+                  <option value="rem">REM Sleep</option>
+                </select>
+              </div>
+              
+              <div class="montage-info" style="margin: 10px 0; padding: 5px; background-color: #f8f9fa; border-radius: 5px;">
+                <p style="margin: 0;"><i class="fa-solid fa-info-circle"></i> <strong>Sleep Montage:</strong> In sleep mode, central leads (C3, C4) replace temporal leads (T3, T4) to better visualize sleep features.</p>
+              </div>
+              
+              <div class="sleep-pattern-toggles">
+                <h5>Sleep Patterns:</h5>
+                <div class="sleep-pattern-buttons">
+                  <button id="sleepSpindlesToggle" onclick="toggleSleepPattern('sleepSpindles')"><i class="fa-solid fa-wave-square"></i> Sleep Spindles</button>
+                  <button id="kComplexesToggle" onclick="toggleSleepPattern('kComplexes')"><i class="fa-solid fa-bolt"></i> K-Complexes</button>
+                  <button id="vertexWavesToggle" onclick="toggleSleepPattern('vertexWaves')"><i class="fa-solid fa-chevron-up"></i> Vertex Waves</button>
+                  <button id="sawtoothWavesToggle" onclick="toggleSleepPattern('sawtoothWaves')"><i class="fa-solid fa-angles-up"></i> Sawtooth Waves</button>
+                </div>
+              </div>
+              
+              <div class="sleep-info">
+                <h5>Current Stage: <span id="current-sleep-stage-display">Wakefulness</span></h5>
+                <p id="sleep-stage-description">Normal wakefulness with posterior dominant rhythm (alpha) and eye blinks.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Waveform Control Panels -->
+          <div class="waveform-control-panels">
+            <!-- Spike Adjusters -->
+            <div id="spike-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> Spike Settings</h4>
+              <div class="slider-container">
+                <label for="spike-frequency">Frequency: <span id="spike-frequency-value">Occasional</span></label>
+                <input type="range" id="spike-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateSpikeFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="spike-periodicity">Periodicity: <span id="spike-periodicity-value">0.5</span> Hz</label>
+                <input type="range" id="spike-periodicity" min="0" max="3.0" step="0.5" value="0.5" 
+                        oninput="updateSpikePeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">3 Hz</span>
               </div>
             </div>
             
-            <div class="sleep-info">
-              <h5>Current Stage: <span id="current-sleep-stage-display">Wakefulness</span></h5>
-              <p id="sleep-stage-description">Normal wakefulness with posterior dominant rhythm (alpha) and eye blinks.</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Waveform Control Panels -->
-        <div class="waveform-control-panels">
-          <!-- Spike Adjusters -->
-          <div id="spike-adjusters" style="display: none;">
-            <h4><i class="fa-solid fa-sliders"></i> Spike Settings</h4>
-            <div class="slider-container">
-              <label for="spike-frequency">Frequency: <span id="spike-frequency-value">Occasional</span></label>
-              <input type="range" id="spike-frequency" min="1" max="4" step="1" value="2" 
-                     oninput="updateSpikeFrequency(this.value)">
-              <span class="slider-label-min">Rare</span>
-              <span class="slider-label-max">Abundant</span>
-            </div>
-            
-            <div class="slider-container">
-              <label for="spike-periodicity">Periodicity: <span id="spike-periodicity-value">0.5</span> Hz</label>
-              <input type="range" id="spike-periodicity" min="0" max="3.0" step="0.5" value="0.5" 
-                     oninput="updateSpikePeriodicity(this.value)">
-              <span class="slider-label-min">0 Hz</span>
-              <span class="slider-label-max">3 Hz</span>
-            </div>
-          </div>
-          
-          <!-- Sharp Wave Adjusters -->
-          <div id="sharp-wave-adjusters" style="display: none;">
-            <h4><i class="fa-solid fa-sliders"></i> Sharp Wave Settings</h4>
-            <div class="slider-container">
-              <label for="sharp-wave-frequency">Frequency: <span id="sharp-wave-frequency-value">Occasional</span></label>
-              <input type="range" id="sharp-wave-frequency" min="1" max="4" step="1" value="2" 
-                     oninput="updateSharpWaveFrequency(this.value)">
-              <span class="slider-label-min">Rare</span>
-              <span class="slider-label-max">Abundant</span>
+            <!-- Sharp Wave Adjusters -->
+            <div id="sharp-wave-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> Sharp Wave Settings</h4>
+              <div class="slider-container">
+                <label for="sharp-wave-frequency">Frequency: <span id="sharp-wave-frequency-value">Occasional</span></label>
+                <input type="range" id="sharp-wave-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateSharpWaveFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="sharp-wave-periodicity">Periodicity: <span id="sharp-wave-periodicity-value">0.5</span> Hz</label>
+                <input type="range" id="sharp-wave-periodicity" min="0" max="3.0" step="0.5" value="0.5" 
+                        oninput="updateSharpWavePeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">3 Hz</span>
+              </div>
             </div>
             
-            <div class="slider-container">
-              <label for="sharp-wave-periodicity">Periodicity: <span id="sharp-wave-periodicity-value">0.5</span> Hz</label>
-              <input type="range" id="sharp-wave-periodicity" min="0" max="3.0" step="0.5" value="0.5" 
-                     oninput="updateSharpWavePeriodicity(this.value)">
-              <span class="slider-label-min">0 Hz</span>
-              <span class="slider-label-max">3 Hz</span>
-            </div>
-          </div>
-          
-          <!-- Spike and Wave Adjusters -->
-          <div id="spike-and-wave-adjusters" style="display: none;">
-            <h4><i class="fa-solid fa-sliders"></i> Spike & Wave Settings</h4>
-            <div class="slider-container">
-              <label for="spike-and-wave-frequency">Frequency: <span id="spike-and-wave-frequency-value">Occasional</span></label>
-              <input type="range" id="spike-and-wave-frequency" min="1" max="4" step="1" value="2" 
-                     oninput="updateSpikeAndWaveFrequency(this.value)">
-              <span class="slider-label-min">Rare</span>
-              <span class="slider-label-max">Abundant</span>
-            </div>
-            
-            <div class="slider-container">
-              <label for="spike-and-wave-periodicity">Periodicity: <span id="spike-and-wave-periodicity-value">2</span> Hz</label>
-              <input type="range" id="spike-and-wave-periodicity" min="0" max="3" step="1" value="1" 
-                     oninput="updateSpikeAndWavePeriodicity(this.value)">
-              <span class="slider-label-min">0 Hz</span>
-              <span class="slider-label-max">5 Hz</span>
-            </div>
-          </div>
-          
-          <!-- LRDA Adjusters -->
-          <div id="lrda-adjusters" style="display: none;">
-            <h4><i class="fa-solid fa-sliders"></i> LRDA Settings</h4>
-            <div class="slider-container">
-              <label for="lrda-frequency">Frequency: <span id="lrda-frequency-value">Occasional</span></label>
-              <input type="range" id="lrda-frequency" min="1" max="4" step="1" value="2" 
-                     oninput="updateLRDAFrequency(this.value)">
-              <span class="slider-label-min">Rare</span>
-              <span class="slider-label-max">Abundant</span>
+            <!-- Spike and Wave Adjusters -->
+            <div id="spike-and-wave-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> Spike & Wave Settings</h4>
+              <div class="slider-container">
+                <label for="spike-and-wave-frequency">Frequency: <span id="spike-and-wave-frequency-value">Occasional</span></label>
+                <input type="range" id="spike-and-wave-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateSpikeAndWaveFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="spike-and-wave-periodicity">Periodicity: <span id="spike-and-wave-periodicity-value">2</span> Hz</label>
+                <input type="range" id="spike-and-wave-periodicity" min="0" max="3" step="1" value="1" 
+                        oninput="updateSpikeAndWavePeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">5 Hz</span>
+              </div>
             </div>
             
-            <div class="slider-container">
-              <label for="lrda-periodicity">Periodicity: <span id="lrda-periodicity-value">1</span> Hz</label>
-              <input type="range" id="lrda-periodicity" min="0" max="2" step="0.5" value="1" 
-                     oninput="updateLRDAPeriodicity(this.value)">
-              <span class="slider-label-min">0 Hz</span>
-              <span class="slider-label-max">2 Hz</span>
-            </div>
-          </div>
-          
-          <!-- GRDA Adjusters -->
-          <div id="grda-adjusters" style="display: none;">
-            <h4><i class="fa-solid fa-sliders"></i> GRDA Settings</h4>
-            <div class="slider-container">
-              <label for="grda-frequency">Frequency: <span id="grda-frequency-value">Occasional</span></label>
-              <input type="range" id="grda-frequency" min="1" max="4" step="1" value="2" 
-                     oninput="updateGRDAFrequency(this.value)">
-              <span class="slider-label-min">Rare</span>
-              <span class="slider-label-max">Abundant</span>
-            </div>
-            
-            <div class="slider-container">
-              <label for="grda-periodicity">Periodicity: <span id="grda-periodicity-value">1</span> Hz</label>
-              <input type="range" id="grda-periodicity" min="0" max="2" step="0.5" value="1" 
-                     oninput="updateGRDAPeriodicity(this.value)">
-              <span class="slider-label-min">0 Hz</span>
-              <span class="slider-label-max">2 Hz</span>
-            </div>
-          </div>
-          
-          <!-- Seizure Adjusters -->
-          <div id="seizure-adjusters" style="display: none;">
-            <h4><i class="fa-solid fa-sliders"></i> Seizure Settings</h4>
-            <div class="slider-container">
-              <label for="seizure-speed">Evolution Speed: <span id="seizure-speed-value">Normal</span></label>
-              <input type="range" id="seizure-speed" min="1" max="3" step="1" value="2" 
-                     oninput="updateSeizureSpeed(this.value)">
-              <span class="slider-label-min">Slow</span>
-              <span class="slider-label-max">Fast</span>
+            <!-- LRDA Adjusters -->
+            <div id="lrda-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> LRDA Settings</h4>
+              <div class="slider-container">
+                <label for="lrda-frequency">Frequency: <span id="lrda-frequency-value">Occasional</span></label>
+                <input type="range" id="lrda-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateLRDAFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="lrda-periodicity">Periodicity: <span id="lrda-periodicity-value">1</span> Hz</label>
+                <input type="range" id="lrda-periodicity" min="0" max="2" step="0.5" value="1" 
+                        oninput="updateLRDAPeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">2 Hz</span>
+              </div>
             </div>
             
-            <div class="slider-container">
-              <label for="seizure-intensity">Intensity: <span id="seizure-intensity-value">Moderate</span></label>
-              <input type="range" id="seizure-intensity" min="1" max="3" step="1" value="2" 
-                     oninput="updateSeizureIntensity(this.value)">
-              <span class="slider-label-min">Mild</span>
-              <span class="slider-label-max">Severe</span>
+            <!-- GRDA Adjusters -->
+            <div id="grda-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> GRDA Settings</h4>
+              <div class="slider-container">
+                <label for="grda-frequency">Frequency: <span id="grda-frequency-value">Occasional</span></label>
+                <input type="range" id="grda-frequency" min="1" max="4" step="1" value="2" 
+                        oninput="updateGRDAFrequency(this.value)">
+                <span class="slider-label-min">Rare</span>
+                <span class="slider-label-max">Abundant</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="grda-periodicity">Periodicity: <span id="grda-periodicity-value">1</span> Hz</label>
+                <input type="range" id="grda-periodicity" min="0" max="2" step="0.5" value="1" 
+                        oninput="updateGRDAPeriodicity(this.value)">
+                <span class="slider-label-min">0 Hz</span>
+                <span class="slider-label-max">2 Hz</span>
+              </div>
             </div>
-          </div>
-        </div>
-
-        <div class="waveform-info">
-          <h3><i class="fa-solid fa-brain"></i> Normal EEG Patterns</h3>
-          <div class="responsive-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Rhythm</th>
-                  <th>Frequency</th>
-                  <th>Location</th>
-                  <th>Clinical Significance</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Alpha</td>
-                  <td>8-13 Hz</td>
-                  <td>Posterior dominant (occipital)</td>
-                  <td>Normal awake rhythm with eyes closed; attenuates with eye opening or mental activity</td>
-                </tr>
-                <tr>
-                  <td>Beta</td>
-                  <td>13-30 Hz</td>
-                  <td>Frontal predominant</td>
-                  <td>Normal during alertness, cognitive activity; enhanced by benzodiazepines and barbiturates</td>
-                </tr>
-                <tr>
-                  <td>Theta</td>
-                  <td>4-8 Hz</td>
-                  <td>Diffuse, temporal</td>
-                  <td>Normal in drowsiness and young adults; excessive in awake adults may indicate abnormality</td>
-                </tr>
-                <tr>
-                  <td>Delta</td>
-                  <td>0.5-4 Hz</td>
-                  <td>Diffuse</td>
-                  <td>Normal in deep sleep (N3) and infants; abnormal when awake except in anterior head regions</td>
-                </tr>
-              </tbody>
-            </table>
+            
+            <!-- Seizure Adjusters -->
+            <div id="seizure-adjusters" style="display: none;">
+              <h4><i class="fa-solid fa-sliders"></i> Seizure Settings</h4>
+              <div class="slider-container">
+                <label for="seizure-speed">Evolution Speed: <span id="seizure-speed-value">Normal</span></label>
+                <input type="range" id="seizure-speed" min="1" max="3" step="1" value="2" 
+                        oninput="updateSeizureSpeed(this.value)">
+                <span class="slider-label-min">Slow</span>
+                <span class="slider-label-max">Fast</span>
+              </div>
+              
+              <div class="slider-container">
+                <label for="seizure-intensity">Intensity: <span id="seizure-intensity-value">Moderate</span></label>
+                <input type="range" id="seizure-intensity" min="1" max="3" step="1" value="2" 
+                        oninput="updateSeizureIntensity(this.value)">
+                <span class="slider-label-min">Mild</span>
+                <span class="slider-label-max">Severe</span>
+              </div>
+            </div>
           </div>
 
-          <h3><i class="fa-solid fa-triangle-exclamation"></i> Common Artifacts</h3>
-          <div class="responsive-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Artifact</th>
-                  <th>Appearance</th>
-                  <th>Location</th>
-                  <th>Identification Tips</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Eye Blinks</td>
-                  <td>Large amplitude downward deflections</td>
-                  <td>Frontal (Fp1/Fp2), attenuating posteriorly</td>
-                  <td>Occurs at 0.5-2Hz when awake; synchronous with visible eye movements; maximal at frontal polar leads</td>
-                </tr>
-                <tr>
-                  <td>Chewing</td>
-                  <td>Rhythmic EMG bursts at ~1Hz with high-frequency spikes</td>
-                  <td>Temporal leads (T3/T4)</td>
-                  <td>Distinguished by muscle artifact clusters, rhythmic appearance at 1Hz; disrupts normal activity</td>
-                </tr>
-                <tr>
-                  <td>Sweat</td>
-                  <td>Slow, undulating baseline shifts (0.1-0.7 Hz)</td>
-                  <td>Often frontal/temporal</td>
-                  <td>Appears as slow baseline wander; often in anxious patients or warm environments</td>
-                </tr>
-                <tr>
-                  <td>60Hz</td>
-                  <td>Regular, fast oscillations superimposed on EEG</td>
-                  <td>Often one electrode or side</td>
-                  <td>Perfect 60Hz rhythm; indicates electrical interference or poor electrode contact</td>
-                </tr>
-                <tr>
-                  <td>ECG</td>
-                  <td>Regular QRS complexes seen as sharp upward deflections across channels</td>
-                  <td>All channels; strongest in temporal leads (T3/T4) closest to neck/heart</td>
-                  <td>Precisely synchronous with heartbeat; most prominent in patients with short/thick necks, low BMI, or when using non-cephalic references (e.g., ear/mastoid)</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+          <div class="waveform-info">
+            <h3><i class="fa-solid fa-brain"></i> Normal EEG Patterns</h3>
+            <div class="responsive-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Rhythm</th>
+                    <th>Frequency</th>
+                    <th>Location</th>
+                    <th>Clinical Significance</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Alpha</td>
+                    <td>8-13 Hz</td>
+                    <td>Posterior dominant (occipital)</td>
+                    <td>Normal awake rhythm with eyes closed; attenuates with eye opening or mental activity</td>
+                  </tr>
+                  <tr>
+                    <td>Beta</td>
+                    <td>13-30 Hz</td>
+                    <td>Frontal predominant</td>
+                    <td>Normal during alertness, cognitive activity; enhanced by benzodiazepines and barbiturates</td>
+                  </tr>
+                  <tr>
+                    <td>Theta</td>
+                    <td>4-8 Hz</td>
+                    <td>Diffuse, temporal</td>
+                    <td>Normal in drowsiness and young adults; excessive in awake adults may indicate abnormality</td>
+                  </tr>
+                  <tr>
+                    <td>Delta</td>
+                    <td>0.5-4 Hz</td>
+                    <td>Diffuse</td>
+                    <td>Normal in deep sleep (N3) and infants; abnormal when awake except in anterior head regions</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
 
-          <h3><i class="fa-solid fa-bolt"></i> Abnormal EEG Patterns</h3>
-          <div class="responsive-table">
-            <table>
-              <thead>
-                <tr>
-                  <th>Pattern</th>
-                  <th>Morphology</th>
-                  <th>Clinical Association</th>
-                  <th>Key Features</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Spikes</td>
-                  <td>Brief (&lt;70ms) pointed transients</td>
-                  <td>Epilepsy, irritative zone</td>
-                  <td>Fast upstroke, pointy peak, slow downstroke; isolated or grouped; usually pathological</td>
-                </tr>
-                <tr>
-                  <td>Sharp Waves</td>
-                  <td>70-200ms pointed transients</td>
-                  <td>Epilepsy, cerebral injury</td>
-                  <td>Longer duration than spikes but similar morphology; often with slow wave following</td>
-                </tr>
-                <tr>
-                  <td>LRDA</td>
-                  <td>Lateralized rhythmic delta (1-4Hz)</td>
-                  <td>Focal cerebral dysfunction</td>
-                  <td>Continuous rhythmic slowing in localized regions; indicates underlying structural or functional pathology</td>
-                </tr>
-                <tr>
-                  <td>GRDA</td>
-                  <td>Generalized rhythmic delta (1-4Hz)</td>
-                  <td>Diffuse cerebral dysfunction</td>
-                  <td>Continuous rhythmic slowing across all regions; indicates global encephalopathy or metabolic disturbance</td>
-                </tr>
-              </tbody>
-            </table>
+            <h3><i class="fa-solid fa-triangle-exclamation"></i> Common Artifacts</h3>
+            <div class="responsive-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Artifact</th>
+                    <th>Appearance</th>
+                    <th>Location</th>
+                    <th>Identification Tips</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Eye Blinks</td>
+                    <td>Large amplitude downward deflections</td>
+                    <td>Frontal (Fp1/Fp2), attenuating posteriorly</td>
+                    <td>Occurs at 0.5-2Hz when awake; synchronous with visible eye movements; maximal at frontal polar leads</td>
+                  </tr>
+                  <tr>
+                    <td>Chewing</td>
+                    <td>Rhythmic EMG bursts at ~1Hz with high-frequency spikes</td>
+                    <td>Temporal leads (T3/T4)</td>
+                    <td>Distinguished by muscle artifact clusters, rhythmic appearance at 1Hz; disrupts normal activity</td>
+                  </tr>
+                  <tr>
+                    <td>Sweat</td>
+                    <td>Slow, undulating baseline shifts (0.1-0.7 Hz)</td>
+                    <td>Often frontal/temporal</td>
+                    <td>Appears as slow baseline wander; often in anxious patients or warm environments</td>
+                  </tr>
+                  <tr>
+                    <td>60Hz</td>
+                    <td>Regular, fast oscillations superimposed on EEG</td>
+                    <td>Often one electrode or side</td>
+                    <td>Perfect 60Hz rhythm; indicates electrical interference or poor electrode contact</td>
+                  </tr>
+                  <tr>
+                    <td>ECG</td>
+                    <td>Regular QRS complexes seen as sharp upward deflections across channels</td>
+                    <td>All channels; strongest in temporal leads (T3/T4) closest to neck/heart</td>
+                    <td>Precisely synchronous with heartbeat; most prominent in patients with short/thick necks, low BMI, or when using non-cephalic references (e.g., ear/mastoid)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <h3><i class="fa-solid fa-bolt"></i> Abnormal EEG Patterns</h3>
+            <div class="responsive-table">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Pattern</th>
+                    <th>Morphology</th>
+                    <th>Clinical Association</th>
+                    <th>Key Features</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Spikes</td>
+                    <td>Brief (&lt;70ms) pointed transients</td>
+                    <td>Epilepsy, irritative zone</td>
+                    <td>Fast upstroke, pointy peak, slow downstroke; isolated or grouped; usually pathological</td>
+                  </tr>
+                  <tr>
+                    <td>Sharp Waves</td>
+                    <td>70-200ms pointed transients</td>
+                    <td>Epilepsy, cerebral injury</td>
+                    <td>Longer duration than spikes but similar morphology; often with slow wave following</td>
+                  </tr>
+                  <tr>
+                    <td>LRDA</td>
+                    <td>Lateralized rhythmic delta (1-4Hz)</td>
+                    <td>Focal cerebral dysfunction</td>
+                    <td>Continuous rhythmic slowing in localized regions; indicates underlying structural or functional pathology</td>
+                  </tr>
+                  <tr>
+                    <td>GRDA</td>
+                    <td>Generalized rhythmic delta (1-4Hz)</td>
+                    <td>Diffuse cerebral dysfunction</td>
+                    <td>Continuous rhythmic slowing across all regions; indicates global encephalopathy or metabolic disturbance</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
           </div>
         </div>
       </div>
     </div>
+
+    <!-- Add tab switching JavaScript -->
+    <script>
+      // No longer need tab switching function as we're using direct links
+    </script>
   </main>
 
   <!-- Include Footer -->
