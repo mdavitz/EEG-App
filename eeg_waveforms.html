@@ -22,6 +22,7 @@
   <script src="assets/js/universal-search.js" defer></script>
   <script src="assets/js/eeg-findings.js" defer></script>
   <script src="assets/js/eeg-waveform.js" defer></script>
+  <script src="assets/js/eeg-sleep.js" defer></script>
   
   <!-- Search initialization script -->
   <script>
@@ -479,6 +480,13 @@
     <h1 class="page-title">EEG Simulator</h1>
     
     <div class="container">
+      <!-- Navigation Button to EEG Lead Practice -->
+      <div class="practice-nav-button" style="margin-bottom: 20px; text-align: center;">
+        <a href="eeg_lead_practice.html" class="nav-button" style="display: inline-block; background: var(--accent-color); color: white; text-decoration: none; padding: 12px 24px; border-radius: 8px; font-weight: 600; box-shadow: 0 4px 8px rgba(0,0,0,0.15); transition: all 0.3s ease; border: none;">
+          <i class="fas fa-brain" style="margin-right: 8px;"></i> Practice EEG Lead Placement
+        </a>
+      </div>
+      
       <div class="waveform-container">
         <div class="waveform-controls">
           <button onclick="demo.play()"><i class="fa-solid fa-play"></i> Play</button>
@@ -490,6 +498,7 @@
           <h4>Normal Features:</h4>
           <button id="eyeBlinkToggle" onclick="demo.toggleEyeBlinks()" class="active"><i class="fa-solid fa-eye"></i> Eye Blinks</button>
           <button id="pdrToggle" onclick="demo.togglePDR()" class="active"><i class="fa-solid fa-wave-square"></i> Posterior Dominant Rhythm</button>
+          <button id="sleepToggle" onclick="toggleSleepMode()"><i class="fa-solid fa-moon"></i> Sleep EEG</button>
           <button id="chewingToggle"><i class="fa-solid fa-tooth"></i> Chewing Artifact</button>
           <button id="movementToggle"><i class="fa-solid fa-person-running"></i> Movement Artifact</button>
           <button id="sweatArtifactToggle" onclick="demo.toggleSweatArtifact()"><i class="fa-solid fa-droplet"></i> Sweat Artifact</button>
@@ -526,6 +535,42 @@
           </div>
           <div class="findings-content">
             <!-- Content will be updated dynamically -->
+          </div>
+        </div>
+
+        <!-- Add a sleep stage controls section after the findings display -->
+        <div id="sleep-controls" class="waveform-control-panels" style="display: none;">
+          <div>
+            <h4><i class="fa-solid fa-moon"></i> Sleep Stage Settings</h4>
+            <div class="sleep-stage-selector">
+              <label for="sleep-stage">Sleep Stage:</label>
+              <select id="sleep-stage" onchange="changeSleepStage(this.value)" class="form-control">
+                <option value="wakefulness">Wakefulness</option>
+                <option value="n1">N1 Sleep (Light)</option>
+                <option value="n2">N2 Sleep (Spindles & K-complexes)</option>
+                <option value="n3">N3 Sleep (Slow Wave)</option>
+                <option value="rem">REM Sleep</option>
+              </select>
+            </div>
+            
+            <div class="montage-info" style="margin: 10px 0; padding: 5px; background-color: #f8f9fa; border-radius: 5px;">
+              <p style="margin: 0;"><i class="fa-solid fa-info-circle"></i> <strong>Sleep Montage:</strong> In sleep mode, central leads (C3, C4) replace temporal leads (T3, T4) to better visualize sleep features.</p>
+            </div>
+            
+            <div class="sleep-pattern-toggles">
+              <h5>Sleep Patterns:</h5>
+              <div class="sleep-pattern-buttons">
+                <button id="sleepSpindlesToggle" onclick="toggleSleepPattern('sleepSpindles')"><i class="fa-solid fa-wave-square"></i> Sleep Spindles</button>
+                <button id="kComplexesToggle" onclick="toggleSleepPattern('kComplexes')"><i class="fa-solid fa-bolt"></i> K-Complexes</button>
+                <button id="vertexWavesToggle" onclick="toggleSleepPattern('vertexWaves')"><i class="fa-solid fa-chevron-up"></i> Vertex Waves</button>
+                <button id="sawtoothWavesToggle" onclick="toggleSleepPattern('sawtoothWaves')"><i class="fa-solid fa-angles-up"></i> Sawtooth Waves</button>
+              </div>
+            </div>
+            
+            <div class="sleep-info">
+              <h5>Current Stage: <span id="current-sleep-stage-display">Wakefulness</span></h5>
+              <p id="sleep-stage-description">Normal wakefulness with posterior dominant rhythm (alpha) and eye blinks.</p>
+            </div>
           </div>
         </div>
 
@@ -810,6 +855,15 @@
       }
       
       console.log("EEG demo initialized with active waveforms:", Array.from(window.demo.activeWaveforms));
+
+      // Sleep mode toggle
+      const sleepToggle = document.getElementById('sleepToggle');
+      if (sleepToggle) {
+        sleepToggle.addEventListener('click', function() {
+          const isActive = this.classList.toggle('active');
+          toggleSleepMode(isActive);
+        });
+      }
 
       // Handle chewing artifact toggle directly
       const chewingToggle = document.getElementById('chewingToggle');
@@ -1219,6 +1273,109 @@
       if (window.demo) {
         console.log("Setting seizure intensity to:", value);
         window.demo.setSeizureIntensity(parseInt(value));
+      }
+    }
+    
+    // Sleep mode toggle function
+    function toggleSleepMode(isActive) {
+      if (isActive === undefined) {
+        const sleepToggle = document.getElementById('sleepToggle');
+        isActive = sleepToggle.classList.contains('active');
+      }
+      
+      const sleepControls = document.getElementById('sleep-controls');
+      
+      if (isActive) {
+        // Show sleep controls and initialize sleep mode
+        sleepControls.style.display = 'block';
+        if (window.sleepDemo) {
+          window.sleepDemo.initializeSleepMode();
+          changeSleepStage('wakefulness');
+        } else {
+          console.error("Sleep demo not initialized. Make sure eeg-sleep.js is loaded properly.");
+        }
+        
+        // Update pattern info
+        showPatternInfo('sleep');
+      } else {
+        // Hide sleep controls and return to normal mode
+        sleepControls.style.display = 'none';
+        if (window.sleepDemo) {
+          window.sleepDemo.exitSleepMode();
+        }
+        
+        // Reset EEG to normal state
+        window.demo.reset();
+      }
+    }
+    
+    // Change sleep stage function
+    function changeSleepStage(stage) {
+      if (!window.sleepDemo) {
+        console.error("Sleep demo not initialized");
+        return;
+      }
+      
+      // Update the sleep stage display
+      document.getElementById('current-sleep-stage-display').textContent = 
+        document.querySelector(`#sleep-stage option[value="${stage}"]`).textContent;
+      
+      // Update the sleep description
+      const descriptions = {
+        'wakefulness': 'Normal wakefulness with posterior dominant rhythm (alpha) and eye blinks.',
+        'n1': 'Light sleep characterized by theta waves and vertex sharp waves (best seen in central leads) with decreased alpha activity.',
+        'n2': 'Defined by sleep spindles (12-14 Hz bursts, maximal in central regions) and K-complexes with predominant theta activity.',
+        'n3': 'Slow wave sleep with high-amplitude delta waves (0.5-4 Hz), prominent in all leads including central derivations.',
+        'rem': 'Low-amplitude mixed frequency activity with sawtooth waves (visible in frontal-central leads) and rapid eye movements.'
+      };
+      
+      document.getElementById('sleep-stage-description').textContent = descriptions[stage] || '';
+      
+      // Set the sleep stage in the sleep demo
+      window.sleepDemo.setSleepStage(stage);
+      
+      // Show pattern info
+      showPatternInfo(`sleep-${stage}`);
+      
+      // Update button states
+      updateSleepPatternButtons(stage);
+    }
+    
+    // Toggle individual sleep patterns
+    function toggleSleepPattern(pattern) {
+      if (!window.sleepDemo) {
+        console.error("Sleep demo not initialized");
+        return;
+      }
+      
+      const button = document.getElementById(`${pattern}Toggle`);
+      const isActive = button.classList.toggle('active');
+      
+      window.sleepDemo.toggleSleepPattern(pattern, isActive);
+    }
+    
+    // Update sleep pattern buttons based on stage
+    function updateSleepPatternButtons(stage) {
+      // Reset all buttons
+      document.querySelectorAll('.sleep-pattern-buttons button').forEach(button => {
+        button.classList.remove('active');
+      });
+      
+      // Activate relevant buttons based on sleep stage
+      switch(stage) {
+        case 'n1':
+          document.getElementById('vertexWavesToggle').classList.add('active');
+          break;
+        case 'n2':
+          document.getElementById('sleepSpindlesToggle').classList.add('active');
+          document.getElementById('kComplexesToggle').classList.add('active');
+          break;
+        case 'n3':
+          // No specific patterns activated by default
+          break;
+        case 'rem':
+          document.getElementById('sawtoothWavesToggle').classList.add('active');
+          break;
       }
     }
   </script>
