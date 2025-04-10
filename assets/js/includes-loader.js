@@ -143,11 +143,38 @@ function setupFooterControls() {
   
   // Font size toggle button
   initializeButton('font-size-btn', function(button) {
+    console.log('Initializing font size button with improved debugging');
+    
     button.addEventListener('click', function() {
-      document.body.classList.toggle('large-text');
-      localStorage.setItem('largeText', document.body.classList.contains('large-text'));
-      console.log('Font size toggled:', document.body.classList.contains('large-text'));
+      console.log('Font size button clicked');
+      
+      // Toggle large font class
+      document.body.classList.toggle('large-font');
+      const isLargeFont = document.body.classList.contains('large-font');
+      localStorage.setItem('largeFont', isLargeFont);
+      
+      // Update button appearance and log status
+      if (isLargeFont) {
+        button.classList.add('active');
+        console.log('Large font enabled. Current classes on body:', document.body.className);
+      } else {
+        button.classList.remove('active');
+        console.log('Large font disabled. Current classes on body:', document.body.className);
+      }
+      
+      // Apply styles to debug elements with fixed font sizes
+      console.log('Remember to check for elements with hardcoded font sizes that might not be affected');
     });
+    
+    // Set initial button state based on current font size
+    if (document.body.classList.contains('large-font') || localStorage.getItem('largeFont') === 'true') {
+      console.log('Setting button to active state - large font is enabled');
+      button.classList.add('active');
+      document.body.classList.add('large-font');
+    } else {
+      console.log('Setting button to normal state - large font is disabled');
+      button.classList.remove('active');
+    }
   });
   
   // Dark mode toggle button
@@ -192,8 +219,8 @@ function applyUserPreferences() {
   }
   
   // Apply font size preference
-  if (localStorage.getItem('largeText') === 'true') {
-    document.body.classList.add('large-text');
+  if (localStorage.getItem('largeFont') === 'true') {
+    document.body.classList.add('large-font');
   }
 }
 

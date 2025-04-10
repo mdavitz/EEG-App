@@ -71,10 +71,20 @@ function setupFooterControls() {
   // Font size toggle button
   const fontSizeBtn = document.getElementById('font-size-btn');
   if (fontSizeBtn) {
+    // Remove any existing listeners to avoid duplicates
+    fontSizeBtn.removeEventListener('click', toggleFontSize);
+    // Add the listener
     fontSizeBtn.addEventListener('click', toggleFontSize);
     console.log('Font size button found and listener attached');
+    
+    // Add visual feedback for the button based on current state
+    if (document.body.classList.contains('large-font')) {
+      fontSizeBtn.classList.add('active');
+    } else {
+      fontSizeBtn.classList.remove('active');
+    }
   } else {
-    console.log('Font size button not found');
+    console.error('Font size button not found in the DOM');
   }
   
   // Dark mode toggle button
@@ -90,7 +100,7 @@ function setupFooterControls() {
       darkModeBtn.textContent = 'Dark Mode';
     }
   } else {
-    console.log('Dark mode button not found');
+    console.error('Dark mode button not found in the DOM');
   }
   
   // Setup disclaimer modal
@@ -191,18 +201,44 @@ function setupFontSize() {
   const largeFont = localStorage.getItem('largeFont');
   if (largeFont === 'true') {
     document.body.classList.add('large-font');
+    
+    // Set active class on the button if it exists
+    const fontSizeBtn = document.getElementById('font-size-btn');
+    if (fontSizeBtn) {
+      fontSizeBtn.classList.add('active');
+    }
   }
 }
 
 // Toggle font size
 function toggleFontSize() {
   console.log('Toggle font size called');
-  if (document.body.classList.contains('large-font')) {
-    document.body.classList.remove('large-font');
-    localStorage.setItem('largeFont', 'false');
-  } else {
-    document.body.classList.add('large-font');
-    localStorage.setItem('largeFont', 'true');
+  try {
+    const fontSizeBtn = document.getElementById('font-size-btn');
+    
+    if (document.body.classList.contains('large-font')) {
+      // Disable large font
+      document.body.classList.remove('large-font');
+      localStorage.setItem('largeFont', 'false');
+      console.log('Large font disabled');
+      
+      // Update button state
+      if (fontSizeBtn) {
+        fontSizeBtn.classList.remove('active');
+      }
+    } else {
+      // Enable large font
+      document.body.classList.add('large-font');
+      localStorage.setItem('largeFont', 'true');
+      console.log('Large font enabled');
+      
+      // Update button state
+      if (fontSizeBtn) {
+        fontSizeBtn.classList.add('active');
+      }
+    }
+  } catch (error) {
+    console.error('Error toggling font size:', error);
   }
 }
 
