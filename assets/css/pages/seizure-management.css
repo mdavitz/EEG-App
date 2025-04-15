@@ -205,61 +205,6 @@ body.dark #seizure-management .green-button:hover {
   background-color: #28bd4c;
 }
 
-/* Enhanced Quick links styling */
-#seizure-management .quick-links {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
-  margin: 0 auto 1.5rem auto;
-  max-width: 600px;
-  width: 100%;
-}
-
-#seizure-management .quick-links a {
-  display: inline-block;
-  padding: 10px 18px;
-  color: var(--accent-color);
-  text-decoration: none;
-  border-radius: 980px;
-  background-color: rgba(0, 102, 204, 0.1);
-  border: none;
-  transition: background-color 0.3s, transform 0.3s;
-  font-size: 14px;
-  font-weight: 500;
-  text-align: center;
-}
-
-#seizure-management .quick-links a:hover {
-  background-color: rgba(0, 102, 204, 0.2);
-  transform: scale(1.02);
-}
-
-#seizure-management .quick-links a.active {
-  background-color: var(--accent-color);
-  color: white;
-}
-
-body.dark #seizure-management .quick-links a {
-  background-color: rgba(41, 151, 255, 0.15);
-}
-
-body.dark #seizure-management .quick-links a:hover {
-  background-color: rgba(41, 151, 255, 0.25);
-}
-
-body.dark #seizure-management .quick-links a.active {
-  background-color: var(--accent-color);
-  color: white;
-}
-
-/* Responsive adjustment */
-@media (max-width: 768px) {
-  #seizure-management .quick-links {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-}
-
 /* Table styling - updated for card format on mobile */
 #seizure-management .custom-table {
   width: 100%;

@@ -63,6 +63,72 @@ document.addEventListener("DOMContentLoaded", () => {
       footerContainerObserver.observe(footerContainer, { childList: true });
     }
   }
+
+  // Setup section toggling and quick links if they exist on the page
+  // BUT exclude pages that handle filtering differently (e.g., acns-criteria)
+  if (!document.body.classList.contains('page-acns_criteria')) { 
+      const sectionHeaders = document.querySelectorAll('.section .section-header');
+      const quickLinks = document.querySelectorAll('.quick-links a');
+
+      if (sectionHeaders.length > 0 || quickLinks.length > 0) {
+        console.log('Setting up standard section toggling and quick links...');
+        
+        // Add click listener to headers (only if they don't have explicit onclick)
+        sectionHeaders.forEach(header => {
+          if (!header.hasAttribute('onclick')) { // Avoid overriding specific page logic
+             header.addEventListener('click', () => toggleSection(header));
+          }
+          
+          // Set initial state for content based on 'expanded' class
+          const content = header.nextElementSibling;
+          if (content && content.classList.contains('section-content')) {
+            if (header.classList.contains('expanded')) {
+              // If initially expanded, set max-height
+              content.style.paddingTop = '1rem'; // Ensure padding is set
+              content.style.paddingBottom = '1.5rem';
+              content.style.maxHeight = content.scrollHeight + "px";
+            } else {
+              // Ensure collapsed sections have 0 max-height and padding
+              content.style.maxHeight = '0px';
+              content.style.paddingTop = '0';
+              content.style.paddingBottom = '0';
+            }
+          }
+        });
+
+        // Add listeners to quick links for smooth scrolling (only if they use href like #section-id)
+        quickLinks.forEach(anchor => {
+            if (anchor.getAttribute('href')?.startsWith('#') && !anchor.hasAttribute('onclick') && !anchor.hasAttribute('data-category')) {
+               anchor.addEventListener('click', scrollToSection);
+            }
+        });
+
+        // Update active link on scroll and initial load (only if using smooth scroll)
+        if (document.querySelector('.quick-links a[href^="#"] S')) { // Check if any scroll links exist
+            let scrollTimeout;
+            window.addEventListener('scroll', () => {
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(updateQuickLinks, 100); // Throttle update checks
+            });
+            updateQuickLinks(); // Set initial active link
+            
+            // Recalculate on resize and load (after images etc.)
+            window.addEventListener('resize', updateQuickLinks);
+            window.addEventListener('load', () => {
+                // Recalculate heights for initially expanded sections after load
+                document.querySelectorAll('.section .section-header.expanded').forEach(header => {
+                   const content = header.nextElementSibling;
+                   if (content && content.classList.contains('section-content')) {
+                       content.style.maxHeight = content.scrollHeight + "px";
+                   }
+                });
+                updateQuickLinks(); // Final check after load
+            });
+        }
+      }
+  } else {
+      console.log('Skipping standard section/quick link setup for page-acns_criteria.');
+  }
 });
 
 // Set up footer controls
@@ -454,4 +520,149 @@ function setupDisclaimerModal() {
       modal: disclaimerModal
     });
   }
-} 
+}
+
+// --- Section and Quick Link Handling ---
+
+/**
+ * Toggles the visibility of a section's content and updates the header class.
+ * Uses max-height for smooth transition.
+ * @param {HTMLElement} headerElement - The header element that was clicked.
+ */
+function toggleSection(headerElement) {
+  if (!headerElement) return;
+  headerElement.classList.toggle('expanded');
+  const content = headerElement.nextElementSibling;
+  if (content && content.classList.contains('section-content')) {
+    if (content.style.maxHeight && content.style.maxHeight !== '0px') {
+      // Collapse: set max-height to 0 after getting current height for transition
+      content.style.maxHeight = content.scrollHeight + "px"; // Ensure transition starts from current height
+      requestAnimationFrame(() => {
+        content.style.maxHeight = '0px';
+        content.style.paddingTop = '0'; // Also transition padding
+        content.style.paddingBottom = '0';
+      });
+    } else {
+      // Expand: set max-height based on scrollHeight
+      content.style.paddingTop = '1rem'; // Set padding before calculating scrollHeight
+      content.style.paddingBottom = '1.5rem';
+      content.style.maxHeight = content.scrollHeight + "px";
+      // Optional: Remove max-height after transition completes
+      content.addEventListener('transitionend', () => {
+        if (headerElement.classList.contains('expanded')) {
+           // content.style.maxHeight = 'none'; // Be careful with this, might cause jumpiness if content changes
+        }
+      }, { once: true });
+    } 
+  }
+  // Avoid calling updateQuickLinks here if it scrolls, causes race condition
+  // Call updateQuickLinks after scrolling finishes in scrollToSection
+}
+
+/**
+ * Updates the active state of quick links based on the currently visible section.
+ */
+function updateQuickLinks() {
+  const quickLinks = document.querySelectorAll('.quick-links a');
+  const sections = document.querySelectorAll('.section');
+  if (quickLinks.length === 0 || sections.length === 0) return; // Only run if elements exist
+
+  let firstVisibleSectionId = null;
+  const headerHeight = document.getElementById('header-container')?.offsetHeight || 60;
+  const scrollOffset = window.pageYOffset + headerHeight + 15; // Offset considers header and some padding
+
+  sections.forEach(section => {
+    const sectionTop = section.offsetTop;
+    const sectionBottom = sectionTop + section.offsetHeight;
+
+    // Check if the top of the section is within the viewport (considering offset)
+    // Or if the section spans across the offset point
+    if (scrollOffset >= sectionTop && scrollOffset < sectionBottom) {
+       firstVisibleSectionId = section.id;
+    }
+    // Fallback for the very first section if near the top
+    else if (!firstVisibleSectionId && scrollOffset < sectionTop && section === sections[0]) {
+        firstVisibleSectionId = section.id;
+    }
+    // Fallback for the last section if scrolled past everything
+    else if (!firstVisibleSectionId && scrollOffset >= sectionBottom && section === sections[sections.length - 1]) {
+         firstVisibleSectionId = section.id;
+    }
+  });
+
+  // If no section found (e.g., all above/below view), default to first/last based on scroll
+  if (!firstVisibleSectionId && sections.length > 0) {
+      if (scrollOffset < sections[0].offsetTop) {
+          firstVisibleSectionId = sections[0].id; // Scrolled above first section
+      } else if (scrollOffset >= sections[sections.length - 1].offsetTop + sections[sections.length - 1].offsetHeight) {
+          firstVisibleSectionId = sections[sections.length - 1].id; // Scrolled below last section
+      }
+  }
+  
+  quickLinks.forEach(link => {
+    const targetId = link.getAttribute('href').substring(1);
+    if (targetId === firstVisibleSectionId) {
+      link.classList.add('active');
+    } else {
+      link.classList.remove('active');
+    }
+  });
+}
+
+/**
+ * Smoothly scrolls to the target section when a quick link is clicked.
+ * @param {Event} event - The click event.
+ */
+function scrollToSection(event) {
+    event.preventDefault();
+    const targetId = event.currentTarget.getAttribute('href');
+    const targetElement = document.querySelector(targetId);
+    if (targetElement) {
+        const headerHeight = document.getElementById('header-container')?.offsetHeight || 60; 
+        const elementPosition = targetElement.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.pageYOffset - headerHeight - 15; 
+  
+        window.scrollTo({
+            top: offsetPosition,
+            behavior: "smooth"
+        });
+
+        const sectionHeader = targetElement.querySelector('.section-header');
+        if (sectionHeader && !sectionHeader.classList.contains('expanded')) {
+             // Expand the section *after* scrolling animation likely starts
+             setTimeout(() => {
+                 toggleSection(sectionHeader);
+                 // Re-check active link *after* expansion finishes transition
+                 const content = sectionHeader.nextElementSibling;
+                 if (content) {
+                    content.addEventListener('transitionend', () => {
+                       updateQuickLinks();
+                    }, { once: true });
+                 } else {
+                    updateQuickLinks(); // Update immediately if no content transition
+                 }
+             }, 350); // Delay should be less than scroll time but enough to start scroll
+        } else {
+            // If already expanded or no header, update links after scroll
+            // Use scrollend event if available, otherwise fallback to timeout
+            let scrollTimeout;
+            const scrollEndHandler = () => {
+                clearTimeout(scrollTimeout);
+                window.removeEventListener('scrollend', scrollEndHandler);
+                updateQuickLinks();
+            };
+
+            if ('onscrollend' in window) {
+                window.addEventListener('scrollend', scrollEndHandler, { once: true });
+            } else {
+                // Fallback timeout if scrollend is not supported
+                window.addEventListener('scroll', () => {
+                    clearTimeout(scrollTimeout);
+                    scrollTimeout = setTimeout(scrollEndHandler, 150); // Adjust timeout as needed
+                });
+            }
+        }
+    }
+}
+
+// --- End Section Handling --- 

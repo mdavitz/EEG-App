@@ -108,7 +108,7 @@
       left: 0;
     }
     
-    /* Modal Styling */
+    /* Modal Styling (Keep if specific to this page or move to components/modals.css) */
     #dev-modal {
       position: fixed;
       top: 0;
@@ -170,96 +170,11 @@
       display: none;
     }
     
-    /* Remove bullet points for lists with class "no-bullets" */
+    /* Remove bullet points for lists with class "no-bullets" (Keep if specific or move to base.css) */
     .no-bullets {
       list-style: none;
       margin: 0;
       padding-left: 0;
-    }
-    
-    /* Section Styling */
-    .section-detail {
-      margin-bottom: 1.5rem;
-    }
-    .section-header {
-      font-size: 1.3rem;
-      font-weight: 600;
-      padding: 1rem 0;
-      cursor: pointer;
-      color: var(--primary-color);
-      transition: color 0.2s ease;
-    }
-    .section-header:hover {
-      color: var(--accent-color);
-    }
-    .section-content {
-      display: none;
-      animation: fadeIn 0.3s ease;
-    }
-    .expand-icon {
-      margin-left: 10px;
-      font-size: 0.7em;
-      transition: transform 0.3s ease;
-    }
-    .expanded .expand-icon {
-      transform: rotate(180deg);
-    }
-    .expanded + .section-content {
-      display: block;
-    }
-    
-    /* Quick links styling */
-    .quick-links {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 12px;
-      margin: 0 auto 1.5rem auto;
-      max-width: 600px;
-      width: 100%;
-    }
-    
-    .quick-links a {
-      display: inline-block;
-      padding: 10px 18px;
-      color: var(--accent-color);
-      text-decoration: none;
-      border-radius: 980px;
-      background-color: rgba(0, 102, 204, 0.1);
-      border: none;
-      transition: background-color 0.3s, transform 0.3s;
-      font-size: 14px;
-      font-weight: 500;
-      text-align: center;
-    }
-    
-    .quick-links a:hover {
-      background-color: rgba(0, 102, 204, 0.2);
-      transform: scale(1.02);
-    }
-    
-    .quick-links a.active {
-      background-color: var(--accent-color);
-      color: white;
-    }
-    
-    body.dark .quick-links a {
-      background-color: rgba(41, 151, 255, 0.15);
-    }
-    
-    body.dark .quick-links a:hover {
-      background-color: rgba(41, 151, 255, 0.25);
-    }
-    
-    body.dark .quick-links a.active {
-      background-color: var(--accent-color);
-      color: white;
-    }
-    
-    @media (max-width: 768px) {
-      .quick-links {
-        grid-template-columns: 1fr;
-        gap: 8px;
-      }
     }
     
     /* Table styling */
