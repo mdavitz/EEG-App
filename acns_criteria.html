@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <!-- Responsive scaling -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ACNS Criteria - EEG Curriculum</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
+  <!-- Main CSS file that imports all modular CSS -->
+  <link rel="stylesheet" href="assets/css/main.css" />
+  
+  <!-- Core Scripts -->
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
+  <script src="assets/js/includes-loader.js" defer></script>
+  <script src="assets/js/universal-search.js" defer></script>
+</head>
+<body>
+  <div id="page-content">
+    <!-- Header -->
+    <div id="header-container"></div>
+
+    <!-- Main content -->
+    <main class="page-acns_criteria">
+      <h2 class="page-title">ACNS Criteria</h2>
+      <div id="acns-criteria" class="info-box">
+        <h3>ACNS Nomenclature Reference Charts</h3>
+        <img src="assets/images/ACNS1.png" alt="ACNS Criteria 1" class="step-image" />
+        <img src="assets/images/ACNS2.png" alt="ACNS Criteria 2" class="step-image" />
+        <img src="assets/images/ACNS3.png" alt="ACNS Criteria 3" class="step-image" />
+        <img src="assets/images/ACNS4.png" alt="ACNS Criteria 4" class="step-image" />
+        <p>
+          <strong>ACNS Standardized Critical Care EEG Terminology</strong><br>
+          A standardized approach to describe EEG patterns in critical care patients.
+          <br><br>
+          <a href="assets/documents/ACNSNomenclature2021_ReferenceChart_2020_0725ForPublicComment.pdf" target="_blank">
+            <i class="fa-solid fa-file-pdf"></i> Download Full Reference PDF
+          </a>
+        </p>
+      </div>
+
+      <!-- New Section for Embedded PowerPoint -->
+      <div id="acns-training-ppt" class="info-box" style="margin-top: 2em;">
+        <h3>ACNS Training Module</h3>
+        <p>View the training presentation below (requires internet connection).</p>
+        <div class="ppt-container" style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; max-width: 100%; background: #f0f0f0; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+          <iframe 
+            src="https://view.officeapps.live.com/op/embed.aspx?src=assets/documents/ACNS_Training_Module_2022-01-01_Combined_FINAL.pptx" 
+            style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" 
+            frameborder="0" 
+            allowfullscreen="true" 
+            allow="autoplay">
+          </iframe>
+        </div>
+        <p style="margin-top: 1em;">
+          <a href="assets/documents/ACNS_Training_Module_2022-01-01_Combined_FINAL.pptx" download>
+            <i class="fa-solid fa-file-powerpoint"></i> Download PowerPoint File
+          </a>
+        </p>
+      </div>
+      <!-- End New Section -->
+
+    </main>
+
+    <!-- Footer -->
+    <div id="footer-container"></div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // Components will be loaded via includes-loader.js
+      console.log('ACNS Criteria page loaded');
+    });
+  </script>
+
+  <!-- Search initialization script -->
+  <script>
+    // Initialize search functionality when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+      const initSearch = function() {
+        if (typeof UniversalSearch !== 'undefined') {
+          console.log('Explicitly initializing search from acns_criteria.html');
+          if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
+            try {
+              // Try to reinitialize first
+              if (typeof UniversalSearch.reinitialize === 'function') {
+                UniversalSearch.reinitialize();
+              } else {
+                UniversalSearch.init();
+              }
+              console.log('Search initialized successfully');
+            } catch(e) {
+              console.error('Error initializing search:', e);
+            }
+          }
+        } else {
+          console.warn('UniversalSearch not available yet, will try again in 300ms');
+          setTimeout(initSearch, 300);
+        }
+      };
+      
+      // Start initialization when document is loaded
+      initSearch();
+      
+      // Also initialize after the header is loaded
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
+    });
+  </script>
+</body>
+</html>

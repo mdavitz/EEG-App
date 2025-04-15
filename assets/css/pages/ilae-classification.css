@@ -1,0 +1,472 @@
+/*-----------------------------------------------
+  ILAE CLASSIFICATION SPECIFIC STYLES
+-----------------------------------------------*/
+
+#ilae-classification-content.ilae-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+#ilae-classification-content .ilae-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+#ilae-classification-content .ilae-card {
+  background: var(--info-bg, #ffffff);
+  padding: 1.2rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+  margin-bottom: 1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid transparent;
+}
+
+#ilae-classification-content .ilae-card:before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 20px;
+  height: 20px;
+  background: var(--accent-color, #0077b6);
+  clip-path: polygon(100% 0, 100% 100%, 0 100%);
+  opacity: 0.8;
+  transition: all 0.3s ease;
+}
+
+#ilae-classification-content .ilae-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  border-color: var(--accent-color, #0077b6);
+}
+
+#ilae-classification-content .ilae-card:hover:before {
+  width: 25px;
+  height: 25px;
+  opacity: 1;
+}
+
+#ilae-classification-content .ilae-card:active {
+  transform: translateY(-2px);
+  transition: transform 0.1s ease;
+}
+
+#ilae-classification-content .ilae-card h3 {
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-weight: 600;
+}
+
+#ilae-classification-content .ilae-card p {
+  color: var(--text-color);
+  margin-bottom: 0;
+  line-height: 1.5;
+}
+
+/* Cross-reference styles */
+#ilae-classification-content .cross-ref {
+  cursor: help;
+  border-bottom: 1px dashed var(--accent-color);
+  position: relative;
+  color: var(--accent-color);
+  font-weight: 500;
+}
+
+#ilae-classification-content .cross-ref .tooltip {
+  visibility: hidden;
+  width: 300px;
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  text-align: left;
+  border-radius: 8px;
+  padding: 12px;
+  position: absolute;
+  z-index: 100;
+  bottom: 125%;
+  left: 50%;
+  margin-left: -150px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid var(--border-color);
+  font-weight: normal;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+#ilae-classification-content .cross-ref:hover .tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ILAE filter styles */
+#ilae-classification-content .filter-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  background-color: var(--info-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+#ilae-classification-content .filter-group {
+  display: flex;
+  align-items: center;
+}
+
+#ilae-classification-content .filter-container label {
+  display: flex;
+  align-items: center;
+  margin-right: 0.75rem;
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+#ilae-classification-content .filter-dropdown {
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+#ilae-classification-content .filter-dropdown:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+#ilae-classification-content .reset-filters {
+  padding: 8px 16px;
+  border-radius: 8px;
+  border: none;
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-weight: 500;
+}
+
+#ilae-classification-content .reset-filters:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+#ilae-classification-content .search-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto 1.5rem auto;
+}
+
+#ilae-classification-content .search-box {
+  width: 100%;
+  max-width: 800px;
+  margin-bottom: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+#ilae-classification-content .search-box input {
+  width: 100%;
+  padding: 12px 15px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  background: white;
+  color: var(--text-color);
+  box-shadow: 0 1px 5px rgba(0,0,0,0.1);
+  transition: all 0.3s ease;
+}
+
+#ilae-classification-content .search-box input:focus {
+  outline: none;
+  border-color: var(--accent-color);
+  box-shadow: 0 1px 8px rgba(0,0,0,0.15);
+}
+
+#ilae-classification-content .no-results {
+  padding: 2rem;
+  text-align: center;
+  background-color: var(--info-bg);
+  border-radius: 8px;
+  margin: 1.5rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+#ilae-classification-content .no-results h3 {
+  color: var(--primary-color);
+  margin-bottom: 1rem;
+}
+
+#ilae-classification-content .no-results p {
+  color: var(--text-color);
+}
+
+/* ILAE modal styles */
+#ilae-classification-content .modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  backdrop-filter: blur(5px);
+}
+
+/* New Copyright-style modal for ILAE */
+.copyright-modal {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(5px);
+}
+
+.copyright-modal-content {
+  background-color: var(--info-bg);
+  margin: 10% auto;
+  padding: 20px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 600px;
+  max-height: 80vh;
+  overflow-y: auto;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+  animation: modalFadeIn 0.3s ease-in-out;
+  position: relative;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; transform: translateY(-20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.copyright-close {
+  color: var(--text-secondary);
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  line-height: 1;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.copyright-close:hover,
+.copyright-close:focus {
+  color: var(--accent-color);
+  text-decoration: none;
+}
+
+/* Original modal content styles modified to work with both modal types */
+#ilae-classification-content .modal-content,
+.copyright-modal-content .modal-content {
+  background: var(--info-bg);
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 800px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+}
+
+#ilae-classification-content .modal-close,
+.copyright-modal-content .modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.5rem;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: var(--text-color);
+  transition: all 0.2s ease;
+}
+
+#ilae-classification-content .modal-close:hover,
+.copyright-modal-content .modal-close:hover {
+  color: var(--accent-color);
+  transform: scale(1.1);
+}
+
+#ilae-classification-content .modal-title,
+.copyright-modal-content .modal-title {
+  font-size: 1.5rem;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+  font-weight: 600;
+}
+
+#ilae-classification-content .modal-overview,
+.copyright-modal-content .modal-overview {
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+  color: var(--text-color);
+}
+
+#ilae-classification-content .modal-eeg,
+.copyright-modal-content .modal-eeg {
+  background-color: var(--info-bg);
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1.5rem;
+  color: var(--text-color);
+  line-height: 1.6;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+}
+
+#ilae-classification-content #pdfLinkContainer,
+.copyright-modal-content #pdfLinkContainer {
+  margin-top: 1.5rem;
+  text-align: center;
+}
+
+#ilae-classification-content #pdfLink,
+.copyright-modal-content #pdfLink {
+  display: inline-block;
+  background-color: var(--accent-color);
+  color: #fff;
+  padding: 10px 20px;
+  text-decoration: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+#ilae-classification-content #pdfLink:hover,
+.copyright-modal-content #pdfLink:hover {
+  background-color: var(--accent-hover);
+  transform: translateY(-1px);
+}
+
+/* Dark mode overrides */
+body.dark #ilae-classification-content .ilae-card {
+  background: var(--card-bg, #222);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+body.dark #ilae-classification-content .ilae-card:hover {
+  border-color: var(--accent-color, #0077b6);
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+}
+
+body.dark #ilae-classification-content .cross-ref {
+  border-bottom: 1px dashed var(--accent-color);
+  color: var(--accent-color);
+}
+
+body.dark #ilae-classification-content .cross-ref .tooltip {
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+body.dark #ilae-classification-content .filter-container {
+  background-color: var(--info-bg);
+}
+
+body.dark #ilae-classification-content .filter-container label {
+  color: var(--text-color);
+}
+
+body.dark #ilae-classification-content .filter-dropdown {
+  background-color: var(--info-bg);
+  color: var(--text-color);
+  border-color: var(--border-color);
+}
+
+body.dark #ilae-classification-content .reset-filters {
+  background-color: var(--accent-color);
+}
+
+body.dark #ilae-classification-content .reset-filters:hover {
+  background-color: var(--accent-hover);
+}
+
+body.dark #ilae-classification-content .no-results {
+  background-color: var(--info-bg);
+}
+
+body.dark #ilae-classification-content .no-results h3 {
+  color: var(--text-color);
+}
+
+body.dark #ilae-classification-content .no-results p {
+  color: var(--text-color);
+}
+
+body.dark #ilae-classification-content .modal-content {
+  background: var(--info-bg);
+}
+
+body.dark #ilae-classification-content .modal-title {
+  color: var(--text-color);
+}
+
+body.dark #ilae-classification-content .modal-overview,
+body.dark #ilae-classification-content .modal-eeg {
+  color: var(--text-color);
+}
+
+body.dark #ilae-classification-content .modal-eeg {
+  background-color: var(--info-bg);
+}
+
+body.dark #ilae-classification-content #pdfLink {
+  background-color: var(--accent-color);
+}
+
+body.dark #ilae-classification-content #pdfLink:hover {
+  background-color: var(--accent-hover);
+}
+
+/* Media query for mobile devices */
+@media (max-width: 768px) {
+  #ilae-classification-content .ilae-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  #ilae-classification-content .filter-container {
+    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  #ilae-classification-content .filter-group {
+    margin-bottom: 0.75rem;
+  }
+  
+  #ilae-classification-content .cross-ref .tooltip {
+    width: 250px;
+    margin-left: -125px;
+  }
+  
+  #ilae-classification-content .modal-content {
+    width: 95%;
+    padding: 1.5rem;
+  }
+} 

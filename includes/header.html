@@ -1,0 +1,174 @@
+<!-- Header Component -->
+<header id="header">
+  <div class="header-inner">
+    <!-- Secret game trigger - hidden except on hover -->
+    <div class="secret-game-container">
+      <button id="secret-game-trigger" class="secret-game-trigger">
+        <span class="game-icon">🎮</span>
+      </button>
+    </div>
+    
+    <!-- Logo -->
+    <img src="assets/images/logo.png" alt="Home" class="logo" onclick="window.location.href='index.html'" />
+
+    <!-- Combined Search & Menu Component (Apple Style) -->
+    <div class="universal-search-menu">
+      <!-- Search Icon that triggers the combined dropdown -->
+      <div class="search-trigger" id="search-trigger">
+        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      </div>
+      
+      <!-- Combined Dropdown Panel -->
+      <div class="search-menu-panel" id="search-menu-panel">
+        <!-- Search Bar Section -->
+        <div class="search-section">
+          <div class="search-wrapper">
+            <i class="fa-solid fa-magnifying-glass search-icon"></i>
+            <input type="text" class="search-input" id="universal-search-input" placeholder="Search..." aria-label="Search the website">
+            <div class="search-clear" id="search-clear">&times;</div>
+          </div>
+          <div class="search-results" id="search-results"></div>
+        </div>
+        
+        <!-- Menu Navigation Links -->
+        <div class="menu-section">
+          <a href="epilepsy_rotation.html">Epilepsy Rotation</a>
+          <a href="seizure_management.html">Seizure Management</a>
+          <a href="ilae_classification.html">ILAE Classification</a>
+          <a href="natus_instructions.html">Natus & Persyst</a>
+          <a href="acns_criteria.html">ACNS Criteria</a>
+          <a href="eeg_atlas.html">EEG Atlas</a>
+          <a href="eeg_waveforms.html">EEG Simulator</a>
+          <a href="eeg_videos.html">EEG Videos</a>
+          <a href="faq.html">Learning Resources</a>
+          <a href="discussion.html">Discussion Forum</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- Fullscreen Search (activated when focusing on small-screen devices) -->
+<div class="search-fullscreen" id="search-fullscreen">
+  <button class="search-close-fullscreen" id="search-close-fullscreen">
+    <i class="fa-solid fa-xmark"></i>
+  </button>
+  <div class="search-fullscreen-input">
+    <i class="fa-solid fa-magnifying-glass search-icon"></i>
+    <input type="text" class="search-input" id="fullscreen-search-input" placeholder="Search..." aria-label="Search the website">
+    <div class="search-clear" id="fullscreen-search-clear">&times;</div>
+  </div>
+  <div class="search-results search-fullscreen-results" id="fullscreen-search-results"></div>
+</div>
+
+<script>
+  // Initialize search and navigation when DOM is fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    // Initialize search on any page that includes the header
+    const initSearch = function() {
+      if (typeof UniversalSearch !== 'undefined') {
+        console.log('Initializing search from header');
+        UniversalSearch.init();
+        
+        // Initialize search trigger and menu panel
+        const searchTrigger = document.getElementById('search-trigger');
+        const searchMenuPanel = document.getElementById('search-menu-panel');
+        const searchInput = document.getElementById('universal-search-input');
+        const searchClear = document.getElementById('search-clear');
+        
+        if (searchTrigger && searchMenuPanel) {
+          // Toggle dropdown when clicking search icon
+          searchTrigger.addEventListener('click', function(event) {
+            event.preventDefault();
+            event.stopPropagation();
+            searchMenuPanel.classList.toggle('active');
+            
+            if (searchMenuPanel.classList.contains('active') && searchInput) {
+              setTimeout(() => {
+                searchInput.focus();
+              }, 100);
+            }
+          });
+          
+          // Close dropdown when clicking outside
+          document.addEventListener('click', function(e) {
+            if (!searchMenuPanel.contains(e.target) && !searchTrigger.contains(e.target)) {
+              searchMenuPanel.classList.remove('active');
+            }
+          });
+          
+          // Handle search input
+          if (searchInput) {
+            searchInput.addEventListener('input', function(event) {
+              if (typeof UniversalSearch !== 'undefined') {
+                UniversalSearch.handleSearchInput(event);
+              }
+            });
+          }
+          
+          // Clear search input
+          if (searchClear) {
+            searchClear.addEventListener('click', function() {
+              if (searchInput) {
+                searchInput.value = '';
+                searchInput.focus();
+                if (typeof UniversalSearch !== 'undefined') {
+                  UniversalSearch.handleSearchInput({target: searchInput});
+                }
+              }
+            });
+          }
+        }
+        
+        // Initialize fullscreen search
+        const fullscreenSearch = document.getElementById('search-fullscreen');
+        const fullscreenSearchInput = document.getElementById('fullscreen-search-input');
+        const fullscreenSearchClear = document.getElementById('fullscreen-search-clear');
+        const fullscreenSearchClose = document.getElementById('search-close-fullscreen');
+        
+        if (fullscreenSearchInput) {
+          // Handle fullscreen search input
+          fullscreenSearchInput.addEventListener('input', function(event) {
+            if (typeof UniversalSearch !== 'undefined') {
+              UniversalSearch.handleSearchInput(event);
+            }
+          });
+          
+          fullscreenSearchInput.addEventListener('focus', function() {
+            fullscreenSearch.classList.add('active');
+            document.body.classList.add('search-fullscreen-active');
+          });
+        }
+        
+        if (fullscreenSearchClose) {
+          fullscreenSearchClose.addEventListener('click', function() {
+            fullscreenSearch.classList.remove('active');
+            document.body.classList.remove('search-fullscreen-active');
+            if (fullscreenSearchInput) {
+              fullscreenSearchInput.value = '';
+              fullscreenSearchInput.blur();
+            }
+          });
+        }
+        
+        if (fullscreenSearchClear) {
+          fullscreenSearchClear.addEventListener('click', function() {
+            if (fullscreenSearchInput) {
+              fullscreenSearchInput.value = '';
+              fullscreenSearchInput.focus();
+              if (typeof UniversalSearch !== 'undefined') {
+                UniversalSearch.handleSearchInput({target: fullscreenSearchInput});
+              }
+            }
+          });
+        }
+      } else {
+        console.log('UniversalSearch not available yet, retrying in 300ms');
+        setTimeout(initSearch, 300);
+      }
+    };
+    
+    // Start initialization
+    initSearch();
+  });
+</script> 

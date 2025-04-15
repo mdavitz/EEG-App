@@ -1,0 +1,170 @@
+/*-----------------------------------------------
+  HOMEPAGE SPECIFIC STYLES
+-----------------------------------------------*/
+
+/* Adjusted for better header/footer space and increased text size */
+.cards-container {
+  max-width: 1200px;
+  margin: 1rem auto 2rem;
+  padding: 0.75rem 1rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  min-height: auto;
+  height: auto;
+}
+
+.cards-container h2 {
+  margin-top: 0;
+  margin-bottom: 1.25rem;
+  font-size: 2rem;
+  text-align: center;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.25rem;
+  margin: 0 auto;
+  max-width: 1200px;
+}
+
+#home-content .card {
+  background-color: var(--info-bg);
+  min-height: 240px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 1.5rem 1.25rem;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+#home-content .card-link {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  text-indent: -9999px;
+  overflow: hidden;
+}
+
+#home-content .card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+}
+
+#home-content .card i {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+  color: var(--accent-color);
+  transition: transform 0.3s ease;
+  display: block;
+  height: 70px;
+  width: 70px;
+  line-height: 70px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 0.5rem;
+}
+
+#home-content .card:hover i {
+  transform: scale(1.1);
+}
+
+#home-content .card h3 {
+  font-size: 1.4rem;
+  margin: 0.25rem 0 0.5rem;
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+#home-content .card p {
+  font-size: 1rem;
+  line-height: 1.4;
+  color: var(--text-secondary);
+  flex: 1;
+  margin-bottom: 0.5rem;
+}
+
+/* Dark mode adjustments */
+body.dark #home-content .card {
+  background-color: var(--info-bg);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+body.dark #home-content .card:hover {
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+}
+
+body.dark #home-content .card h3 {
+  color: var(--text-color);
+}
+
+body.dark #home-content .card i {
+  color: var(--accent-color);
+}
+
+/* Media query for medium screens */
+@media (max-width: 992px) {
+  .cards-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+  }
+  
+  #home-content .card {
+    min-height: 230px;
+  }
+  
+  #home-content .card i {
+    height: 65px;
+    width: 65px;
+    line-height: 65px;
+    margin-bottom: 0.9rem;
+  }
+}
+
+/* Media query for small screens */
+@media (max-width: 768px) {
+  .cards-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .cards-container h2 {
+    font-size: 1.7rem;
+    margin-bottom: 1rem;
+  }
+  
+  #home-content .card {
+    min-height: 220px;
+    padding: 1.25rem 1rem;
+  }
+  
+  #home-content .card i {
+    height: 60px;
+    width: 60px;
+    line-height: 60px;
+    margin-bottom: 0.8rem;
+    font-size: 2.2rem;
+  }
+  
+  #home-content .card h3 {
+    font-size: 1.3rem;
+    margin: 0.2rem 0 0.4rem;
+  }
+  
+  #home-content .card p {
+    font-size: 0.95rem;
+  }
+}
