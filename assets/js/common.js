@@ -104,7 +104,7 @@ document.addEventListener("DOMContentLoaded", () => {
         });
 
         // Update active link on scroll and initial load (only if using smooth scroll)
-        if (document.querySelector('.quick-links a[href^="#"] S')) { // Check if any scroll links exist
+        if (document.querySelector('.quick-links a[href^="#"]')) { // Check if any scroll links exist
             let scrollTimeout;
             window.addEventListener('scroll', () => {
                 clearTimeout(scrollTimeout);

@@ -585,4 +585,22 @@ body.dark #seizure-management .green-button:hover {
 
 #medicationsTableBody tr.card-visible {
   animation: fadeInUp 0.5s ease forwards;
+}
+
+/* Added from base.css - Styles specific to ASM Flowcharts */
+#asm-flowcharts .image-container {
+  padding: 0.5rem;
+}
+
+#asm-flowcharts .responsive-image {
+  max-width: 90%;
+  margin: 1.5rem auto;
+  box-shadow: 0 3px 10px var(--shadow-color);
+}
+
+@media (max-width: 768px) {
+  #asm-flowcharts .responsive-image {
+    max-width: 100%;
+    margin: 1rem auto;
+  }
 } 

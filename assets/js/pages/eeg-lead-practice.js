@@ -4,6 +4,12 @@ document.addEventListener('DOMContentLoaded', function() {
   
   // Initialize lead practice
   init();
+  
+  // Track scroll position
+  window.addEventListener('scroll', function() {
+    documentScrollX = window.scrollX || window.pageXOffset;
+    documentScrollY = window.scrollY || window.pageYOffset;
+  });
 });
 
 /**
@@ -177,6 +183,10 @@ let timerDisplay;
 let randomLeadPrompt;
 let guidedInstructions;
 
+// Initialize global variables to track document scroll
+let documentScrollX = 0;
+let documentScrollY = 0;
+
 function init() {
   // Initialize DOM references
   leadsContainer = document.getElementById('leads-container');
@@ -319,7 +329,7 @@ function initLeadButtons() {
       // Create a visual clone for dragging
       const clone = this.cloneNode(true);
       clone.id = 'dragging-clone';
-      clone.style.position = 'absolute';
+      clone.style.position = 'fixed'; // Use fixed positioning to handle scroll
       clone.style.zIndex = '1000';
       clone.style.opacity = '0.8';
       clone.style.pointerEvents = 'none';
@@ -327,14 +337,15 @@ function initLeadButtons() {
       
       // Store touch start position
       const touch = e.touches[0];
+      const rect = this.getBoundingClientRect();
       initialTouchPos = {
         x: touch.clientX,
         y: touch.clientY,
-        offsetX: touch.clientX - this.getBoundingClientRect().left,
-        offsetY: touch.clientY - this.getBoundingClientRect().top
+        offsetX: touch.clientX - rect.left,
+        offsetY: touch.clientY - rect.top
       };
       
-      // Update clone position
+      // Position the clone correctly initially
       updateClonePosition(touch.clientX, touch.clientY);
       
       e.preventDefault(); // Prevent default touch behavior
@@ -385,6 +396,18 @@ function initLeadButtons() {
       initialTouchPos = null;
     });
     
+    // Handle touch cancel events
+    leadBtn.addEventListener('touchcancel', function(e) {
+      const clone = document.getElementById('dragging-clone');
+      if (clone) {
+        document.body.removeChild(clone);
+      }
+      
+      this.classList.remove('selected');
+      selectedLead = null;
+      initialTouchPos = null;
+    });
+    
     leadsContainer.appendChild(leadBtn);
   });
 }
@@ -392,6 +415,8 @@ function initLeadButtons() {
 function updateClonePosition(x, y) {
   const clone = document.getElementById('dragging-clone');
   if (clone && initialTouchPos) {
+    // Apply the proper offset to make clone follow finger position
+    // Use the position accounting for scroll
     clone.style.left = (x - initialTouchPos.offsetX) + 'px';
     clone.style.top = (y - initialTouchPos.offsetY) + 'px';
   }
@@ -511,6 +536,7 @@ function placeLead(leadName, x, y) {
     leadElement.addEventListener('touchstart', handleLeadTouchStart);
     leadElement.addEventListener('touchmove', handleLeadTouchMove);
     leadElement.addEventListener('touchend', handleLeadTouchEnd);
+    leadElement.addEventListener('touchcancel', handleLeadTouchCancel);
     
     droppedLeadsContainer.appendChild(leadElement);
   }
@@ -552,11 +578,15 @@ function handleLeadTouchStart(e) {
   const leadName = this.getAttribute('data-lead');
   selectedLead = leadName;
   
-  // Store touch start position
+  // Store touch start position and element reference
   const touch = e.touches[0];
+  const rect = this.getBoundingClientRect();
+  
   initialTouchPos = {
     x: touch.clientX,
     y: touch.clientY,
+    offsetX: touch.clientX - rect.left,
+    offsetY: touch.clientY - rect.top,
     element: this
   };
   
@@ -615,6 +645,18 @@ function handleLeadTouchEnd(e) {
   } else {
     // Update position if within head
     placedLeads[leadName] = { x, y };
+  }
+  
+  selectedLead = null;
+  initialTouchPos = null;
+}
+
+// Handle touch cancel event for placed leads
+function handleLeadTouchCancel(e) {
+  if (initialTouchPos && initialTouchPos.element) {
+    // Reset visual properties
+    initialTouchPos.element.style.opacity = '1';
+    initialTouchPos.element.style.zIndex = '5';
   }
   
   selectedLead = null;
@@ -1602,4 +1644,17 @@ function checkGuidedLeadPlacement(leadName) {
   }
   
   return false;
+}
+
+// Helper function to get position accounting for scroll
+function getElementPositionWithScroll(element) {
+  const rect = element.getBoundingClientRect();
+  return {
+    left: rect.left + documentScrollX,
+    top: rect.top + documentScrollY,
+    right: rect.right + documentScrollX,
+    bottom: rect.bottom + documentScrollY,
+    width: rect.width,
+    height: rect.height
+  };
 } 
