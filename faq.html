@@ -51,10 +51,44 @@
       initSearch();
       
       // Also initialize after the header is loaded
-      document.addEventListener('headerLoaded', function() {
-        console.log('Header loaded, reinitializing search');
-        initSearch();
-      });
+      setTimeout(function() {
+        if (document.getElementById('universal-search-input')) {
+          console.log('Search input found, ensuring search is initialized');
+          initSearch();
+          
+          // Fix for search dropdown functionality
+          const searchTrigger = document.getElementById('search-trigger');
+          const searchMenuPanel = document.getElementById('search-menu-panel');
+          const searchInput = document.getElementById('universal-search-input');
+          
+          if (searchTrigger && searchMenuPanel) {
+            searchTrigger.addEventListener('click', function(event) {
+              event.preventDefault();
+              event.stopPropagation();
+              searchMenuPanel.classList.toggle('active');
+              
+              // Focus search when dropdown is opened
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => {
+                  searchInput.focus();
+                  // Ensure search is working when clicked
+                  if (typeof UniversalSearch !== 'undefined' && typeof UniversalSearch.handleSearchInput === 'function') {
+                    UniversalSearch.handleSearchInput({target: searchInput});
+                  }
+                }, 100);
+              }
+            });
+          }
+        }
+      }, 500);
+    });
+    
+    // Also initialize search when window fully loads
+    window.addEventListener('load', function() {
+      if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
+        console.log('Window loaded, initializing search');
+        UniversalSearch.init();
+      }
     });
   </script>
 

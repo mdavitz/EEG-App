@@ -111,12 +111,6 @@ const UniversalSearch = {
         content: "Standardized terminology for EEG monitoring in critical care settings, including criteria for seizures and status epilepticus.",
         url: "acns_criteria.html",
         keywords: ["ACNS", "critical care", "terminology", "EEG", "monitoring"]
-      },
-      {
-        title: "Discussion Forum",
-        content: "Join the conversation about EEG and epilepsy topics, ask questions and share insights.",
-        url: "faq.html",
-        keywords: ["forum", "discussion", "questions", "epilepsy", "EEG"]
       }
     ]
   },

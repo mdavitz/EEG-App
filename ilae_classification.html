@@ -99,12 +99,13 @@
       flex-direction: column;
       max-width: 1440px;
       margin: 0 auto;
+      padding: 0 20px;
     }
     
     .page-title {
       text-align: center;
       font-size: 2.2rem;
-      margin: 1.5rem 0 2rem;
+      margin: 2rem 0;
       color: var(--primary-color);
       position: relative;
       padding-bottom: 12px;
@@ -115,9 +116,9 @@
     .page-title:after {
       content: '';
       position: absolute;
-      width: 120px;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, var(--accent-color), transparent);
+      width: 80px;
+      height: 3px;
+      background: var(--accent-color);
       bottom: 0;
       left: 50%;
       transform: translateX(-50%);
@@ -127,25 +128,23 @@
     /* Intro text styling */
     .intro-text {
       text-align: center;
-      max-width: 900px;
+      max-width: 800px;
       margin: 0 auto 2rem;
       color: var(--text-color);
       line-height: 1.6;
-      font-size: 1.05rem;
-      background: rgba(0,102,204,0.05);
-      padding: 1.5rem;
-      border-radius: 12px;
-      border: 1px solid rgba(0,102,204,0.1);
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
     }
     
     .intro-text p {
-      margin-bottom: 0;
+      margin-bottom: 1rem;
     }
     
     #ilae-classification-content {
       max-width: 1200px;
       margin: 0 auto;
-      padding: 2rem;
+      padding: 1.5rem;
       background: var(--card-bg);
       border-radius: 16px;
       box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
@@ -157,46 +156,52 @@
       flex-direction: column;
       align-items: center;
       margin-bottom: 2rem;
-      padding-bottom: 1.5rem;
+      padding-bottom: 1rem;
       border-bottom: 1px solid var(--border-color);
     }
     
-    /* Search box styling */
     .search-box {
       position: relative;
       width: 100%;
-      max-width: 600px;
+      max-width: 500px;
       margin-bottom: 1.5rem;
+    }
+    
+    .search-icon {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 42px;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+    }
+    
+    .search-icon i {
+      color: var(--accent-color);
+      font-size: 14px;
+      opacity: 0.7;
     }
     
     .search-box input {
       width: 100%;
-      padding: 15px 20px 15px 45px;
-      border-radius: 12px;
-      border: 2px solid var(--border-color);
-      font-size: 1rem;
-      background: var(--info-bg);
+      height: 44px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      font-size: 0.95rem;
+      background-color: var(--info-bg);
       color: var(--text-color);
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      box-shadow: 0 1px 4px rgba(0,0,0,0.05);
       transition: all 0.3s ease;
-    }
-    
-    .search-box:before {
-      content: '\f002';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--accent-color);
-      z-index: 1;
     }
     
     .search-box input:focus {
       outline: none;
       border-color: var(--accent-color);
-      box-shadow: 0 2px 12px rgba(0,102,204,0.15);
+      box-shadow: 0 1px 6px rgba(0,102,204,0.15);
     }
     
     /* Filter container styling */
@@ -204,113 +209,111 @@
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
-      gap: 16px;
+      gap: 12px;
       width: 100%;
-      max-width: 800px;
-      background: var(--info-bg);
-      padding: 1.2rem;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+      max-width: 700px;
+      padding: 1rem;
+      border-radius: 8px;
     }
     
     .filter-group {
       display: flex;
       flex-direction: column;
-      min-width: 200px;
+      min-width: 180px;
       flex: 1;
     }
     
     .filter-container label {
-      margin-bottom: 8px;
+      margin-bottom: 6px;
       font-weight: 500;
       color: var(--primary-color);
-      font-size: 14px;
+      font-size: 13px;
     }
     
     .filter-dropdown {
-      padding: 12px 15px;
-      border-radius: 8px;
+      padding: 8px 12px;
+      border-radius: 6px;
       border: 1px solid var(--border-color);
       background: var(--info-bg);
       color: var(--text-color);
       font-size: 14px;
       appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23555' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: calc(100% - 12px) center;
-      padding-right: 35px;
+      background-position: calc(100% - 10px) center;
+      padding-right: 28px;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
     }
     
     .filter-dropdown:focus {
       outline: none;
       border-color: var(--accent-color);
-      box-shadow: 0 0 0 2px rgba(0,102,204,0.15);
+      box-shadow: 0 0 0 2px rgba(0,102,204,0.1);
     }
     
     .reset-filters {
-      margin-top: 24px;
-      padding: 12px 24px;
+      margin: 1rem auto 0;
+      padding: 8px 16px;
       border: none;
-      border-radius: 30px;
+      border-radius: 6px;
       background: var(--accent-color);
       color: white;
       font-weight: 500;
-      font-size: 14px;
+      font-size: 13px;
       cursor: pointer;
-      transition: all 0.3s ease;
-      align-self: flex-end;
+      transition: all 0.2s ease;
     }
     
     .reset-filters:hover {
       background: var(--accent-hover, #005fa3);
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
     
     /* No results message */
     .no-results {
-      padding: 3rem 2rem;
+      padding: 2rem;
       text-align: center;
       background: var(--info-bg);
-      border-radius: 12px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      margin: 2rem 0;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+      margin: 1.5rem 0;
     }
     
     .no-results h3 {
       color: var(--primary-color);
-      margin-bottom: 1rem;
-      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
     }
     
     .no-results p {
       color: var(--text-color);
-      max-width: 500px;
+      max-width: 400px;
       margin: 0 auto;
+      font-size: 0.95rem;
     }
     
     /* Section headers styling */
     .section-header {
       background: var(--info-bg);
-      padding: 1.2rem 1.5rem;
-      border-radius: 12px;
-      margin: 2rem 0 1.2rem;
-      font-size: 1.3rem;
+      padding: 1rem 1.2rem;
+      border-radius: 8px;
+      margin: 1.5rem 0 1rem;
+      font-size: 1.2rem;
       font-weight: 600;
       color: var(--primary-color);
       cursor: pointer;
       position: relative;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      transition: all 0.3s ease;
+      box-shadow: 0 1px 5px rgba(0,0,0,0.05);
+      transition: all 0.2s ease;
       display: flex;
       justify-content: space-between;
       align-items: center;
     }
     
     .section-header:hover {
-      background: rgba(0,102,204,0.08);
+      background: rgba(0,102,204,0.05);
       color: var(--accent-color);
     }
     
@@ -319,7 +322,7 @@
       font-family: 'Font Awesome 6 Free';
       font-weight: 900;
       font-size: 0.8rem;
-      transition: transform 0.3s ease;
+      transition: transform 0.2s ease;
     }
     
     details[open] > summary.section-header::after {
@@ -327,9 +330,7 @@
     }
     
     details[open] > summary.section-header {
-      margin-bottom: 1.5rem;
-      border-bottom-left-radius: 0;
-      border-bottom-right-radius: 0;
+      margin-bottom: 1rem;
     }
     
     /* Remove default details marker */
@@ -344,74 +345,39 @@
     /* ILAE Cards Grid */
     .ilae-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-      gap: 1.5rem;
-      margin-bottom: 2rem;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 1.2rem;
+      margin-bottom: 1.5rem;
     }
     
     /* ILAE Card styling */
     .ilae-card {
       background: var(--info-bg);
-      border-radius: 12px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+      border-radius: 8px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
       cursor: pointer;
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      transition: all 0.2s ease;
       position: relative;
-      border-left: 4px solid var(--accent-color);
+      border-left: 3px solid var(--accent-color);
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      overflow: hidden;
-    }
-    
-    .ilae-card:after {
-      content: '\f05a';
-      font-family: 'Font Awesome 6 Free';
-      font-weight: 900;
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      font-size: 0.9rem;
-      color: var(--accent-color);
-      opacity: 0.6;
-      transition: all 0.3s ease;
-    }
-    
-    .ilae-card:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 4px;
-      background: linear-gradient(90deg, transparent, var(--accent-color, #0077b6), transparent);
-      opacity: 0;
-      transition: opacity 0.3s ease;
     }
     
     .ilae-card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
-      background: linear-gradient(to bottom, var(--info-bg), rgba(240,248,255,0.5));
-    }
-    
-    .ilae-card:hover:after {
-      opacity: 1;
       transform: translateY(-3px);
-    }
-    
-    .ilae-card:hover:before {
-      opacity: 1;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      background: linear-gradient(to bottom, var(--info-bg), rgba(240,248,255,0.5));
     }
     
     .ilae-card h3 {
       color: var(--primary-color);
-      margin-bottom: 0.8rem;
+      margin-bottom: 0.7rem;
       font-weight: 600;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       position: relative;
-      padding-bottom: 8px;
+      padding-bottom: 6px;
     }
     
     .ilae-card h3:after {
@@ -419,17 +385,17 @@
       position: absolute;
       bottom: 0;
       left: 0;
-      width: 50px;
+      width: 40px;
       height: 2px;
-      background: var(--accent-color, #0077b6);
+      background: var(--accent-color);
       opacity: 0.7;
     }
     
     .ilae-card p {
       color: var(--text-color);
-      line-height: 1.6;
+      line-height: 1.5;
       margin-bottom: 0;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
     }
 
     /* Cross Reference Styling */
@@ -438,35 +404,34 @@
       border-bottom: 1px dotted var(--accent-color);
       position: relative;
       cursor: help;
-      font-weight: 500;
     }
     
     .cross-ref .tooltip {
       visibility: hidden;
-      width: 280px;
+      width: 220px;
       background: var(--info-bg);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.1);
       color: var(--text-color);
       text-align: left;
-      padding: 1rem;
-      border-radius: 8px;
+      padding: 0.8rem;
+      border-radius: 6px;
       position: absolute;
       z-index: 100;
       bottom: 125%;
       left: 50%;
-      margin-left: -140px;
+      margin-left: -110px;
       opacity: 0;
-      transition: all 0.3s ease;
+      transition: all 0.2s ease;
       font-weight: normal;
-      font-size: 0.9rem;
-      line-height: 1.5;
+      font-size: 0.85rem;
+      line-height: 1.4;
       pointer-events: none;
     }
     
     .cross-ref:hover .tooltip {
       visibility: visible;
       opacity: 1;
-      transform: translateY(-5px);
+      transform: translateY(-3px);
     }
     
     /* Modal Styling */
@@ -957,65 +922,35 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      padding: 0.8rem 1.5rem;
-      background: linear-gradient(145deg, #0066cc, #0052a3);
+      gap: 8px;
+      margin: 1rem auto 0;
+      padding: 8px 16px;
+      background-color: var(--accent-color);
       color: white;
-      border-radius: 30px;
+      border-radius: 6px;
       text-decoration: none;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 12px rgba(0, 102, 204, 0.2);
-      max-width: 320px;
-      width: auto;
-      gap: 10px;
-      position: relative;
-      overflow: hidden;
-    }
-    
-    .ilae-resource-button:before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-      border-radius: 50px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      transition: all 0.2s ease;
+      width: fit-content;
     }
     
     .ilae-resource-button:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 15px 30px rgba(0, 102, 204, 0.3);
-      background: linear-gradient(145deg, #0077e6, #0066cc);
-    }
-    
-    .ilae-resource-button:active {
+      background-color: var(--accent-hover, #005fa3);
       transform: translateY(-2px);
-      box-shadow: 0 8px 15px rgba(0, 102, 204, 0.3);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+      color: white;
     }
     
-    .ilae-button-logo {
-      width: 30px;
-      height: 30px;
-      background: white;
-      padding: 3px;
-      border-radius: 6px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      display: flex;
-      align-items: center;
-      justify-content: center;
+    .ilae-resource-button i {
+      font-size: 14px;
     }
     
-    .ilae-button-text {
-      font-size: 0.95rem;
-      font-weight: 600;
-      text-align: center;
-    }
-    
-    .ilae-button-description {
-      margin-top: 1rem;
-      color: var(--text-color);
-      font-size: 0.95rem;
-      opacity: 0.8;
+    .ilae-resource-button .fa-external-link-alt {
+      font-size: 10px;
+      opacity: 0.7;
+      margin-left: 4px;
     }
     
     /* Dark mode support */
@@ -1054,6 +989,173 @@
         margin-top: 0.7rem;
       }
     }
+
+    /* Color coding for ILAE cards based on seizure type */
+    .ilae-card {
+      background: var(--info-bg);
+      border-radius: 8px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      border-left: 3px solid var(--accent-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    
+    /* Seizure type color indicators */
+    .ilae-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      right: 0;
+      width: 30px;
+      height: 8px;
+      border-radius: 0 8px 0 8px;
+      z-index: 1; /* Ensure visibility */
+    }
+    
+    .ilae-card[data-type="focal"]::before {
+      background-color: #3498db !important; /* Blue for focal - using !important to override any conflicts */
+    }
+    
+    .ilae-card[data-type="generalized"]::before {
+      background-color: #e74c3c !important; /* Red for generalized */
+    }
+    
+    .ilae-card[data-type="combined"]::before {
+      background-color: #9b59b6 !important; /* Purple for combined/mixed */
+    }
+    
+    /* Age indicator dot */
+    .ilae-card::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 35px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      z-index: 1; /* Ensure visibility */
+    }
+    
+    .ilae-card[data-age="neonatal"]::after {
+      background-color: #f1c40f !important; /* Yellow for neonatal */
+    }
+    
+    .ilae-card[data-age="infant"]::after {
+      background-color: #2ecc71 !important; /* Green for infant */
+    }
+    
+    .ilae-card[data-age="childhood"]::after {
+      background-color: #f39c12 !important; /* Orange for childhood */
+    }
+    
+    .ilae-card[data-age="adolescent"]::after {
+      background-color: #1abc9c !important; /* Teal for adolescent */
+    }
+    
+    .ilae-card[data-age="variable"]::after {
+      background-color: #95a5a6 !important; /* Gray for variable age */
+    }
+    
+    /* Color legend for the cards */
+    .color-legend {
+      display: flex;
+      justify-content: center;
+      padding: 8px 15px;
+      margin: 0 auto 1.5rem;
+      background: var(--info-bg);
+      border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      max-width: 900px;
+      background-color: rgba(240, 240, 240, 0.4);
+      border: 1px solid rgba(0,0,0,0.05);
+    }
+    
+    .legend-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+    }
+    
+    .legend-subtitle {
+      font-weight: 600;
+      color: var(--primary-color);
+      font-size: 0.85rem;
+      margin-bottom: 5px;
+    }
+    
+    .legend-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      font-size: 0.75rem;
+      white-space: nowrap;
+    }
+    
+    .legend-separator {
+      color: #ccc;
+      margin: 0 4px;
+    }
+    
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      margin-right: 4px;
+      border-radius: 2px;
+    }
+    
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      margin-right: 4px;
+      border-radius: 50%;
+    }
+    
+    /* Dark mode adjustments */
+    body.dark .color-legend {
+      background-color: rgba(50, 50, 50, 0.3);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    
+    @media (max-width: 768px) {
+      .legend-row {
+        flex-direction: column;
+        align-items: flex-start;
+        padding-left: 20px;
+      }
+      
+      .legend-separator {
+        display: none;
+      }
+      
+      .legend-subtitle {
+        align-self: flex-start;
+        padding-left: 20px;
+      }
+    }
+
+    /* Color legend styling */
+    .legend-focal { background: #3498db; }
+    .legend-generalized { background: #e74c3c; }
+    .legend-combined { background: #9b59b6; }
+
+    .legend-neonatal { background: #f1c40f; }
+    .legend-infant { background: #2ecc71; }
+    .legend-childhood { background: #f39c12; }
+    .legend-adolescent { background: #1abc9c; }
+    .legend-variable { background: #95a5a6; }
   </style>
 </head>
 <body>
@@ -1067,7 +1169,7 @@
       <div id="ilae-classification-content" class="ilae-container">
         <!-- Search and filter section -->
         <div class="search-container">
-          <!-- Search bar with icon -->
+          <!-- Search bar -->
           <div class="search-box">
             <input type="text" id="searchBar" placeholder="Search epilepsy syndromes..." />
           </div>
@@ -1098,19 +1200,32 @@
           </div>
         </div>
         
+        <!-- Add the color legend after the intro text -->
+        <div class="color-legend">
+          <div class="legend-group">
+            <div class="legend-subtitle">Color Code: </div>
+            <div class="legend-row">
+              <div class="legend-item"><span class="legend-color legend-focal"></span>Focal</div>
+              <div class="legend-item"><span class="legend-color legend-generalized"></span>Generalized</div>
+              <div class="legend-item"><span class="legend-color legend-combined"></span>Combined</div>
+              <div class="legend-separator">|</div>
+              <div class="legend-item"><span class="legend-dot legend-neonatal"></span>Neonatal</div>
+              <div class="legend-item"><span class="legend-dot legend-infant"></span>Infant</div>
+              <div class="legend-item"><span class="legend-dot legend-childhood"></span>Childhood</div>
+              <div class="legend-item"><span class="legend-dot legend-adolescent"></span>Adolescent</div>
+              <div class="legend-item"><span class="legend-dot legend-variable"></span>Variable Age</div>
+            </div>
+          </div>
+        </div>
+        
         <!-- Introduction text with embedded button -->
         <div class="intro-text">
           <p>The ILAE Classification provides a framework for classifying seizures, epilepsies, and epilepsy syndromes. This page presents an overview of these classifications to help with the understanding and diagnosis of epilepsy.</p>
-          <p style="margin-top: 12px;">For complete classification details, visit the official ILAE resource:</p>
-          <div style="text-align: center; margin: 15px 0 5px;">
-            <a href="https://www.epilepsydiagnosis.org" target="_blank" class="ilae-resource-button" style="display: inline-flex;">
-              <span class="ilae-button-logo">
-                <i class="fas fa-brain" style="color: #0066cc; font-size: 16px;"></i>
-              </span>
-              <span class="ilae-button-text">Official ILAE Classification</span>
-              <i class="fas fa-external-link-alt" style="font-size: 12px;"></i>
-            </a>
-          </div>
+          <a href="https://www.epilepsydiagnosis.org" target="_blank" class="ilae-resource-button">
+            <i class="fas fa-brain"></i>
+            <span>Visit Official ILAE Classification Website</span>
+            <i class="fas fa-external-link-alt"></i>
+          </a>
         </div>
     
         <!-- No Results Message -->

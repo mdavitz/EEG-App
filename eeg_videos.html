@@ -492,6 +492,40 @@
 
   <!-- CAT OVERLAY SCRIPT -->
   <script>
+    // Define local cat GIFs - these need to be added to the images/cats folder
+    const localCatGifs = [
+      "assets/images/cats/cat1.gif",
+      "assets/images/cats/cat2.gif", 
+      "assets/images/cats/cat3.gif",
+      "assets/images/cats/cat4.gif",
+      "assets/images/cats/cat5.gif",
+      "assets/images/cats/cat6.gif",
+      "assets/images/cats/cat7.gif",
+      "assets/images/cats/cat8.gif",
+      "assets/images/cats/cat9.gif",
+      "assets/images/cats/cat10.gif",
+      "assets/images/cats/cat11.gif",
+      "assets/images/cats/cat12.gif",
+      "assets/images/cats/cat13.gif",
+      "assets/images/cats/cat14.gif",
+      "assets/images/cats/cat15.gif"
+    ];
+    
+    // Preload cat images for instant display
+    const preloadedCats = [];
+    
+    // Preload images in the background
+    function preloadCatImages() {
+      localCatGifs.forEach(src => {
+        const img = new Image();
+        img.src = src;
+        preloadedCats.push(img);
+      });
+    }
+    
+    // Start preloading images as soon as possible
+    preloadCatImages();
+    
     function showKittenOverlay() {
       // Remove any existing kitten overlays first
       const existingOverlays = document.querySelectorAll('.kitten-overlay');
@@ -512,50 +546,51 @@
       overlay.style.zIndex = "9999";
       overlay.style.flexDirection = "column";
       
-      // Add a loading message
-      const loadingText = document.createElement("p");
-      loadingText.textContent = "Loading a celebratory kitten...";
-      loadingText.style.color = "white";
-      loadingText.style.fontSize = "18px";
-      loadingText.style.marginBottom = "20px";
-      overlay.appendChild(loadingText);
-      
       // Add click event to close
       overlay.addEventListener("click", () => overlay.remove());
       
-      // Add to document
+      // Add to document immediately
       document.body.appendChild(overlay);
       
-      // Create and add the cat image with a random parameter to avoid caching
-      const randomParam = Date.now();
+      // Create the cat image element
       const catImg = document.createElement("img");
-      catImg.src = `https://cataas.com/cat/gif?${randomParam}`;
+      
+      // Select a random local cat GIF
+      const randomIndex = Math.floor(Math.random() * localCatGifs.length);
+      const selectedCat = localCatGifs[randomIndex];
+      
       catImg.alt = "Kitten Celebration!";
       catImg.style.maxWidth = "90%";
       catImg.style.maxHeight = "70%";
       catImg.style.borderRadius = "8px";
       catImg.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.3)";
       
-      // Add loading event and error handling
-      catImg.onload = function() {
-        // Remove loading text once image is loaded
-        loadingText.remove();
-        overlay.appendChild(catImg);
-      };
+      // Add the image to the overlay
+      overlay.appendChild(catImg);
       
+      // Set source after adding to DOM (prevents flicker)
+      catImg.src = selectedCat;
+      
+      // Fallback for image load errors
       catImg.onerror = function() {
-        // Use a fallback image if the cat API fails
-        loadingText.textContent = "Meow! Celebration!";
-        catImg.src = "https://media.giphy.com/media/BzyTuYCmvSORqs1ABM/giphy.gif";
-        overlay.appendChild(catImg);
+        // Use a simple embedded base64 cat GIF as ultimate fallback
+        catImg.src = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+        
+        // Add a text message instead
+        const textNode = document.createElement("p");
+        textNode.textContent = "Meow! Celebration!";
+        textNode.style.color = "white";
+        textNode.style.fontSize = "24px";
+        textNode.style.fontWeight = "bold";
+        overlay.appendChild(textNode);
       };
       
-      // Set a timeout to remove the overlay after 5 seconds
+      // Set a timeout to remove the overlay after 3 seconds (reduced from 5)
       setTimeout(() => {
         if (document.body.contains(overlay)) {
           overlay.remove();
         }
-      }, 5000);
+      }, 3000);
     }
   </script>
 

@@ -34,13 +34,23 @@
 }
 
 /* Search icon */
-.search-icon {
+.search-icon-container {
   position: absolute;
   left: 10px;
   top: 50%;
   transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none; /* Allow clicks to pass through to the input */
+}
+
+.search-icon {
   color: #8E8E93;
   font-size: 14px;
+  pointer-events: none; /* Ensure icon doesn't capture clicks */
 }
 
 /* Clear button */
