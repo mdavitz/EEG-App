@@ -1131,9 +1131,11 @@
     
     @media (max-width: 768px) {
       .legend-row {
-        flex-direction: column;
-        align-items: flex-start;
-        padding-left: 20px;
+        flex-direction: row;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding-left: 0;
+        gap: 8px;
       }
       
       .legend-separator {
@@ -1141,8 +1143,9 @@
       }
       
       .legend-subtitle {
-        align-self: flex-start;
-        padding-left: 20px;
+        align-self: center;
+        padding-left: 0;
+        margin-bottom: 8px;
       }
     }
 
@@ -1156,6 +1159,38 @@
     .legend-childhood { background: #f39c12; }
     .legend-adolescent { background: #1abc9c; }
     .legend-variable { background: #95a5a6; }
+    
+    /* Two‑column layout: sidebar and main content */
+    .ilae-layout {
+      display: grid;
+      grid-template-columns: 300px 1fr;
+      gap: 1.5rem;
+    }
+    
+    /* Make the sidebar sticky and scrollable */
+    .ilae-sidebar {
+      position: sticky;
+      top: 2rem;
+      align-self: start;
+      max-height: calc(100vh - 4rem);
+      overflow-y: auto;
+      padding-right: 1rem;
+    }
+    
+    /* Responsive: single column on smaller screens */
+    @media (max-width: 992px) {
+      .ilae-layout {
+        grid-template-columns: 1fr;
+      }
+      .ilae-sidebar {
+        position: relative;
+        top: auto;
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
+        margin-bottom: 1.5rem;
+      }
+    }
   </style>
 </head>
 <body>
@@ -1166,8 +1201,7 @@
     <!-- Main content -->
     <main class="page-ilae_classification">
       <h2 class="page-title">ILAE Classification of the Epilepsies</h2>
-      <div id="ilae-classification-content" class="ilae-container">
-        <div class="ilae-layout">
+      <div id="ilae-classification-content" class="ilae-container ilae-layout">
         <!-- Search and filter section -->
         <aside class="ilae-sidebar">
           <div class="search-container">
@@ -1203,540 +1237,540 @@
           </div>
         </aside>
         
-        <!-- Add the color legend after the intro text -->
-        <div class="color-legend">
-          <div class="legend-group">
-            <div class="legend-subtitle">Color Code: </div>
-            <div class="legend-row">
-              <div class="legend-item"><span class="legend-color legend-focal"></span>Focal</div>
-              <div class="legend-item"><span class="legend-color legend-generalized"></span>Generalized</div>
-              <div class="legend-item"><span class="legend-color legend-combined"></span>Combined</div>
-              <div class="legend-separator">|</div>
-              <div class="legend-item"><span class="legend-dot legend-neonatal"></span>Neonatal</div>
-              <div class="legend-item"><span class="legend-dot legend-infant"></span>Infant</div>
-              <div class="legend-item"><span class="legend-dot legend-childhood"></span>Childhood</div>
-              <div class="legend-item"><span class="legend-dot legend-adolescent"></span>Adolescent</div>
-              <div class="legend-item"><span class="legend-dot legend-variable"></span>Variable Age</div>
+        <div class="ilae-main-content">
+          <!-- Add the color legend at the top of the main content -->
+          <div class="color-legend">
+            <div class="legend-group">
+              <div class="legend-subtitle">Color Code: </div>
+              <div class="legend-row">
+                <div class="legend-item"><span class="legend-color legend-focal"></span>Focal</div>
+                <div class="legend-item"><span class="legend-color legend-generalized"></span>Generalized</div>
+                <div class="legend-item"><span class="legend-color legend-combined"></span>Combined</div>
+                <div class="legend-separator">|</div>
+                <div class="legend-item"><span class="legend-dot legend-neonatal"></span>Neonatal</div>
+                <div class="legend-item"><span class="legend-dot legend-infant"></span>Infant</div>
+                <div class="legend-item"><span class="legend-dot legend-childhood"></span>Childhood</div>
+                <div class="legend-item"><span class="legend-dot legend-adolescent"></span>Adolescent</div>
+                <div class="legend-item"><span class="legend-dot legend-variable"></span>Variable Age</div>
+              </div>
             </div>
           </div>
+          
+          <!-- Introduction text with embedded button -->
+          <div class="intro-text">
+            <p>The ILAE Classification provides a framework for classifying seizures, epilepsies, and epilepsy syndromes. This page presents an overview of these classifications to help with the understanding and diagnosis of epilepsy.</p>
+            <a href="https://www.epilepsydiagnosis.org" target="_blank" class="ilae-resource-button">
+              <i class="fas fa-brain"></i>
+              <span>Visit Official ILAE Classification Website</span>
+              <i class="fas fa-external-link-alt"></i>
+            </a>
+          </div>
+    
+          <!-- No Results Message -->
+          <div id="no-results" class="no-results" style="display: none;">
+            <h3>No matching epilepsy syndromes found</h3>
+            <p>Try adjusting your filter criteria or click "Reset Filters" to show all syndromes.</p>
+          </div>
+          
+          <!-- Content Container -->
+          <section class="ilae-content">
+          <div id="contentContainer">
+            <!-- Section 1: Neonates and Infants -->
+            <details open>
+              <summary class="section-header">Epilepsy Syndromes with Onset in Neonates and Infants</summary>
+              <div class="ilae-grid">
+                <!-- Card: Self‑Limited Neonatal Epilepsy (SeLNE) -->
+                <div class="ilae-card"
+                     data-title="Self‑Limited Neonatal Epilepsy (SeLNE)"
+                     data-summary="Focal seizures typically starting between days 2 and 7 of life with normal development between events. Most common genetic cause is KCNQ2 mutations."
+                     data-eeg="Interictal EEG may show mild background slowing with occasional focal discharges. Ictal EEG shows focal sharp waves or spikes predominantly in the central and temporal regions."
+                     data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=9"
+                     data-age="neonatal"
+                     data-type="focal">
+                  <h3>Self‑Limited Neonatal Epilepsy (SeLNE)</h3>
+                  <p>Focal seizures starting between days 2 and 7 with normal development. Associated with <span class="cross-ref">KCNQ2<span class="tooltip">KCNQ2 mutations affect potassium channels and are the most common cause of self-limited neonatal epilepsy. Most cases follow autosomal dominant inheritance.</span></span> mutations.</p>
+                </div>
+                <!-- Card: Infantile Spasms -->
+                <div class="ilae-card"
+                     data-title="Infantile Spasms"
+                     data-summary="Characterized by clusters of epileptic spasms, a chaotic hypsarrhythmic EEG pattern, and developmental regression. Peak onset is 4-7 months of age."
+                     data-eeg="EEG typically shows chaotic, high‐amplitude hypsarrhythmia with multifocal spikes, polyspikes, and slow waves. During spasms, there is often an electrodecremental response."
+                     data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=22"
+                     data-age="infant"
+                     data-type="generalized">
+                  <h3>Infantile Spasms</h3>
+                  <p>Clusters of spasms with chaotic EEG and developmental regression. Peak onset 4-7 months.</p>
+                </div>
+                <!-- Card: Early Infantile Epileptic Encephalopathy (EIEE) -->
+                <div class="ilae-card"
+                     data-title="Early Infantile Epileptic Encephalopathy (EIEE)"
+                     data-summary="Also known as Ohtahara syndrome, EIEE presents with severe neonatal encephalopathy, tonic seizures, and a suppression-burst EEG pattern. Onset is typically within the first 10 days of life."
+                     data-eeg="EEG demonstrates a characteristic suppression-burst pattern in both waking and sleeping states, consisting of high-voltage bursts alternating with nearly flat suppression phases at regular intervals."
+                     data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=16"
+                     data-age="neonatal"
+                     data-type="generalized">
+                  <h3>Early Infantile Epileptic Encephalopathy (EIEE)</h3>
+                  <p>Severe neonatal encephalopathy with tonic seizures and suppression-burst on EEG. Also known as <span class="cross-ref">Ohtahara syndrome<span class="tooltip">Named after Dr. Shunsuke Ohtahara who first described it in 1976. Often evolves into West syndrome (infantile spasms) after 3-6 months.</span></span>.</p>
+                </div>
+                <!-- Card: Epilepsy of Infancy with Migrating Focal Seizures (EIMFS) -->
+                <div class="ilae-card"
+                     data-title="Epilepsy of Infancy with Migrating Focal Seizures (EIMFS)"
+                     data-summary="Rare syndrome with multifocal seizures that migrate between brain regions; most common genetic causes include KCNT1 mutations. Onset typically before 6 months of age with poor prognosis."
+                     data-eeg="EEG shows a unique pattern of focal seizures that shift from one hemisphere to another during the same recording. Characteristic 'migration' of ictal foci is pathognomonic."
+                     data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=20"
+                     data-age="infant"
+                     data-type="focal">
+                  <h3>Epilepsy of Infancy with Migrating Focal Seizures (EIMFS)</h3>
+                  <p>Multifocal, migrating focal seizures with onset before 6 months. Associated with <span class="cross-ref">KCNT1<span class="tooltip">KCNT1 encodes a sodium-activated potassium channel. Mutations lead to gain of function and increased excitability. Other genes involved include SCN1A, SCN2A, and KCNQ2.</span></span> mutations.</p>
+                </div>
+                <!-- Added Card: Dravet Syndrome -->
+                <div class="ilae-card"
+                     data-title="Dravet Syndrome"
+                     data-summary="Previously known as Severe Myoclonic Epilepsy of Infancy (SMEI). Characterized by prolonged, fever-sensitive seizures in the first year, followed by multiple seizure types. Associated with SCN1A mutations in 80% of cases."
+                     data-eeg="Early EEG may be normal, but later shows generalized spike and polyspike-wave discharges, photosensitivity, and focal/multifocal abnormalities."
+                     data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=25"
+                     data-age="infant"
+                     data-type="combined">
+                  <h3>Dravet Syndrome</h3>
+                  <p>Begins with prolonged, often fever-triggered seizures in the first year. Associated with <span class="cross-ref">SCN1A<span class="tooltip">SCN1A gene provides instructions for making sodium channel subunits. Mutations lead to impaired function of inhibitory interneurons, causing hyperexcitability. 90% of mutations occur de novo.</span></span> mutations (80% of cases).</p>
+                </div>
+              </div>
+            </details>
+            
+            <!-- Section 2: Self‑Limited Focal Epilepsies of Childhood -->
+            <details open>
+              <summary class="section-header">Self‑Limited Focal Epilepsies of Childhood</summary>
+              <div class="ilae-grid">
+                <!-- Card: Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS) -->
+                <div class="ilae-card"
+                     data-title="Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)"
+                     data-summary="Formerly called Benign Epilepsy with Centrotemporal Spikes (BECTS) or Rolandic Epilepsy. Focal seizures with centrotemporal semiology, typically occurring during sleep. Remission is expected by adolescence."
+                     data-eeg="EEG shows high‐amplitude centrotemporal sharp‐and‐slow wave complexes on a normal background, enhanced during drowsiness and sleep."
+                     data-pdf="assets/documents/onset-in-childhood2.pdf#page=6"
+                     data-age="childhood"
+                     data-type="focal">
+                  <h3>Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)</h3>
+                  <p>Focal centrotemporal seizures during sleep with remission by adolescence. Formerly called <span class="cross-ref">BECTS<span class="tooltip">Benign Epilepsy with Centrotemporal Spikes (BECTS) or Rolandic Epilepsy. Name changed to Self-Limited Epilepsy with Centrotemporal Spikes in the 2017 ILAE classification to avoid the term "benign" as cognitive and behavioral issues can occur.</span></span>.</p>
+                </div>
+                <!-- Card: Self-­ limited epilepsy with autonomic seizures (SeLEAS) -->
+                <div class="ilae-card"
+                     data-title="Self-­Limited epilepsy with autonomic seizures (SeLEAS)"
+                     data-summary="Formerly known as Panayiotopoulos syndrome or early onset benign occipital epilepsy. Characterized by focal autonomic seizures that are often prolonged, with peak onset at 3-6 years. Excellent prognosis with spontaneous resolution."
+                     data-eeg="EEG shows high-­amplitude (>200 μV) focal spikes with variable localization, predominantly in the posterior regions, activated by sleep."
+                     data-pdf="assets/documents/onset-in-childhood2.pdf#page=10"
+                     data-age="childhood"
+                     data-type="focal">
+                  <h3>Self-­Limited Epilepsy with Autonomic Seizures (SeLEAS)</h3>
+                  <p>Onset in early childhood of focal autonomic seizures that are often prolonged. Formerly known as <span class="cross-ref">Panayiotopoulos syndrome<span class="tooltip">Named after Dr. Chrysostomos P. Panayiotopoulos. Key features include ictal vomiting, pallor, and eye deviation. Despite often prolonged seizures (>30 minutes in 40% of cases), prognosis is excellent.</span></span>.</p>
+                </div>
+                <!-- Card: Childhood Occipital Visual Epilepsy (COVE) -->
+                <div class="ilae-card"
+                     data-title="Childhood Occipital Visual Epilepsy (COVE)"
+                     data-summary="Formerly known as Gastaut type of childhood occipital epilepsy. Characterized by focal visual seizures with occipital EEG abnormalities, often accompanied by visual auras (elementary visual hallucinations), headache, and ictal blindness."
+                     data-eeg="EEG shows interictal occipital spikes with normal background, especially during sleep. Ictal EEG demonstrates occipital onset with fast rhythmic activity."
+                     data-pdf="assets/documents/onset-in-childhood2.pdf#page=12"
+                     data-age="childhood"
+                     data-type="focal">
+                  <h3>Childhood Occipital Visual Epilepsy (COVE)</h3>
+                  <p>Focal visual seizures with occipital EEG findings and favorable prognosis. Formerly called <span class="cross-ref">Gastaut type<span class="tooltip">Named after Henri Gastaut. Distinguished from migraine by brief duration of visual symptoms (seconds to minutes), stereotypical appearance, and potential evolution to other seizure types.</span></span> of childhood occipital epilepsy.</p>
+                </div>
+                <!-- Card: Photosensitive Occipital Lobe Epilepsy (POLE) -->
+                <div class="ilae-card"
+                     data-title="Photosensitive Occipital Lobe Epilepsy (POLE)"
+                     data-summary="Triggered by photic stimulation, presenting with focal visual seizures; strong female predominance noted. May evolve from visual symptoms to complex partial or generalized tonic-clonic seizures."
+                     data-eeg="EEG shows occipital spike‑and‑wave discharges enhanced by eye closure and photic stimulation. Photosensitivity is the hallmark feature."
+                     data-pdf="assets/documents/onset-in-childhood2.pdf#page=14"
+                     data-age="childhood"
+                     data-type="focal">
+                  <h3>Photosensitive Occipital Lobe Epilepsy (POLE)</h3>
+                  <p>Focal visual seizures triggered by light with characteristic occipital EEG patterns. Strong <span class="cross-ref">female predominance<span class="tooltip">Female predominance is a common feature of photosensitive epilepsies, possibly related to hormonal influences on neural excitability.</span></span>.</p>
+                </div>
+              </div>
+            </details>
+      
+            <!-- Section 3: Generalized Epilepsies of Childhood -->
+            <details open>
+              <summary class="section-header">Generalized Epilepsies of Childhood</summary>
+              <div class="ilae-grid">
+                <!-- Card: Childhood Absence Epilepsy (CAE) -->
+                <div class="ilae-card"
+                     data-title="Childhood Absence Epilepsy (CAE)"
+                     data-summary="Characterized by brief impaired awareness episodes with a regular 3 Hz spike‑and‑wave pattern on EEG. Typical onset between 4-10 years with high frequency of absences (many per day)."
+                     data-eeg="EEG displays a consistent 3 Hz spike‑and‑wave discharge on a normal background, bilaterally synchronous and symmetrical."
+                     data-pdf="assets/documents/idiopathic-generalized2.pdf#page=8"
+                     data-age="childhood"
+                     data-type="generalized">
+                  <h3>Childhood Absence Epilepsy (CAE)</h3>
+                  <p>Brief staring spells with classic 3 Hz spike‑and‑wave EEG activity. Peak onset 5-7 years with <span class="cross-ref">multiple daily episodes<span class="tooltip">Children may have dozens to hundreds of absence seizures per day, each lasting 5-30 seconds. Often misinterpreted as daydreaming or inattention. Can be provoked by hyperventilation in about 90% of patients.</span></span>.</p>
+                </div>
+                <!-- Card: Epilepsy with eyelid myoclonia (EEM) -->
+                <div class="ilae-card"
+                     data-title="Epilepsy with eyelid myoclonia (EEM)"
+                     data-summary="Also known as Jeavons syndrome. A triad of frequent eyelid myoclonia, with or without absences, induced by eye closure and photic stimulation. Eyelid myoclonia is often most prominent upon awakening."
+                     data-eeg="Eye closure and intermittent photic stimulation elicits fast (3‑6 Hz) generalized polyspikes or polyspike-and-wave complexes."
+                     data-pdf="assets/documents/onset-in-childhood2.pdf#page=17"
+                     data-age="childhood"
+                     data-type="generalized">
+                  <h3>Epilepsy with Eyelid Myoclonia (EEM)</h3>
+                  <p>Eyelid myoclonia, with or without absences, induced by eye closure and photic stimulation. Also called <span class="cross-ref">Jeavons syndrome<span class="tooltip">Named after Peter Jeavons who first described it in 1977. Features the triad of eyelid myoclonia with or without absences, eye-closure sensitivity, and photosensitivity. Often resistant to medications.</span></span>.</p>
+                </div>
+                <!-- Card: Epilepsy with Myoclonic Atonic Seizures (EMAtS) -->
+                <div class="ilae-card"
+                     data-title="Epilepsy with Myoclonic Atonic Seizures (EMAtS)"
+                     data-summary="Previously known as Doose syndrome. A severe syndrome with myoclonic and atonic seizures leading to drop attacks and generalized EEG abnormalities. Onset typically between 2-5 years of age."
+                     data-eeg="EEG demonstrates generalized spike-wave or polyspike-wave discharges (2-3 Hz) with myoclonic and atonic components. Background may show theta rhythms."
+                     data-pdf="assets/documents/onset-in-childhood2.pdf#page=22"
+                     data-age="childhood"
+                     data-type="generalized">
+                  <h3>Epilepsy with Myoclonic Atonic Seizures (EMAtS)</h3>
+                  <p>Myoclonic and atonic seizures causing drop attacks with generalized EEG findings. Previously called <span class="cross-ref">Doose syndrome<span class="tooltip">Named after Hermann Doose who described it in 1970. Characterized by diverse seizure types, with myoclonic-atonic seizures being the hallmark. Children often have normal development before seizure onset.</span></span>.</p>
+                </div>
+                <!-- Card: Epilepsy with Myoclonic Absence (EMA) -->
+                <div class="ilae-card"
+                     data-title="Epilepsy with Myoclonic Absence (EMA)"
+                     data-summary="Very rare childhood epilepsy syndrome that presents with daily myoclonic absence seizures characterized by rhythmic myoclonic jerks with impaired consciousness. Often resistant to medications with poor outcome."
+                     data-eeg="EEG demonstrates regular 3-Hz generalized spike-and-wave pattern time-locked with myoclonic jerks, distinguishing it from typical absence seizures."
+                     data-pdf="assets/documents/onset-in-childhood2.pdf#page=19"
+                     data-age="childhood"
+                     data-type="generalized">
+                  <h3>Epilepsy with Myoclonic Absence (EMA)</h3>
+                  <p>Very rare childhood epilepsy syndrome with daily myoclonic absence seizures. Features <span class="cross-ref">rhythmic 3 Hz jerking<span class="tooltip">During seizures, there is rhythmic myoclonic jerking at 3 Hz, often involving the shoulders and arms, with concomitant impaired awareness. Seizures typically last 10-60 seconds and may cause progressive drop of arms.</span></span> with impaired consciousness.</p>
+                </div>
+              </div>
+            </details>
+      
+            <!-- Section 4: Idiopathic Generalized Epilepsies (IGE) -->
+            <details open>
+              <summary class="section-header">Idiopathic Generalized Epilepsies (IGE)</summary>
+              <div class="ilae-grid">
+                <!-- Card: Juvenile Absence Epilepsy (JAE) -->
+                <div class="ilae-card"
+                     data-title="Juvenile Absence Epilepsy (JAE)"
+                     data-summary="Characterized by less frequent absence seizures than CAE, with onset in adolescence (10-16 years). More than 90% have generalized tonic-clonic seizures, distinguishing it from CAE."
+                     data-eeg="EEG exhibits a consistent 3-5.5 Hz spike‑and‑wave discharge on a normal background, typically faster than the 3 Hz pattern of CAE."
+                     data-pdf="assets/documents/idiopathic-generalized2.pdf#page=11"
+                     data-age="adolescent"
+                     data-type="generalized">
+                  <h3>Juvenile Absence Epilepsy (JAE)</h3>
+                  <p>Brief impaired awareness episodes with >3 Hz spike‑and‑wave EEG. Distinguished from CAE by <span class="cross-ref">later onset (10-16 years)<span class="tooltip">Unlike CAE, JAE features less frequent absences but >90% develop generalized tonic-clonic seizures. Absences are typically less frequent than in CAE but may be longer in duration.</span></span> and frequent GTCs.</p>
+                </div>
+                <!-- Card: Juvenile Myoclonic Epilepsy (JME) -->
+                <div class="ilae-card"
+                     data-title="Juvenile Myoclonic Epilepsy (JME)"
+                     data-summary="The most common IGE in adolescents, characterized by myoclonic jerks soon after waking, and may include absence and generalized tonic–clonic seizures. Strong genetic component and lifelong treatment often required."
+                     data-eeg="EEG shows generalized polyspike‑and‑wave discharges at 3-5.5 Hz with photic sensitivity in about 30-40% of patients."
+                     data-pdf="assets/documents/idiopathic-generalized2.pdf#page=14"
+                     data-age="adolescent"
+                     data-type="generalized">
+                  <h3>Juvenile Myoclonic Epilepsy (JME)</h3>
+                  <p>Adolescent-onset epilepsy with myoclonic jerks and generalized polyspike‑and‑wave EEG. Prominent <span class="cross-ref">morning jerks<span class="tooltip">Myoclonic jerks typically occur within 1-2 hours after awakening and can be triggered by sleep deprivation, alcohol, and stress. JME has a strong genetic component and usually requires lifelong treatment.</span></span> with high photosensitivity.</p>
+                </div>
+                <!-- Card: Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA) -->
+                <div class="ilae-card"
+                     data-title="Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)"
+                     data-summary="Features isolated generalized tonic–clonic seizures without other seizure types, with standard treatment response. Seizures often occur shortly after awakening or during relaxation after exertion."
+                     data-eeg="EEG reveals 3-5.5 Hz generalized spike-wave or polyspike-wave discharges on a normal background. Interictal EEG may be normal in up to 50% of patients."
+                     data-pdf="assets/documents/idiopathic-generalized2.pdf#page=18"
+                     data-age="adolescent"
+                     data-type="generalized">
+                  <h3>Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)</h3>
+                  <p>Isolated generalized tonic–clonic seizures with normal interictal EEG in up to 50% of cases. Often <span class="cross-ref">sleep-related<span class="tooltip">GTCA seizures frequently occur shortly after awakening (within the first 2 hours) or during relaxation periods. About 80% of patients respond well to appropriate anti-seizure medications.</span></span>.</p>
+                </div>
+              </div>
+            </details>
+            
+            <!-- Section 5: Epilepsy Syndromes with Onset at a Variable Age -->
+            <details open>
+              <summary class="section-header">Epilepsy Syndromes with Onset at a Variable Age</summary>
+              <div class="ilae-grid">
+                <!-- Card: Sleep-Related Hypermotor Epilepsy (SHE) -->
+                <div class="ilae-card"
+                     data-title="Sleep-Related Hypermotor Epilepsy (SHE)"
+                     data-summary="Formerly known as Nocturnal Frontal Lobe Epilepsy (NFLE). Features brief, stereotyped hyperkinetic seizures predominantly during sleep; may be associated with both genetic (e.g., CHRNA4, KCNT1) and structural causes."
+                     data-eeg="Scalp EEG during sleep shows hyperkinetic movements with abnormal frontal activity in only 50% of cases due to the deep location of seizure origin."
+                     data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=6"
+                     data-age="variable"
+                     data-type="focal">
+                  <h3>Sleep-Related Hypermotor Epilepsy (SHE)</h3>
+                  <p>Brief hyperkinetic seizures during sleep with focal frontal EEG abnormalities. Formerly called <span class="cross-ref">NFLE<span class="tooltip">Nocturnal Frontal Lobe Epilepsy was renamed to Sleep-Related Hypermotor Epilepsy in 2017 because: 1) seizures can occur during daytime sleep, 2) the origin isn't always frontal, and 3) the semiology is more accurately described as hyperkinetic rather than just nocturnal.</span></span>.</p>
+                </div>
+                <!-- Card: Familial Mesial Temporal Lobe Epilepsy (FMTLE) -->
+                <div class="ilae-card"
+                     data-title="Familial Mesial Temporal Lobe Epilepsy (FMTLE)"
+                     data-summary="A focal epilepsy syndrome with seizures originating from the mesial temporal lobe; often familial and presenting in adolescence/adulthood with variable penetrance. Typically has a better prognosis than hippocampal sclerosis-associated MTLE."
+                     data-eeg="EEG shows focal temporal discharges with mild background slowing. Interictal discharges may be absent in up to 60% of patients."
+                     data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=8"
+                     data-age="variable"
+                     data-type="focal">
+                  <h3>Familial Mesial Temporal Lobe Epilepsy (FMTLE)</h3>
+                  <p>Focal temporal seizures with a positive family history. Features <span class="cross-ref">psychic and autonomic auras<span class="tooltip">Common aura types include déjà vu, jamais vu, epigastric rising sensations, and fear. Unlike sporadic MTLE, FMTLE is typically not associated with hippocampal sclerosis and has a better prognosis with many achieving seizure freedom on medication.</span></span>, often well-controlled.</p>
+                </div>
+                <!-- Card: Familial Focal Epilepsy with Variable Foci (FFEVF) -->
+                <div class="ilae-card"
+                     data-title="Familial Focal Epilepsy with Variable Foci (FFEVF)"
+                     data-summary="Presents with focal seizures whose localization varies among affected family members, suggesting complex genetic inheritance. DEPDC5 mutations are the most common identified cause."
+                     data-eeg="EEG is normal in 60% of cases or shows mild temporal slowing. When abnormal, focal epileptiform discharges vary in location between family members."
+                     data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=11"
+                     data-age="variable"
+                     data-type="focal">
+                  <h3>Familial Focal Epilepsy with Variable Foci (FFEVF)</h3>
+                  <p>Focal seizures with variable localization among family members. Associated with <span class="cross-ref">DEPDC5<span class="tooltip">DEPDC5 gene mutations account for about 12-37% of FFEVF cases. This gene is part of the mTOR pathway regulation, and mutations can lead to cortical malformations including focal cortical dysplasia.</span></span> mutations.</p>
+                </div>
+                <!-- Card: Epilepsy with Auditory Features (EAF) -->
+                <div class="ilae-card"
+                     data-title="Epilepsy with Auditory Features (EAF)"
+                     data-summary="Characterized by focal aware seizures with auditory auras (buzzing, humming, distortion), sometimes with receptive language disturbances. The LGI1 gene is mutated in familial cases (autosomal dominant lateral temporal lobe epilepsy)."
+                     data-eeg="EEG is mostly normal but may demonstrate focal temporal discharges, particularly in the lateral temporal regions."
+                     data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=10"
+                     data-age="variable"
+                     data-type="focal">
+                  <h3>Epilepsy with Auditory Features (EAF)</h3>
+                  <p>Focal seizures with auditory auras and possible temporal EEG abnormalities. Familial form associated with <span class="cross-ref">LGI1<span class="tooltip">LGI1 (Leucine-rich Glioma Inactivated 1) gene mutations are found in about 50% of familial cases, known as Autosomal Dominant Lateral Temporal Lobe Epilepsy (ADLTLE), but are rare in sporadic cases.</span></span> mutations.</p>
+                </div>
+                <!-- Card: Autoimmune Epilepsies (added) -->
+                <div class="ilae-card"
+                     data-title="Autoimmune Epilepsies"
+                     data-summary="A growing category of epilepsies associated with autoimmune mechanisms, including anti-NMDAR encephalitis, anti-LGI1 encephalitis, and GAD65 antibody-associated epilepsy. Often presents with abrupt onset of seizures and other neurological symptoms."
+                     data-eeg="EEG patterns vary but may show focal or multifocal epileptiform discharges, slowing, or extreme delta brush in anti-NMDAR encephalitis."
+                     data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=18"
+                     data-age="variable"
+                     data-type="combined">
+                  <h3>Autoimmune Epilepsies</h3>
+                  <p>Various syndromes with autoimmune etiology, including <span class="cross-ref">anti-NMDAR<span class="tooltip">Anti-NMDA receptor encephalitis typically affects young women and features psychiatric symptoms, memory deficits, seizures, and movement disorders. It's often responsive to immunotherapy, with 80% of patients achieving good outcomes.</span></span>, anti-LGI1, and GAD65 antibody-associated epilepsies.</p>
+                </div>
+                <!-- Card: Progressive Myoclonus Epilepsies (PME) -->
+                <div class="ilae-card"
+                     data-title="Progressive Myoclonus Epilepsies (PME)"
+                     data-summary="A group of rare genetic disorders characterized by myoclonus, progressive neurological deterioration (dementia, ataxia), and epilepsy. Includes Unverricht-Lundborg disease, Lafora disease, and neuronal ceroid lipofuscinoses."
+                     data-eeg="EEG demonstrates background slowing and generalized spike/polyspike and wave discharges, often photosensitive. The extent of EEG abnormalities progresses with disease course."
+                     data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=22"
+                     data-age="variable"
+                     data-type="combined">
+                  <h3>Progressive Myoclonus Epilepsies (PME)</h3>
+                  <p>Severe myoclonic seizures with progressive neurological decline. Includes <span class="cross-ref">Unverricht-Lundborg disease<span class="tooltip">Caused by mutations in the CSTB gene encoding cystatin B. The most common PME in Europe, especially Finland. Characterized by stimulus-sensitive myoclonus and tonic-clonic seizures with onset at 6-16 years, followed by progressive neurological deterioration.</span></span>, Lafora disease, and others.</p>
+                </div>
+                <!-- Card: Rasmussen Syndrome (RS) -->
+                <div class="ilae-card"
+                     data-title="Rasmussen Syndrome (RS)"
+                     data-summary="A rare, progressive autoimmune encephalitis with intractable focal seizures, hemiplegia, and cognitive decline, characterized by unilateral cerebral atrophy. Inflammation is likely immune-mediated but the exact trigger remains unknown."
+                     data-eeg="EEG reveals unilateral focal discharges with marked background slowing in one hemisphere. Frequent epilepsia partialis continua is characteristic."
+                     data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=16"
+                     data-age="variable"
+                     data-type="focal">
+                  <h3>Rasmussen Syndrome (RS)</h3>
+                  <p>Intractable seizures with progressive hemiplegia and unilateral EEG abnormalities. Features <span class="cross-ref">epilepsia partialis continua<span class="tooltip">Epilepsia partialis continua is a form of ongoing focal motor seizure activity that may continue for extended periods (days to years). In Rasmussen syndrome, it frequently affects the face and hand. Hemispherectomy may be required for seizure control.</span></span> and unilateral atrophy.</p>
+                </div>
+              </div>
+            </details>
+            
+            <!-- Links to PDF resources -->
+            <h3>Additional Resources</h3>
+            <ul class="resource-links">
+              <li><a href="assets/documents/epilepsy-syndromes-introduction.pdf" target="_blank">Introduction to the Epilepsy Syndrome Papers (Epilepsia, 2022)</a></li>
+              <li><a href="assets/documents/epilepsy-syndromes-methodology1.pdf" target="_blank">Methodology for Classification and Definition of Epilepsy Syndromes (Epilepsia, 2022)</a></li>
+              <li><a href="assets/documents/onset-at-a-variable-age2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset at a Variable Age (Epilepsia, 2022)</a></li>
+              <li><a href="assets/documents/onset-in-childhood2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Childhood (Epilepsia, 2022)</a></li>
+              <li><a href="assets/documents/onset-in-neonates-and-infants2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Neonates and Infants (Epilepsia, 2022)</a></li>
+              <li><a href="assets/documents/idiopathic-generalized2.pdf" target="_blank">ILAE Position Statement: Idiopathic Generalized Epilepsy Syndromes (Epilepsia, 2022)</a></li>
+            </ul>
+          </section>
+          </div>
         </div>
-        
-        <!-- Introduction text with embedded button -->
-        <div class="intro-text">
-          <p>The ILAE Classification provides a framework for classifying seizures, epilepsies, and epilepsy syndromes. This page presents an overview of these classifications to help with the understanding and diagnosis of epilepsy.</p>
-          <a href="https://www.epilepsydiagnosis.org" target="_blank" class="ilae-resource-button">
-            <i class="fas fa-brain"></i>
-            <span>Visit Official ILAE Classification Website</span>
-            <i class="fas fa-external-link-alt"></i>
+      </main>
+      
+      <!-- Footer -->
+      <div id="footer-container"></div>
+    </div>
+
+    <!-- ILAE Modal -->
+    <div id="ilae-modal" class="modal" style="display: none;">
+      <div class="modal-content">
+        <button class="modal-close">&times;</button>
+        <h2 id="modal-title"></h2>
+        <div class="modal-section">
+          <h3>Overview</h3>
+          <p id="modal-overview"></p>
+        </div>
+        <div class="modal-section">
+          <h3>EEG Findings</h3>
+          <p id="modal-eeg"></p>
+        </div>
+        <div id="pdfLinkContainer">
+          <a id="pdfLink" href="#" target="_blank">
+            <i class="fas fa-file-pdf"></i> View Full Details (PDF)
           </a>
         </div>
-    
-        <!-- No Results Message -->
-        <div id="no-results" class="no-results" style="display: none;">
-          <h3>No matching epilepsy syndromes found</h3>
-          <p>Try adjusting your filter criteria or click "Reset Filters" to show all syndromes.</p>
-        </div>
-        
-        <!-- Content Container -->
-        <section class="ilae-content">
-        <div id="contentContainer">
-          <!-- Section 1: Neonates and Infants -->
-          <details open>
-            <summary class="section-header">Epilepsy Syndromes with Onset in Neonates and Infants</summary>
-            <div class="ilae-grid">
-              <!-- Card: Self‑Limited Neonatal Epilepsy (SeLNE) -->
-              <div class="ilae-card"
-                   data-title="Self‑Limited Neonatal Epilepsy (SeLNE)"
-                   data-summary="Focal seizures typically starting between days 2 and 7 of life with normal development between events. Most common genetic cause is KCNQ2 mutations."
-                   data-eeg="Interictal EEG may show mild background slowing with occasional focal discharges. Ictal EEG shows focal sharp waves or spikes predominantly in the central and temporal regions."
-                   data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=9"
-                   data-age="neonatal"
-                   data-type="focal">
-                <h3>Self‑Limited Neonatal Epilepsy (SeLNE)</h3>
-                <p>Focal seizures starting between days 2 and 7 with normal development. Associated with <span class="cross-ref">KCNQ2<span class="tooltip">KCNQ2 mutations affect potassium channels and are the most common cause of self-limited neonatal epilepsy. Most cases follow autosomal dominant inheritance.</span></span> mutations.</p>
-              </div>
-              <!-- Card: Infantile Spasms -->
-              <div class="ilae-card"
-                   data-title="Infantile Spasms"
-                   data-summary="Characterized by clusters of epileptic spasms, a chaotic hypsarrhythmic EEG pattern, and developmental regression. Peak onset is 4-7 months of age."
-                   data-eeg="EEG typically shows chaotic, high‐amplitude hypsarrhythmia with multifocal spikes, polyspikes, and slow waves. During spasms, there is often an electrodecremental response."
-                   data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=22"
-                   data-age="infant"
-                   data-type="generalized">
-                <h3>Infantile Spasms</h3>
-                <p>Clusters of spasms with chaotic EEG and developmental regression. Peak onset 4-7 months.</p>
-              </div>
-              <!-- Card: Early Infantile Epileptic Encephalopathy (EIEE) -->
-              <div class="ilae-card"
-                   data-title="Early Infantile Epileptic Encephalopathy (EIEE)"
-                   data-summary="Also known as Ohtahara syndrome, EIEE presents with severe neonatal encephalopathy, tonic seizures, and a suppression-burst EEG pattern. Onset is typically within the first 10 days of life."
-                   data-eeg="EEG demonstrates a characteristic suppression-burst pattern in both waking and sleeping states, consisting of high-voltage bursts alternating with nearly flat suppression phases at regular intervals."
-                   data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=16"
-                   data-age="neonatal"
-                   data-type="generalized">
-                <h3>Early Infantile Epileptic Encephalopathy (EIEE)</h3>
-                <p>Severe neonatal encephalopathy with tonic seizures and suppression-burst on EEG. Also known as <span class="cross-ref">Ohtahara syndrome<span class="tooltip">Named after Dr. Shunsuke Ohtahara who first described it in 1976. Often evolves into West syndrome (infantile spasms) after 3-6 months.</span></span>.</p>
-              </div>
-              <!-- Card: Epilepsy of Infancy with Migrating Focal Seizures (EIMFS) -->
-              <div class="ilae-card"
-                   data-title="Epilepsy of Infancy with Migrating Focal Seizures (EIMFS)"
-                   data-summary="Rare syndrome with multifocal seizures that migrate between brain regions; most common genetic causes include KCNT1 mutations. Onset typically before 6 months of age with poor prognosis."
-                   data-eeg="EEG shows a unique pattern of focal seizures that shift from one hemisphere to another during the same recording. Characteristic 'migration' of ictal foci is pathognomonic."
-                   data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=20"
-                   data-age="infant"
-                   data-type="focal">
-                <h3>Epilepsy of Infancy with Migrating Focal Seizures (EIMFS)</h3>
-                <p>Multifocal, migrating focal seizures with onset before 6 months. Associated with <span class="cross-ref">KCNT1<span class="tooltip">KCNT1 encodes a sodium-activated potassium channel. Mutations lead to gain of function and increased excitability. Other genes involved include SCN1A, SCN2A, and KCNQ2.</span></span> mutations.</p>
-              </div>
-              <!-- Added Card: Dravet Syndrome -->
-              <div class="ilae-card"
-                   data-title="Dravet Syndrome"
-                   data-summary="Previously known as Severe Myoclonic Epilepsy of Infancy (SMEI). Characterized by prolonged, fever-sensitive seizures in the first year, followed by multiple seizure types. Associated with SCN1A mutations in 80% of cases."
-                   data-eeg="Early EEG may be normal, but later shows generalized spike and polyspike-wave discharges, photosensitivity, and focal/multifocal abnormalities."
-                   data-pdf="assets/documents/onset-in-neonates-and-infants2.pdf#page=25"
-                   data-age="infant"
-                   data-type="combined">
-                <h3>Dravet Syndrome</h3>
-                <p>Begins with prolonged, often fever-triggered seizures in the first year. Associated with <span class="cross-ref">SCN1A<span class="tooltip">SCN1A gene provides instructions for making sodium channel subunits. Mutations lead to impaired function of inhibitory interneurons, causing hyperexcitability. 90% of mutations occur de novo.</span></span> mutations (80% of cases).</p>
-              </div>
-            </div>
-          </details>
-          
-          <!-- Section 2: Self‑Limited Focal Epilepsies of Childhood -->
-          <details open>
-            <summary class="section-header">Self‑Limited Focal Epilepsies of Childhood</summary>
-            <div class="ilae-grid">
-              <!-- Card: Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS) -->
-              <div class="ilae-card"
-                   data-title="Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)"
-                   data-summary="Formerly called Benign Epilepsy with Centrotemporal Spikes (BECTS) or Rolandic Epilepsy. Focal seizures with centrotemporal semiology, typically occurring during sleep. Remission is expected by adolescence."
-                   data-eeg="EEG shows high‐amplitude centrotemporal sharp‐and‐slow wave complexes on a normal background, enhanced during drowsiness and sleep."
-                   data-pdf="assets/documents/onset-in-childhood2.pdf#page=6"
-                   data-age="childhood"
-                   data-type="focal">
-                <h3>Self‑Limited Epilepsy with Centrotemporal Spikes (SeLECTS)</h3>
-                <p>Focal centrotemporal seizures during sleep with remission by adolescence. Formerly called <span class="cross-ref">BECTS<span class="tooltip">Benign Epilepsy with Centrotemporal Spikes (BECTS) or Rolandic Epilepsy. Name changed to Self-Limited Epilepsy with Centrotemporal Spikes in the 2017 ILAE classification to avoid the term "benign" as cognitive and behavioral issues can occur.</span></span>.</p>
-              </div>
-              <!-- Card: Self-­ limited epilepsy with autonomic seizures (SeLEAS) -->
-              <div class="ilae-card"
-                   data-title="Self-­Limited epilepsy with autonomic seizures (SeLEAS)"
-                   data-summary="Formerly known as Panayiotopoulos syndrome or early onset benign occipital epilepsy. Characterized by focal autonomic seizures that are often prolonged, with peak onset at 3-6 years. Excellent prognosis with spontaneous resolution."
-                   data-eeg="EEG shows high-­amplitude (>200 μV) focal spikes with variable localization, predominantly in the posterior regions, activated by sleep."
-                   data-pdf="assets/documents/onset-in-childhood2.pdf#page=10"
-                   data-age="childhood"
-                   data-type="focal">
-                <h3>Self-­Limited Epilepsy with Autonomic Seizures (SeLEAS)</h3>
-                <p>Onset in early childhood of focal autonomic seizures that are often prolonged. Formerly known as <span class="cross-ref">Panayiotopoulos syndrome<span class="tooltip">Named after Dr. Chrysostomos P. Panayiotopoulos. Key features include ictal vomiting, pallor, and eye deviation. Despite often prolonged seizures (>30 minutes in 40% of cases), prognosis is excellent.</span></span>.</p>
-              </div>
-              <!-- Card: Childhood Occipital Visual Epilepsy (COVE) -->
-              <div class="ilae-card"
-                   data-title="Childhood Occipital Visual Epilepsy (COVE)"
-                   data-summary="Formerly known as Gastaut type of childhood occipital epilepsy. Characterized by focal visual seizures with occipital EEG abnormalities, often accompanied by visual auras (elementary visual hallucinations), headache, and ictal blindness."
-                   data-eeg="EEG shows interictal occipital spikes with normal background, especially during sleep. Ictal EEG demonstrates occipital onset with fast rhythmic activity."
-                   data-pdf="assets/documents/onset-in-childhood2.pdf#page=12"
-                   data-age="childhood"
-                   data-type="focal">
-                <h3>Childhood Occipital Visual Epilepsy (COVE)</h3>
-                <p>Focal visual seizures with occipital EEG findings and favorable prognosis. Formerly called <span class="cross-ref">Gastaut type<span class="tooltip">Named after Henri Gastaut. Distinguished from migraine by brief duration of visual symptoms (seconds to minutes), stereotypical appearance, and potential evolution to other seizure types.</span></span> of childhood occipital epilepsy.</p>
-              </div>
-              <!-- Card: Photosensitive Occipital Lobe Epilepsy (POLE) -->
-              <div class="ilae-card"
-                   data-title="Photosensitive Occipital Lobe Epilepsy (POLE)"
-                   data-summary="Triggered by photic stimulation, presenting with focal visual seizures; strong female predominance noted. May evolve from visual symptoms to complex partial or generalized tonic-clonic seizures."
-                   data-eeg="EEG shows occipital spike‑and‑wave discharges enhanced by eye closure and photic stimulation. Photosensitivity is the hallmark feature."
-                   data-pdf="assets/documents/onset-in-childhood2.pdf#page=14"
-                   data-age="childhood"
-                   data-type="focal">
-                <h3>Photosensitive Occipital Lobe Epilepsy (POLE)</h3>
-                <p>Focal visual seizures triggered by light with characteristic occipital EEG patterns. Strong <span class="cross-ref">female predominance<span class="tooltip">Female predominance is a common feature of photosensitive epilepsies, possibly related to hormonal influences on neural excitability.</span></span>.</p>
-              </div>
-            </div>
-          </details>
-    
-          <!-- Section 3: Generalized Epilepsies of Childhood -->
-          <details open>
-            <summary class="section-header">Generalized Epilepsies of Childhood</summary>
-            <div class="ilae-grid">
-              <!-- Card: Childhood Absence Epilepsy (CAE) -->
-              <div class="ilae-card"
-                   data-title="Childhood Absence Epilepsy (CAE)"
-                   data-summary="Characterized by brief impaired awareness episodes with a regular 3 Hz spike‑and‑wave pattern on EEG. Typical onset between 4-10 years with high frequency of absences (many per day)."
-                   data-eeg="EEG displays a consistent 3 Hz spike‑and‑wave discharge on a normal background, bilaterally synchronous and symmetrical."
-                   data-pdf="assets/documents/idiopathic-generalized2.pdf#page=8"
-                   data-age="childhood"
-                   data-type="generalized">
-                <h3>Childhood Absence Epilepsy (CAE)</h3>
-                <p>Brief staring spells with classic 3 Hz spike‑and‑wave EEG activity. Peak onset 5-7 years with <span class="cross-ref">multiple daily episodes<span class="tooltip">Children may have dozens to hundreds of absence seizures per day, each lasting 5-30 seconds. Often misinterpreted as daydreaming or inattention. Can be provoked by hyperventilation in about 90% of patients.</span></span>.</p>
-              </div>
-              <!-- Card: Epilepsy with eyelid myoclonia (EEM) -->
-              <div class="ilae-card"
-                   data-title="Epilepsy with eyelid myoclonia (EEM)"
-                   data-summary="Also known as Jeavons syndrome. A triad of frequent eyelid myoclonia, with or without absences, induced by eye closure and photic stimulation. Eyelid myoclonia is often most prominent upon awakening."
-                   data-eeg="Eye closure and intermittent photic stimulation elicits fast (3‑6 Hz) generalized polyspikes or polyspike-and-wave complexes."
-                   data-pdf="assets/documents/onset-in-childhood2.pdf#page=17"
-                   data-age="childhood"
-                   data-type="generalized">
-                <h3>Epilepsy with Eyelid Myoclonia (EEM)</h3>
-                <p>Eyelid myoclonia, with or without absences, induced by eye closure and photic stimulation. Also called <span class="cross-ref">Jeavons syndrome<span class="tooltip">Named after Peter Jeavons who first described it in 1977. Features the triad of eyelid myoclonia with or without absences, eye-closure sensitivity, and photosensitivity. Often resistant to medications.</span></span>.</p>
-              </div>
-              <!-- Card: Epilepsy with Myoclonic Atonic Seizures (EMAtS) -->
-              <div class="ilae-card"
-                   data-title="Epilepsy with Myoclonic Atonic Seizures (EMAtS)"
-                   data-summary="Previously known as Doose syndrome. A severe syndrome with myoclonic and atonic seizures leading to drop attacks and generalized EEG abnormalities. Onset typically between 2-5 years of age."
-                   data-eeg="EEG demonstrates generalized spike-wave or polyspike-wave discharges (2-3 Hz) with myoclonic and atonic components. Background may show theta rhythms."
-                   data-pdf="assets/documents/onset-in-childhood2.pdf#page=22"
-                   data-age="childhood"
-                   data-type="generalized">
-                <h3>Epilepsy with Myoclonic Atonic Seizures (EMAtS)</h3>
-                <p>Myoclonic and atonic seizures causing drop attacks with generalized EEG findings. Previously called <span class="cross-ref">Doose syndrome<span class="tooltip">Named after Hermann Doose who described it in 1970. Characterized by diverse seizure types, with myoclonic-atonic seizures being the hallmark. Children often have normal development before seizure onset.</span></span>.</p>
-              </div>
-              <!-- Card: Epilepsy with Myoclonic Absence (EMA) -->
-              <div class="ilae-card"
-                   data-title="Epilepsy with Myoclonic Absence (EMA)"
-                   data-summary="Very rare childhood epilepsy syndrome that presents with daily myoclonic absence seizures characterized by rhythmic myoclonic jerks with impaired consciousness. Often resistant to medications with poor outcome."
-                   data-eeg="EEG demonstrates regular 3-Hz generalized spike-and-wave pattern time-locked with myoclonic jerks, distinguishing it from typical absence seizures."
-                   data-pdf="assets/documents/onset-in-childhood2.pdf#page=19"
-                   data-age="childhood"
-                   data-type="generalized">
-                <h3>Epilepsy with Myoclonic Absence (EMA)</h3>
-                <p>Very rare childhood epilepsy syndrome with daily myoclonic absence seizures. Features <span class="cross-ref">rhythmic 3 Hz jerking<span class="tooltip">During seizures, there is rhythmic myoclonic jerking at 3 Hz, often involving the shoulders and arms, with concomitant impaired awareness. Seizures typically last 10-60 seconds and may cause progressive drop of arms.</span></span> with impaired consciousness.</p>
-              </div>
-            </div>
-          </details>
-    
-          <!-- Section 4: Idiopathic Generalized Epilepsies (IGE) -->
-          <details open>
-            <summary class="section-header">Idiopathic Generalized Epilepsies (IGE)</summary>
-            <div class="ilae-grid">
-              <!-- Card: Juvenile Absence Epilepsy (JAE) -->
-              <div class="ilae-card"
-                   data-title="Juvenile Absence Epilepsy (JAE)"
-                   data-summary="Characterized by less frequent absence seizures than CAE, with onset in adolescence (10-16 years). More than 90% have generalized tonic-clonic seizures, distinguishing it from CAE."
-                   data-eeg="EEG exhibits a consistent 3-5.5 Hz spike‑and‑wave discharge on a normal background, typically faster than the 3 Hz pattern of CAE."
-                   data-pdf="assets/documents/idiopathic-generalized2.pdf#page=11"
-                   data-age="adolescent"
-                   data-type="generalized">
-                <h3>Juvenile Absence Epilepsy (JAE)</h3>
-                <p>Brief impaired awareness episodes with >3 Hz spike‑and‑wave EEG. Distinguished from CAE by <span class="cross-ref">later onset (10-16 years)<span class="tooltip">Unlike CAE, JAE features less frequent absences but >90% develop generalized tonic-clonic seizures. Absences are typically less frequent than in CAE but may be longer in duration.</span></span> and frequent GTCs.</p>
-              </div>
-              <!-- Card: Juvenile Myoclonic Epilepsy (JME) -->
-              <div class="ilae-card"
-                   data-title="Juvenile Myoclonic Epilepsy (JME)"
-                   data-summary="The most common IGE in adolescents, characterized by myoclonic jerks soon after waking, and may include absence and generalized tonic–clonic seizures. Strong genetic component and lifelong treatment often required."
-                   data-eeg="EEG shows generalized polyspike‑and‑wave discharges at 3-5.5 Hz with photic sensitivity in about 30-40% of patients."
-                   data-pdf="assets/documents/idiopathic-generalized2.pdf#page=14"
-                   data-age="adolescent"
-                   data-type="generalized">
-                <h3>Juvenile Myoclonic Epilepsy (JME)</h3>
-                <p>Adolescent-onset epilepsy with myoclonic jerks and generalized polyspike‑and‑wave EEG. Prominent <span class="cross-ref">morning jerks<span class="tooltip">Myoclonic jerks typically occur within 1-2 hours after awakening and can be triggered by sleep deprivation, alcohol, and stress. JME has a strong genetic component and usually requires lifelong treatment.</span></span> with high photosensitivity.</p>
-              </div>
-              <!-- Card: Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA) -->
-              <div class="ilae-card"
-                   data-title="Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)"
-                   data-summary="Features isolated generalized tonic–clonic seizures without other seizure types, with standard treatment response. Seizures often occur shortly after awakening or during relaxation after exertion."
-                   data-eeg="EEG reveals 3-5.5 Hz generalized spike-wave or polyspike-wave discharges on a normal background. Interictal EEG may be normal in up to 50% of patients."
-                   data-pdf="assets/documents/idiopathic-generalized2.pdf#page=18"
-                   data-age="adolescent"
-                   data-type="generalized">
-                <h3>Epilepsy with Generalized Tonic–Clonic Seizures Alone (GTCA)</h3>
-                <p>Isolated generalized tonic–clonic seizures with normal interictal EEG in up to 50% of cases. Often <span class="cross-ref">sleep-related<span class="tooltip">GTCA seizures frequently occur shortly after awakening (within the first 2 hours) or during relaxation periods. About 80% of patients respond well to appropriate anti-seizure medications.</span></span>.</p>
-              </div>
-            </div>
-          </details>
-          
-          <!-- Section 5: Epilepsy Syndromes with Onset at a Variable Age -->
-          <details open>
-            <summary class="section-header">Epilepsy Syndromes with Onset at a Variable Age</summary>
-            <div class="ilae-grid">
-              <!-- Card: Sleep-Related Hypermotor Epilepsy (SHE) -->
-              <div class="ilae-card"
-                   data-title="Sleep-Related Hypermotor Epilepsy (SHE)"
-                   data-summary="Formerly known as Nocturnal Frontal Lobe Epilepsy (NFLE). Features brief, stereotyped hyperkinetic seizures predominantly during sleep; may be associated with both genetic (e.g., CHRNA4, KCNT1) and structural causes."
-                   data-eeg="Scalp EEG during sleep shows hyperkinetic movements with abnormal frontal activity in only 50% of cases due to the deep location of seizure origin."
-                   data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=6"
-                   data-age="variable"
-                   data-type="focal">
-                <h3>Sleep-Related Hypermotor Epilepsy (SHE)</h3>
-                <p>Brief hyperkinetic seizures during sleep with focal frontal EEG abnormalities. Formerly called <span class="cross-ref">NFLE<span class="tooltip">Nocturnal Frontal Lobe Epilepsy was renamed to Sleep-Related Hypermotor Epilepsy in 2017 because: 1) seizures can occur during daytime sleep, 2) the origin isn't always frontal, and 3) the semiology is more accurately described as hyperkinetic rather than just nocturnal.</span></span>.</p>
-              </div>
-              <!-- Card: Familial Mesial Temporal Lobe Epilepsy (FMTLE) -->
-              <div class="ilae-card"
-                   data-title="Familial Mesial Temporal Lobe Epilepsy (FMTLE)"
-                   data-summary="A focal epilepsy syndrome with seizures originating from the mesial temporal lobe; often familial and presenting in adolescence/adulthood with variable penetrance. Typically has a better prognosis than hippocampal sclerosis-associated MTLE."
-                   data-eeg="EEG shows focal temporal discharges with mild background slowing. Interictal discharges may be absent in up to 60% of patients."
-                   data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=8"
-                   data-age="variable"
-                   data-type="focal">
-                <h3>Familial Mesial Temporal Lobe Epilepsy (FMTLE)</h3>
-                <p>Focal temporal seizures with a positive family history. Features <span class="cross-ref">psychic and autonomic auras<span class="tooltip">Common aura types include déjà vu, jamais vu, epigastric rising sensations, and fear. Unlike sporadic MTLE, FMTLE is typically not associated with hippocampal sclerosis and has a better prognosis with many achieving seizure freedom on medication.</span></span>, often well-controlled.</p>
-              </div>
-              <!-- Card: Familial Focal Epilepsy with Variable Foci (FFEVF) -->
-              <div class="ilae-card"
-                   data-title="Familial Focal Epilepsy with Variable Foci (FFEVF)"
-                   data-summary="Presents with focal seizures whose localization varies among affected family members, suggesting complex genetic inheritance. DEPDC5 mutations are the most common identified cause."
-                   data-eeg="EEG is normal in 60% of cases or shows mild temporal slowing. When abnormal, focal epileptiform discharges vary in location between family members."
-                   data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=11"
-                   data-age="variable"
-                   data-type="focal">
-                <h3>Familial Focal Epilepsy with Variable Foci (FFEVF)</h3>
-                <p>Focal seizures with variable localization among family members. Associated with <span class="cross-ref">DEPDC5<span class="tooltip">DEPDC5 gene mutations account for about 12-37% of FFEVF cases. This gene is part of the mTOR pathway regulation, and mutations can lead to cortical malformations including focal cortical dysplasia.</span></span> mutations.</p>
-              </div>
-              <!-- Card: Epilepsy with Auditory Features (EAF) -->
-              <div class="ilae-card"
-                   data-title="Epilepsy with Auditory Features (EAF)"
-                   data-summary="Characterized by focal aware seizures with auditory auras (buzzing, humming, distortion), sometimes with receptive language disturbances. The LGI1 gene is mutated in familial cases (autosomal dominant lateral temporal lobe epilepsy)."
-                   data-eeg="EEG is mostly normal but may demonstrate focal temporal discharges, particularly in the lateral temporal regions."
-                   data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=10"
-                   data-age="variable"
-                   data-type="focal">
-                <h3>Epilepsy with Auditory Features (EAF)</h3>
-                <p>Focal seizures with auditory auras and possible temporal EEG abnormalities. Familial form associated with <span class="cross-ref">LGI1<span class="tooltip">LGI1 (Leucine-rich Glioma Inactivated 1) gene mutations are found in about 50% of familial cases, known as Autosomal Dominant Lateral Temporal Lobe Epilepsy (ADLTLE), but are rare in sporadic cases.</span></span> mutations.</p>
-              </div>
-              <!-- Card: Autoimmune Epilepsies (added) -->
-              <div class="ilae-card"
-                   data-title="Autoimmune Epilepsies"
-                   data-summary="A growing category of epilepsies associated with autoimmune mechanisms, including anti-NMDAR encephalitis, anti-LGI1 encephalitis, and GAD65 antibody-associated epilepsy. Often presents with abrupt onset of seizures and other neurological symptoms."
-                   data-eeg="EEG patterns vary but may show focal or multifocal epileptiform discharges, slowing, or extreme delta brush in anti-NMDAR encephalitis."
-                   data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=18"
-                   data-age="variable"
-                   data-type="combined">
-                <h3>Autoimmune Epilepsies</h3>
-                <p>Various syndromes with autoimmune etiology, including <span class="cross-ref">anti-NMDAR<span class="tooltip">Anti-NMDA receptor encephalitis typically affects young women and features psychiatric symptoms, memory deficits, seizures, and movement disorders. It's often responsive to immunotherapy, with 80% of patients achieving good outcomes.</span></span>, anti-LGI1, and GAD65 antibody-associated epilepsies.</p>
-              </div>
-              <!-- Card: Progressive Myoclonus Epilepsies (PME) -->
-              <div class="ilae-card"
-                   data-title="Progressive Myoclonus Epilepsies (PME)"
-                   data-summary="A group of rare genetic disorders characterized by myoclonus, progressive neurological deterioration (dementia, ataxia), and epilepsy. Includes Unverricht-Lundborg disease, Lafora disease, and neuronal ceroid lipofuscinoses."
-                   data-eeg="EEG demonstrates background slowing and generalized spike/polyspike and wave discharges, often photosensitive. The extent of EEG abnormalities progresses with disease course."
-                   data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=22"
-                   data-age="variable"
-                   data-type="combined">
-                <h3>Progressive Myoclonus Epilepsies (PME)</h3>
-                <p>Severe myoclonic seizures with progressive neurological decline. Includes <span class="cross-ref">Unverricht-Lundborg disease<span class="tooltip">Caused by mutations in the CSTB gene encoding cystatin B. The most common PME in Europe, especially Finland. Characterized by stimulus-sensitive myoclonus and tonic-clonic seizures with onset at 6-16 years, followed by progressive neurological deterioration.</span></span>, Lafora disease, and others.</p>
-              </div>
-              <!-- Card: Rasmussen Syndrome (RS) -->
-              <div class="ilae-card"
-                   data-title="Rasmussen Syndrome (RS)"
-                   data-summary="A rare, progressive autoimmune encephalitis with intractable focal seizures, hemiplegia, and cognitive decline, characterized by unilateral cerebral atrophy. Inflammation is likely immune-mediated but the exact trigger remains unknown."
-                   data-eeg="EEG reveals unilateral focal discharges with marked background slowing in one hemisphere. Frequent epilepsia partialis continua is characteristic."
-                   data-pdf="assets/documents/onset-at-a-variable-age2.pdf#page=16"
-                   data-age="variable"
-                   data-type="focal">
-                <h3>Rasmussen Syndrome (RS)</h3>
-                <p>Intractable seizures with progressive hemiplegia and unilateral EEG abnormalities. Features <span class="cross-ref">epilepsia partialis continua<span class="tooltip">Epilepsia partialis continua is a form of ongoing focal motor seizure activity that may continue for extended periods (days to years). In Rasmussen syndrome, it frequently affects the face and hand. Hemispherectomy may be required for seizure control.</span></span> and unilateral atrophy.</p>
-              </div>
-            </div>
-          </details>
-          
-          <!-- Links to PDF resources -->
-          <h3>Additional Resources</h3>
-          <ul class="resource-links">
-            <li><a href="assets/documents/epilepsy-syndromes-introduction.pdf" target="_blank">Introduction to the Epilepsy Syndrome Papers (Epilepsia, 2022)</a></li>
-            <li><a href="assets/documents/epilepsy-syndromes-methodology1.pdf" target="_blank">Methodology for Classification and Definition of Epilepsy Syndromes (Epilepsia, 2022)</a></li>
-            <li><a href="assets/documents/onset-at-a-variable-age2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset at a Variable Age (Epilepsia, 2022)</a></li>
-            <li><a href="assets/documents/onset-in-childhood2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Childhood (Epilepsia, 2022)</a></li>
-            <li><a href="assets/documents/onset-in-neonates-and-infants2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Neonates and Infants (Epilepsia, 2022)</a></li>
-            <li><a href="assets/documents/idiopathic-generalized2.pdf" target="_blank">ILAE Position Statement: Idiopathic Generalized Epilepsy Syndromes (Epilepsia, 2022)</a></li>
-          </ul>
-        </section>
-        </div> <!-- end ilae-layout -->
-        </div>
-      </div>
-    </main>
-    
-    <!-- Footer -->
-    <div id="footer-container"></div>
-  </div>
-
-  <!-- ILAE Modal -->
-  <div id="ilae-modal" class="modal" style="display: none;">
-    <div class="modal-content">
-      <button class="modal-close">&times;</button>
-      <h2 id="modal-title"></h2>
-      <div class="modal-section">
-        <h3>Overview</h3>
-        <p id="modal-overview"></p>
-      </div>
-      <div class="modal-section">
-        <h3>EEG Findings</h3>
-        <p id="modal-eeg"></p>
-      </div>
-      <div id="pdfLinkContainer">
-        <a id="pdfLink" href="#" target="_blank">
-          <i class="fas fa-file-pdf"></i> View Full Details (PDF)
-        </a>
       </div>
     </div>
-  </div>
 
-  <script>
-    // Initialize ILAE Classification Page
-    function initializeILAEClassification() {
-      // Initialize filter and search functionality
-      const ageFilter = document.getElementById('age-filter');
-      const typeFilter = document.getElementById('type-filter');
-      const resetBtn = document.getElementById('reset-filters');
-      const searchBar = document.getElementById('searchBar');
-      
-      // Add event listeners
-      ageFilter.addEventListener('change', applyFilters);
-      typeFilter.addEventListener('change', applyFilters);
-      resetBtn.addEventListener('click', resetFilters);
-      searchBar.addEventListener('input', applyFilters);
-      
-      // Initialize the section headers
-      document.querySelectorAll('.section-header').forEach(header => {
-        // Initially open all sections
-        header.parentElement.setAttribute('open', true);
-      });
-      
-      // Initialize the ILAE cards
-      initializeIlaeCards();
-      
-      // Apply any saved filters or search (if coming back to page)
-      applyFilters();
-    }
-    
-    // Function to apply filters and search
-    function applyFilters() {
-      const ageFilter = document.getElementById('age-filter').value;
-      const typeFilter = document.getElementById('type-filter').value;
-      const searchTerm = document.getElementById('searchBar').value.toLowerCase();
-      
-      // Get all cards
-      const cards = document.querySelectorAll('.ilae-card');
-      let visibleCount = 0;
-      
-      // Reset section visibility
-      document.querySelectorAll('details').forEach(section => {
-        section.style.display = 'block';
-        section.querySelector('.ilae-grid').style.display = 'grid';
-      });
-      
-      // Filter cards
-      cards.forEach(card => {
-        const cardAge = card.getAttribute('data-age');
-        const cardType = card.getAttribute('data-type');
-        const cardTitle = card.getAttribute('data-title').toLowerCase();
-        const cardSummary = card.getAttribute('data-summary').toLowerCase();
-        const cardContent = card.textContent.toLowerCase();
+    <script>
+      // Initialize ILAE Classification Page
+      function initializeILAEClassification() {
+        // Initialize filter and search functionality
+        const ageFilter = document.getElementById('age-filter');
+        const typeFilter = document.getElementById('type-filter');
+        const resetBtn = document.getElementById('reset-filters');
+        const searchBar = document.getElementById('searchBar');
         
-        // Check if card matches all filters
-        const matchesAge = ageFilter === 'all' || cardAge === ageFilter;
-        const matchesType = typeFilter === 'all' || cardType === typeFilter;
-        const matchesSearch = searchTerm === '' || 
-                              cardTitle.includes(searchTerm) || 
-                              cardSummary.includes(searchTerm) || 
-                              cardContent.includes(searchTerm);
+        // Add event listeners
+        ageFilter.addEventListener('change', applyFilters);
+        typeFilter.addEventListener('change', applyFilters);
+        resetBtn.addEventListener('click', resetFilters);
+        searchBar.addEventListener('input', applyFilters);
         
-        // Show or hide card based on filters
-        if (matchesAge && matchesType && matchesSearch) {
-          card.style.display = 'block';
-          visibleCount++;
-        } else {
-          card.style.display = 'none';
-        }
-      });
-      
-      // Check each section for visible cards
-      document.querySelectorAll('details').forEach(section => {
-        const visibleCards = Array.from(section.querySelectorAll('.ilae-card')).filter(card => 
-          card.style.display !== 'none'
-        );
+        // Initialize the section headers
+        document.querySelectorAll('.section-header').forEach(header => {
+          // Initially open all sections
+          header.parentElement.setAttribute('open', true);
+        });
         
-        // If no visible cards in a section, hide the section
-        if (visibleCards.length === 0) {
-          section.style.display = 'none';
-        }
-      });
-      
-      // Show or hide the 'no results' message
-      const noResults = document.getElementById('no-results');
-      if (visibleCount === 0) {
-        noResults.style.display = 'block';
-      } else {
-        noResults.style.display = 'none';
+        // Initialize the ILAE cards
+        initializeIlaeCards();
+        
+        // Apply any saved filters or search (if coming back to page)
+        applyFilters();
       }
-    }
-    
-    // Function to reset filters
-    function resetFilters() {
-      document.getElementById('age-filter').value = 'all';
-      document.getElementById('type-filter').value = 'all';
-      document.getElementById('searchBar').value = '';
-      applyFilters();
-    }
-    
-    // Function to initialize ILAE cards
-    function initializeIlaeCards() {
-      const cards = document.querySelectorAll('.ilae-card');
-      const modal = document.getElementById('ilae-modal');
-      const modalContent = modal.querySelector('.modal-content');
-      const closeBtn = modal.querySelector('.modal-close');
       
-      cards.forEach(card => {
-        card.addEventListener('click', function() {
-          console.log('Card clicked'); // Debug log
+      // Function to apply filters and search
+      function applyFilters() {
+        const ageFilter = document.getElementById('age-filter').value;
+        const typeFilter = document.getElementById('type-filter').value;
+        const searchTerm = document.getElementById('searchBar').value.toLowerCase();
+        
+        // Get all cards
+        const cards = document.querySelectorAll('.ilae-card');
+        let visibleCount = 0;
+        
+        // Reset section visibility
+        document.querySelectorAll('details').forEach(section => {
+          section.style.display = 'block';
+          section.querySelector('.ilae-grid').style.display = 'grid';
+        });
+        
+        // Filter cards
+        cards.forEach(card => {
+          const cardAge = card.getAttribute('data-age');
+          const cardType = card.getAttribute('data-type');
+          const cardTitle = card.getAttribute('data-title').toLowerCase();
+          const cardSummary = card.getAttribute('data-summary').toLowerCase();
+          const cardContent = card.textContent.toLowerCase();
           
-          // Get data from card attributes
-          const title = this.getAttribute('data-title');
-          const summary = this.getAttribute('data-summary');
-          const eeg = this.getAttribute('data-eeg');
-          const pdfLink = this.getAttribute('data-pdf');
+          // Check if card matches all filters
+          const matchesAge = ageFilter === 'all' || cardAge === ageFilter;
+          const matchesType = typeFilter === 'all' || cardType === typeFilter;
+          const matchesSearch = searchTerm === '' || 
+                                cardTitle.includes(searchTerm) || 
+                                cardSummary.includes(searchTerm) || 
+                                cardContent.includes(searchTerm);
           
-          console.log('Card data:', { title, summary, eeg, pdfLink }); // Debug log
-          
-          // Populate modal with card data
-          document.getElementById('modal-title').textContent = title;
-          document.getElementById('modal-overview').innerHTML = summary;
-          document.getElementById('modal-eeg').innerHTML = eeg || 'No specific EEG findings documented.';
-          
-          // Update PDF link
-          const pdfLinkElement = document.getElementById('pdfLink');
-          if (pdfLink) {
-            pdfLinkElement.href = pdfLink;
-            pdfLinkElement.style.display = 'inline-flex';
+          // Show or hide card based on filters
+          if (matchesAge && matchesType && matchesSearch) {
+            card.style.display = 'block';
+            visibleCount++;
           } else {
-            pdfLinkElement.style.display = 'none';
+            card.style.display = 'none';
           }
+        });
+        
+        // Check each section for visible cards
+        document.querySelectorAll('details').forEach(section => {
+          const visibleCards = Array.from(section.querySelectorAll('.ilae-card')).filter(card => 
+            card.style.display !== 'none'
+          );
           
-          // Show the modal
-          modal.style.display = 'flex';
-          modalContent.style.opacity = '1';
-          
-          // Prevent click from bubbling to modal background
-          modalContent.addEventListener('click', function(e) {
-            e.stopPropagation();
+          // If no visible cards in a section, hide the section
+          if (visibleCards.length === 0) {
+            section.style.display = 'none';
+          }
+        });
+        
+        // Show or hide the 'no results' message
+        const noResults = document.getElementById('no-results');
+        if (visibleCount === 0) {
+          noResults.style.display = 'block';
+        } else {
+          noResults.style.display = 'none';
+        }
+      }
+      
+      // Function to reset filters
+      function resetFilters() {
+        document.getElementById('age-filter').value = 'all';
+        document.getElementById('type-filter').value = 'all';
+        document.getElementById('searchBar').value = '';
+        applyFilters();
+      }
+      
+      // Function to initialize ILAE cards
+      function initializeIlaeCards() {
+        const cards = document.querySelectorAll('.ilae-card');
+        const modal = document.getElementById('ilae-modal');
+        const modalContent = modal.querySelector('.modal-content');
+        const closeBtn = modal.querySelector('.modal-close');
+        
+        cards.forEach(card => {
+          card.addEventListener('click', function() {
+            console.log('Card clicked'); // Debug log
+            
+            // Get data from card attributes
+            const title = this.getAttribute('data-title');
+            const summary = this.getAttribute('data-summary');
+            const eeg = this.getAttribute('data-eeg');
+            const pdfLink = this.getAttribute('data-pdf');
+            
+            console.log('Card data:', { title, summary, eeg, pdfLink }); // Debug log
+            
+            // Populate modal with card data
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-overview').innerHTML = summary;
+            document.getElementById('modal-eeg').innerHTML = eeg || 'No specific EEG findings documented.';
+            
+            // Update PDF link
+            const pdfLinkElement = document.getElementById('pdfLink');
+            if (pdfLink) {
+              pdfLinkElement.href = pdfLink;
+              pdfLinkElement.style.display = 'inline-flex';
+            } else {
+              pdfLinkElement.style.display = 'none';
+            }
+            
+            // Show the modal
+            modal.style.display = 'flex';
+            modalContent.style.opacity = '1';
+            
+            // Prevent click from bubbling to modal background
+            modalContent.addEventListener('click', function(e) {
+              e.stopPropagation();
+            });
           });
         });
-      });
-      
-      // Close modal when clicking the close button
-      closeBtn.addEventListener('click', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        modal.style.display = 'none';
-      });
-      
-      // Close modal when clicking outside the content
-      modal.addEventListener('click', function(event) {
-        if (event.target === modal) {
+        
+        // Close modal when clicking the close button
+        closeBtn.addEventListener('click', function(e) {
+          e.preventDefault();
+          e.stopPropagation();
           modal.style.display = 'none';
-        }
-      });
+        });
+        
+        // Close modal when clicking outside the content
+        modal.addEventListener('click', function(event) {
+          if (event.target === modal) {
+            modal.style.display = 'none';
+          }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', function(event) {
+          if (event.key === 'Escape' && modal.style.display === 'flex') {
+            modal.style.display = 'none';
+          }
+        });
+      }
       
-      // Close modal with Escape key
-      document.addEventListener('keydown', function(event) {
-        if (event.key === 'Escape' && modal.style.display === 'flex') {
-          modal.style.display = 'none';
-        }
+      // Initialize when DOM is loaded
+      document.addEventListener('DOMContentLoaded', function() {
+        initializeILAEClassification();
       });
-    }
-    
-    // Initialize when DOM is loaded
-    document.addEventListener('DOMContentLoaded', function() {
-      initializeILAEClassification();
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
