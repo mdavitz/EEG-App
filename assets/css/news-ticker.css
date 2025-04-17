@@ -1,0 +1,276 @@
+/**
+ * News Ticker Styles
+ * Styling for the header news ticker that shows latest articles
+ */
+
+.news-ticker-container {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1.5rem;
+  height: 36px;
+  position: relative;
+  max-width: 600px;
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.news-ticker {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  overflow: hidden;
+  padding: 0 15px;
+}
+
+.news-ticker__label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  background-color: var(--accent-color);
+  color: white;
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-radius: 18px 0 0 18px;
+  z-index: 2;
+}
+
+.news-ticker__content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 75px; /* Make room for the label */
+  color: rgba(255, 255, 255, 0.9);
+  white-space: nowrap;
+  transition: transform 0.5s ease;
+}
+
+.news-ticker__article {
+  width: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  padding-left: 75px;
+  opacity: 0;
+  transform: translateY(100%);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+}
+
+.news-ticker__article.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.news-ticker__title {
+  font-size: 0.85rem;
+  font-weight: 500;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: flex;
+  align-items: center;
+  max-width: 100%;
+}
+
+.news-ticker__title:before {
+  content: attr(data-source);
+  display: inline-block;
+  margin-right: 8px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 0 6px;
+  border-radius: 10px;
+  color: white;
+  background-color: var(--accent-color);
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.news-ticker__title[data-source="Epilepsia"]:before {
+  background-color: #1e88e5;
+}
+
+.news-ticker__title[data-source="Epilepsy Currents"]:before {
+  background-color: #43a047;
+}
+
+.news-ticker__title[data-source="Neurology"]:before {
+  background-color: #e53935;
+}
+
+/* Dark mode specific styles */
+body.dark .news-ticker__label,
+body.dark .news-ticker__title:before {
+  background-color: var(--accent-color);
+  color: white;
+}
+
+.news-ticker__title a {
+  color: rgba(255, 255, 255, 0.9);
+  text-decoration: none;
+  transition: color 0.2s;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
+}
+
+.news-ticker__title a:hover {
+  color: var(--accent-color, #00a8ff);
+  text-decoration: underline;
+}
+
+.news-ticker__controls {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  margin-right: 5px;
+  z-index: 3;
+  position: relative;
+}
+
+.news-ticker__prev,
+.news-ticker__next {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border: none;
+  background: rgba(255, 255, 255, 0.15);
+  color: white;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 0.7rem;
+  transition: background 0.2s;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.news-ticker__prev:hover,
+.news-ticker__next:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
+/* Mobile Responsive */
+@media (max-width: 768px) {
+  .news-ticker-container {
+    margin: 0 0.5rem;
+    height: 32px;
+    order: 3; /* Position it after logo and search on mobile */
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .header-inner {
+    flex-wrap: wrap;
+    padding: 0.75rem 1rem;
+    row-gap: 8px;
+  }
+  
+  .news-ticker__label {
+    font-size: 0.65rem;
+    padding: 0 6px;
+    width: 60px;
+  }
+  
+  .news-ticker__content {
+    padding-left: 65px; /* Smaller label on mobile */
+  }
+  
+  .news-ticker__article {
+    padding-left: 65px;
+  }
+  
+  /* Mobile horizontal scrolling */
+  .news-ticker__title {
+    font-size: 0.75rem;
+    white-space: nowrap;
+    position: relative;
+    /* Standard text truncation by default */
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  
+  /* Only activate scrolling for articles that need it */
+  .news-ticker__article[data-needs-scroll="true"] .news-ticker__title {
+    overflow: visible;
+  }
+  
+  .news-ticker__article[data-needs-scroll="true"] .news-ticker__title a {
+    display: inline-block;
+    padding-right: 50px; /* Space after text */
+    animation: ticker-scroll 12s linear 1.5s infinite;
+    text-overflow: initial;
+    overflow: visible;
+  }
+  
+  @keyframes ticker-scroll {
+    0%, 5% {
+      transform: translateX(0);
+    }
+    95%, 100% {
+      transform: translateX(calc(-100% + 65px)); /* Leave space for the source label */
+    }
+  }
+  
+  .news-ticker__title:before {
+    font-size: 0.65rem;
+    padding: 0 4px;
+    margin-right: 6px;
+  }
+  
+  .news-ticker__controls {
+    margin-right: 2px;
+  }
+  
+  .news-ticker__prev,
+  .news-ticker__next {
+    width: 20px;
+    height: 20px;
+    font-size: 0.65rem;
+  }
+  
+  /* Touch events to pause scrolling */
+  .news-ticker__article:active .news-ticker__title a {
+    animation-play-state: paused;
+  }
+}
+
+/* On hover, pause the animation (desktop only) */
+@media (hover: hover) {
+  .news-ticker__article:hover .news-ticker__title a {
+    animation-play-state: paused;
+  }
+}
+
+/* Show on larger screens */
+@media (min-width: 900px) {
+  .news-ticker-container {
+    max-width: 800px;
+  }
+}
+
+/* For extra-large screens */
+@media (min-width: 1200px) {
+  .news-ticker-container {
+    max-width: 1000px;
+  }
+} 

@@ -1167,8 +1167,10 @@
     <main class="page-ilae_classification">
       <h2 class="page-title">ILAE Classification of the Epilepsies</h2>
       <div id="ilae-classification-content" class="ilae-container">
+        <div class="ilae-layout">
         <!-- Search and filter section -->
-        <div class="search-container">
+        <aside class="ilae-sidebar">
+          <div class="search-container">
           <!-- Search bar -->
           <div class="search-box">
             <input type="text" id="searchBar" placeholder="Search epilepsy syndromes..." />
@@ -1198,7 +1200,8 @@
             </div>
             <button id="reset-filters" class="reset-filters">Reset Filters</button>
           </div>
-        </div>
+          </div>
+        </aside>
         
         <!-- Add the color legend after the intro text -->
         <div class="color-legend">
@@ -1235,6 +1238,7 @@
         </div>
         
         <!-- Content Container -->
+        <section class="ilae-content">
         <div id="contentContainer">
           <!-- Section 1: Neonates and Infants -->
           <details open>
@@ -1534,6 +1538,8 @@
             <li><a href="assets/documents/onset-in-neonates-and-infants2.pdf" target="_blank">ILAE Position Statement: Epilepsy Syndromes with Onset in Neonates and Infants (Epilepsia, 2022)</a></li>
             <li><a href="assets/documents/idiopathic-generalized2.pdf" target="_blank">ILAE Position Statement: Idiopathic Generalized Epilepsy Syndromes (Epilepsia, 2022)</a></li>
           </ul>
+        </section>
+        </div> <!-- end ilae-layout -->
         </div>
       </div>
     </main>

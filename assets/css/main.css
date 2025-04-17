@@ -24,6 +24,8 @@
 @import url('components/login-modal.css');
 @import url('components/sections.css');
 @import url('components/mermaid.css');
+@import url('news-feed.css');
+@import url('news-ticker.css');
 
 /* Pages */
 @import url('pages/home.css');
