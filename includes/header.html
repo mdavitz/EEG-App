@@ -98,10 +98,24 @@
             }
           });
           
-          // Close dropdown when clicking outside
-          document.addEventListener('click', function(e) {
-            if (!searchMenuPanel.contains(e.target) && !searchTrigger.contains(e.target)) {
+          // Improved outside click detection to close dropdown
+          function closeSearchMenu(e) {
+            // If click is outside the search menu and trigger
+            if (searchMenuPanel.classList.contains('active') && 
+                !searchMenuPanel.contains(e.target) && 
+                !searchTrigger.contains(e.target)) {
               searchMenuPanel.classList.remove('active');
+            }
+          }
+          
+          // Add click listener to document (whole page)
+          document.addEventListener('click', closeSearchMenu);
+          
+          // Handle click inside the menu to prevent immediate closing
+          searchMenuPanel.addEventListener('click', function(e) {
+            // Only prevent propagation if clicking links or the search input
+            if (e.target.tagName === 'A' || e.target.tagName === 'INPUT') {
+              e.stopPropagation();
             }
           });
           
@@ -112,20 +126,33 @@
                 UniversalSearch.handleSearchInput(event);
               }
             });
+            
+            // Ensure we don't close the menu when typing
+            searchInput.addEventListener('click', function(e) {
+              e.stopPropagation();
+            });
           }
           
           // Clear search input
           if (searchClear) {
-            searchClear.addEventListener('click', function() {
+            searchClear.addEventListener('click', function(e) {
               if (searchInput) {
                 searchInput.value = '';
                 searchInput.focus();
                 if (typeof UniversalSearch !== 'undefined') {
                   UniversalSearch.handleSearchInput({target: searchInput});
                 }
+                e.stopPropagation(); // Prevent closing the menu
               }
             });
           }
+          
+          // Also close on escape key
+          document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && searchMenuPanel.classList.contains('active')) {
+              searchMenuPanel.classList.remove('active');
+            }
+          });
         }
         
         // Initialize fullscreen search
@@ -179,4 +206,7 @@
     // Start initialization
     initSearch();
   });
-</script> 
+</script>
+
+<!-- Include the enhanced search behavior -->
+<script src="assets/js/search-behavior.js"></script> 

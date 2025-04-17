@@ -18,7 +18,7 @@ footer {
   -webkit-backdrop-filter: blur(8px);
   box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.1);
   z-index: 900;
-  transition: background var(--transition-duration);
+  transition: background var(--transition-duration), padding 0.3s ease;
 }
 
 body.dark footer {
@@ -40,7 +40,7 @@ body.dark footer {
   cursor: pointer;
   padding: 0.5rem 1rem;
   border-radius: 980px;
-  transition: background-color 0.2s, transform 0.1s;
+  transition: background-color 0.2s, transform 0.1s, padding 0.3s, font-size 0.3s;
   font-size: 0.9rem;
   font-weight: 500;
   user-select: none;
@@ -88,6 +88,44 @@ body.dark .footer-copy:hover {
 /* Add bottom padding to page content to prevent footer overlap */
 #page-content {
   padding-bottom: 3.5rem;
+}
+
+/* Mobile responsive styles to match header */
+@media (max-width: 768px) {
+  footer {
+    padding: 0.4rem 0;
+  }
+  
+  .footer-btns {
+    gap: 0.5rem;
+  }
+  
+  .footer-btns button {
+    padding: 0.3rem 0.7rem;
+    font-size: 0.75rem;
+  }
+  
+  .footer-copy {
+    margin-top: 0.3em;
+    font-size: 0.7rem;
+  }
+  
+  /* Adjust page content padding to match smaller footer */
+  #page-content {
+    padding-bottom: 2.5rem;
+  }
+}
+
+/* Smaller mobile devices */
+@media (max-width: 480px) {
+  .footer-btns {
+    gap: 0.3rem;
+  }
+  
+  .footer-btns button {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.7rem;
+  }
 }
 
 /* COPYRIGHT MODAL */

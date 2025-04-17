@@ -482,4 +482,23 @@ body.dark .menu-section a:hover {
     width: 100%;
     box-sizing: border-box;
   }
+}
+
+/* Search backdrop overlay for handling clicks outside dropdown */
+.search-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: transparent;
+  z-index: 999; /* Just below the dropdown but above other content */
+  display: none;
+}
+
+/* Ensure search menu panel is above the backdrop */
+.search-menu-panel.active {
+  display: block;
+  animation: fadeIn 0.25s cubic-bezier(0.165, 0.84, 0.44, 1);
+  z-index: 1000; /* Ensure it's above the backdrop */
 } 
