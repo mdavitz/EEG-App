@@ -4,28 +4,25 @@
  */
 
 .news-ticker-container {
-  flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 1.5rem;
-  height: 36px;
+  width: 100%;
+  max-width: 100%;
+  margin: 0 auto;
   position: relative;
-  max-width: 600px;
+  background-color: var(--color-dark);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   overflow: hidden;
-  border-radius: 18px;
-  background: rgba(255, 255, 255, 0.12);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
-  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.08);
+  flex: 1; /* Take available space */
+  min-width: 0; /* Allow flex item to shrink below content size */
 }
 
 .news-ticker {
-  flex: 1;
-  height: 100%;
-  position: relative;
-  overflow: hidden;
+  display: flex;
+  align-items: center;
+  height: 50px;
   padding: 0 15px;
+  overflow: hidden;
+  position: relative;
 }
 
 .news-ticker__label {
@@ -55,6 +52,7 @@
   color: rgba(255, 255, 255, 0.9);
   white-space: nowrap;
   transition: transform 0.5s ease;
+  position: relative;
 }
 
 .news-ticker__article {
@@ -86,6 +84,7 @@
   display: flex;
   align-items: center;
   max-width: 100%;
+  position: relative;
 }
 
 .news-ticker__title:before {
@@ -100,6 +99,8 @@
   background-color: var(--accent-color);
   white-space: nowrap;
   flex-shrink: 0;
+  position: relative;
+  z-index: 5;
 }
 
 .news-ticker__title[data-source="Epilepsia"]:before {
@@ -174,52 +175,92 @@ body.dark .news-ticker__title:before {
   .news-ticker-container {
     margin: 0 0.5rem;
     height: 32px;
-    order: 3; /* Position it after logo and search on mobile */
-    width: 100%;
-    max-width: 100%;
+    flex: 1;
+    min-width: 0; /* Allow container to shrink below content size */
+    max-width: none; /* Remove max-width restriction */
   }
   
   .header-inner {
-    flex-wrap: wrap;
-    padding: 0.75rem 1rem;
-    row-gap: 8px;
+    flex-wrap: nowrap !important; /* Never wrap header items */
+    padding: 0.5rem !important; /* Reduce padding */
+    gap: 0.25rem !important; /* Reduce gap between items */
+  }
+  
+  .logo {
+    width: auto !important; /* Allow logo to resize */
+    height: 30px !important; /* Fixed height */
+    margin-right: 0.25rem !important; /* Reduce margin */
+    flex-shrink: 0; /* Don't allow logo to shrink */
+  }
+  
+  .universal-search-menu {
+    margin-left: 0.25rem !important; /* Reduce margin */
+    flex-shrink: 0; /* Don't allow search to shrink */
+  }
+  
+  .news-ticker {
+    height: 32px;
+    padding: 0 5px; /* Reduce padding */
   }
   
   .news-ticker__label {
-    font-size: 0.65rem;
-    padding: 0 6px;
-    width: 60px;
+    font-size: 0.6rem;
+    padding: 0 4px;
+    width: 50px; /* Smaller width */
   }
   
   .news-ticker__content {
-    padding-left: 65px; /* Smaller label on mobile */
+    padding-left: 50px; /* Match the smaller label width */
+  }
+  
+  /* Create overlay effect for source badge */
+  .news-ticker__content:before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    width: 50px; /* Match label width */
+    background: var(--color-dark);
+    z-index: 4;
+    pointer-events: none;
   }
   
   .news-ticker__article {
-    padding-left: 65px;
+    padding-left: 50px; /* Match the smaller label width */
   }
   
-  /* Mobile horizontal scrolling */
   .news-ticker__title {
-    font-size: 0.75rem;
-    white-space: nowrap;
-    position: relative;
-    /* Standard text truncation by default */
-    text-overflow: ellipsis;
-    overflow: hidden;
-  }
-  
-  /* Only activate scrolling for articles that need it */
-  .news-ticker__article[data-needs-scroll="true"] .news-ticker__title {
+    font-size: 0.7rem;
     overflow: visible;
   }
   
+  .news-ticker__title:before {
+    z-index: 10;
+    font-size: 0.6rem;
+    padding: 0 2px;
+    margin-right: 4px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  }
+  
+  /* Hide controls on very small screens */
+  @media (max-width: 480px) {
+    .news-ticker__controls {
+      display: none;
+    }
+    
+    .news-ticker__content {
+      padding-right: 0;
+    }
+  }
+  
+  /* Article horizontal scrolling effect */
   .news-ticker__article[data-needs-scroll="true"] .news-ticker__title a {
     display: inline-block;
-    padding-right: 50px; /* Space after text */
+    white-space: nowrap;
     animation: ticker-scroll 12s linear 1.5s infinite;
-    text-overflow: initial;
-    overflow: visible;
+    animation-fill-mode: both;
+    padding-right: 20px;
   }
   
   @keyframes ticker-scroll {
@@ -227,28 +268,11 @@ body.dark .news-ticker__title:before {
       transform: translateX(0);
     }
     95%, 100% {
-      transform: translateX(calc(-100% + 65px)); /* Leave space for the source label */
+      transform: translateX(calc(-100%));
     }
   }
   
-  .news-ticker__title:before {
-    font-size: 0.65rem;
-    padding: 0 4px;
-    margin-right: 6px;
-  }
-  
-  .news-ticker__controls {
-    margin-right: 2px;
-  }
-  
-  .news-ticker__prev,
-  .news-ticker__next {
-    width: 20px;
-    height: 20px;
-    font-size: 0.65rem;
-  }
-  
-  /* Touch events to pause scrolling */
+  /* Pause animation on touch */
   .news-ticker__article:active .news-ticker__title a {
     animation-play-state: paused;
   }
@@ -273,4 +297,4 @@ body.dark .news-ticker__title:before {
   .news-ticker-container {
     max-width: 1000px;
   }
-} 
+}

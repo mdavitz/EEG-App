@@ -29,9 +29,9 @@ class NewsTicker {
           rssUrl: 'https://www.neurology.org/rss/current.xml'
         }
       ],
-      articleCount: options.articleCount || 10,
+      articleCount: options.articleCount || 20,
       autoRotate: options.autoRotate !== false,
-      rotationInterval: options.rotationInterval || 5000, // 5 seconds
+      rotationInterval: options.rotationInterval || 20000, // 5 seconds
       ...options
     };
 
@@ -439,9 +439,12 @@ class NewsTicker {
     linkEl.textContent = article.title;
     linkEl.title = `${article.source}: ${article.title}`;
     
-    // Check if we need horizontal scrolling on mobile
-    if (this.isMobile && article.title.length > 30) {
+    // Check if we need horizontal scrolling on mobile (with more generous threshold)
+    if (this.isMobile && article.title.length > 25) {
       articleEl.setAttribute('data-needs-scroll', 'true');
+      
+      // Set a data attribute for title length to help with animation calculations
+      titleEl.setAttribute('data-title-length', article.title.length);
     }
     
     // Build the DOM structure
@@ -454,6 +457,22 @@ class NewsTicker {
     // Trigger animation
     setTimeout(() => {
       articleEl.classList.add('active');
+      
+      // If we're on mobile and the title is long, ensure scrolling works properly
+      if (this.isMobile && article.title.length > 25) {
+        // Allow some time for the animation to settle before applying scrolling
+        setTimeout(() => {
+          const titleWidth = titleEl.scrollWidth;
+          const containerWidth = contentContainer.clientWidth - 65; // Subtract label width
+          
+          // Only scroll if content is wider than container
+          if (titleWidth > containerWidth) {
+            // Adjust animation duration based on text length
+            const duration = Math.max(8, Math.min(20, article.title.length * 0.3)); // Between 8-20s
+            linkEl.style.animationDuration = `${duration}s`;
+          }
+        }, 100);
+      }
     }, 50);
   }
 
