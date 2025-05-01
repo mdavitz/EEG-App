@@ -67,6 +67,17 @@
     <div class="search-clear" id="fullscreen-search-clear">&times;</div>
   </div>
   <div class="search-results search-fullscreen-results" id="fullscreen-search-results"></div>
+  <div class="menu-section fullscreen-menu-section">
+    <a href="epilepsy_rotation.html">Epilepsy Rotation</a>
+    <a href="seizure_management.html">Seizure Management</a>
+    <a href="ilae_classification.html">ILAE Classification</a>
+    <a href="natus_instructions.html">Natus & Persyst</a>
+    <a href="acns_criteria.html">ACNS Criteria</a>
+    <a href="eeg_atlas.html">EEG Atlas</a>
+    <a href="eeg_waveforms.html">EEG Simulator</a>
+    <a href="eeg_videos.html">EEG Videos</a>
+    <a href="faq.html">Learning Resources</a>
+  </div>
 </div>
 
 <script>
@@ -89,12 +100,20 @@
           searchTrigger.addEventListener('click', function(event) {
             event.preventDefault();
             event.stopPropagation();
-            searchMenuPanel.classList.toggle('active');
-            
-            if (searchMenuPanel.classList.contains('active') && searchInput) {
-              setTimeout(() => {
-                searchInput.focus();
-              }, 100);
+            const fsOverlay = document.getElementById('search-fullscreen');
+            const fsInput = document.getElementById('fullscreen-search-input');
+            // On mobile, open fullscreen overlay, else toggle dropdown
+            if (window.innerWidth <= 600 && fsOverlay) {
+              fsOverlay.classList.add('active');
+              document.body.classList.add('search-fullscreen-active');
+              if (fsInput) {
+                setTimeout(() => fsInput.focus(), 100);
+              }
+            } else {
+              searchMenuPanel.classList.toggle('active');
+              if (searchMenuPanel.classList.contains('active') && searchInput) {
+                setTimeout(() => searchInput.focus(), 100);
+              }
             }
           });
           
