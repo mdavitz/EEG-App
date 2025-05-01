@@ -47,7 +47,22 @@ function loadInclude(includeName, callback) {
       switch (includeName) {
         case 'header':
           if (document.getElementById('header-container')) {
-            document.getElementById('header-container').innerHTML = data;
+            // Inject header HTML
+            const container = document.getElementById('header-container');
+            container.innerHTML = data;
+            // Execute inline <script> tags from the header include
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = data;
+            tempDiv.querySelectorAll('script').forEach(oldScript => {
+              const newScript = document.createElement('script');
+              if (oldScript.src) {
+                newScript.src = oldScript.src;
+              } else {
+                newScript.textContent = oldScript.textContent;
+              }
+              document.head.appendChild(newScript);
+              document.head.removeChild(newScript);
+            });
           }
           break;
           

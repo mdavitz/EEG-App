@@ -62,13 +62,13 @@ body main #home-content .card p {
   }
   
   body main #home-content .card h3 {
-    font-size: 1rem !important;
+    font-size: 1em !important;
     margin: 0 0 0.1rem !important;
     line-height: 1.1 !important;
   }
   
   body main #home-content .card p {
-    font-size: 0.85rem !important;
+    font-size: 0.85em !important;
     line-height: 1.2 !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -119,12 +119,12 @@ body main #home-content .card p {
   }
   
   body main #home-content .card h3 {
-    font-size: 0.9rem !important;
+    font-size: 0.9em !important;
     margin: 0 0 0.05rem !important;
   }
   
   body main #home-content .card p {
-    font-size: 0.7rem !important;
+    font-size: 0.7em !important;
     line-height: 1.1 !important;
     -webkit-line-clamp: 2 !important;
     margin: 0 !important;

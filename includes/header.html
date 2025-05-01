@@ -70,8 +70,8 @@
 </div>
 
 <script>
-  // Initialize search and navigation when DOM is fully loaded
-  document.addEventListener('DOMContentLoaded', function() {
+  // Initialize search and navigation immediately after header injection
+  (function() {
     // Initialize search on any page that includes the header
     const initSearch = function() {
       if (typeof UniversalSearch !== 'undefined') {
@@ -205,8 +205,10 @@
     
     // Start initialization
     initSearch();
-  });
+  })();
 </script>
 
+<!-- Removed search-behavior.js include due to conflicts -->
+
 <!-- Include the enhanced search behavior -->
-<script src="assets/js/search-behavior.js"></script> 
+-<script src="assets/js/search-behavior.js"></script> 
