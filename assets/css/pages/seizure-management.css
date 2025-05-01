@@ -1,6 +1,20 @@
 /*-----------------------------------------------
   SEIZURE MANAGEMENT STYLES
 -----------------------------------------------*/
+/* Page title styling */
+#seizure-management .page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+body.dark #seizure-management .page-title {
+  color: var(--text-color);
+}
+
 /* Tab buttons - Apple style */
 #seizure-management .tab-buttons {
   display: flex;
@@ -603,4 +617,340 @@ body.dark #seizure-management .green-button:hover {
     max-width: 100%;
     margin: 1rem auto;
   }
+}
+
+/* Enhanced Mobile Responsiveness - Matching Home Page Style */
+@media (max-width: 992px) {
+  #seizure-management .page-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  /* Existing styles for this breakpoint... */
+}
+
+@media (max-width: 768px) {
+  #seizure-management .page-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  #seizure-management .filter-container {
+    flex-direction: column;
+    gap: 1rem;
+    padding: 1rem;
+    margin: 0.75rem auto;
+    border-radius: 6px;
+  }
+  
+  #seizure-management .filter-group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  
+  #seizure-management .filter-dropdown {
+    width: 100%;
+    min-width: unset;
+    font-size: 0.9rem;
+    padding: 8px 10px;
+  }
+  
+  #seizure-management .tab-buttons {
+    gap: 8px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  #seizure-management .tab-buttons button,
+  #seizure-management .blue-button,
+  #seizure-management .green-button,
+  #seizure-management .reset-filters {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    min-width: 100px;
+    margin-bottom: 4px;
+  }
+  
+  #seizure-management .reset-filters {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+  
+  #seizure-management .quick-links {
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    margin-bottom: 1rem !important;
+  }
+  
+  #seizure-management .quick-links a {
+    font-size: 0.9rem;
+    padding: 6px 12px;
+    min-width: 0;
+    border-radius: 6px;
+    flex: 1 0 calc(33.33% - 8px);
+    text-align: center;
+  }
+  
+  #seizure-management .info-box {
+    padding: 1rem;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+  }
+  
+  #seizure-management .info-box h2 {
+    font-size: 1.4rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  #seizure-management .info-box h3 {
+    font-size: 1.2rem !important;
+    margin: 0.75rem 0 0.5rem !important;
+  }
+  
+  #seizure-management .section-header {
+    font-size: 1.2rem;
+    padding: 0.8rem 0;
+  }
+  
+  #seizure-management .section-detail {
+    margin-bottom: 1rem;
+  }
+  
+  #seizure-management .button-group {
+    gap: 10px;
+    margin-top: 1rem;
+  }
+  
+  /* Improved card styling for mobile */
+  #seizure-management .custom-table tbody tr {
+    padding: 0;
+    margin-bottom: 1rem;
+  }
+  
+  #seizure-management .custom-table tbody td {
+    font-size: 0.9rem;
+    padding: 10px 12px 10px 45%;
+  }
+  
+  /* Better spacing for reference cards */
+  #seizure-management .reference-cards-container {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  
+  #seizure-management .reference-card-link {
+    padding: 12px;
+  }
+  
+  #seizure-management .reference-card-icon {
+    margin-right: 8px;
+  }
+}
+
+/* Small mobile devices - Exact Home Page Match */
+@media (max-width: 480px) {
+  #seizure-management .page-title {
+    font-size: 1.4rem !important; 
+    margin-bottom: 0.8rem !important;
+    margin-top: 0.3rem !important;
+  }
+  
+  #seizure-management .quick-links {
+    gap: 6px;
+    margin-bottom: 0.8rem;
+  }
+  
+  #seizure-management .quick-links a {
+    font-size: 0.8rem !important;
+    padding: 5px 10px;
+    border-radius: 4px;
+    flex: 1 0 calc(50% - 6px);
+  }
+  
+  #seizure-management .info-box {
+    padding: 0.8rem;
+    border-radius: 6px;
+    margin-bottom: 0.8rem;
+  }
+  
+  #seizure-management .info-box h2 {
+    font-size: 1.3rem !important;
+    margin-bottom: 0.6rem !important;
+  }
+  
+  #seizure-management .info-box h3 {
+    font-size: 1.1rem !important;
+    margin: 0.6rem 0 0.4rem !important;
+  }
+  
+  #seizure-management .section-header {
+    font-size: 1.1rem;
+    padding: 0.6rem 0;
+  }
+  
+  #seizure-management .section-detail {
+    margin-bottom: 0.8rem;
+  }
+  
+  #seizure-management .blue-button,
+  #seizure-management .green-button,
+  #seizure-management .reset-filters {
+    font-size: 0.8rem;
+    padding: 5px 10px;
+    min-width: 90px;
+  }
+  
+  /* Medication table improvements */
+  #medicationsTableBody tr {
+    padding: 12px;
+  }
+  
+  #medicationsTableBody td {
+    padding: 6px 0;
+  }
+  
+  #medicationsTableBody td:first-child {
+    font-size: 1rem;
+    padding-bottom: 8px;
+  }
+  
+  /* Status epilepticus table improvements */
+  #status-epilepticus .custom-table td[data-label="Phase"] {
+    font-size: 1rem;
+    padding: 10px 12px;
+  }
+  
+  #status-epilepticus .custom-table td[data-label="Time Range"] {
+    padding: 8px 10px 8px 45%;
+  }
+  
+  #status-epilepticus .custom-table td[data-label="Intervention & Dosing"] {
+    padding: 12px;
+  }
+  
+  #status-epilepticus .custom-table td[data-label="Intervention & Dosing"] .no-bullets li {
+    margin-bottom: 6px;
+    font-size: 0.85rem;
+  }
+  
+  /* Improved table visualization */
+  #seizure-management .custom-table tbody td:before {
+    font-size: 0.85rem;
+  }
+  
+  /* Flowchart images */
+  #asm-flowcharts .responsive-image {
+    max-width: 100%;
+    margin: 0.8rem auto;
+  }
+}
+
+/* Smallest devices - Exact Home Page Match */
+@media (max-width: 360px) {
+  #seizure-management .page-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+    margin-top: 0.2rem !important;
+  }
+  
+  #seizure-management .quick-links {
+    gap: 4px;
+    margin-bottom: 0.6rem;
+    flex-direction: column;
+  }
+  
+  #seizure-management .quick-links a {
+    font-size: 0.75rem !important;
+    padding: 4px 8px;
+    border-radius: 4px;
+    width: 100%;
+    flex: none;
+  }
+  
+  #seizure-management .info-box {
+    padding: 0.7rem;
+    border-radius: 4px;
+    margin-bottom: 0.7rem;
+  }
+  
+  #seizure-management .info-box h2 {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  #seizure-management .info-box h3 {
+    font-size: 1rem !important;
+    margin: 0.5rem 0 0.3rem !important;
+  }
+  
+  #seizure-management .section-header {
+    font-size: 1rem;
+    padding: 0.5rem 0;
+  }
+  
+  #seizure-management .blue-button,
+  #seizure-management .green-button,
+  #seizure-management .reset-filters {
+    font-size: 0.75rem;
+    padding: 4px 8px;
+    min-width: 80px;
+    width: 100%;
+    margin: 4px 0;
+  }
+  
+  #seizure-management .button-group {
+    flex-direction: column;
+  }
+  
+  /* Improved table padding */
+  #seizure-management .custom-table tbody td {
+    padding: 8px 8px 8px 45%;
+    font-size: 0.8rem;
+  }
+  
+  #seizure-management .custom-table tbody td:before {
+    font-size: 0.8rem;
+    top: 8px;
+    left: 8px;
+  }
+}
+
+/* Add quick links styles at the top */
+#seizure-management .quick-links {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+#seizure-management .quick-links a {
+  display: inline-block;
+  padding: 8px 18px;
+  color: var(--accent-color);
+  text-decoration: none;
+  border-radius: 980px;
+  background-color: rgba(0, 102, 204, 0.1);
+  border: none;
+  transition: background-color 0.3s, transform 0.3s;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+#seizure-management .quick-links a:hover,
+#seizure-management .quick-links a.active {
+  background-color: rgba(0, 102, 204, 0.2);
+  transform: scale(1.02);
+}
+
+body.dark #seizure-management .quick-links a {
+  background-color: rgba(41, 151, 255, 0.15);
+}
+
+body.dark #seizure-management .quick-links a:hover,
+body.dark #seizure-management .quick-links a.active {
+  background-color: rgba(41, 151, 255, 0.25);
 } 

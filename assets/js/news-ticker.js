@@ -30,16 +30,15 @@ class NewsTicker {
         }
       ],
       articleCount: options.articleCount || 20,
-      autoRotate: options.autoRotate !== false,
-      rotationInterval: options.rotationInterval || 20000, // 5 seconds
+      scrollSpeed: options.scrollSpeed || 60, // Scroll duration in seconds (changed from 658)
+      siteColors: {
+        blue: '#0066cc', // Site's blue color
+        white: '#ffffff'  // Header icon white color
+      },
       ...options
     };
 
     this.articles = [];
-    this.currentIndex = 0;
-    this.rotationTimer = null;
-    this.touchStartX = 0;
-    this.touchEndX = 0;
     this.isMobile = window.innerWidth <= 768;
     
     // Listen for window resize events to update mobile status
@@ -50,9 +49,9 @@ class NewsTicker {
   
   handleResize() {
     this.isMobile = window.innerWidth <= 768;
-    // Re-render current article to apply mobile-specific changes
+    // Re-render if articles are loaded
     if (this.articles.length) {
-      this.displayArticle(this.currentIndex);
+      this.displayArticles();
     }
   }
 
@@ -61,20 +60,15 @@ class NewsTicker {
       // Start with static data to show something immediately
       this.useStaticData();
       this.renderTicker();
-      this.displayArticle(0);
-      
-      // Start rotation with static data immediately
-      if (this.options.autoRotate) {
-        this.startRotation();
-      }
+      this.displayArticles();
       
       // Attempt to fetch articles from all sources in background
       await this.fetchAllArticles();
       
       // Only update UI if we actually got articles
       if (this.articles.length > 0) {
-        // Reset to first article with fresh data
-        this.displayArticle(0);
+        // Update display with fresh data
+        this.displayArticles();
       }
     } catch (error) {
       console.error('Failed to initialize news ticker:', error);
@@ -91,7 +85,7 @@ class NewsTicker {
       console.log(`Attempting to fetch from ${this.options.sources.length} sources:`, 
         this.options.sources.map(s => s.name).join(', '));
       
-      // Try to fetch from each source, with debugging
+      // Try to fetch from each source
       for (const source of this.options.sources) {
         try {
           console.log(`Fetching from ${source.name}...`);
@@ -154,10 +148,6 @@ class NewsTicker {
       
       const xmlText = await response.text();
       console.log(`Got ${xmlText.length} bytes of XML data for ${source.name}`);
-      
-      // For debugging: Show a short sample of the XML
-      const xmlSample = xmlText.substring(0, 200).replace(/[\n\r]+/g, ' ').trim();
-      console.log(`XML sample for ${source.name}: ${xmlSample}...`);
       
       const parser = new DOMParser();
       const xmlDoc = parser.parseFromString(xmlText, "text/xml");
@@ -341,172 +331,234 @@ class NewsTicker {
     // Create the ticker layout
     this.container.innerHTML = `
       <div class="news-ticker">
-        <div class="news-ticker__label">Latest</div>
-        <div class="news-ticker__content"></div>
-        <div class="news-ticker__controls">
-          <button class="news-ticker__prev" aria-label="Previous article">
-            <i class="fas fa-chevron-left"></i>
-          </button>
-          <button class="news-ticker__next" aria-label="Next article">
-            <i class="fas fa-chevron-right"></i>
-          </button>
+        <div class="news-ticker__scroll-container">
+          <div class="news-ticker__scrolling-content"></div>
         </div>
       </div>
     `;
 
-    // Set up event listeners
-    const prevBtn = this.container.querySelector('.news-ticker__prev');
-    const nextBtn = this.container.querySelector('.news-ticker__next');
-    const contentContainer = this.container.querySelector('.news-ticker__content');
-    
-    prevBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.showPreviousArticle();
-    });
-    
-    nextBtn.addEventListener('click', (e) => {
-      e.preventDefault();
-      e.stopPropagation();
-      this.showNextArticle();
-    });
-    
-    // Touch events for mobile swiping
-    contentContainer.addEventListener('touchstart', (e) => {
-      this.touchStartX = e.changedTouches[0].screenX;
-      // Pause rotation during touch
-      this.pauseRotation();
-    }, {passive: true});
-    
-    contentContainer.addEventListener('touchend', (e) => {
-      this.touchEndX = e.changedTouches[0].screenX;
-      this.handleSwipe();
-      // Resume rotation after touch
-      this.resumeRotation();
-    }, {passive: true});
-    
-    // Pause rotation on hover (desktop)
+    // Add CSS for the scrolling banner
+    if (!document.getElementById('news-ticker-styles')) {
+      const style = document.createElement('style');
+      style.id = 'news-ticker-styles';
+      style.textContent = `
+        /* News ticker container */
+        .news-ticker {
+          display: flex;
+          align-items: center;
+          background: transparent;
+          overflow: hidden;
+          height: 42px;
+          width: 100%;
+        }
+        
+        /* Scroll container */
+        .news-ticker__scroll-container {
+          position: relative;
+          overflow: hidden;
+          width: 100%;
+          height: 100%;
+        }
+        
+        /* Scrolling content */
+        .news-ticker__scrolling-content {
+          display: flex;
+          align-items: center;
+          position: absolute;
+          white-space: nowrap;
+          will-change: transform;
+          padding-left: 100%;
+          height: 100%;
+          transform: translateX(0);
+          transition: transform 0.2s linear;
+        }
+        
+        /* Each news item */
+        .news-ticker__item {
+          display: inline-flex;
+          align-items: center;
+          margin-right: 50px;
+          font-size: 15px;
+        }
+        
+        /* News item links */
+        .news-ticker__item a {
+          color: ${this.options.siteColors.white};
+          text-decoration: none;
+          font-weight: 500;
+          transition: color 0.2s ease;
+          letter-spacing: 0.2px;
+          text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+        }
+        
+        .news-ticker__item a:hover {
+          color: ${this.options.siteColors.white};
+          text-decoration: underline;
+          opacity: 0.9;
+        }
+        
+        /* Source badges */
+        .news-ticker__item-source {
+          font-weight: 600;
+          margin-right: 10px;
+          color: ${this.options.siteColors.white};
+          background-color: ${this.options.siteColors.blue};
+          padding: 4px 10px;
+          border-radius: 4px;
+          font-size: 13px;
+          white-space: nowrap;
+          box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Different background colors for different sources */
+        .news-ticker__item-source[data-source="Epilepsy Currents"] {
+          background-color: #5a84e4;
+        }
+        
+        .news-ticker__item-source[data-source="Neurology"] {
+          background-color: #3d4db7;
+        }
+        
+        /* Mobile adjustments */
+        @media (max-width: 768px) {
+          .news-ticker {
+            height: 38px;
+          }
+          
+          .news-ticker__item {
+            font-size: 14px;
+            margin-right: 40px;
+          }
+          
+          .news-ticker__item-source {
+            font-size: 12px;
+            padding: 3px 8px;
+          }
+        }
+      `;
+      document.head.appendChild(style);
+    }
+
+    // Event listeners
     this.container.addEventListener('mouseenter', () => this.pauseRotation());
     this.container.addEventListener('mouseleave', () => this.resumeRotation());
+    
+    // Start the animation manually instead of using CSS animation
+    this.setupAnimation();
+  }
+
+  setupAnimation() {
+    // Calculate the appropriate speed
+    this.scrollContainer = this.container.querySelector('.news-ticker__scrolling-content');
+    if (!this.scrollContainer) return;
+    
+    // Default scroll values
+    this.animationSpeed = 90; // pixels per second (increased from 60, 50% faster)
+    this.scrollPosition = 0;
+    this.isPaused = false;
+    this.lastFrameTime = null;
+    
+    // Start animation loop
+    this.startAnimation();
   }
   
-  handleSwipe() {
-    const threshold = 50; // Minimum swipe distance in pixels
-    
-    if (this.touchStartX - this.touchEndX > threshold) {
-      // Swiped left, go to next article
-      this.showNextArticle();
-    } else if (this.touchEndX - this.touchStartX > threshold) {
-      // Swiped right, go to previous article
-      this.showPreviousArticle();
+  startAnimation() {
+    // Use requestAnimationFrame for smooth animation
+    if (!this.animationFrameId) {
+      this.lastFrameTime = performance.now();
+      this.animationFrameId = requestAnimationFrame(this.animate.bind(this));
     }
   }
+  
+  animate(timestamp) {
+    if (!this.lastFrameTime) {
+      this.lastFrameTime = timestamp;
+    }
+    
+    // Calculate elapsed time
+    const elapsed = timestamp - this.lastFrameTime;
+    this.lastFrameTime = timestamp;
+    
+    if (!this.isPaused) {
+      // Calculate the distance to move based on elapsed time and speed
+      const pixelsToMove = (this.animationSpeed * elapsed) / 1000;
+      this.scrollPosition -= pixelsToMove;
+      
+      // Reset when scrolled completely
+      const containerWidth = this.container.clientWidth;
+      const contentWidth = this.scrollContainer.scrollWidth;
+      
+      if (Math.abs(this.scrollPosition) >= contentWidth) {
+        this.scrollPosition = 0;
+      }
+      
+      // Apply the transform
+      this.scrollContainer.style.transform = `translateX(${this.scrollPosition}px)`;
+    }
+    
+    // Continue animation
+    this.animationFrameId = requestAnimationFrame(this.animate.bind(this));
+  }
 
-  displayArticle(index) {
+  displayArticles() {
+    // Populate all articles into the scrolling banner
     if (!this.articles.length) return;
     
-    this.currentIndex = index;
-    const article = this.articles[index];
-    const contentContainer = this.container.querySelector('.news-ticker__content');
+    const scrollContainer = this.container.querySelector('.news-ticker__scrolling-content');
+    if (!scrollContainer) return;
     
-    // Clear previous articles
-    const oldArticles = this.container.querySelectorAll('.news-ticker__article');
-    oldArticles.forEach(oldArticle => {
-      if (oldArticle.classList.contains('active')) {
-        oldArticle.classList.remove('active');
-        setTimeout(() => {
-          oldArticle.remove();
-        }, 500); // Remove after transition ends
-      } else {
-        oldArticle.remove();
-      }
+    // Clear previous content
+    scrollContainer.innerHTML = '';
+    
+    // Add all articles to the scrolling banner
+    this.articles.forEach(article => {
+      const articleEl = document.createElement('div');
+      articleEl.className = 'news-ticker__item';
+      
+      // Add source
+      const sourceEl = document.createElement('span');
+      sourceEl.className = 'news-ticker__item-source';
+      sourceEl.textContent = article.source || '';
+      sourceEl.setAttribute('data-source', article.source || ''); // For source-specific styling
+      
+      // Create link element
+      const linkEl = document.createElement('a');
+      linkEl.href = article.link;
+      linkEl.target = '_blank';
+      linkEl.rel = 'noopener';
+      linkEl.textContent = article.title;
+      linkEl.title = `${article.source}: ${article.title}`;
+      
+      // Build the DOM structure
+      articleEl.appendChild(sourceEl);
+      articleEl.appendChild(linkEl);
+      
+      // Add to scrolling container
+      scrollContainer.appendChild(articleEl);
     });
     
-    // Create new article element
-    const articleEl = document.createElement('div');
-    articleEl.className = 'news-ticker__article';
-    
-    // Create title element with proper markup
-    const titleEl = document.createElement('h4');
-    titleEl.className = 'news-ticker__title';
-    titleEl.setAttribute('data-source', article.source || '');
-    
-    // Create link element
-    const linkEl = document.createElement('a');
-    linkEl.href = article.link;
-    linkEl.target = '_blank';
-    linkEl.rel = 'noopener';
-    linkEl.textContent = article.title;
-    linkEl.title = `${article.source}: ${article.title}`;
-    
-    // Check if we need horizontal scrolling on mobile (with more generous threshold)
-    if (this.isMobile && article.title.length > 25) {
-      articleEl.setAttribute('data-needs-scroll', 'true');
+    // Reset position when content changes
+    if (this.scrollContainer) {
+      this.scrollPosition = 0;
+      this.scrollContainer.style.transform = `translateX(${this.scrollPosition}px)`;
       
-      // Set a data attribute for title length to help with animation calculations
-      titleEl.setAttribute('data-title-length', article.title.length);
-    }
-    
-    // Build the DOM structure
-    titleEl.appendChild(linkEl);
-    articleEl.appendChild(titleEl);
-    
-    // Add to DOM
-    contentContainer.appendChild(articleEl);
-    
-    // Trigger animation
-    setTimeout(() => {
-      articleEl.classList.add('active');
+      // Adjust speed based on content length
+      const contentWidth = scrollContainer.scrollWidth;
+      const containerWidth = this.container.clientWidth;
       
-      // If we're on mobile and the title is long, ensure scrolling works properly
-      if (this.isMobile && article.title.length > 25) {
-        // Allow some time for the animation to settle before applying scrolling
-        setTimeout(() => {
-          const titleWidth = titleEl.scrollWidth;
-          const containerWidth = contentContainer.clientWidth - 65; // Subtract label width
-          
-          // Only scroll if content is wider than container
-          if (titleWidth > containerWidth) {
-            // Adjust animation duration based on text length
-            const duration = Math.max(8, Math.min(20, article.title.length * 0.3)); // Between 8-20s
-            linkEl.style.animationDuration = `${duration}s`;
-          }
-        }, 100);
-      }
-    }, 50);
-  }
-
-  showNextArticle() {
-    const nextIndex = (this.currentIndex + 1) % this.articles.length;
-    this.displayArticle(nextIndex);
-  }
-
-  showPreviousArticle() {
-    const prevIndex = (this.currentIndex - 1 + this.articles.length) % this.articles.length;
-    this.displayArticle(prevIndex);
-  }
-
-  startRotation() {
-    if (this.rotationTimer) {
-      clearInterval(this.rotationTimer);
+      // Adjust speed: slower for longer content (increased by 50%)
+      this.animationSpeed = Math.max(62, Math.min(120, 90 * (containerWidth / contentWidth * 2)));
     }
-    
-    this.rotationTimer = setInterval(() => {
-      this.showNextArticle();
-    }, this.options.rotationInterval);
   }
 
   pauseRotation() {
-    if (this.rotationTimer) {
-      clearInterval(this.rotationTimer);
-      this.rotationTimer = null;
-    }
+    // Pause the animation
+    this.isPaused = true;
   }
 
   resumeRotation() {
-    if (this.options.autoRotate && !this.rotationTimer) {
-      this.startRotation();
-    }
+    // Resume the animation
+    this.isPaused = false;
   }
 }
 
@@ -516,8 +568,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize with a slight delay to ensure the container is ready
     new NewsTicker('#news-ticker-container', {
       articleCount: 10,
-      autoRotate: true,
-      rotationInterval: 7000
+      siteColors: {
+        blue: '#0066cc', // Site's blue color
+        white: '#ffffff'  // Header icon white color
+      }
     });
   }, 500);
 }); 

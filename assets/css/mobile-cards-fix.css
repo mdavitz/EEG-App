@@ -1,0 +1,137 @@
+/* 
+ * Mobile Cards Fix - Critical overrides for mobile display
+ * These styles use high specificity selectors to ensure they override default styles
+ */
+
+/* Base overrides for all screens */
+body main #home-content .cards-grid {
+  grid-auto-rows: auto !important;
+}
+
+body main #home-content .card {
+  min-height: unset !important;
+  justify-content: flex-start !important;
+}
+
+body main #home-content .card i {
+  margin-bottom: 0 !important;
+}
+
+body main #home-content .card p {
+  flex-grow: 0 !important;
+  margin-bottom: 0 !important;
+}
+
+/* Small screens (tablets and below) */
+@media (max-width: 768px) {
+  body main #home-content.cards-container {
+    margin: 0.25rem auto 0.5rem !important;
+    padding: 0.25rem !important;
+  }
+  
+  body main #home-content .cards-grid {
+    grid-template-columns: 1fr !important;
+    gap: 0.5rem !important;
+  }
+  
+  body main #home-content.cards-container h2 {
+    font-size: 1.4rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  body main #home-content .card {
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0.5rem !important;
+    margin-bottom: 0.4rem !important;
+    display: flex !important;
+    flex-direction: row !important;
+    text-align: left !important;
+    align-items: center !important;
+    border-radius: 4px !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+  }
+  
+  body main #home-content .card i {
+    flex: 0 0 35px !important;
+    height: 35px !important;
+    width: 35px !important;
+    line-height: 35px !important;
+    margin: 0 0.6rem 0 0 !important;
+    font-size: 1.4rem !important;
+  }
+  
+  body main #home-content .card h3 {
+    font-size: 1rem !important;
+    margin: 0 0 0.1rem !important;
+    line-height: 1.1 !important;
+  }
+  
+  body main #home-content .card p {
+    font-size: 0.85rem !important;
+    line-height: 1.2 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    -webkit-line-clamp: 2 !important;
+    display: -webkit-box !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+  }
+  
+  body main #home-content .card .content-wrapper {
+    flex: 1 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    min-height: 0 !important;
+    max-height: none !important;
+  }
+}
+
+/* Extra small devices (phones) */
+@media (max-width: 480px) {
+  body main #home-content.cards-container {
+    padding: 0.2rem !important;
+    margin: 0.2rem auto 0.4rem !important;
+  }
+  
+  body main #home-content .cards-grid {
+    gap: 0.35rem !important;
+  }
+  
+  body main #home-content .card {
+    padding: 0.4rem !important;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1) !important;
+    margin: 0 0 0.35rem !important;
+    min-height: 0 !important;
+  }
+  
+  body main #home-content .card i {
+    flex: 0 0 28px !important;
+    height: 28px !important;
+    width: 28px !important;
+    line-height: 28px !important;
+    font-size: 1.1rem !important;
+    margin-right: 0.4rem !important;
+    margin-bottom: 0 !important;
+  }
+  
+  body main #home-content .card h3 {
+    font-size: 0.9rem !important;
+    margin: 0 0 0.05rem !important;
+  }
+  
+  body main #home-content .card p {
+    font-size: 0.7rem !important;
+    line-height: 1.1 !important;
+    -webkit-line-clamp: 2 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+  
+  body main #home-content .card:hover {
+    transform: translateY(-2px) !important;
+  }
+} 

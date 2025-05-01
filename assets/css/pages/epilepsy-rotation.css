@@ -1,6 +1,20 @@
 /*-----------------------------------------------
   EPILEPSY ROTATION STYLING - MODERNIZED
 -----------------------------------------------*/
+/* Page title styling */
+#epilepsy-rotation .page-title {
+  text-align: center;
+  font-size: 2.5rem;
+  font-weight: 600;
+  margin-bottom: 2rem;
+  color: var(--primary-color);
+  transition: font-size 0.3s ease, margin 0.3s ease;
+}
+
+body.dark #epilepsy-rotation .page-title {
+  color: var(--text-color);
+}
+
 #epilepsy-rotation .tab-buttons {
   display: flex;
   justify-content: center;
@@ -520,40 +534,265 @@ body.modal-open {
 
 @media (max-width: 768px) {
   #epilepsy-rotation .tab-buttons {
-    flex-direction: column;
+    flex-direction: row;
+    flex-wrap: wrap;
     gap: 8px;
+    margin-bottom: 0.75em !important;
+    margin-top: 0.5em !important;
   }
   
   #epilepsy-rotation .tab-buttons button {
-    width: 100%;
-    min-width: unset;
+    padding: 6px 12px;
+    font-size: 0.9rem !important;
+    min-width: 0;
+    flex: 1 0 calc(33.33% - 10px);
+    margin-bottom: 4px;
+    border-radius: 4px;
   }
   
   #epilepsy-rotation .quick-links {
-    flex-direction: column;
-    gap: 5px;
+    gap: 6px;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  #epilepsy-rotation .quick-links a {
+    padding: 5px 10px;
+    font-size: 0.85rem !important;
+    border-radius: 4px;
   }
   
   #epilepsy-rotation .info-box {
-    padding: 1rem;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
   }
   
   #epilepsy-rotation .info-box h2 {
-    font-size: 1.5rem;
+    font-size: 1.4rem !important;
+    margin-bottom: 0.75rem !important;
   }
   
   #epilepsy-rotation .info-box h3 {
-    font-size: 1.2rem;
+    font-size: 1.2rem !important;
+    margin: 0.75rem 0 0.5rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h4 {
+    font-size: 1rem !important;
+    margin: 0.75rem 0 0.4rem !important;
+  }
+  
+  #epilepsy-rotation .section-header {
+    font-size: 1.1rem;
+    padding: 0.6rem 0;
+  }
+  
+  #epilepsy-rotation .custom-table {
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   }
   
   #epilepsy-rotation .custom-table thead th,
   #epilepsy-rotation .custom-table tbody td {
-    padding: 10px;
-    font-size: 14px;
+    padding: 8px 10px;
+    font-size: 0.9rem !important;
   }
   
-  #epilepsy-rotation .modal-content {
-    width: 95%;
+  #epilepsy-rotation .blue-button,
+  #epilepsy-rotation .green-button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+  
+  #epilepsy-rotation .button-group {
+    gap: 10px;
+    margin-top: 16px;
+  }
+}
+
+/* Additional styles for extra small screens */
+@media (max-width: 480px) {
+  #epilepsy-rotation .tab-buttons {
+    gap: 6px;
+    margin-bottom: 0.6em !important;
+    margin-top: 0.4em !important;
+  }
+  
+  #epilepsy-rotation .tab-buttons button {
+    padding: 5px 8px;
+    font-size: 0.8rem !important;
+    flex: 1 0 calc(50% - 6px);
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .quick-links {
+    gap: 4px;
+    margin-bottom: 0.6rem !important;
+    flex-wrap: wrap;
+  }
+  
+  #epilepsy-rotation .quick-links a {
+    padding: 4px 8px;
+    font-size: 0.75rem !important;
+    width: calc(50% - 4px);
+    text-align: center;
+    margin: 0;
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .info-box {
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .info-box h2 {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h3 {
+    font-size: 1.1rem !important;
+    margin: 0.6rem 0 0.4rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h4 {
+    font-size: 0.9rem !important;
+    margin: 0.5rem 0 0.3rem !important;
+  }
+  
+  #epilepsy-rotation .custom-table {
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  #epilepsy-rotation .custom-table thead th,
+  #epilepsy-rotation .custom-table tbody td {
+    padding: 6px 8px;
+    font-size: 0.8rem !important;
+  }
+  
+  #epilepsy-rotation .table-link {
+    font-size: 0.7rem;
+  }
+  
+  .modal-content {
+    width: 100%;
+    border-radius: 4px;
+  }
+  
+  .modal-header {
+    padding: 8px 12px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  .modal-body {
+    padding: 8px 12px 12px;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  
+  .form-group input[type="text"] {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+  }
+  
+  .form-group input[type="file"] {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .blue-button,
+  #epilepsy-rotation .green-button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    min-width: 90px;
+  }
+  
+  #epilepsy-rotation .button-group {
+    gap: 8px;
+    margin-top: 12px;
+  }
+}
+
+/* Additional styles for super small screens */
+@media (max-width: 360px) {
+  #epilepsy-rotation .tab-buttons {
+    gap: 4px;
+    margin-bottom: 0.5em !important;
+  }
+  
+  #epilepsy-rotation .tab-buttons button {
+    padding: 4px 6px;
+    font-size: 0.7rem !important;
+    flex: 1 0 calc(50% - 4px);
+  }
+  
+  #epilepsy-rotation .quick-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  #epilepsy-rotation .quick-links a {
+    width: 100%;
+    padding: 4px 6px;
+    font-size: 0.7rem !important;
+    margin-bottom: 0;
+  }
+  
+  #epilepsy-rotation .info-box {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  #epilepsy-rotation .info-box h2 {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h3 {
+    font-size: 1rem !important;
+    margin: 0.5rem 0 0.3rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h4 {
+    font-size: 0.85rem !important;
+    margin: 0.4rem 0 0.2rem !important;
+  }
+  
+  #epilepsy-rotation .section-header {
+    font-size: 0.95rem;
+    padding: 0.4rem 0;
+  }
+  
+  #epilepsy-rotation .custom-table thead th,
+  #epilepsy-rotation .custom-table tbody td {
+    padding: 5px 6px;
+    font-size: 0.75rem !important;
+  }
+  
+  #epilepsy-rotation .table-link {
+    font-size: 0.65rem;
+  }
+  
+  #epilepsy-rotation .blue-button,
+  #epilepsy-rotation .green-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    min-width: 80px;
   }
 }
 
@@ -626,4 +865,313 @@ body.dark #epilepsy-rotation .green-button {
 
 body.dark #epilepsy-rotation .green-button:hover {
   background-color: #28bd4c;
+}
+
+/* Enhanced Mobile Responsiveness - Matching Home Page Style */
+@media (max-width: 992px) {
+  #epilepsy-rotation .page-title {
+    font-size: 2.2rem;
+    margin-bottom: 1.75rem;
+  }
+  
+  #epilepsy-rotation .tab-buttons {
+    gap: 12px;
+    margin-bottom: 1.75em;
+  }
+  
+  #epilepsy-rotation .tab-buttons button {
+    padding: 7px 16px;
+    font-size: 13.5px;
+    min-width: 130px;
+  }
+  
+  #epilepsy-rotation .info-box h2 {
+    font-size: 1.7rem;
+  }
+  
+  #epilepsy-rotation .info-box h3 {
+    font-size: 1.35rem;
+  }
+}
+
+@media (max-width: 768px) {
+  #epilepsy-rotation .page-title {
+    font-size: 1.6rem !important;
+    margin-bottom: 1rem !important;
+    margin-top: 0.5rem !important;
+  }
+  
+  #epilepsy-rotation .tab-buttons {
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 0.75em !important;
+    margin-top: 0.5em !important;
+  }
+  
+  #epilepsy-rotation .tab-buttons button {
+    padding: 6px 12px;
+    font-size: 0.9rem !important;
+    min-width: 0;
+    flex: 1 0 calc(33.33% - 10px);
+    margin-bottom: 4px;
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .quick-links {
+    gap: 6px;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  #epilepsy-rotation .quick-links a {
+    padding: 5px 10px;
+    font-size: 0.85rem !important;
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .info-box {
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    border-radius: 4px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  }
+  
+  #epilepsy-rotation .info-box h2 {
+    font-size: 1.4rem !important;
+    margin-bottom: 0.75rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h3 {
+    font-size: 1.2rem !important;
+    margin: 0.75rem 0 0.5rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h4 {
+    font-size: 1rem !important;
+    margin: 0.75rem 0 0.4rem !important;
+  }
+  
+  #epilepsy-rotation .section-header {
+    font-size: 1.1rem;
+    padding: 0.6rem 0;
+  }
+  
+  #epilepsy-rotation .custom-table {
+    border-radius: 4px;
+    margin-bottom: 0.75rem;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  }
+  
+  #epilepsy-rotation .custom-table thead th,
+  #epilepsy-rotation .custom-table tbody td {
+    padding: 8px 10px;
+    font-size: 0.9rem !important;
+  }
+  
+  #epilepsy-rotation .blue-button,
+  #epilepsy-rotation .green-button {
+    padding: 6px 12px;
+    font-size: 0.9rem;
+    min-width: 100px;
+  }
+  
+  #epilepsy-rotation .button-group {
+    gap: 10px;
+    margin-top: 16px;
+  }
+}
+
+/* Small mobile devices - Exact Home Page Match */
+@media (max-width: 480px) {
+  #epilepsy-rotation .page-title {
+    font-size: 1.4rem !important; 
+    margin-bottom: 0.8rem !important;
+    margin-top: 0.3rem !important;
+  }
+  
+  #epilepsy-rotation .tab-buttons {
+    gap: 6px;
+    margin-bottom: 0.6em !important;
+    margin-top: 0.4em !important;
+  }
+  
+  #epilepsy-rotation .tab-buttons button {
+    padding: 5px 8px;
+    font-size: 0.8rem !important;
+    flex: 1 0 calc(50% - 6px);
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .quick-links {
+    gap: 4px;
+    margin-bottom: 0.6rem !important;
+    flex-wrap: wrap;
+  }
+  
+  #epilepsy-rotation .quick-links a {
+    padding: 4px 8px;
+    font-size: 0.75rem !important;
+    width: calc(50% - 4px);
+    text-align: center;
+    margin: 0;
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .info-box {
+    padding: 0.6rem;
+    margin-bottom: 0.6rem;
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .info-box h2 {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h3 {
+    font-size: 1.1rem !important;
+    margin: 0.6rem 0 0.4rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h4 {
+    font-size: 0.9rem !important;
+    margin: 0.5rem 0 0.3rem !important;
+  }
+  
+  #epilepsy-rotation .custom-table {
+    font-size: 0.8rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  #epilepsy-rotation .custom-table thead th,
+  #epilepsy-rotation .custom-table tbody td {
+    padding: 6px 8px;
+    font-size: 0.8rem !important;
+  }
+  
+  #epilepsy-rotation .table-link {
+    font-size: 0.7rem;
+  }
+  
+  .modal-content {
+    width: 100%;
+    border-radius: 4px;
+  }
+  
+  .modal-header {
+    padding: 8px 12px;
+  }
+  
+  .modal-header h2 {
+    font-size: 1.1rem;
+  }
+  
+  .modal-body {
+    padding: 8px 12px 12px;
+  }
+  
+  .form-group label {
+    font-size: 0.9rem;
+    margin-bottom: 4px;
+  }
+  
+  .form-group input[type="text"] {
+    padding: 6px 10px;
+    font-size: 0.9rem;
+    border-radius: 4px;
+  }
+  
+  .form-group input[type="file"] {
+    padding: 6px 10px;
+    font-size: 0.8rem;
+    border-radius: 4px;
+  }
+  
+  #epilepsy-rotation .blue-button,
+  #epilepsy-rotation .green-button {
+    padding: 5px 10px;
+    font-size: 0.8rem;
+    min-width: 90px;
+  }
+  
+  #epilepsy-rotation .button-group {
+    gap: 8px;
+    margin-top: 12px;
+  }
+}
+
+/* Smallest devices - Exact Home Page Match */
+@media (max-width: 360px) {
+  #epilepsy-rotation .page-title {
+    font-size: 1.2rem !important;
+    margin-bottom: 0.6rem !important;
+    margin-top: 0.2rem !important;
+  }
+  
+  #epilepsy-rotation .tab-buttons {
+    gap: 4px;
+    margin-bottom: 0.5em !important;
+  }
+  
+  #epilepsy-rotation .tab-buttons button {
+    padding: 4px 6px;
+    font-size: 0.7rem !important;
+    flex: 1 0 calc(50% - 4px);
+  }
+  
+  #epilepsy-rotation .quick-links {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 4px;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  #epilepsy-rotation .quick-links a {
+    width: 100%;
+    padding: 4px 6px;
+    font-size: 0.7rem !important;
+    margin-bottom: 0;
+  }
+  
+  #epilepsy-rotation .info-box {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  #epilepsy-rotation .info-box h2 {
+    font-size: 1.1rem !important;
+    margin-bottom: 0.5rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h3 {
+    font-size: 1rem !important;
+    margin: 0.5rem 0 0.3rem !important;
+  }
+  
+  #epilepsy-rotation .info-box h4 {
+    font-size: 0.85rem !important;
+    margin: 0.4rem 0 0.2rem !important;
+  }
+  
+  #epilepsy-rotation .section-header {
+    font-size: 0.95rem;
+    padding: 0.4rem 0;
+  }
+  
+  #epilepsy-rotation .custom-table thead th,
+  #epilepsy-rotation .custom-table tbody td {
+    padding: 5px 6px;
+    font-size: 0.75rem !important;
+  }
+  
+  #epilepsy-rotation .table-link {
+    font-size: 0.65rem;
+  }
+  
+  #epilepsy-rotation .blue-button,
+  #epilepsy-rotation .green-button {
+    padding: 4px 8px;
+    font-size: 0.75rem;
+    min-width: 80px;
+  }
 } 

@@ -559,12 +559,12 @@
         
         <!-- Quick Links - For navigation -->
         <div class="quick-links">
-          <a href="#" id="all-btn" class="active" onclick="filterCategory('all'); return false;">All Content</a>
-          <a href="#status-epilepticus" onclick="filterCategory('epilepticus'); return false;">Status Epilepticus</a>
-          <a href="#anti-seizure-medications" onclick="filterCategory('medications'); return false;">Medications</a>
-          <a href="#asm-flowcharts" onclick="filterCategory('asm-flowcharts'); return false;">ASM Flowcharts</a>
-          <a href="#asm-withdrawal" onclick="filterCategory('asm-withdrawal'); return false;">ASM Withdrawal</a>
-          <a href="#refractory-epilepsy" onclick="filterCategory('refractory-epilepsy'); return false;">Refractory Epilepsy</a>
+          <a href="#" id="all-btn" class="active" onclick="filterCategory('all', false); return false;">All Content</a>
+          <a href="#status-epilepticus" onclick="filterCategory('epilepticus', false); return false;">Status Epilepticus</a>
+          <a href="#anti-seizure-medications" onclick="filterCategory('medications', false); return false;">Medications</a>
+          <a href="#asm-flowcharts" onclick="filterCategory('asm-flowcharts', false); return false;">ASM Flowcharts</a>
+          <a href="#asm-withdrawal" onclick="filterCategory('asm-withdrawal', false); return false;">ASM Withdrawal</a>
+          <a href="#refractory-epilepsy" onclick="filterCategory('refractory-epilepsy', false); return false;">Refractory Epilepsy</a>
         </div>
         
         <!-- Content Container with Expandable Details -->
@@ -1092,7 +1092,7 @@
 
         // Initialize filtering to "All" on page load
         setTimeout(() => {
-          filterCategory('all');
+          filterCategory('all', true);
         }, 100);
 
         // ASM Filter functionality
@@ -1180,7 +1180,7 @@
     });
 
     // Content filtering function to show/hide sections
-    function filterCategory(category) {
+    function filterCategory(category, isInitialLoad = false) {
       // Get all quick link buttons and section details
       const quickLinks = document.querySelectorAll('.quick-links a');
       const sectionDetails = document.querySelectorAll('.section-detail');
@@ -1228,8 +1228,11 @@
         }
       });
       
-      // Scroll to the top of the content area
-      document.getElementById('seizure-management').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      // Only scroll if this is not the initial page load
+      if (!isInitialLoad) {
+        // Scroll to the top of the content area
+        document.getElementById('seizure-management').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     }
   </script>
 </body>
