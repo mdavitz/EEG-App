@@ -105,113 +105,17 @@
     /* Intro text styling */
     .intro-text {
       text-align: center;
-      max-width: 900px;
+      max-width: 800px;
       margin: 0 auto 2rem;
       color: var(--text-color);
       line-height: 1.6;
       font-size: 1rem;
-      padding: 1.5rem;
-      border-radius: 12px;
-      background: var(--card-bg);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06);
-    }
-    
-    .intro-heading {
-      color: var(--primary-color);
-      margin-bottom: 1.2rem;
-      font-size: 1.5rem;
-      font-weight: 600;
-      position: relative;
-      padding-bottom: 12px;
-    }
-    
-    .intro-heading:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 80px;
-      height: 3px;
-      background: var(--accent-color);
-      border-radius: 2px;
+      padding: 1rem;
+      border-radius: 8px;
     }
     
     .intro-text p {
-      margin-bottom: 1.2rem;
-    }
-    
-    .intro-highlights {
-      text-align: left;
-      display: inline-block;
-      margin: 0.5rem auto 1.2rem;
-      padding-left: 1.5rem;
-    }
-    
-    .intro-highlights li {
-      margin-bottom: 0.5rem;
-      position: relative;
-      padding-left: 8px;
-    }
-    
-    .intro-highlights li:before {
-      content: '';
-      position: absolute;
-      left: -15px;
-      top: 9px;
-      width: 6px;
-      height: 6px;
-      background-color: var(--accent-color);
-      border-radius: 50%;
-    }
-    
-    .intro-pdf-link {
-      margin-top: 1.5rem;
-    }
-    
-    .pdf-button {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: var(--accent-color);
-      color: white;
-      text-decoration: none;
-      padding: 10px 20px;
-      border-radius: 30px;
-      font-weight: 500;
-      transition: all 0.3s ease;
-      box-shadow: 0 4px 10px rgba(0, 102, 204, 0.2);
-    }
-    
-    .pdf-button:hover {
-      background: var(--accent-hover, #005fa3);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0, 102, 204, 0.3);
-    }
-    
-    .pdf-button i {
-      font-size: 16px;
-    }
-    
-    @media (max-width: 768px) {
-      .intro-text {
-        padding: 1.2rem;
-        text-align: left;
-      }
-      
-      .intro-heading {
-        text-align: center;
-        font-size: 1.3rem;
-      }
-      
-      .intro-highlights {
-        width: 100%;
-      }
-      
-      .pdf-button {
-        width: 100%;
-        justify-content: center;
-      }
+      margin-bottom: 1rem;
     }
     
     #ilae-classification-content {
@@ -1823,19 +1727,7 @@
       <!-- Seizure Classification Content -->
       <div id="classification-tab" class="ilae-tab-content">
         <div class="intro-text">
-          <h3 class="intro-heading">2025 ILAE Classification: A Modern Approach to Epileptic Seizures</h3>
-          <p>The International League Against Epilepsy (ILAE) has updated its classification of epileptic seizures for 2025, introducing important changes to improve clinical relevance and scientific accuracy. Key innovations include:</p>
-          <ul class="intro-highlights">
-            <li>Replacement of "awareness" with "consciousness" as a primary classifier</li>
-            <li>Introduction of "observable" vs. "nonobservable" manifestations instead of motor/non-motor</li>
-            <li>Emphasis on the chronological sequence of seizure symptoms for more precise descriptions</li>
-          </ul>
-          <p>These changes aim to improve communication among clinicians, support accurate diagnosis, and guide effective treatment planning.</p>
-          <div class="intro-pdf-link">
-            <a href="https://www.ilae.org/files/dmfile/updated-classification-of-epileptic-seizures-2025.pdf" target="_blank" class="pdf-button">
-              <i class="fas fa-file-pdf"></i> Download the Complete 2025 ILAE Classification PDF
-            </a>
-          </div>
+          <p>The updated ILAE classification of epileptic seizures (2025) categorizes seizures based on their onset with the new distinction of preserved versus impaired consciousness (no longer using "awareness"). For full guidelines, refer to the <a href="https://www.ilae.org/files/dmfile/updated-classification-of-epileptic-seizures-2025.pdf" target="_blank">2025 ILAE Classification of Epileptic Seizures PDF</a>.</p>
         </div>
 
         <!-- Classification diagram -->
@@ -1846,27 +1738,27 @@
           <div class="classification-container">
             <div class="classification-column">
               <div class="classification-type focal">
-                <h4>Focal</h4>
+                <h4>Focal Onset</h4>
                 <p>Seizures originating within networks limited to one hemisphere</p>
                 <div class="classification-subtypes">
                   <div class="subtype-card">
                     <h5>With Preserved Consciousness</h5>
                     <p>Patient maintains awareness of self and environment</p>
                     <ul>
-                      <li>Observable manifestations</li>
-                      <li>Nonobservable manifestations</li>
+                      <li>Motor onset (e.g., tonic, clonic, myoclonic)</li>
+                      <li>Non-motor onset (e.g., sensory, cognitive, emotional)</li>
                     </ul>
                   </div>
                   <div class="subtype-card">
                     <h5>With Impaired Consciousness</h5>
                     <p>Patient has altered awareness of self and environment</p>
                     <ul>
-                      <li>Observable manifestations may occur</li>
+                      <li>Motor manifestations may occur</li>
                       <li>Automatisms may be present</li>
                     </ul>
                   </div>
                   <div class="subtype-card">
-                    <h5>Bilateral Tonic-Clonic</h5>
+                    <h5>Focal to Bilateral Tonic-Clonic</h5>
                     <p>Begins focally and evolves to engage both hemispheres</p>
                   </div>
                 </div>
@@ -1904,28 +1796,26 @@
             </div>
             <div class="classification-column">
               <div class="classification-type unknown">
-                <h4>Unknown</h4>
-                <p>When the onset is not clearly determined whether focal or generalized</p>
+                <h4>Unknown Onset</h4>
+                <p>When the onset is not clearly determined</p>
                 <div class="classification-subtypes">
                   <div class="subtype-card">
-                    <h5>With Preserved Consciousness</h5>
-                    <p>Patient maintains awareness of self and environment</p>
+                    <h5>Motor</h5>
                     <ul>
-                      <li>Observable manifestations</li>
-                      <li>Nonobservable manifestations</li>
+                      <li>Tonic-clonic</li>
+                      <li>Epileptic spasms</li>
+                      <li>Other motor</li>
                     </ul>
                   </div>
                   <div class="subtype-card">
-                    <h5>With Impaired Consciousness</h5>
-                    <p>Patient has altered awareness of self and environment</p>
+                    <h5>Non-Motor</h5>
                     <ul>
-                      <li>Observable manifestations may occur</li>
-                      <li>Automatisms may be present</li>
+                      <li>Behavior arrest</li>
                     </ul>
                   </div>
                   <div class="subtype-card">
-                    <h5>Bilateral Tonic-Clonic</h5>
-                    <p>Unknown whether focal or generalized in origin</p>
+                    <h5>Unclassified</h5>
+                    <p>Insufficient information or unable to place in other categories</p>
                   </div>
                 </div>
               </div>
@@ -1938,35 +1828,251 @@
           <h3>Key Changes in the 2025 Classification</h3>
           <div class="changes-grid">
             <div class="change-card">
-              <div class="change-icon"><i class="fas fa-edit"></i></div>
-              <h4>Removal of "Onset"</h4>
-              <p>"Onset" is removed from the names of the main seizure classes.</p>
-            </div>
-            <div class="change-card">
-              <div class="change-icon"><i class="fas fa-tags"></i></div>
-              <h4>Classifiers vs. Descriptors</h4>
-              <p>A distinction is made between classifiers and descriptors, based on taxonomic rule.</p>
-            </div>
-            <div class="change-card">
               <div class="change-icon"><i class="fas fa-brain"></i></div>
               <h4>Consciousness vs. Awareness</h4>
-              <p>Consciousness is used as a classifier instead of awareness, with consciousness operationally defined by awareness and responsiveness.</p>
+              <p>The term "awareness" has been replaced with "consciousness" to better reflect the patient's state during seizures.</p>
             </div>
             <div class="change-card">
-              <div class="change-icon"><i class="fas fa-eye"></i></div>
-              <h4>Observable vs. Nonobservable</h4>
-              <p>The motor vs. nonmotor dichotomy is replaced by observable vs. nonobservable manifestations.</p>
+              <div class="change-icon"><i class="fas fa-network-wired"></i></div>
+              <h4>Network Emphasis</h4>
+              <p>Greater focus on identifying the networks involved rather than just the clinical manifestations.</p>
             </div>
             <div class="change-card">
-              <div class="change-icon"><i class="fas fa-clock"></i></div>
-              <h4>Chronological Sequence</h4>
-              <p>The chronological sequence of seizure semiology is used to describe seizures, rather than relying solely on the first sign.</p>
+              <div class="change-icon"><i class="fas fa-bolt"></i></div>
+              <h4>Refinement of Motor Subtypes</h4>
+              <p>More precise definitions of motor seizure subtypes with standardized terminology.</p>
             </div>
             <div class="change-card">
-              <div class="change-icon"><i class="fas fa-hand-paper"></i></div>
-              <h4>Epileptic Negative Myoclonus</h4>
-              <p>Epileptic negative myoclonus is recognized as a seizure type.</p>
+              <div class="change-icon"><i class="fas fa-stethoscope"></i></div>
+              <h4>Clinical Utility</h4>
+              <p>Classification designed to be more practical for clinical diagnosis and treatment planning.</p>
             </div>
+          </div>
+        </div>
+
+        <!-- Interactive Learning Tool -->
+        <div class="interactive-section">
+          <h3>Interactive Seizure Type Explorer</h3>
+          <div class="seizure-explorer">
+            <div class="seizure-selector">
+              <label for="seizure-type-select">Select Seizure Type:</label>
+              <select id="seizure-type-select">
+                <option value="">-- Select a type --</option>
+                <option value="focal-preserved">Focal Onset - Preserved Consciousness</option>
+                <option value="focal-impaired">Focal Onset - Impaired Consciousness</option>
+                <option value="focal-bilateral">Focal to Bilateral Tonic-Clonic</option>
+                <option value="generalized-tonic-clonic">Generalized Onset - Tonic-Clonic</option>
+                <option value="generalized-absence">Generalized Onset - Absence</option>
+                <option value="generalized-myoclonic">Generalized Onset - Myoclonic</option>
+                <option value="unknown">Unknown Onset</option>
+              </select>
+            </div>
+            <div class="seizure-details" id="seizure-details">
+              <div class="placeholder-message">Select a seizure type to view detailed information</div>
+              <!-- Details will be populated by JavaScript -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Examples Section -->
+        <div class="clinical-examples-section">
+          <h3>Clinical Examples</h3>
+          <div class="examples-grid">
+            <div class="example-card">
+              <div class="example-header">
+                <h4>Example 1: Focal Motor Seizure with Preserved Consciousness</h4>
+              </div>
+              <div class="example-content">
+                <p><strong>Clinical presentation:</strong> A 35-year-old patient experiences rhythmic jerking of the right hand that gradually spreads to the right arm. The patient remains fully conscious and can recall the event afterward.</p>
+                <p><strong>Classification:</strong> Focal motor onset seizure with preserved consciousness</p>
+                <p><strong>EEG finding:</strong> Left central rhythmic discharges</p>
+              </div>
+            </div>
+            <div class="example-card">
+              <div class="example-header">
+                <h4>Example 2: Absence Seizure</h4>
+              </div>
+              <div class="example-content">
+                <p><strong>Clinical presentation:</strong> A 10-year-old child briefly stares, stops activity, and is unresponsive for about 10 seconds before resuming activity with no recollection of the event.</p>
+                <p><strong>Classification:</strong> Generalized onset - typical absence</p>
+                <p><strong>EEG finding:</strong> 3 Hz generalized spike-and-wave discharges</p>
+              </div>
+            </div>
+            <div class="example-card">
+              <div class="example-header">
+                <h4>Example 3: Focal to Bilateral Tonic-Clonic</h4>
+              </div>
+              <div class="example-content">
+                <p><strong>Clinical presentation:</strong> A 27-year-old experiences a visual aura followed by head turning to the right, then progressing to bilateral limb stiffening and jerking with loss of consciousness.</p>
+                <p><strong>Classification:</strong> Focal to bilateral tonic-clonic seizure</p>
+                <p><strong>EEG finding:</strong> Left occipital onset spreading to both hemispheres</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Diagnostic Decision Tree -->
+        <div class="decision-tree-section">
+          <h3>Seizure Classification Decision Tree</h3>
+          <div class="decision-tree-container">
+            <div class="decision-node start">
+              <div class="node-content">
+                <p>Start: Observed Seizure Event</p>
+              </div>
+              <div class="node-connector"></div>
+            </div>
+            <div class="decision-level">
+              <div class="decision-node">
+                <div class="node-content">
+                  <p>Is onset focal, generalized, or unknown?</p>
+                </div>
+                <div class="node-options">
+                  <div class="option">Focal</div>
+                  <div class="option">Generalized</div>
+                  <div class="option">Unknown</div>
+                </div>
+              </div>
+            </div>
+            <div class="decision-level">
+              <div class="decision-node focal">
+                <div class="node-content">
+                  <p>Is consciousness preserved or impaired?</p>
+                </div>
+                <div class="node-options">
+                  <div class="option">Preserved</div>
+                  <div class="option">Impaired</div>
+                </div>
+              </div>
+              <div class="decision-node generalized">
+                <div class="node-content">
+                  <p>Is it motor or non-motor (absence)?</p>
+                </div>
+                <div class="node-options">
+                  <div class="option">Motor</div>
+                  <div class="option">Non-Motor</div>
+                </div>
+              </div>
+              <div class="decision-node unknown">
+                <div class="node-content">
+                  <p>Is it motor, non-motor, or unclassified?</p>
+                </div>
+                <div class="node-options">
+                  <div class="option">Motor</div>
+                  <div class="option">Non-Motor</div>
+                  <div class="option">Unclassified</div>
+                </div>
+              </div>
+            </div>
+            <div class="decision-level">
+              <div class="decision-node focal-preserved">
+                <div class="node-content">
+                  <p>Motor or non-motor onset?</p>
+                </div>
+                <div class="node-options">
+                  <div class="option">Motor</div>
+                  <div class="option">Non-Motor</div>
+                </div>
+              </div>
+              <div class="decision-node focal-bilateral">
+                <div class="node-content">
+                  <p>Does it evolve to bilateral tonic-clonic?</p>
+                </div>
+                <div class="node-options">
+                  <div class="option">Yes</div>
+                  <div class="option">No</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Clinical Tips Section -->
+        <div class="clinical-tips-section">
+          <h3>Clinical Tips for Seizure Classification</h3>
+          <div class="tips-container">
+            <div class="tip-card">
+              <div class="tip-number">1</div>
+              <h4>History Taking</h4>
+              <p>Ask for detailed description of the sequence of events, including any aura, motor manifestations, and recovery period. Query witnesses about the patient's responsiveness during the event.</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-number">2</div>
+              <h4>Video Documentation</h4>
+              <p>When possible, have family members video record seizures on smartphones to aid classification.</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-number">3</div>
+              <h4>EEG Correlation</h4>
+              <p>Correlate clinical features with EEG findings when available, especially for distinguishing focal from generalized onset.</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-number">4</div>
+              <h4>Consciousness Assessment</h4>
+              <p>Test for preserved consciousness by asking the patient to recall specific details or perform simple tasks during the event.</p>
+            </div>
+            <div class="tip-card">
+              <div class="tip-number">5</div>
+              <h4>Reclassification</h4>
+              <p>Be prepared to reclassify seizures as more information becomes available from additional witnesses, EEG studies, or imaging.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- EEG Findings by Seizure Type -->
+        <div class="eeg-section">
+          <h3>EEG Findings by Seizure Type</h3>
+          <div class="eeg-table-container">
+            <table class="eeg-table">
+              <thead>
+                <tr>
+                  <th>Seizure Type</th>
+                  <th>Typical EEG Findings</th>
+                  <th>Notes</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Focal with Preserved Consciousness</td>
+                  <td>Rhythmic discharges in one region/hemisphere; may not always be visible on scalp EEG</td>
+                  <td>Background slowing post-ictally may be focal</td>
+                </tr>
+                <tr>
+                  <td>Focal with Impaired Consciousness</td>
+                  <td>Rhythmic theta/alpha/beta evolving to spike-waves in one hemisphere, often temporal</td>
+                  <td>Background slowing post-ictally often lateralized</td>
+                </tr>
+                <tr>
+                  <td>Focal to Bilateral Tonic-Clonic</td>
+                  <td>Focal onset with spread to both hemispheres; muscle artifact often obscures</td>
+                  <td>Post-ictal slowing typically diffuse but may be lateralized</td>
+                </tr>
+                <tr>
+                  <td>Generalized Tonic-Clonic</td>
+                  <td>Generalized spike-wave followed by electrodecremental pattern and fast activity</td>
+                  <td>No focal onset recorded; post-ictal slowing is bilateral</td>
+                </tr>
+                <tr>
+                  <td>Absence</td>
+                  <td>3 Hz (typical) or slower (atypical) generalized spike-wave discharges</td>
+                  <td>Often induced by hyperventilation; minimal post-ictal changes</td>
+                </tr>
+                <tr>
+                  <td>Myoclonic</td>
+                  <td>Generalized polyspike-wave discharges</td>
+                  <td>Brief duration; often photosensitive</td>
+                </tr>
+                <tr>
+                  <td>Epileptic Spasms</td>
+                  <td>Electrodecremental pattern or high-amplitude slow waves</td>
+                  <td>May be focal, generalized, or have underlying hypsarrhythmia</td>
+                </tr>
+                <tr>
+                  <td>Unknown Onset</td>
+                  <td>Variable, may have non-specific abnormalities</td>
+                  <td>Further investigation often needed</td>
+                </tr>
+              </tbody>
+            </table>
           </div>
         </div>
 
