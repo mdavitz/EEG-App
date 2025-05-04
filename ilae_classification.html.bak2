@@ -4,21 +4,22 @@
   <meta charset="UTF-8">
   <!-- Responsive scaling -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>ILAE Classification of the Epilepsies - EEG Explorer</title>
-  <meta name="description" content="Explore the ILAE (International League Against Epilepsy) classification system, including seizure types, epilepsies, and epilepsy syndromes." />
+  <title>ILAE Classification - EEG Curriculum</title>
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-  <!-- Font Awesome -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="icon" type="image/png" href="assets/images/logo.png" />
+  <link rel="apple-touch-icon" href="assets/images/logo.png" />
+  <link rel="manifest" href="manifest.json">
+  
   <!-- Main CSS file that imports all modular CSS -->
-  <link rel="stylesheet" href="assets/css/main.css">
-  <link rel="stylesheet" href="assets/css/pages/ilae-classification.css">
+  <link rel="stylesheet" href="assets/css/main.css" />
   
   <!-- Core Scripts -->
-  <script src="assets/js/theme-switcher.js" defer></script>
+  <script src="firebase-auth.js" defer></script>
+  <script src="assets/js/common.js" defer></script>
   <script src="assets/js/includes-loader.js" defer></script>
   <script src="assets/js/universal-search.js" defer></script>
-  <script src="carousel.js" defer></script>
   
   <!-- Search initialization script -->
   <script>
@@ -26,7 +27,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       const initSearch = function() {
         if (typeof UniversalSearch !== 'undefined') {
-
+          console.log('Explicitly initializing search from ilae_classification.html');
           if (!UniversalSearch.initialized || typeof UniversalSearch.reinitialize === 'function') {
             try {
               // Try to reinitialize first
@@ -35,7 +36,7 @@
               } else {
                 UniversalSearch.init();
               }
-
+              console.log('Search initialized successfully');
             } catch(e) {
               console.error('Error initializing search:', e);
             }
@@ -52,7 +53,7 @@
       // Also initialize after the header is loaded
       setTimeout(function() {
         if (document.getElementById('universal-search-input')) {
-
+          console.log('Search input found, ensuring search is initialized');
           initSearch();
           
           // Fix for search dropdown functionality
@@ -85,7 +86,7 @@
     // Also initialize search when window fully loads
     window.addEventListener('load', function() {
       if (typeof UniversalSearch !== 'undefined' && !UniversalSearch.initialized) {
-
+        console.log('Window loaded, initializing search');
         UniversalSearch.init();
       }
     });
@@ -422,7 +423,53 @@
       margin-bottom: 1.5rem;
     }
     
-    /* ILAE Card styling moved to the comprehensive definition below */
+    /* ILAE Card styling */
+    .ilae-card {
+      background: var(--info-bg);
+      border-radius: 8px;
+      padding: 1.2rem;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+      border-left: 3px solid var(--accent-color);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+    
+    .ilae-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+      background: linear-gradient(to bottom, var(--info-bg), rgba(240,248,255,0.5));
+    }
+    
+    .ilae-card h3 {
+      color: var(--primary-color);
+      margin-bottom: 0.7rem;
+      font-weight: 600;
+      font-size: 1.1rem;
+      position: relative;
+      padding-bottom: 6px;
+    }
+    
+    .ilae-card h3:after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background: var(--accent-color);
+      opacity: 0.7;
+    }
+    
+    .ilae-card p {
+      color: var(--text-color);
+      line-height: 1.5;
+      margin-bottom: 0;
+      font-size: 0.9rem;
+    }
 
     /* Cross Reference Styling */
     .cross-ref {
@@ -683,12 +730,185 @@
       .ilae-grid {
         grid-template-columns: 1fr;
       }
+      
+      .ilae-card {
+        padding: 1.2rem;
+      }
     }
     
-    /* Animation for transitions */
+    /* Additional direct modal styles for fallback */
     @keyframes fadeIn {
       from { opacity: 0; transform: scale(0.97); }
       to { opacity: 1; transform: scale(1); }
+    }
+    
+    .direct-modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: rgba(0, 0, 0, 0.8);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      animation: fadeIn 0.3s ease forwards;
+      backdrop-filter: blur(5px);
+    }
+    
+    .direct-modal-content {
+      background: white;
+      padding: 2.5rem;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+      box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+      border-top: 5px solid #0077b6;
+    }
+    
+    .direct-modal-title {
+      color: #0077b6;
+      font-size: 1.8rem;
+      margin-bottom: 1.8rem;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #0077b6;
+      font-weight: bold;
+      position: relative;
+    }
+    
+    .direct-modal-title:before {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 60px;
+      height: 4px;
+      background: #0077b6;
+    }
+    
+    .direct-modal-section {
+      margin-bottom: 1.8rem;
+      background: rgba(0, 119, 182, 0.05);
+      padding: 1.5rem;
+      border-radius: 10px;
+    }
+    
+    .direct-modal-section h3 {
+      color: #0077b6;
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+    }
+    
+    .direct-modal-section h3:before {
+      content: '\f02e';
+      font-family: 'Font Awesome 6 Free';
+      font-weight: 900;
+      margin-right: 10px;
+      font-size: 1rem;
+    }
+    
+    .direct-modal-section p {
+      line-height: 1.7;
+      color: #333;
+      font-size: 1rem;
+      margin-bottom: 0;
+    }
+    
+    .direct-modal-close {
+      position: absolute;
+      top: 15px;
+      right: 20px;
+      font-size: 2rem;
+      background: none;
+      border: none;
+      color: #666;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 50%;
+    }
+    
+    .direct-modal-close:hover {
+      background: rgba(0, 0, 0, 0.05);
+      color: #0077b6;
+      transform: rotate(90deg);
+    }
+    
+    .direct-modal-link {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: #0077b6;
+      color: white;
+      padding: 14px 28px;
+      border-radius: 30px;
+      text-decoration: none;
+      margin-top: 1rem;
+      font-weight: 500;
+      text-align: center;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(0, 119, 182, 0.3);
+    }
+    
+    .direct-modal-link:hover {
+      background: #005fa3;
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(0, 119, 182, 0.4);
+    }
+    
+    /* Dark mode support for direct modal */
+    body.dark .direct-modal-content {
+      background: #222;
+      border-top: 5px solid #4db8ff;
+    }
+    
+    body.dark .direct-modal-title {
+      color: #4db8ff;
+      border-bottom-color: #444;
+    }
+    
+    body.dark .direct-modal-title:before {
+      background: #4db8ff;
+    }
+    
+    body.dark .direct-modal-section {
+      background: rgba(77, 184, 255, 0.08);
+    }
+    
+    body.dark .direct-modal-section h3 {
+      color: #4db8ff;
+    }
+    
+    body.dark .direct-modal-section p {
+      color: #ddd;
+    }
+    
+    body.dark .direct-modal-close {
+      color: #aaa;
+    }
+    
+    body.dark .direct-modal-close:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: #4db8ff;
+    }
+    
+    @media (max-width: 768px) {
+      .direct-modal-content {
+        padding: 1.8rem;
+        width: 95%;
+      }
     }
     
     /* ILAE Reference Section */
@@ -843,7 +1063,7 @@
       }
     }
 
-    /* Comprehensive ILAE card styling with color coding */
+    /* Color coding for ILAE cards based on seizure type */
     .ilae-card {
       background: var(--info-bg);
       border-radius: 8px;
@@ -856,39 +1076,6 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-    }
-    
-    .ilae-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-      background: linear-gradient(to bottom, var(--info-bg), rgba(240,248,255,0.5));
-    }
-    
-    .ilae-card h3 {
-      color: var(--primary-color);
-      margin-bottom: 0.7rem;
-      font-weight: 600;
-      font-size: 1.1rem;
-      position: relative;
-      padding-bottom: 6px;
-    }
-    
-    .ilae-card h3:after {
-      content: '';
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 40px;
-      height: 2px;
-      background: var(--accent-color);
-      opacity: 0.7;
-    }
-    
-    .ilae-card p {
-      color: var(--text-color);
-      line-height: 1.5;
-      margin-bottom: 0;
-      font-size: 0.9rem;
     }
     
     /* Seizure type color indicators */
@@ -1714,8 +1901,6 @@
         font-size: 0.85rem;
       }
     }
-    
-    /* Carousel styles moved to ilae-classification.css */
   </style>
 </head>
 <body>
@@ -1734,7 +1919,7 @@
       <!-- Seizure Classification Content -->
       <div id="classification-tab" class="ilae-tab-content">
         <div class="intro-text">
-          <div class="intro-pdf-link intro-pdf-link-centered">
+          <div class="intro-pdf-link" style="margin-top: 0; text-align: center;">
             <a href="https://www.ilae.org/files/dmfile/updated-classification-of-epileptic-seizures-2025.pdf" target="_blank" class="pdf-button">
               <i class="fas fa-file-pdf"></i> Download the ILAE Classification PDF
             </a>
@@ -1839,151 +2024,200 @@
         <!-- Clinical Examples Section (Simple Version) -->
         <div class="clinical-examples-section">
           <h3>Clinical Examples</h3>
-          <p class="examples-description">Examples illustrating the practical application of the 2025 ILAE seizure classification</p>
+          <p style="text-align: center; margin-bottom: 1.5rem;">Examples illustrating the practical application of the 2025 ILAE seizure classification</p>
           
-          <div class="examples-carousel">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;">
             <!-- Example 1 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 Unknown - Bilateral Tonic-Clonic (BTC)
               </div>
-              <div class="example-content">
-                <p>A young woman awakens to find her 20-year-old boyfriend having a seizure in bed. The onset is not witnessed, but she is able to describe bilateral stiffening followed by bilateral "shaking." EEG and MRI findings are normal.</p>
-                <p><strong>Classification:</strong> Bilateral tonic–clonic seizure—unknown whether focal or generalized (BTC)</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">A young woman awakens to find her 20-year-old boyfriend having a seizure in bed. The onset is not witnessed, but she is able to describe bilateral stiffening followed by bilateral "shaking." EEG and MRI findings are normal.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Classification:</strong> Bilateral tonic–clonic seizure—unknown whether focal or generalized (BTC)</p>
               </div>
             </div>
             
             <!-- Example 2 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 Focal to Bilateral Tonic-Clonic (FBTC)
               </div>
-              <div class="example-content">
-                <p>In an alternate scenario of the previous case, the EEG shows a clear right parietal slow-wave focus. The MRI shows a right parietal region of cortical dysplasia.</p>
-                <p><strong>Classification:</strong> Focal to bilateral tonic–clonic seizure (FBTC)</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">In an alternate scenario of the previous case, the EEG shows a clear right parietal slow-wave focus. The MRI shows a right parietal region of cortical dysplasia.</p>
+                <p style="font-size: 0.9rem;"><strong>Classification:</strong> Focal to bilateral tonic–clonic seizure (FBTC)</p>
               </div>
             </div>
             
             <!-- Example 3 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 Focal - Impaired Consciousness (FIC)
               </div>
-              <div class="example-content">
-                <p>A 25-year-old woman describes seizures beginning with 30s of an intense feeling that "familiar music is playing." She can hear other people talking but afterward realizes that she could not determine what they were saying. Eyewitnesses report that the patient does not respond to external stimuli during the seizure.</p>
-                <p><strong>Classification:</strong> Focal impaired consciousness seizure (FIC)</p>
-                <p><strong>Evolution:</strong> Auditory aura → Receptive aphasia → Impaired responsiveness → Postictal confusion</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">A 25-year-old woman describes seizures beginning with 30s of an intense feeling that "familiar music is playing." She can hear other people talking but afterward realizes that she could not determine what they were saying. Eyewitnesses report that the patient does not respond to external stimuli during the seizure.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Classification:</strong> Focal impaired consciousness seizure (FIC)</p>
+                <p style="font-size: 0.9rem;"><strong>Evolution:</strong> Auditory aura → Receptive aphasia → Impaired responsiveness → Postictal confusion</p>
               </div>
             </div>
-            
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
             <!-- Example 4 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 Focal - Preserved Consciousness (FPC)
               </div>
-              <div class="example-content">
-                <p>A 22-year-old man has seizures during which he remains fully aware, with the "hair on my arms standing on edge" and a feeling of being flushed.</p>
-                <p><strong>Classification:</strong> Focal preserved consciousness seizure (FPC) with observable manifestations: piloerection + flushing</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">A 22-year-old man has seizures during which he remains fully aware, with the "hair on my arms standing on edge" and a feeling of being flushed.</p>
+                <p style="font-size: 0.9rem;"><strong>Classification:</strong> Focal preserved consciousness seizure (FPC) with observable manifestations: piloerection + flushing</p>
               </div>
             </div>
             
             <!-- Example 5 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 Generalized Myoclonic-Tonic-Clonic
               </div>
-              <div class="example-content">
-                <p>A 13-year-old with juvenile myoclonic epilepsy has seizures beginning with a few jerks, followed by stiffening of all limbs and then rhythmic jerking of all limbs.</p>
-                <p><strong>Classification:</strong> Generalized myoclonic-tonic–clonic seizures (GTC)</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">A 13-year-old with juvenile myoclonic epilepsy has seizures beginning with a few jerks, followed by stiffening of all limbs and then rhythmic jerking of all limbs.</p>
+                <p style="font-size: 0.9rem;"><strong>Classification:</strong> Generalized myoclonic-tonic–clonic seizures (GTC)</p>
               </div>
             </div>
             
             <!-- Example 6 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 Generalized Epileptic Spasm
               </div>
-              <div class="example-content">
-                <p>A 3-month-old boy has clusters of short seizures with flexion in the neck and hips, and abduction in the shoulders of short duration (up to 2s). Video-EEG showed epileptic spasms associated with a generalized suppression on EEG.</p>
-                <p><strong>Classification:</strong> Generalized epileptic spasm (GES)</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">A 3-month-old boy has clusters of short seizures with flexion in the neck and hips, and abduction in the shoulders of short duration (up to 2s). Video-EEG showed epileptic spasms associated with a generalized suppression on EEG.</p>
+                <p style="font-size: 0.9rem;"><strong>Classification:</strong> Generalized epileptic spasm (GES)</p>
               </div>
             </div>
-            
+          </div>
+          
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
             <!-- Example 7 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 Focal Epileptic Spasms
               </div>
-              <div class="example-content">
-                <p>A 14-month-old girl has sudden extension of both arms and flexion of the trunk for approximately 2s. These seizures repeat in clusters. EEG shows hypsarrhythmia with bilateral spikes, most prominent over the left parietal region. MRI shows left parietal cortical dysplasia.</p>
-                <p><strong>Classification:</strong> Focal seizure with epileptic spasms (focal epileptic spasms)</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">A 14-month-old girl has sudden extension of both arms and flexion of the trunk for approximately 2s. These seizures repeat in clusters. EEG shows hypsarrhythmia with bilateral spikes, most prominent over the left parietal region. MRI shows left parietal cortical dysplasia.</p>
+                <p style="font-size: 0.9rem;"><strong>Classification:</strong> Focal seizure with epileptic spasms (focal epileptic spasms)</p>
               </div>
             </div>
             
             <!-- Example 8 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 FPC with Automatisms
               </div>
-              <div class="example-content">
-                <p>During video-EEG monitoring, a 28-year-old female patient experiences an ascending sensation from the stomach and then starts chewing and manipulating nearby objects using the right hand. The patient can recall what happens and is able to respond.</p>
-                <p><strong>Classification:</strong> Focal preserved consciousness seizure (FPC)</p>
-                <p><strong>Evolution:</strong> Epigastric aura → Oroalimentary automatisms + gestural automatisms with preserved awareness</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">During video-EEG monitoring, a 28-year-old female patient experiences an ascending sensation from the stomach and then starts chewing and manipulating nearby objects using the right hand. The patient can recall what happens and is able to respond.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Classification:</strong> Focal preserved consciousness seizure (FPC)</p>
+                <p style="font-size: 0.9rem;"><strong>Evolution:</strong> Epigastric aura → Oroalimentary automatisms + gestural automatisms with preserved awareness</p>
               </div>
             </div>
             
             <!-- Example 9 -->
-            <div class="example-slide">
-              <div class="example-header">
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
                 FBTC with Visual Aura
               </div>
-              <div class="example-content">
-                <p>An 8-year-old boy reports episodes starting with seeing colored dots and stripes on the left side. Eyewitnesses report that he does not respond, turns his head to the left, becomes stiff, and then has jerks in all limbs.</p>
-                <p><strong>Classification:</strong> Focal-to-bilateral tonic–clonic seizure (FBTC)</p>
-                <p><strong>Evolution:</strong> Visual aura → Versive to left + loss of awareness → Bilateral tonic–clonic</p>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">An 8-year-old boy reports episodes starting with seeing colored dots and stripes on the left side. Eyewitnesses report that he does not respond, turns his head to the left, becomes stiff, and then has jerks in all limbs.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Classification:</strong> Focal-to-bilateral tonic–clonic seizure (FBTC)</p>
+                <p style="font-size: 0.9rem;"><strong>Evolution:</strong> Visual aura → Versive to left + loss of awareness → Bilateral tonic–clonic</p>
               </div>
-            </div>
-            
-            <!-- Example 10 -->
-            <div class="example-slide">
-              <div class="example-header">
-                FIC with Automatisms
-              </div>
-              <div class="example-content">
-                <p>A 33-year-old man experienced seizures accompanied by a feeling of abdominal discomfort followed by loss of awareness. His wife reported episodes of lip smacking, fumbling hand movements, and occasional right-hand posturing.</p>
-                <p><strong>Classification:</strong> Focal impaired consciousness seizure (FIC)</p>
-                <p><strong>Evolution:</strong> Epigastric aura → Impaired awareness → Oroalimentary automatisms + gestural automatisms + dystonic posturing</p>
-              </div>
-            </div>
-            
-            <!-- Carousel Navigation -->
-            <div class="carousel-nav">
-              <button class="carousel-prev">&#10094;</button>
-              <div class="carousel-dots">
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-                <span class="carousel-dot"></span>
-              </div>
-              <button class="carousel-next">&#10095;</button>
-              <button class="carousel-pause"><i class="fas fa-pause"></i></button>
             </div>
           </div>
           
-          <p class="examples-attribution">Examples adapted from the 2025 ILAE Classification of Epileptic Seizures</p>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; margin-top: 1.5rem;">
+            <!-- Example 10 -->
+            <div style="background: #f8f9fa; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+              <div style="background: #0066cc; color: white; padding: 0.8rem; font-weight: 500;">
+                FIC with Automatisms
+              </div>
+              <div style="padding: 1rem;">
+                <p style="font-size: 0.9rem; margin-bottom: 0.8rem;">A 33-year-old man experienced seizures accompanied by a feeling of abdominal discomfort followed by loss of awareness. His wife reported episodes of lip smacking, fumbling hand movements, and occasional right-hand posturing.</p>
+                <p style="font-size: 0.9rem; margin-bottom: 0.5rem;"><strong>Classification:</strong> Focal impaired consciousness seizure (FIC)</p>
+                <p style="font-size: 0.9rem;"><strong>Evolution:</strong> Epigastric aura → Impaired awareness → Oroalimentary automatisms + gestural automatisms + dystonic posturing</p>
+              </div>
+            </div>
+          </div>
+          
+          <p style="text-align: center; margin-top: 1.5rem; font-size: 0.8rem; font-style: italic;">Examples adapted from the 2025 ILAE Classification of Epileptic Seizures</p>
+        </div>
+
+        <!-- Key Changes in 2025 Classification -->
+        <div class="key-changes-section">
+          <h3>Key Changes in the 2025 Classification</h3>
+          <div class="changes-grid">
+            <div class="change-card">
+              <div class="change-icon"><i class="fas fa-edit"></i></div>
+              <h4>Removal of "Onset"</h4>
+              <p>"Onset" is removed from the names of the main seizure classes.</p>
+            </div>
+            <div class="change-card">
+              <div class="change-icon"><i class="fas fa-tags"></i></div>
+              <h4>Classifiers vs. Descriptors</h4>
+              <p>A distinction is made between classifiers and descriptors, based on taxonomic rule.</p>
+            </div>
+            <div class="change-card">
+              <div class="change-icon"><i class="fas fa-brain"></i></div>
+              <h4>Consciousness vs. Awareness</h4>
+              <p>Consciousness is used as a classifier instead of awareness, with consciousness operationally defined by awareness and responsiveness.</p>
+            </div>
+            <div class="change-card">
+              <div class="change-icon"><i class="fas fa-eye"></i></div>
+              <h4>Observable vs. Nonobservable</h4>
+              <p>The motor vs. nonmotor dichotomy is replaced by observable vs. nonobservable manifestations.</p>
+            </div>
+            <div class="change-card">
+              <div class="change-icon"><i class="fas fa-clock"></i></div>
+              <h4>Chronological Sequence</h4>
+              <p>The chronological sequence of seizure semiology is used to describe seizures, rather than relying solely on the first sign.</p>
+            </div>
+            <div class="change-card">
+              <div class="change-icon"><i class="fas fa-hand-paper"></i></div>
+              <h4>Epileptic Negative Myoclonus</h4>
+              <p>Epileptic negative myoclonus is recognized as a seizure type.</p>
+            </div>
+          </div>
         </div>
 
         <!-- Resources Section -->
-        <!-- Additional Resources section removed as requested -->
+        <div class="resources-section">
+          <h3>Additional Resources</h3>
+          <div class="resources-grid">
+            <a href="https://www.epilepsydiagnosis.org" target="_blank" class="resource-card">
+              <div class="resource-icon"><i class="fas fa-globe"></i></div>
+              <div class="resource-content">
+                <h4>ILAE Epilepsy Diagnosis Website</h4>
+                <p>Official resource for the diagnosis of epilepsy syndromes</p>
+              </div>
+            </a>
+            <a href="https://www.aesnet.org" target="_blank" class="resource-card">
+              <div class="resource-icon"><i class="fas fa-hospital"></i></div>
+              <div class="resource-content">
+                <h4>American Epilepsy Society</h4>
+                <p>Clinical resources and practice guidelines</p>
+              </div>
+            </a>
+            <a href="https://www.epilepsy.com" target="_blank" class="resource-card">
+              <div class="resource-icon"><i class="fas fa-user-md"></i></div>
+              <div class="resource-content">
+                <h4>Epilepsy Foundation</h4>
+                <p>Patient education and seizure recognition resources</p>
+              </div>
+            </a>
+          </div>
+        </div>
       </div>
       <!-- Epilepsy Syndromes Content -->
-      <div id="syndromes-tab" class="ilae-tab-content">
+      <div id="syndromes-tab" class="ilae-tab-content" style="display:none;">
         <div id="ilae-classification-content" class="ilae-container ilae-layout">
           <!-- Search and filter section -->
           <aside class="ilae-sidebar">
@@ -2050,7 +2284,7 @@
             </div>
       
             <!-- No Results Message -->
-            <div id="no-results" class="no-results">
+            <div id="no-results" class="no-results" style="display: none;">
               <h3>No matching epilepsy syndromes found</h3>
               <p>Try adjusting your filter criteria or click "Reset Filters" to show all syndromes.</p>
             </div>
@@ -2360,13 +2594,32 @@
             </div>
           </div>
         </main>
-
+        <script>
+          // Tab toggle for ILAE Classification page
+          function showILaeTab(tab) {
+            const cBtn = document.getElementById('classification-tab-btn');
+            const sBtn = document.getElementById('syndromes-tab-btn');
+            const cDiv = document.getElementById('classification-tab');
+            const sDiv = document.getElementById('syndromes-tab');
+            if (tab === 'classification') {
+              cBtn.classList.add('active');
+              sBtn.classList.remove('active');
+              cDiv.style.display = 'block';
+              sDiv.style.display = 'none';
+            } else {
+              cBtn.classList.remove('active');
+              sBtn.classList.add('active');
+              cDiv.style.display = 'none';
+              sDiv.style.display = 'block';
+            }
+          }
+        </script>
         <!-- Footer -->
         <div id="footer-container"></div>
       </div>
 
       <!-- ILAE Modal -->
-      <div id="ilae-modal" class="modal">
+      <div id="ilae-modal" class="modal" style="display: none;">
         <div class="modal-content">
           <button class="modal-close">&times;</button>
           <h2 id="modal-title"></h2>
@@ -2415,6 +2668,22 @@
           // Apply any saved filters or search (if coming back to page)
           if (typeof applyFilters === 'function') {
             applyFilters();
+          }
+          
+          // Add event listener for more examples toggle if it exists
+          const moreExamplesToggle = document.getElementById('more-examples-toggle');
+          if (moreExamplesToggle) {
+            moreExamplesToggle.addEventListener('click', function() {
+              const moreExamples = document.getElementById('more-examples');
+              if (moreExamples) {
+                const isHidden = moreExamples.style.display === 'none';
+                moreExamples.style.display = isHidden ? 'grid' : 'none';
+                moreExamplesToggle.querySelector('span').textContent = 
+                  isHidden ? 'Show Fewer Examples' : 'Show More Examples';
+                moreExamplesToggle.querySelector('i').className = 
+                  isHidden ? 'fas fa-chevron-up' : 'fas fa-chevron-down';
+              }
+            });
           }
         }
         
@@ -2516,11 +2785,15 @@
           
           cards.forEach(card => {
             card.addEventListener('click', function() {
+              console.log('Card clicked'); // Debug log
+              
               // Get data from card attributes
               const title = this.getAttribute('data-title');
               const summary = this.getAttribute('data-summary');
               const eeg = this.getAttribute('data-eeg');
               const pdfLink = this.getAttribute('data-pdf');
+              
+              console.log('Card data:', { title, summary, eeg, pdfLink }); // Debug log
               
               // Populate modal with card data
               document.getElementById('modal-title').textContent = title;

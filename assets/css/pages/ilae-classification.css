@@ -829,4 +829,295 @@ body.dark #ilae-classification-content #pdfLink:hover {
 body.dark .page-ilae_classification .tab-buttons button:not(.active) {
   background-color: rgba(41, 151, 255, 0.15);
   color: var(--accent-color);
+}
+
+/* Carousel Styles for Clinical Examples */
+.examples-carousel {
+  max-width: 800px;
+  margin: 0 auto;
+  position: relative;
+  background: var(--card-bg);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  padding: 1.5rem;
+  overflow: hidden;
+  min-height: 400px; /* Increased height for carousel */
+}
+
+.example-slide {
+  display: none;
+  animation: fadeEffect 1s;
+  background: #f8f9fa;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  height: 340px; /* Fixed height for all slides */
+  position: relative;
+}
+
+.example-slide.active {
+  display: flex;
+  flex-direction: column;
+}
+
+.example-header {
+  background: #0066cc;
+  color: white;
+  padding: 0.8rem 1rem;
+  font-weight: 600;
+  font-size: 1.15rem; /* Larger header text */
+}
+
+.example-content {
+  padding: 1rem;
+  flex-grow: 1;
+  overflow-y: auto; /* Allow scrolling if content is too long */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 1.1rem; /* Increased font size */
+}
+
+.example-content p {
+  font-size: 1.05rem;
+  line-height: 1.5;
+  margin-bottom: 0.8rem;
+}
+
+.example-content strong {
+  font-size: 1.1rem;
+  color: var(--primary-color, #0066cc);
+}
+
+.carousel-nav {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+  align-items: center;
+}
+
+.carousel-dots {
+  display: flex;
+  gap: 6px;
+  margin: 0 10px;
+  align-items: center;
+}
+
+.carousel-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #ccc;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.carousel-dot.active {
+  background: #0066cc;
+  width: 12px;
+  height: 12px;
+}
+
+.carousel-prev,
+.carousel-next {
+  background: #0066cc;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+.carousel-prev:hover,
+.carousel-next:hover {
+  background: #004c99;
+  transform: translateY(-2px);
+}
+
+/* Auto-rotation pause button */
+.carousel-pause {
+  background: #0066cc;
+  color: white;
+  border: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  margin: 0 10px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+}
+
+.carousel-pause:hover {
+  background: #004c99;
+}
+
+.carousel-pause.paused i::before {
+  content: "\f04b"; /* Font Awesome play icon */
+}
+
+@keyframes fadeEffect {
+  from {opacity: 0.7; transform: translateX(20px);}
+  to {opacity: 1; transform: translateX(0);}
+}
+
+/* Additional styling for inline elements */
+.intro-pdf-link-centered {
+  margin-top: 0; 
+  text-align: center;
+}
+
+.examples-description {
+  text-align: center; 
+  margin-bottom: 1.5rem;
+}
+
+.examples-attribution {
+  text-align: center; 
+  margin-top: 1.5rem; 
+  font-size: 0.9rem; 
+  font-style: italic;
+}
+
+/* Tab content display states */
+#syndromes-tab.ilae-tab-content {
+  display: none;
+}
+
+#no-results.no-results {
+  display: none;
+}
+
+/* Modal display states */
+#ilae-modal.modal {
+  display: none;
+}
+
+/* Dark mode for carousel */
+body.dark .example-slide {
+  background: #2a2a2a;
+}
+
+body.dark .example-header {
+  background: #005599;
+}
+
+body.dark .example-content strong {
+  color: #4db8ff;
+}
+
+body.dark .carousel-dot {
+  background: #555;
+}
+
+body.dark .carousel-dot.active {
+  background: #4db8ff;
+}
+
+body.dark .carousel-prev,
+body.dark .carousel-next,
+body.dark .carousel-pause {
+  background: #005599;
+}
+
+body.dark .carousel-prev:hover,
+body.dark .carousel-next:hover,
+body.dark .carousel-pause:hover {
+  background: #004480;
+}
+
+/* Responsive carousel styles */
+@media (max-width: 768px) {
+  .examples-carousel {
+    padding: 1.2rem;
+    min-height: 380px;
+  }
+  
+  .example-slide {
+    height: 320px;
+  }
+  
+  .example-header {
+    padding: 0.7rem 0.9rem;
+    font-size: 1.1rem;
+  }
+  
+  .example-content {
+    padding: 0.9rem;
+    font-size: 1rem;
+  }
+  
+  .example-content p {
+    font-size: 1rem;
+    margin-bottom: 0.7rem;
+  }
+  
+  .example-content strong {
+    font-size: 1rem;
+  }
+  
+  .examples-attribution {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .examples-carousel {
+    padding: 1rem;
+    min-height: 360px;
+  }
+  
+  .example-slide {
+    height: 300px;
+  }
+  
+  .example-header {
+    padding: 0.6rem 0.8rem;
+    font-size: 1rem;
+  }
+  
+  .example-content {
+    padding: 0.8rem;
+    font-size: 0.95rem;
+  }
+  
+  .example-content p {
+    font-size: 0.95rem;
+    margin-bottom: 0.6rem;
+  }
+  
+  .example-content strong {
+    font-size: 0.95rem;
+  }
+  
+  .carousel-prev,
+  .carousel-next,
+  .carousel-pause {
+    width: 32px;
+    height: 32px;
+  }
+  
+  .carousel-dot {
+    width: 8px;
+    height: 8px;
+  }
+  
+  .carousel-dot.active {
+    width: 10px;
+    height: 10px;
+  }
+  
+  .examples-attribution {
+    font-size: 0.8rem;
+  }
 } 
